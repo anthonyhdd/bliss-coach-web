@@ -54,9 +54,15 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <article style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
     <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase(`/${app.slug}/`)}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
       <span class="crumb">
-        <a href={withBase(`/${app.slug}/`)}>{app.name}</a> · <a href={withBase(`/${app.slug}/blog/`)}>{app.blogTitle}</a>
+        <a href={withBase(`/${app.slug}/blog/`)}>{app.blogTitle}</a>
       </span>
       <h1>{post.data.title}</h1>
       <p class="meta">
