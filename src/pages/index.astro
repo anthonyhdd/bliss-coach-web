@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import { APPS, withBase } from '../config/apps';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Bliss Coach',
+  url: 'https://bliss-coach.com/',
+  description:
+    'Bliss Coach is a mobile app studio building AI-powered coaching apps that help people grow — one conversation at a time.',
+  sameAs: ['https://apps.apple.com/us/developer/bliss-coach/id1628409883'],
+};
+---
+
+<Base
+  title="Bliss Coach — AI Coaching Apps"
+  description="Bliss Coach is a mobile app studio building AI-powered coaching apps that help people grow — one conversation at a time."
+  jsonLd={jsonLd}
+>
+  <section class="hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="container">
+      <h1>Building the world's largest portfolio of <span class="grad">AI coaching apps</span></h1>
+      <p class="sub">Specialized AI coaches for every area of life. Real conversations, real progress — one app per goal.</p>
+      <a class="btn btn-brand" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="app-grid">
+      {Object.values(APPS).map((app) => (
+        <article class="app-card" style={`--c1:${app.gradient[0]};--c2:${app.gradient[2]}`}>
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="top">
+            <img class="icon" src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="64" height="64" loading="lazy" />
+            <div>
+              <div class="kicker">{app.category}</div>
+              <h3>{app.name}</h3>
+            </div>
+          </div>
+          <p>{app.tagline}. {app.subtitle.split('. ')[0]}.</p>
+          <div class="links">
+            <a class="more" href={withBase(`/${app.slug}/`)}>Learn more →</a>
+            <a class="store" href={app.appStoreUrl}>App Store</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,21 @@
+---
+import { APPS, withBase } from '../config/apps';
+
+interface Props {
+  activeApp?: string;
+}
+const { activeApp } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a class="logo" href={withBase('/')}>Bliss <span>Coach</span></a>
+    <nav class="nav" aria-label="Apps">
+      {Object.values(APPS).map((app) => (
+        <a href={withBase(`/${app.slug}/`)} aria-current={activeApp === app.slug ? 'true' : undefined}>
+          {app.name}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

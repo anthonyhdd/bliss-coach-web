@@ -1,0 +1,82 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', (p) => !p.data.draft);
+  return posts.map((post) => ({
+    params: { app: post.data.app, slug: post.id.split('/')[1] },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const app = APPS[post.data.app];
+const { Content } = await render(post);
+
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const canonicalPath = `/${app.slug}/blog/${post.id.split('/')[1]}/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.publishDate.toISOString(),
+    dateModified: (post.data.updatedDate ?? post.data.publishDate).toISOString(),
+    author: { '@type': 'Organization', name: `${app.name} by Bliss Coach`, url: `https://bliss-coach.com/${app.slug}/` },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+    mainEntityOfPage: `https://bliss-coach.com${canonicalPath}`,
+    keywords: post.data.keywords.join(', '),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: app.name, item: `https://bliss-coach.com/${app.slug}/` },
+      { '@type': 'ListItem', position: 3, name: post.data.title, item: `https://bliss-coach.com${canonicalPath}` },
+    ],
+  },
+];
+---
+
+<Base
+  title={`${post.data.title} | ${app.name}`}
+  description={post.data.description}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  jsonLd={jsonLd}
+>
+  <article style={brandStyle}>
+    <header class="article-header">
+      <span class="crumb">
+        <a href={withBase(`/${app.slug}/`)}>{app.name}</a> · <a href={withBase(`/${app.slug}/blog/`)}>{app.blogTitle}</a>
+      </span>
+      <h1>{post.data.title}</h1>
+      <p class="meta">
+        {fmt(post.data.publishDate)} · by the {app.name} team
+      </p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="72" height="72" />
+        <div>
+          <h3>{app.tagline}</h3>
+          <p>{app.name} — {app.category.toLowerCase()} with an AI coach that talks back. Free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.appStoreUrl}>Get {app.name} free</a>
+      </div>
+    </aside>
+  </article>
+</Base>

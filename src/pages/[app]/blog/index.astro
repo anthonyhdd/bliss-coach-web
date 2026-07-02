@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+export function getStaticPaths() {
+  return Object.keys(APPS).map((app) => ({ params: { app } }));
+}
+
+const { app: slug } = Astro.params;
+const app = APPS[slug!];
+
+const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft)).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
+);
+
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Base
+  title={`${app.blogTitle} | ${app.name}`}
+  description={app.blogDescription}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  activeApp={app.slug}
+>
+  <div style={brandStyle}>
+    <section class="section container">
+      <h2 style="font-size:clamp(30px,5vw,44px)">{app.blogTitle}</h2>
+      <p class="lead">{app.blogDescription}</p>
+      <div class="article-list">
+        {posts.map((post) => (
+          <a class="article-card" href={withBase(`/${app.slug}/blog/${post.id.split('/')[1]}/`)}>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+            <span class="meta">{fmt(post.data.publishDate)}</span>
+            <span class="read">Read the guide →</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

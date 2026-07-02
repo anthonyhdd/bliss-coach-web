@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { withBase } from '../config/apps';
+
+interface Props {
+  title: string;
+  description: string;
+  /** App Store ID → renders the Apple Smart Banner meta */
+  appStoreId?: string;
+  /** root-relative og image path (public/) or absolute URL */
+  ogImage?: string;
+  bodyClass?: string;
+  activeApp?: string;
+  jsonLd?: object | object[];
+}
+
+const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL, '/').replace('//', '/'), Astro.site);
+const ogImageUrl = ogImage
+  ? ogImage.startsWith('http')
+    ? ogImage
+    : new URL(ogImage, Astro.site).href
+  : new URL('/icons/sofia.jpg', Astro.site).href;
+const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/jpeg" href={withBase('/icons/sofia.jpg')} />
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+    {appStoreId && <meta name="apple-itunes-app" content={`app-id=${appStoreId}`} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content="Bliss Coach" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    {jsonLdBlocks.map((block) => (
+      <script type="application/ld+json" set:html={JSON.stringify(block)} />
+    ))}
+  </head>
+  <body class={bodyClass}>
+    <div class="page">
+      <Header activeApp={activeApp} />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>
