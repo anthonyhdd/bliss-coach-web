@@ -83,7 +83,7 @@ A few rules that apply across the board:
 
 ## Variations of the Same Question
 
-"Walk me through your resume," "tell me about your background," and "how did you get here?" are near-identical prompts — use the same present-past-future core. "Walk me through your resume" tolerates slightly more chronology, but you should still compress early roles into a sentence and spend your time on the recent, relevant ones. If a recruiter asks it in a screening call, keep it closer to 60 seconds; recruiters are checking fit and communication, not depth.
+"Walk me through your resume," "tell me about your background," and "how did you get here?" are near-identical prompts — use the same present-past-future core. "Walk me through your resume" tolerates slightly more chronology, but still compress early roles into a sentence. If a recruiter asks it in a screening call, keep it closer to 60 seconds; recruiters are checking fit and communication, not depth.
 
 ## FAQ
 
