@@ -65,6 +65,7 @@ async function main() {
   // strip the Framer editor pencil + Framer analytics
   html = html
     .replace(/<script[^>]*framer\.com\/edit[^>]*>\s*<\/script>/g, '')
+    .replace(/<script>try\{if\(localStorage[^<]*editorbar[^<]*<\/script>/g, '')
     .replace(/<script[^>]*events\.framer\.com[^>]*>[\s\S]*?<\/script>/g, '');
 
   html = rewriteText(html, 0);
@@ -73,6 +74,7 @@ async function main() {
   const PAINTER = `
 <script>
 (function () {
+  try { localStorage.removeItem('__framer_force_showing_editorbar_since'); } catch (e) {}
   function boot() {
     var canvases = Array.prototype.slice.call(document.querySelectorAll('canvas'));
     if (!canvases.length) return;

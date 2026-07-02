@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	
 	
-	<script>try{if(localStorage.get("__framer_force_showing_editorbar_since")){const n=document.createElement("link");n.rel = "modulepreload";n.href="https://framer.com/edit/init.mjs";document.head.appendChild(n)}}catch(e){}</script>
+	
 	<!-- Start of headStart -->
     
     <!-- End of headStart -->
@@ -168,6 +168,61 @@
 
 <script>
 (function () {
+  function boot() {
+    var canvases = Array.prototype.slice.call(document.querySelectorAll('canvas'));
+    if (!canvases.length) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvases.forEach(function (c) {
+      if (c.width !== 300 || c.height !== 150) return; // framer painted it after all
+      var r = c.getBoundingClientRect();
+      if (!r.width) return;
+      c.width = r.width * dpr; c.height = r.height * dpr;
+      var ctx = c.getContext('2d');
+      if (!ctx) return;
+      if (r.height > 700) nebula(c, ctx); else stars(c, ctx, dpr);
+    });
+  }
+  // Both layers are STATIC on the original Framer page (measured: zero motion,
+  // zero twinkle). Values sampled from the live canvases.
+  function nebula(c, ctx) {
+    var w = c.width, h = c.height;
+    var g = ctx.createRadialGradient(w * 0.5, h * 0.44, 0, w * 0.5, h * 0.44, Math.max(w, h) * 0.42);
+    g.addColorStop(0, 'rgba(108,155,185,0.65)');
+    g.addColorStop(0.45, 'rgba(100,140,200,0.33)');
+    g.addColorStop(0.75, 'rgba(121,112,255,0.10)');
+    g.addColorStop(1, 'rgba(10,10,10,0)');
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.44);
+    ctx.scale(1, 0.72);
+    ctx.translate(-w * 0.5, -h * 0.44);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+  function stars(c, ctx, dpr) {
+    var w = c.width, h = c.height;
+    var n = Math.round((w * h) / 22600); // 125 stars at 2400x1176, like the original
+    ctx.fillStyle = '#fff';
+    for (var i = 0; i < n; i++) {
+      ctx.globalAlpha = 0.12 + Math.random() * 0.4;
+      ctx.beginPath();
+      ctx.arc(Math.random() * w, Math.random() * h, (0.4 + Math.random() * 0.85) * dpr, 0, 6.28318);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  var tries = 0;
+  var iv = setInterval(function () {
+    tries++;
+    var pending = Array.prototype.some.call(document.querySelectorAll('canvas'), function (c) { return c.width === 300 && c.height === 150; });
+    if (pending) boot();
+    if (tries > 60) clearInterval(iv);
+  }, 250);
+})();
+</script>
+<script>
+(function () {
+  try { localStorage.removeItem('__framer_force_showing_editorbar_since'); } catch (e) {}
   function boot() {
     var canvases = Array.prototype.slice.call(document.querySelectorAll('canvas'));
     if (!canvases.length) return;
