@@ -13,6 +13,8 @@ export interface AppDef {
   features: { title: string; body: string }[];
   blogTitle: string;
   blogDescription: string;
+  /** app not yet released on the App Store — render a coming-soon pill instead of a store link */
+  comingSoon?: boolean;
 }
 
 export const APPS: Record<string, AppDef> = {
@@ -135,6 +137,67 @@ export const APPS: Record<string, AppDef> = {
     blogTitle: 'Interview Prep — Guides',
     blogDescription:
       'Interview questions with model answers, the STAR method, salary talk, and company-specific prep — from the Alex team.',
+  },
+  mila: {
+    slug: 'mila',
+    name: 'Mila',
+    category: 'Nutrition Coach',
+    tagline: 'Eat better without the guilt trips',
+    subtitle:
+      'Mila is your AI dietician. Talk through your meals, cravings and goals in real conversations — and get practical, judgment-free guidance that fits your real life.',
+    appStoreId: '6779667418',
+    appStoreUrl: 'https://apps.apple.com/app/id6779667418',
+    gradient: ['#16A34A', '#84CC16', '#14B8A6'],
+    accent: '#22C55E',
+    onGradient: '#ffffff',
+    features: [
+      {
+        title: 'Talk it out, out loud',
+        body: 'Voice conversations with a dietician who listens first — no forms, no calorie shame, just real answers.',
+      },
+      {
+        title: 'Advice for your real life',
+        body: 'Restaurant menus, late-night cravings, busy weeks — Mila works with how you actually eat.',
+      },
+      {
+        title: 'Habits that stick',
+        body: 'Small, sustainable changes over crash plans. Mila remembers your goals and keeps you on track.',
+      },
+    ],
+    blogTitle: 'Nutrition — Guides & Tips',
+    blogDescription:
+      'Practical, health-positive guides to eating better: everyday nutrition, habits, and mindset from the Mila team.',
+  },
+  astra: {
+    slug: 'astra',
+    name: 'Astra',
+    category: 'Astrology',
+    tagline: 'Your personal AI astrologer',
+    subtitle:
+      'Astra reads your natal chart and talks you through it — live voice conversations about your sign, your day, and what the stars actually say about you.',
+    appStoreId: '6779667872',
+    appStoreUrl: 'https://apps.apple.com/app/id6779667872',
+    gradient: ['#0B0B12', '#312E81', '#C9A14A'],
+    accent: '#C9A14A',
+    onGradient: '#ffffff',
+    comingSoon: true,
+    features: [
+      {
+        title: 'Your chart, decoded',
+        body: 'A full natal chart reading in plain language — sun, moon, rising and what they mean together.',
+      },
+      {
+        title: 'Daily horoscopes that feel personal',
+        body: 'Not recycled one-liners: daily guidance computed from your own chart and the sky right now.',
+      },
+      {
+        title: 'Ask the stars anything',
+        body: 'Love, work, timing — talk it through with Astra in a real conversation, voice or text.',
+      },
+    ],
+    blogTitle: 'Astrology — Guides',
+    blogDescription:
+      'Natal charts, signs, houses and transits explained simply — astrology guides from the Astra team.',
   },
 };
 

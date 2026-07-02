@@ -48,7 +48,11 @@ const jsonLd = {
           <div class="kicker">{app.category}</div>
           <h1>{app.tagline}</h1>
           <p class="sub">{app.subtitle}</p>
-          <AppStoreButton href={app.appStoreUrl} />
+          {app.comingSoon ? (
+            <span class="coming-soon" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid color-mix(in srgb, var(--accent) 55%, transparent);border-radius:999px;font-size:14px;font-weight:600;color:var(--accent);letter-spacing:0.02em;">Coming soon to the App Store</span>
+          ) : (
+            <AppStoreButton href={app.appStoreUrl} />
+          )}
         </div>
       </div>
     </section>

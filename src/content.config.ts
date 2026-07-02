@@ -6,7 +6,7 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string().max(70),
     description: z.string().max(165),
-    app: z.enum(['sofia', 'alex', 'charm', 'amelie']),
+    app: z.enum(['sofia', 'alex', 'charm', 'amelie', 'mila', 'astra']),
     publishDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     keywords: z.array(z.string()).default([]),
