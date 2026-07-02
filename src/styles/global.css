@@ -233,3 +233,12 @@ main { flex: 1; }
   width: 100vw; height: 240px; pointer-events: none; z-index: -1;
   background: radial-gradient(58% 220px at 50% 0, color-mix(in srgb, var(--brand-2) 13%, transparent), transparent 72%);
 }
+
+/* ---------- related articles (article pages are light) ---------- */
+.related { max-width: var(--prose-w); margin: 0 auto; padding: 0 24px 48px; }
+.related h2 { font-size: 22px; letter-spacing: -0.02em; margin-bottom: 18px; color: #121216; }
+.related .article-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.article-page .article-card { background: #ffffff; border: 1px solid rgba(0,0,0,0.08); }
+.article-page .article-card h3 { color: #17171c; font-size: 16px; }
+.article-page .article-card p { color: #55555f; font-size: 13.5px; }
+.article-page .article-card:hover { border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.08)); }
