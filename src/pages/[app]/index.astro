@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import AppStoreButton from '../../components/AppStoreButton.astro';
 import { APPS, withBase } from '../../config/apps';
+import { PSEO_SECTIONS } from '../../config/pseo';
 
 export function getStaticPaths() {
   return Object.keys(APPS).map((app) => ({ params: { app } }));
@@ -14,6 +15,8 @@ const app = APPS[slug!];
 const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft)).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
 );
+const pseoSection = PSEO_SECTIONS[slug!];
+const pseoCount = (await getCollection('pseo', (p) => p.data.app === slug && !p.data.draft)).length;
 
 const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
 
@@ -68,6 +71,16 @@ const jsonLd = {
         ))}
       </div>
     </section>
+
+    {pseoCount > 0 && (
+      <section class="section container">
+        <a class="article-card" href={withBase(`/${app.slug}/${pseoSection.base}/`)} style="display:block">
+          <h3>{pseoSection.hubTitle} ({pseoCount})</h3>
+          <p>{pseoSection.hubIntro}</p>
+          <span class="read">Browse all →</span>
+        </a>
+      </section>
+    )}
 
     {posts.length > 0 && (
       <section class="section container">
