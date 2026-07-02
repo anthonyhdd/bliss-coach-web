@@ -179,53 +179,37 @@
       c.width = r.width * dpr; c.height = r.height * dpr;
       var ctx = c.getContext('2d');
       if (!ctx) return;
-      if (r.height > 700) nebula(c, ctx, dpr); else stars(c, ctx, dpr);
+      if (r.height > 700) nebula(c, ctx); else stars(c, ctx, dpr);
     });
   }
-  function nebula(c, ctx, dpr) {
-    var t0 = Math.random() * 1000;
-    function frame(now) {
-      var w = c.width, h = c.height;
-      var pulse = 0.86 + 0.14 * Math.sin((now / 1000 + t0) / 4);
-      ctx.clearRect(0, 0, w, h);
-      var g = ctx.createRadialGradient(w * 0.5, h * 0.44, 0, w * 0.5, h * 0.44, Math.max(w, h) * 0.42);
-      g.addColorStop(0, 'rgba(99,144,188,' + (0.68 * pulse) + ')');
-      g.addColorStop(0.45, 'rgba(110,125,215,' + (0.34 * pulse) + ')');
-      g.addColorStop(0.75, 'rgba(121,112,255,' + (0.10 * pulse) + ')');
-      g.addColorStop(1, 'rgba(10,10,10,0)');
-      ctx.save();
-      ctx.translate(w * 0.5, h * 0.44);
-      ctx.scale(1, 0.72);
-      ctx.translate(-w * 0.5, -h * 0.44);
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, w, h);
-      ctx.restore();
-      requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
+  // Both layers are STATIC on the original Framer page (measured: zero motion,
+  // zero twinkle). Values sampled from the live canvases.
+  function nebula(c, ctx) {
+    var w = c.width, h = c.height;
+    var g = ctx.createRadialGradient(w * 0.5, h * 0.44, 0, w * 0.5, h * 0.44, Math.max(w, h) * 0.42);
+    g.addColorStop(0, 'rgba(108,155,185,0.65)');
+    g.addColorStop(0.45, 'rgba(100,140,200,0.33)');
+    g.addColorStop(0.75, 'rgba(121,112,255,0.10)');
+    g.addColorStop(1, 'rgba(10,10,10,0)');
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.44);
+    ctx.scale(1, 0.72);
+    ctx.translate(-w * 0.5, -h * 0.44);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
   }
   function stars(c, ctx, dpr) {
     var w = c.width, h = c.height;
-    var n = Math.round((w * h) / (14000 * dpr));
-    var st = [];
+    var n = Math.round((w * h) / 22600); // 125 stars at 2400x1176, like the original
+    ctx.fillStyle = '#fff';
     for (var i = 0; i < n; i++) {
-      st.push({ x: Math.random() * w, y: Math.random() * h, r: (Math.random() * 0.9 + 0.4) * dpr, a: Math.random() * 0.5 + 0.2, s: Math.random() * 1.6 + 0.4, p: Math.random() * 6.28 });
+      ctx.globalAlpha = 0.12 + Math.random() * 0.4;
+      ctx.beginPath();
+      ctx.arc(Math.random() * w, Math.random() * h, (0.4 + Math.random() * 0.85) * dpr, 0, 6.28318);
+      ctx.fill();
     }
-    function frame(now) {
-      ctx.clearRect(0, 0, w, h);
-      for (var i = 0; i < st.length; i++) {
-        var d = st[i];
-        var tw = d.a + Math.sin(now / 1000 * d.s + d.p) * 0.22;
-        if (tw < 0.04) tw = 0.04;
-        ctx.globalAlpha = Math.min(tw, 0.85);
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, 6.28318);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-      }
-      requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
+    ctx.globalAlpha = 1;
   }
   var tries = 0;
   var iv = setInterval(function () {
