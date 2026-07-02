@@ -56,7 +56,6 @@ Food is where beginners get the most real-world speaking practice. Waiters expec
 |---|--------|---------|---------------|----------|
 | 21 | Une table pour deux, s'il vous plaît | A table for two, please | ewn TAH-bluh poor DUH | Formal |
 | 22 | La carte, s'il vous plaît | The menu, please | lah KART | Formal |
-| 22 | La carte, s'il vous plaît | The menu, please | lah KART | Formal |
 | 23 | Je vais prendre un café | I'll have a coffee | zhuh vay prah(n)-druh uh(n) kah-FAY | Neutral |
 | 24 | Je voudrais... | I would like... | zhuh voo-DREH | Neutral |
 | 25 | Qu'est-ce que vous me conseillez ? | What do you recommend? | kess-kuh voo muh koh(n)-say-YAY | Formal |

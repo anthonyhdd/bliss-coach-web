@@ -39,7 +39,7 @@ Two selection rules before you pick your weakness:
 
 ### 1. New grad / early career
 
-"I overestimate what I can deliver in a given week — in school that just meant late nights, but in my internship it meant I once committed to three deliverables and delivered two late instead of two on time. Now I keep a simple rule: before saying yes, I write down the actual tasks involved and add a 30% buffer, and I check my last three estimates against reality every Friday. Over my final two internship months, my on-time rate went from about 60% to over 90%, and my manager commented that my estimates had become the most reliable on the team of interns."
+"I overestimate what I can deliver in a week — in school that meant late nights, but in my internship it meant committing to three deliverables and delivering two late instead of two on time. Now, before saying yes, I write down the actual tasks involved and add a 30% buffer, and I check my last three estimates against reality every Friday. Over my final two internship months, my on-time rate went from about 60% to over 90%, and my manager called my estimates the most reliable among the interns."
 
 ### 2. Software engineer
 
@@ -47,19 +47,19 @@ Two selection rules before you pick your weakness:
 
 ### 3. Manager
 
-"I'm slow to address underperformance — my instinct is to give people more time and coaching than the situation warrants. On my last team, I let a performance issue run four months longer than it should have, which was unfair to the rest of the team carrying the load. What I changed: I now write down, at the first sign of a problem, what improvement I need to see and by when, and I share it with the person directly — turning a vague hope into a documented, honest conversation. The last time it came up, I had the difficult conversation within two weeks, and the person turned it around because they finally knew where they stood."
+"I'm slow to address underperformance — my instinct is to give people more time and coaching than the situation warrants. On my last team, I let a performance issue run four months longer than it should have, which was unfair to everyone carrying the load. Now, at the first sign of a problem, I write down what improvement I need to see and by when, and share it with the person directly — turning a vague hope into a documented, honest conversation. The last time it came up, I had the difficult conversation within two weeks, and the person turned it around because they finally knew where they stood."
 
 ### 4. Career changer
 
-"My weakness right now is domain depth — I'm coming from logistics into SaaS, and I don't yet have the pattern library someone with five years in this industry has. I've been closing that gap deliberately: I've completed two industry certifications in the past six months, I read the three main trade publications weekly, and I've done informational interviews with a dozen people in roles like this one. What I'd ask you to weigh against it is that my logistics background is why I catch operational problems your industry veterans walk past — but I won't pretend the ramp-up isn't real. I expect to need about a quarter to be fully fluent."
+"My weakness right now is domain depth — I'm coming from logistics into SaaS, and I don't yet have the pattern library someone with five years in this industry has. I've been closing that gap deliberately: two industry certifications in six months, the three main trade publications weekly, and informational interviews with a dozen people in roles like this one. The flip side is that my logistics background is why I catch operational problems industry veterans walk past — but the ramp-up is real, and I expect to need about a quarter to be fully fluent."
 
 ### 5. Sales / customer-facing
 
-"I follow up too aggressively when a deal goes quiet — earlier in my career I turned a warm prospect cold by sending four check-ins in two weeks. A mentor made me map my sequences against actual close data, and the numbers were clear: spacing follow-ups out and adding value in each one — a relevant case study, a benchmark — outperformed pure persistence. Now every follow-up in my sequence has to carry something useful or it doesn't go out. My reply rates on stalled deals roughly doubled after I made that change, and I haven't had a prospect go dark from fatigue since."
+"I follow up too aggressively when a deal goes quiet — earlier in my career I turned a warm prospect cold with four check-ins in two weeks. A mentor made me map my sequences against close data, and the numbers were clear: spaced follow-ups that add value — a relevant case study, a benchmark — outperform pure persistence. Now every follow-up has to carry something useful or it doesn't go out. My reply rates on stalled deals roughly doubled, and I haven't had a prospect go dark from fatigue since."
 
 ### 6. Analyst / detail-oriented role
 
-"Presenting to senior audiences is where I'm weakest — my instinct is to show all the work, and executives want the answer first. Eighteen months ago a VP stopped me three slides into a forty-slide deck and asked for the bottom line, and I didn't have a crisp one. Since then I force every presentation through a one-slide summary first — answer, evidence, recommendation — and I've joined a Toastmasters chapter to get reps. Last quarter I presented to our leadership team twice, and my manager's feedback was that the recommendation landed in the first two minutes both times."
+"Presenting to senior audiences is where I'm weakest — my instinct is to show all the work, and executives want the answer first. Eighteen months ago a VP stopped me three slides into a forty-slide deck and asked for the bottom line, and I didn't have a crisp one. Since then I force every presentation through a one-slide summary first — answer, evidence, recommendation — and I joined Toastmasters for reps. Last quarter I presented to leadership twice, and both times the feedback was that the recommendation landed in the first two minutes."
 
 ### 7. Operations / project manager
 
@@ -71,13 +71,13 @@ Two selection rules before you pick your weakness:
 
 ## Weaknesses to Never Say
 
-**The humble-brags.** "I'm a perfectionist," "I work too hard," "I care too much," "I'm too honest." These are scored as non-answers, and worse, as evidence you think the interviewer is naive.
+**The humble-brags.** "I'm a perfectionist," "I work too hard," "I'm too honest." Scored as non-answers — and as evidence you think the interviewer is naive.
 
 **Anything core to the job.** Deadlines for a project manager, numbers for an analyst, conflict avoidance for a manager, cold outreach for a salesperson. Re-read the top three requirements in the posting; your weakness must not overlap them.
 
 **Character flaws.** "I have a temper," "I lose interest quickly," "I struggle with authority," "I'm often late." These aren't weaknesses to be coached — they're reasons to reject.
 
-**"I can't think of one."** The single worst answer available. It reads as either zero self-awareness or a refusal to engage, and it invites the interviewer to go looking for your weaknesses themselves.
+**"I can't think of one."** The single worst answer available. It reads as zero self-awareness or a refusal to engage, and it invites the interviewer to go hunting for your weaknesses themselves.
 
 **A raw confession with no mitigation.** Honesty without a system is just a warning label. Never deliver part one of the formula without parts two and three.
 
@@ -85,17 +85,17 @@ Two selection rules before you pick your weakness:
 
 This answer, more than most, betrays lack of rehearsal — hesitation reads as concealment or improvisation, both of which undermine the credibility the question tests. But over-rehearsal is just as bad: a too-smooth recitation sounds like a script. Practice until the structure is automatic while the wording stays natural, and pressure-test the follow-ups: "Tell me about a time that cost you." "What did your manager say?" Run it past a friend, or rehearse with [Alex, an AI interview coach](https://apps.apple.com/app/id6761726840), which plays the interviewer, asks the follow-ups, and lets you repeat the answer until it's tight without sounding canned.
 
-One more preparation step most candidates skip: verify your weakness against reality. Ask a former colleague or manager what they'd say your weakness is. If their answer and yours don't match, use theirs — it's the one a reference check will surface anyway.
+One preparation step most candidates skip: ask a former colleague or manager what they'd say your weakness is. If their answer and yours don't match, use theirs — it's the one a reference check will surface anyway.
 
 ## FAQ
 
 ### Should I give more than one weakness?
 
-Give one, well. If the interviewer asks for another — some do, precisely to get past your rehearsed answer — have a second prepared with the same three-part structure. Never volunteer a list; each additional weakness dilutes the mitigation story.
+Give one, well. If the interviewer asks for another — some do, to get past your rehearsed answer — have a second prepared with the same structure. Never volunteer a list.
 
 ### What if my real greatest weakness IS core to the job?
 
-Then the honest move happens before the interview: question whether this is the right role. In the interview itself, you're not obligated to volunteer your single greatest flaw — the question asks for *a* significant, true weakness. Pick a real one that the role can absorb.
+Then the honest move happens before the interview: question whether this is the right role. In the room, you're not obligated to volunteer your single greatest flaw — pick a real, significant weakness the role can absorb.
 
 ### How is "What's your greatest weakness?" different from "Tell me about a failure"?
 

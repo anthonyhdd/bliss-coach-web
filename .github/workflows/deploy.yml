@@ -17,11 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # Preview mode: site lives at anthonyhdd.github.io/bliss-coach-web.
-      # At DNS cutover: delete this env block AND add public/CNAME containing
-      # "bliss-coach.com", then set the custom domain in repo Settings > Pages.
-      BASE_PATH: /bliss-coach-web
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3

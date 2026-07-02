@@ -32,11 +32,11 @@ GCA is not brainteasers (Google retired those after finding they predicted nothi
 9. How would you decide whether Google should enter a new market?
 10. Walk me through a complex problem you solved. What made it complex?
 
-**How to answer:** think out loud, state your assumptions, and structure before you solve ("I'd look at three things: whether the drop is real, whether it's concentrated, and what changed"). The rubric rewards process over the final number.
+**How to answer:** think out loud, state assumptions, and structure before you solve. The rubric rewards process over the final number.
 
 ## Role-Related Knowledge Questions
 
-These vary by function, but the pattern is constant: depth on what you claim, honesty about what you don't know. For engineers this is coding and system design; below are the cross-functional versions.
+These vary by function — for engineers, coding and system design — but the pattern is constant: depth on what you claim, honesty about what you don't know. Below are the cross-functional versions.
 
 11. What's the hardest technical (or domain) problem you've solved in the last two years?
 12. Explain a complex concept from your field to me like I'm a smart non-expert.
@@ -49,7 +49,7 @@ These vary by function, but the pattern is constant: depth on what you claim, ho
 19. Tell me about a time your expertise was challenged by someone senior. What did you do?
 20. Where does your knowledge run out? What's adjacent to your role that you'd need help with?
 
-Question 20 is a real question at Google and a trap for bluffers. Interviewers probe until they find the edge of your knowledge; candidates who acknowledge the edge score better than candidates who improvise past it.
+Question 20 is a trap for bluffers: interviewers probe until they find the edge of your knowledge, and candidates who acknowledge the edge score better than those who improvise past it.
 
 ## Leadership Questions (Emergent Leadership)
 
@@ -68,7 +68,7 @@ Google explicitly looks for "emergent leadership" — stepping up without the ti
 
 ## Googliness Questions
 
-Googliness is the fuzziest attribute, but the rubric behind it is concrete: comfort with ambiguity, intellectual humility, bias to action, and caring about users and colleagues. It is not "being quirky."
+Googliness sounds fuzzy, but the rubric is concrete: comfort with ambiguity, intellectual humility, bias to action, caring about users and colleagues. It is not "being quirky."
 
 31. Tell me about a time you were wrong about something important. How did you find out and what did you do?
 32. Describe a time priorities changed suddenly. How did you adapt?
@@ -87,33 +87,33 @@ Googliness is the fuzziest attribute, but the rubric behind it is concrete: comf
 
 "At my last company, our onboarding docs were so outdated that new hires were pinging senior engineers daily with the same questions — I counted 14 interruptions in one week. Nobody owned documentation, so I proposed a two-week docs sprint in our team channel. I built the outline, split it into eight chunks, and asked people to claim one — I took the two nobody wanted. To keep it moving without being anyone's boss, I ran a 10-minute Friday check-in and publicly credited every completed section. We shipped in 12 days, and new-hire questions to seniors dropped about 70% the following month. The lesson: authority wasn't the blocker — nobody had made the work small and claimable."
 
-Why this scores well: unprompted ownership, a mechanism (not just enthusiasm), a quantified result, and a generalized lesson — all easy for the interviewer to write down.
+Why this scores well: unprompted ownership, a mechanism, a quantified result, a generalized lesson — all easy to write down.
 
 ### "Tell me about a time you were wrong about something important." (Googliness)
 
 "I pushed hard to build an in-house analytics dashboard instead of buying a vendor tool — I estimated six weeks and argued the vendor cost was unjustifiable. Three months in, we were still building, and the two engineers on it were pulled from roadmap work. A teammate showed me a cost breakdown proving the vendor would have been cheaper even at double the license price. She was right and I said so, in the same meeting. I recommended we kill the project, wrote the post-mortem myself, and we migrated to the vendor in three weeks. Since then, every build-vs-buy call I make includes a written estimate of fully loaded engineering cost, reviewed by someone incentivized to disagree with me. The dashboard was a bad call; the bigger error was framing the debate so nobody wanted to challenge me."
 
-Why this scores well: a real, costly mistake (not a humble-brag), fast public reversal, and a durable process change — textbook intellectual humility.
+Why this scores well: a real, costly mistake, fast public reversal, and a durable process change — textbook intellectual humility.
 
 ### "Our product's user engagement dropped 15% last quarter. Walk me through how you'd investigate." (GCA)
 
 "First, I'd verify the drop is real: tracking changes, metric definition changes, seasonality against last year. If it's real, I'd segment — platform, geography, cohort, acquisition channel — because a uniform 15% drop and a 50% drop in one segment are different problems. Then I'd overlay a timeline of changes: our releases, pricing, competitor launches, platform policy. If the drop correlates with a release, I'd look at funnel data around the changed surface and consider a holdback test to confirm causation. If nothing internal explains it, I'd talk to churned users directly — ten interviews beat another dashboard. Throughout, I'd distinguish 'engagement dropped' from 'value dropped': if the release made a task faster, sessions falling might be fine. My deliverable: a ranked list of hypotheses with evidence and the cheapest next test for each."
 
-Why this scores well: structure first, assumptions stated, and it questions the metric itself — a distinguishing move at the top of the rubric.
+Why this scores well: structure first, and it questions the metric itself — a top-of-rubric move.
 
 ## How to Prepare in the Two Weeks Before
 
-- **Build 8–10 stories, not 40 answers.** A strong story about an ambiguous project can answer a leadership, Googliness, or GCA question depending on where you put the emphasis. Index your stories by attribute.
+- **Build 8–10 stories, not 40 answers.** One strong story about an ambiguous project can answer a leadership, Googliness, or GCA question depending on emphasis. Index your stories by attribute.
 - **Quantify everything.** "Improved onboarding" becomes "cut new-hire ramp questions 70%." Committee packets run on numbers.
-- **Practice out loud, under pressure.** Reading answers silently doesn't prepare you for delivering them; rehearse with a friend, or use [Alex, an AI interview coach](https://apps.apple.com/app/id6761726840) to run realistic mock interviews with follow-up questions until your stories come out tight and quotable.
-- **Prepare for follow-ups, not just openers.** Google interviewers drill down: "Why that decision? What would you do differently? What did the other person think?" If your story collapses one layer deep, it wasn't ready.
-- **Ask your recruiter what the loop covers.** They will tell you the interview structure and attributes for your role. Use it.
+- **Practice out loud, under pressure.** Reading answers silently doesn't prepare you to deliver them; rehearse with a friend, or use [Alex, an AI interview coach](https://apps.apple.com/app/id6761726840) to run realistic mock interviews with follow-ups until your stories come out tight and quotable.
+- **Prepare for the drill-down.** Google interviewers probe: "Why that decision? What would you do differently?" If your story collapses one layer deep, it wasn't ready.
+- **Ask your recruiter what the loop covers.** They'll tell you the structure and attributes for your role. Use it.
 
 ## FAQ
 
 ### How many interviews are in the Google process?
 
-Typically a recruiter screen, one or two phone/video interviews, then a virtual or onsite loop of four to five 45-minute interviews. After the loop, the hiring committee reviews written feedback and makes the recommendation, which is why the whole process often takes four to eight weeks.
+Typically a recruiter screen, one or two phone/video interviews, then a loop of four to five 45-minute interviews. The hiring committee then reviews written feedback and makes the recommendation, which is why the process often takes four to eight weeks.
 
 ### Does Google still ask brainteasers like "how many golf balls fit in a bus"?
 
@@ -121,8 +121,8 @@ No. Google publicly dropped brainteasers after internal research showed they did
 
 ### What is Googliness, in plain terms?
 
-Comfort with ambiguity, intellectual humility (changing your mind on evidence), bias to action, and caring about users and teammates. Show it with stories where you admitted a mistake, adapted to a sudden change, or helped someone with no upside for yourself.
+Comfort with ambiguity, intellectual humility, bias to action, and caring about users and teammates. Show it with stories where you admitted a mistake, adapted to sudden change, or helped someone with no upside for yourself.
 
 ### Can I reuse the same story in multiple interviews?
 
-Across different interviewers, yes — they compare notes in committee, but a strong story told to two of five interviewers is fine. Within a single interview, don't reuse a story; have enough range that each question gets fresh evidence.
+Across different interviewers, yes — a strong story told to two of five interviewers is fine even though notes are compared in committee. Within a single interview, give each question fresh evidence.
