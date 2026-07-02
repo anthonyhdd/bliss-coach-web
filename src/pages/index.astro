@@ -139,8 +139,24 @@ const avatars = [
         margin-top: 56px;
         padding: 1.5px;
         border-radius: 12px;
-        background: conic-gradient(from 80.568deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, #ffdc83 78%, #ffabad 86%, #ffc1f7 94%, rgba(0,0,0,0) 100%);
       }
+      .cta-beam {
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .cta-beam::before {
+        content: '';
+        position: absolute;
+        left: 50%; top: 50%;
+        width: 420px; height: 420px;
+        margin: -210px 0 0 -210px;
+        background: conic-gradient(from 80.568deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, #ffdc83 78%, #ffabad 86%, #ffc1f7 94%, rgba(0,0,0,0) 100%);
+        animation: beam-spin 2.5s linear infinite;
+      }
+      @keyframes beam-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .cta-beam::before { animation: none; } }
       .cta-wrap::before {
         content: '';
         position: absolute;
@@ -154,6 +170,7 @@ const avatars = [
         z-index: -1;
       }
       .cta {
+        position: relative;
         display: block;
         background: #0a0a0a;
         border-radius: 10.5px;
@@ -244,6 +261,7 @@ const avatars = [
         </h1>
         <p class="sub">Specialized AI coaches<br />for every area of life.</p>
         <div class="cta-wrap">
+          <span class="cta-beam" aria-hidden="true"></span>
           <a class="cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get Started</a>
         </div>
       </div>
@@ -267,7 +285,8 @@ const avatars = [
       // Twinkling starfield, same spirit as the Framer canvas.
       const canvas = document.getElementById('stars') as HTMLCanvasElement;
       const ctx = canvas.getContext('2d')!;
-      let stars: { x: number; y: number; r: number; a: number; s: number }[] = [];
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let stars: { x: number; y: number; r: number; a: number; s: number; vx: number; vy: number }[] = [];
 
       function seed() {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -281,6 +300,8 @@ const avatars = [
           r: Math.random() * 1.1 + 0.4,
           a: Math.random() * 0.55 + 0.15,
           s: Math.random() * 0.004 + 0.001,
+          vx: (Math.random() - 0.5) * 0.1,
+          vy: -(Math.random() * 0.05 + 0.012),
         }));
       }
 
@@ -289,6 +310,13 @@ const avatars = [
         t++;
         ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
         for (const st of stars) {
+          if (!reduceMotion) {
+            st.x += st.vx;
+            st.y += st.vy;
+            if (st.y < -2) { st.y = canvas.offsetHeight * 0.8 + 2; st.x = Math.random() * canvas.offsetWidth; }
+            if (st.x < -2) st.x = canvas.offsetWidth + 2;
+            else if (st.x > canvas.offsetWidth + 2) st.x = -2;
+          }
           const tw = st.a + Math.sin(t * st.s * 60) * 0.18;
           ctx.globalAlpha = Math.max(0.05, Math.min(0.8, tw));
           ctx.beginPath();

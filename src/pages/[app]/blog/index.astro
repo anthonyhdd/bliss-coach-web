@@ -26,7 +26,12 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   activeApp={app.slug}
 >
   <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
     <section class="section container">
+      <a class="app-chip" href={withBase(`/${app.slug}/`)}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
       <h2 style="font-size:clamp(30px,5vw,44px)">{app.blogTitle}</h2>
       <p class="lead">{app.blogDescription}</p>
       <div class="article-list">
