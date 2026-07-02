@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+import { PSEO_SECTIONS } from '../../../config/pseo';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('pseo', (p) => !p.data.draft);
+  return Object.entries(PSEO_SECTIONS)
+    .filter(([app]) => entries.some((e) => e.data.app === app))
+    .map(([app, section]) => ({ params: { app, section: section.base } }));
+}
+
+const { app: slug } = Astro.params;
+const app = APPS[slug!];
+const section = PSEO_SECTIONS[slug!];
+
+const entries = (await getCollection('pseo', (p) => p.data.app === slug && !p.data.draft)).sort((a, b) =>
+  a.data.subject.localeCompare(b.data.subject),
+);
+
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+---
+
+<Base
+  title={`${section.hubTitle} | ${app.name}`}
+  description={section.hubIntro}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  activeApp={app.slug}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+    <section class="section container">
+      <a class="app-chip" href={withBase(`/${app.slug}/`)}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <h2 style="font-size:clamp(30px,5vw,44px)">{section.hubTitle}</h2>
+      <p class="lead">{section.hubIntro}</p>
+      <div class="article-list">
+        {entries.map((e) => (
+          <a class="article-card" href={withBase(`/${app.slug}/${section.base}/${e.id.split('/')[1]}/`)}>
+            <h3>{e.data.subject}</h3>
+            <p>{e.data.description}</p>
+            <span class="read">Read the {section.itemLabel} →</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

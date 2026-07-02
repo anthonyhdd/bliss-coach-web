@@ -1,0 +1,111 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+import { PSEO_SECTIONS } from '../../../config/pseo';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('pseo', (p) => !p.data.draft);
+  return entries.map((entry) => ({
+    params: {
+      app: entry.data.app,
+      section: PSEO_SECTIONS[entry.data.app].base,
+      slug: entry.id.split('/')[1],
+    },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const app = APPS[entry.data.app];
+const section = PSEO_SECTIONS[entry.data.app];
+const { Content } = await render(entry);
+
+const related = (await getCollection('pseo', (p) => p.data.app === entry.data.app && !p.data.draft && p.id !== entry.id))
+  .sort(() => 0.5 - Math.random())
+  .slice(0, 3);
+
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+const canonicalPath = `/${app.slug}/${section.base}/${entry.id.split('/')[1]}/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate.toISOString(),
+    dateModified: (entry.data.updatedDate ?? entry.data.publishDate).toISOString(),
+    author: { '@type': 'Organization', name: `${app.name} by Bliss Coach`, url: `https://bliss-coach.com/${app.slug}/` },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+    mainEntityOfPage: `https://bliss-coach.com${canonicalPath}`,
+    keywords: entry.data.keywords.join(', '),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: app.name, item: `https://bliss-coach.com/${app.slug}/` },
+      { '@type': 'ListItem', position: 3, name: section.hubTitle, item: `https://bliss-coach.com/${app.slug}/${section.base}/` },
+      { '@type': 'ListItem', position: 4, name: entry.data.subject, item: `https://bliss-coach.com${canonicalPath}` },
+    ],
+  },
+];
+---
+
+<Base
+  title={entry.data.title}
+  description={entry.data.description}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  jsonLd={jsonLd}
+>
+  <article style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase(`/${app.slug}/`)}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb">
+        <a href={withBase(`/${app.slug}/${section.base}/`)}>{section.hubTitle}</a>
+      </span>
+      <h1>{entry.data.title}</h1>
+      <p class="meta">Updated {(entry.data.updatedDate ?? entry.data.publishDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · by the {app.name} team</p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {related.length > 0 && (
+      <section class="related">
+        <h2>More {section.itemLabel}s</h2>
+        <div class="article-list">
+          {related.map((r) => (
+            <a class="article-card" href={withBase(`/${app.slug}/${section.base}/${r.id.split('/')[1]}/`)}>
+              <h3>{r.data.subject}</h3>
+              <p>{r.data.description}</p>
+              <span class="read">Read →</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="72" height="72" />
+        <div>
+          <h3>{app.tagline}</h3>
+          <p>{app.name} — {app.category.toLowerCase()} with an AI coach that talks back. Free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.comingSoon ? withBase(`/${app.slug}/`) : app.appStoreUrl}>Get {app.name} free</a>
+      </div>
+    </aside>
+  </article>
+</Base>
