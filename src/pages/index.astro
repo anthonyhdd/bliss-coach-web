@@ -2,8 +2,16 @@
 import { withBase } from '../config/apps';
 
 // Pixel-faithful clone of the original Framer landing page (bliss-coach.com).
-// Standalone layout on purpose: the Framer page has no header nav — the four
-// avatar tiles link into the app sections instead.
+// All values below were measured on the live Framer page (computed styles):
+// h1 60/66 w500 ls-3px, text-clip gradient #FBDBFF→#FFF at 15%; sub 18/27 white/70;
+// button inner 48px r10.5 pad 16x32 fs13 w600 on #0a0a0a, 1.5px conic border
+// (gold #FFDC83 → salmon #FFABAD → pink #FFC1F7) + blurred conic glow behind;
+// horizon = 2242x955 ellipse, bg #0a0a0a, inset 0 2px 20px #fff rim +
+// 0 -10px 50px rgba(255,255,255,.49) halo + 787x111 radial flare blur(57px);
+// avatars 54x66 r16 overlapping -5px, 90px under the horizon apex;
+// hero card has a warm inset vignette rgba(217,119,87) + side/top fades.
+// The starfield + violet nebula are canvas-driven on Framer → replicated with a
+// tiny canvas script (stars) + CSS radial (nebula).
 
 const title = 'Bliss Coach';
 const description =
@@ -20,10 +28,10 @@ const jsonLd = {
 };
 
 const avatars = [
-  { src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 18%' },
-  { src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 22%' },
-  { src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 14%' },
-  { src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 20%' },
+  { src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 12%' },
+  { src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 16%' },
+  { src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 10%' },
+  { src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 14%' },
 ];
 ---
 
@@ -48,188 +56,186 @@ const avatars = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap"
     />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
-      html, body { background: #050505; }
+      html, body { background: #0a0a0a; }
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         color: #fff;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
       }
-      .stage {
+      .card {
         position: relative;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        max-width: 1320px;
+        margin: 0 auto;
+        height: max(800px, calc(100vh - 53px));
         overflow: hidden;
+        box-shadow:
+          rgba(217, 119, 87, 0.7) 0px 0px 15px 0px inset,
+          rgba(217, 119, 87, 0.5) 0px 0px 25px 0px inset,
+          rgba(217, 119, 87, 0.2) 0px 0px 35px 0px inset;
       }
-      /* starfield */
-      .stars, .stars2 {
-        position: absolute; inset: 0; pointer-events: none;
-        background-image:
-          radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,0.7), transparent),
-          radial-gradient(1px 1px at 28% 8%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1.2px 1.2px at 41% 24%, rgba(255,255,255,0.6), transparent),
-          radial-gradient(1px 1px at 55% 6%, rgba(255,255,255,0.45), transparent),
-          radial-gradient(1.6px 1.6px at 67% 15%, rgba(255,255,255,0.7), transparent),
-          radial-gradient(1px 1px at 78% 28%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1.3px 1.3px at 88% 10%, rgba(255,255,255,0.6), transparent),
-          radial-gradient(1px 1px at 7% 42%, rgba(255,255,255,0.4), transparent),
-          radial-gradient(1.4px 1.4px at 94% 38%, rgba(255,255,255,0.55), transparent),
-          radial-gradient(1px 1px at 18% 55%, rgba(255,255,255,0.4), transparent),
-          radial-gradient(1.2px 1.2px at 83% 52%, rgba(255,255,255,0.5), transparent),
-          radial-gradient(1px 1px at 35% 40%, rgba(255,255,255,0.35), transparent),
-          radial-gradient(1px 1px at 63% 45%, rgba(255,255,255,0.35), transparent);
-      }
-      .stars2 {
-        transform: translate(30px, 60px) scale(1.4);
-        opacity: 0.5;
-      }
-      /* violet nebula glow behind the headline */
+      /* canvas starfield (replaces Framer's canvas) */
+      #stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+      /* violet nebula */
       .nebula {
         position: absolute; inset: 0; pointer-events: none;
         background:
-          radial-gradient(40% 36% at 50% 32%, rgba(104, 86, 162, 0.34), transparent 62%),
-          radial-gradient(22% 18% at 50% 28%, rgba(146, 122, 212, 0.18), transparent 65%);
+          radial-gradient(44% 40% at 50% 36%, rgba(118, 98, 188, 0.34), rgba(94, 74, 152, 0.14) 58%, transparent 78%),
+          radial-gradient(24% 20% at 50% 30%, rgba(158, 132, 224, 0.20), transparent 68%);
       }
+      /* edge fades measured on the original: 600px side fades + 100px top fade */
+      .fade-l, .fade-r, .fade-t {
+        position: absolute; pointer-events: none; top: 0; bottom: 0;
+      }
+      .fade-l { left: 0; width: 45%; background: linear-gradient(90deg, #0a0a0a 0%, rgba(10,10,10,0) 100%); }
+      .fade-r { right: 0; width: 45%; background: linear-gradient(270deg, #0a0a0a 0%, rgba(10,10,10,0) 100%); }
+      .fade-t { left: 0; right: 0; height: 100px; bottom: auto; background: linear-gradient(#0a0a0a 0%, rgba(10,10,10,0) 100%); }
+
       .content {
         position: relative;
         display: flex; flex-direction: column; align-items: center;
         padding: 0 24px;
-        width: 100%;
       }
       .logo-mark {
-        width: 46px; height: 46px; margin: 88px auto 48px;
-        filter: brightness(1.35) drop-shadow(0 0 10px rgba(240, 205, 150, 0.35));
+        width: 52px; height: 52px; margin: 69px auto 26px;
+        filter: brightness(1.25) drop-shadow(0 0 14px rgba(200, 170, 255, 0.28));
       }
       h1 {
         text-align: center;
-        font-size: clamp(36px, 4.6vw, 64px);
-        font-weight: 600;
-        letter-spacing: -0.03em;
-        line-height: 1.12;
-        max-width: 900px;
+        font-weight: 500;
+        font-size: clamp(38px, 4.7vw, 60px);
+        line-height: 1.1;
+        letter-spacing: -0.05em;
+        background: linear-gradient(0deg, #fbdbff 0%, #ffffff 15%, #ffffff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
       h1 .serif {
         font-family: 'Instrument Serif', Georgia, serif;
         font-style: italic;
         font-weight: 400;
-        font-size: 1.04em;
-        background: linear-gradient(100deg, #ffffff 45%, #f3e2f0 75%, #d9c4ee 95%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        padding-right: 0.06em;
+        letter-spacing: -0.01em;
+        padding-right: 0.05em;
       }
       .sub {
-        margin-top: 34px;
+        margin-top: 27px;
         text-align: center;
-        font-size: 19px;
-        line-height: 1.55;
-        color: rgba(235, 235, 245, 0.62);
+        font-size: 18px;
+        line-height: 27px;
+        color: rgba(255, 255, 255, 0.7);
         font-weight: 400;
       }
+      /* CTA — 1.5px conic border + blurred conic glow behind */
       .cta-wrap {
-        margin-top: 40px;
-        padding: 1px;
-        border-radius: 15px;
-        background: linear-gradient(115deg, #eccf9d 0%, rgba(255, 255, 255, 0.14) 35%, rgba(255, 255, 255, 0.1) 60%, #ecb9d9 100%);
-        box-shadow: 0 0 30px rgba(236, 185, 217, 0.12);
-        transition: box-shadow 0.2s;
+        position: relative;
+        margin-top: 56px;
+        padding: 1.5px;
+        border-radius: 12px;
+        background: conic-gradient(from 80.568deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, #ffdc83 78%, #ffabad 86%, #ffc1f7 94%, rgba(0,0,0,0) 100%);
       }
-      .cta-wrap:hover { box-shadow: 0 0 44px rgba(236, 185, 217, 0.25); }
+      .cta-wrap::before {
+        content: '';
+        position: absolute;
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        width: 220px; height: 120px;
+        background: conic-gradient(from 80.568deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, #ffdc83 78%, #ffabad 86%, #ffc1f7 94%, rgba(0,0,0,0) 100%);
+        filter: blur(30px);
+        opacity: 0.32;
+        pointer-events: none;
+        z-index: -1;
+      }
       .cta {
         display: block;
-        background: #0b0b0b;
-        border-radius: 14px;
-        padding: 16px 34px;
+        background: #0a0a0a;
+        border-radius: 10.5px;
+        padding: 16px 32px;
         color: #fff;
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 600;
+        line-height: 1.2;
         text-decoration: none;
-        letter-spacing: -0.01em;
       }
-      /* planet horizon */
-      .planet {
+      /* planet horizon — 74px under the button */
+      .horizon {
         position: relative;
         width: 100%;
-        margin-top: 56px;
-        height: 300px;
         flex: 1 0 auto;
+        margin-top: 74px;
+        min-height: 240px;
         pointer-events: none;
       }
-      .planet .disc {
+      .horizon .disc {
         position: absolute;
         left: 50%; top: 0;
         transform: translateX(-50%);
-        width: 280vw; max-width: 4600px;
-        height: 3400px;
-        border-radius: 50%;
-        background: #030303;
+        width: 187%;
+        min-width: 1500px;
+        height: 955px;
+        border-radius: 100%;
+        background: #0a0a0a;
         box-shadow:
-          0 -1px 0 rgba(255, 255, 255, 0.85),
-          0 -6px 18px rgba(255, 255, 255, 0.35),
-          0 -22px 60px rgba(214, 200, 255, 0.18),
-          0 -70px 160px rgba(140, 120, 200, 0.12);
+          rgb(255, 255, 255) 0px 2px 20px 0px inset,
+          rgba(255, 255, 255, 0.49) 0px -10px 50px 1px;
       }
-      .planet .flare {
+      .horizon .flare {
         position: absolute;
-        left: 50%; top: -50px;
-        transform: translateX(-50%);
-        width: 780px; height: 120px;
-        background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.28), transparent 70%);
-        filter: blur(2px);
+        left: 50%; top: 0;
+        transform: translate(-50%, -50%);
+        width: 787px; height: 111px;
+        background: radial-gradient(50% 50%, rgba(255, 255, 255, 0.5) 0%, rgba(10, 10, 10, 0) 100%);
+        filter: blur(57px);
       }
-      /* avatar row — sits on the planet surface */
+      /* avatars — 54x66 r16, overlapping 5px, 90px under the apex */
       .avatars {
         position: absolute;
-        left: 50%; top: 118px;
+        left: 50%; top: 90px;
         transform: translateX(-50%);
         display: flex;
-        gap: 2px;
         pointer-events: auto;
-        filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.8));
       }
-      .avatars a { display: block; }
+      .avatars a { display: block; margin-right: -5px; }
+      .avatars a:last-child { margin-right: 0; }
       .avatars img {
-        width: 52px; height: 52px;
+        width: 54px; height: 66px;
         object-fit: cover;
-        border-radius: 12px;
+        border-radius: 16px;
         display: block;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
         transition: transform 0.18s;
       }
-      .avatars a:hover img { transform: translateY(-4px) scale(1.06); }
+      .avatars a:hover img { transform: translateY(-4px); }
       footer {
         position: relative;
-        width: 100%;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 26px 0;
+        padding: 17px 0;
         text-align: center;
         font-size: 13px;
         color: rgba(255, 255, 255, 0.45);
-        background: #050505;
       }
       @media (max-width: 640px) {
-        .logo-mark { margin: 72px auto 40px; }
-        .sub { font-size: 17px; }
-        .planet { height: 260px; }
-        .avatars { top: 100px; }
+        .logo-mark { margin-top: 56px; }
+        .sub { font-size: 16px; line-height: 24px; }
+        .horizon { margin-top: 60px; }
       }
     </style>
   </head>
   <body>
-    <div class="stage">
-      <div class="stars" aria-hidden="true"></div>
-      <div class="stars2" aria-hidden="true"></div>
+    <div class="card">
+      <canvas id="stars" aria-hidden="true"></canvas>
       <div class="nebula" aria-hidden="true"></div>
+      <div class="fade-l" aria-hidden="true"></div>
+      <div class="fade-r" aria-hidden="true"></div>
+      <div class="fade-t" aria-hidden="true"></div>
 
       <div class="content">
-        <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss Coach logo" width="46" height="46" />
+        <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss Coach logo" width="52" height="52" />
         <h1>
           Building the world's largest<br />
           portfolio of <span class="serif">AI coaching apps</span>
@@ -240,19 +246,60 @@ const avatars = [
         </div>
       </div>
 
-      <div class="planet">
+      <div class="horizon">
         <div class="disc" aria-hidden="true"></div>
         <div class="flare" aria-hidden="true"></div>
         <nav class="avatars" aria-label="Our apps">
           {avatars.map((a) => (
             <a href={withBase(a.href)} title={a.alt}>
-              <img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="52" height="52" loading="eager" />
+              <img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="54" height="66" loading="eager" />
             </a>
           ))}
         </nav>
       </div>
-
-      <footer>© Bliss Coach</footer>
     </div>
+
+    <footer>© Bliss Coach</footer>
+
+    <script>
+      // Twinkling starfield, same spirit as the Framer canvas.
+      const canvas = document.getElementById('stars') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d')!;
+      let stars: { x: number; y: number; r: number; a: number; s: number }[] = [];
+
+      function seed() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = canvas.offsetWidth * dpr;
+        canvas.height = canvas.offsetHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const n = Math.round((canvas.offsetWidth * canvas.offsetHeight) / 9000);
+        stars = Array.from({ length: n }, () => ({
+          x: Math.random() * canvas.offsetWidth,
+          y: Math.random() * canvas.offsetHeight * 0.8,
+          r: Math.random() * 1.1 + 0.4,
+          a: Math.random() * 0.55 + 0.15,
+          s: Math.random() * 0.004 + 0.001,
+        }));
+      }
+
+      let t = 0;
+      function draw() {
+        t++;
+        ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+        for (const st of stars) {
+          const tw = st.a + Math.sin(t * st.s * 60) * 0.18;
+          ctx.globalAlpha = Math.max(0.05, Math.min(0.8, tw));
+          ctx.beginPath();
+          ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+
+      seed();
+      draw();
+      window.addEventListener('resize', seed);
+    </script>
   </body>
 </html>
