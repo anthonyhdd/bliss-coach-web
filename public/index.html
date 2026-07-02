@@ -227,8 +227,13 @@
     }
     requestAnimationFrame(frame);
   }
-  if (document.readyState === 'complete') setTimeout(boot, 1200);
-  else window.addEventListener('load', function () { setTimeout(boot, 1200); });
+  var tries = 0;
+  var iv = setInterval(function () {
+    tries++;
+    var pending = Array.prototype.some.call(document.querySelectorAll('canvas'), function (c) { return c.width === 300 && c.height === 150; });
+    if (pending) boot();
+    if (tries > 60) clearInterval(iv);
+  }, 250);
 })();
 </script></body>
 </html>
