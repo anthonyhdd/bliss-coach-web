@@ -25,20 +25,29 @@ const CDN_RE = /https:\/\/framerusercontent\.com(\/[A-Za-z0-9_.\/-]+)(\?[^"'\s),
 const seen = new Set();
 const queue = [];
 
-function enqueue(pathname) {
-  if (!seen.has(pathname)) {
-    seen.add(pathname);
-    queue.push(pathname);
+/** local path for a CDN pathname + optional scale-down-to rendition */
+function localPath(pathname, sd) {
+  return sd ? pathname.replace(/(\.[a-z0-9]+)$/i, `.sd${sd}$1`) : pathname;
+}
+
+function enqueue(pathname, sd) {
+  const key = localPath(pathname, sd);
+  if (!seen.has(key)) {
+    seen.add(key);
+    queue.push({ pathname, sd, local: key });
   }
+  return key;
 }
 
 /** Rewrite CDN refs in text. `depth` = how many dirs deep the text file lives
  *  below the site root (0 for index.html). */
 function rewriteText(text, depth) {
   const prefix = depth === 0 ? './' : '../'.repeat(depth);
-  return text.replace(CDN_RE, (_m, pathname) => {
-    enqueue(pathname);
-    return `${prefix}framer${pathname}`;
+  return text.replace(CDN_RE, (_m, pathname, query) => {
+    const isRaster = /\.(png|jpe?g|webp)$/i.test(pathname);
+    const m = query && query.match(/scale-down-to=(\d+)/);
+    const sd = isRaster ? (m ? m[1] : '2048') : null;
+    return `${prefix}framer${enqueue(pathname, sd)}`;
   });
 }
 
@@ -140,13 +149,13 @@ async function main() {
   }
 
   while (queue.length) {
-    const pathname = queue.shift();
-    const dest = path.join(ASSET_DIR, '.' + pathname);
+    const { pathname, sd, local } = queue.shift();
+    const dest = path.join(ASSET_DIR, '.' + local);
     try {
       let buf;
-      if (/\/images\/.+\.(png|jpe?g|webp)$/i.test(pathname)) {
+      if (sd) {
         try {
-          buf = await fetchBin(`https://framerusercontent.com${pathname}?scale-down-to=2048`);
+          buf = await fetchBin(`https://framerusercontent.com${pathname}?scale-down-to=${sd}`);
         } catch {
           buf = await fetchBin(`https://framerusercontent.com${pathname}`);
         }
@@ -163,9 +172,9 @@ async function main() {
       }
       await mkdir(path.dirname(dest), { recursive: true });
       await writeFile(dest, buf);
-      console.log(`ok  ${pathname}  (${(buf.length / 1024).toFixed(0)}kB)`);
+      console.log(`ok  ${local}  (${(buf.length / 1024).toFixed(0)}kB)`);
     } catch (e) {
-      console.warn(`SKIP ${pathname}: ${e.message}`);
+      console.warn(`SKIP ${local}: ${e.message}`);
     }
   }
 
