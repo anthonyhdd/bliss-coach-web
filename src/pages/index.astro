@@ -230,6 +230,9 @@ const avatars = [
         transition: transform 0.18s;
       }
       .avatars a:hover img { transform: translateY(-4px); }
+      .foot-apps { display: flex; gap: 22px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+      .foot-apps a { color: rgba(255, 255, 255, 0.55); font-size: 13px; text-decoration: none; transition: color 0.15s; }
+      .foot-apps a:hover { color: #fff; }
       footer {
         position: relative;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -279,7 +282,12 @@ const avatars = [
       </div>
     </div>
 
-    <footer>© Bliss Coach</footer>
+    <footer>
+      <nav class="foot-apps" aria-label="Our apps">
+        <a href="/sofia/">Sofia</a><a href="/amelie/">Amélie</a><a href="/charm/">Charm</a><a href="/alex/">Alex</a><a href="/mila/">Mila</a><a href="/astra/">Astra</a>
+      </nav>
+      <span>© Bliss Coach</span>
+    </footer>
 
     <script>
       // Twinkling starfield, same spirit as the Framer canvas.
