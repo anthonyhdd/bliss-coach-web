@@ -99,14 +99,64 @@ const jsonLd = {
       <p class="serif-line">{show.craftLine}</p>
     </section>
 
+    <!-- features as an animated bento — art types themed per app -->
     <section class="section container">
-      <div class="features">
-        {app.features.map((f) => (
-          <div class="feature">
-            <h3>{f.title}</h3>
-            <p>{f.body}</p>
-          </div>
-        ))}
+      <div class="fbento">
+        {app.features.map((f, i) => {
+          const art = show.featureArts[i];
+          const span = i === 0 ? 'fb7' : i === 1 ? 'fb5' : 'fb12';
+          return (
+            <div class={`fcell ${span} feature`}>
+              <div class={`fart fart-${art}`} aria-hidden="true">
+                {art === 'wave' && (
+                  <>{[0, 0.12, 0.24, 0.06, 0.3, 0.18, 0.02, 0.26, 0.1, 0.22].map((d) => <span class="fbar" style={`animation-delay:${d}s`}></span>)}</>
+                )}
+                {art === 'replies' && (
+                  <>
+                    <span class="fbub">{show.screenLine}</span>
+                    {show.replies?.map((r, j) => <span class="fpill" style={`animation-delay:${0.4 + j * 0.35}s`}>{r}</span>)}
+                  </>
+                )}
+                {art === 'chat' && (
+                  <>
+                    <span class="fbub">{show.screenLine}</span>
+                    <span class="fbub me">…</span>
+                    <span class="fbub"><span class="ftyping"><i></i><i></i><i></i></span></span>
+                  </>
+                )}
+                {art === 'track' && (
+                  <div class="ftrack">
+                    {[1, 2, 3, 4].map((n) => <span class={`fstep${n < 3 ? ' done' : n === 3 ? ' now' : ''}`}>{n}</span>)}
+                  </div>
+                )}
+                {art === 'scan' && (
+                  <div class="fscan"><div class="fdoc"></div><div class="fbeam"></div></div>
+                )}
+                {art === 'chips' && (
+                  <div class="fchips">{show.chips?.map((c, j) => <span class="fchip" style={`animation-delay:${j * 0.5}s`}>{c}</span>)}</div>
+                )}
+                {art === 'ring' && (
+                  <svg class="fring" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="9" />
+                    <circle class="arc" cx="60" cy="60" r="48" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="302" stroke-dashoffset="90" transform="rotate(-90 60 60)" />
+                  </svg>
+                )}
+                {art === 'glyphs' && (
+                  <>{['14s', '22s', '11s', '18s'].map((dur, j) => (
+                    <div class="fcol" style={`animation-duration:${dur}`}>{['♄', '3', '☽', '7', '♀', '1', '☉', '9', '♄', '3', '☽', '7'].map((g) => <span>{g}</span>)}</div>
+                  ))}</>
+                )}
+                {art === 'orbit' && (
+                  <div class="forbit"><span class="fsun"></span><span class="fpath"></span><span class="fmoon"></span></div>
+                )}
+              </div>
+              <div class="ftxt">
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
 
