@@ -70,7 +70,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenImg: 'amelie.webp',
     screenPos: '50% 18%',
     chatUser: 'Je suis allé… allée au parc ?',
-    featureArts: ['replies', 'track', 'chat'],
+    featureArts: ['replies', 'track', 'fix'],
     paper: { title: 'LEÇON DU JOUR ✓', line: 'Basic vocabulary → real conversations' },
     sticker: 'OH LÀ LÀ',
   },
