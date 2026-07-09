@@ -43,6 +43,16 @@ const avatars = [
   { slug: 'astra', src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 50%' },
 ];
 
+// Real store reviews (from the apps' App Store pages).
+const REVIEWS = [
+  { name: 'Jane', color: '#FF6B35', text: 'I improved my pronunciation in just a few days.' },
+  { name: 'Marcus', color: '#C9A14A', text: 'Charm helped me say the right thing. We’re exclusive now.' },
+  { name: 'Emily', color: '#FF4D9E', text: 'Sofia finally made me comfortable speaking Spanish.' },
+  { name: 'Tom', color: '#8a6a1f', text: 'Updated my bio with Charm, tripled my matches in a week.' },
+  { name: 'Jake', color: '#C084FC', text: 'I used to stare at my screen for 20 min. Now I just open and get replies.' },
+  { name: 'Rayan', color: '#22C55E', text: 'Tried Charm, got 3 dates in two weeks. Lesson learned.' },
+];
+
 // Scroll-story manifesto — revealed word by word as you scroll.
 const manifesto = [
   'A great coach changes everything.',
@@ -107,9 +117,9 @@ const coaches = [
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content="https://bliss-coach.com/" />
-    <meta property="og:image" content="https://bliss-coach.com/home/logo.png" />
+    <meta property="og:image" content="https://bliss-coach.com/home/og.png" />
     <meta property="og:site_name" content="Bliss Coach" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -127,6 +137,25 @@ const coaches = [
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
       }
+      .banner {
+        display: block;
+        background: #101014;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        text-decoration: none;
+        text-align: center;
+        padding: 9px 16px;
+      }
+      .banner-inner {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.8);
+        letter-spacing: 0.02em;
+      }
+      .banner-inner i { color: #7ee787; font-style: normal; margin-right: 6px; }
+      .banner-inner mark { background: #ffdc83; color: #0a0a0a; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+      .banner-inner b { color: #ffdc83; }
+      .banner:hover .banner-inner { color: #fff; }
+      @media (max-width: 640px) { .banner-inner { font-size: 11px; } }
       .card {
         position: relative;
         width: 100%;
@@ -319,17 +348,58 @@ const coaches = [
         pointer-events: none;
       }
       .dock-chip:hover .dock-vid { opacity: 1; transform: translateY(-4px); }
-      .foot-apps { display: flex; gap: 22px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
-      .foot-apps a { color: rgba(255, 255, 255, 0.55); font-size: 13px; text-decoration: none; transition: color 0.15s; }
-      .foot-apps a:hover { color: #fff; }
-      footer {
+      /* --- footer: the last thing you see should still be fun --- */
+      .foot {
         position: relative;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 17px 0;
+        padding: 64px 24px 34px;
         text-align: center;
-        font-size: 13px;
-        color: rgba(255, 255, 255, 0.45);
+        overflow: hidden;
       }
+      .foot-grid {
+        position: absolute; inset: 0; pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255, 220, 131, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 220, 131, 0.05) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(70% 90% at 50% 100%, #000, transparent 80%);
+        -webkit-mask-image: radial-gradient(70% 90% at 50% 100%, #000, transparent 80%);
+      }
+      .foot-stickers { position: relative; height: 0; }
+      .stk {
+        position: absolute;
+        font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
+        padding: 8px 14px; border-radius: 999px;
+        background: #f7f4ec; color: #17130a;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+        white-space: nowrap;
+      }
+      .stk-1 { left: calc(50% - 420px); top: 8px; rotate: -8deg; background: #ffdc83; }
+      .stk-2 { right: calc(50% - 470px); top: 2px; rotate: 5deg; }
+      .stk-3 { right: calc(50% - 400px); top: 74px; rotate: -4deg; background: #ffc1f7; }
+      @media (max-width: 900px) {
+        .stk { position: static; display: inline-block; margin: 0 6px 10px; rotate: none; }
+        .stk-1 { rotate: -3deg; } .stk-2 { rotate: 2deg; } .stk-3 { rotate: -2deg; }
+        .foot-stickers { height: auto; margin-bottom: 18px; }
+      }
+      .foot-board { position: relative; display: flex; gap: 10px; justify-content: center; margin-bottom: 26px; }
+      .foot-board img {
+        width: 54px; height: 54px; border-radius: 13px; display: block;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+        transition: transform 0.18s;
+      }
+      .foot-board a:hover img { transform: translateY(-5px) scale(1.06); }
+      .foot-mark { position: relative; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+      .foot-mark em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+      .foot-tag {
+        position: relative;
+        font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
+        color: rgba(255, 255, 255, 0.5); font-size: 15px;
+        margin: 6px 0 26px;
+      }
+      .foot-links { position: relative; display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: rgba(255, 255, 255, 0.45); }
+      .foot-links a { color: rgba(255, 255, 255, 0.55); text-decoration: none; }
+      .foot-links a:hover { color: #fff; }
       @media (max-width: 640px) {
         .content { padding: 0 20px; }
         .logo-mark { margin-top: 56px; }
@@ -708,6 +778,34 @@ const coaches = [
         .art-memory .cl { stroke-dashoffset: 0; }
       }
 
+      /* --- reviews marquee --- */
+      .reviews { padding: 2vh 0 4vh; overflow: hidden; }
+      .marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+      .marquee-track { display: flex; gap: 18px; width: max-content; }
+      @media (prefers-reduced-motion: no-preference) {
+        .marquee-track { animation: marquee 46s linear infinite; }
+        .marquee:hover .marquee-track { animation-play-state: paused; }
+        @keyframes marquee { to { transform: translateX(-50%); } }
+      }
+      .review {
+        flex: 0 0 auto;
+        width: 320px;
+        background: #101014;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 18px 20px 16px;
+      }
+      .review .rev-avatar {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; border-radius: 50%;
+        background: color-mix(in srgb, var(--ra) 30%, #17171c);
+        color: color-mix(in srgb, var(--ra) 80%, #fff);
+        font-weight: 800; font-size: 13px;
+        margin-bottom: 10px;
+      }
+      .review blockquote { font-size: 14.5px; line-height: 1.55; color: rgba(255, 255, 255, 0.85); margin-bottom: 8px; }
+      .review figcaption { font-size: 12.5px; color: rgba(255, 255, 255, 0.45); font-weight: 600; }
+
       /* --- proof band --- */
       .proof {
         text-align: center;
@@ -743,6 +841,9 @@ const coaches = [
     </style>
   </head>
   <body>
+    <a class="banner" href={withBase('/astra/')}>
+      <span class="banner-inner"><i>&gt;</i> Astra joins the roster — <mark>coming soon</mark> to the App Store <b>✦</b></span>
+    </a>
     <div class="card">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="nebula" aria-hidden="true"></div>
@@ -756,7 +857,7 @@ const coaches = [
           <span class="t-desktop">Your coach, for<br /><span class="serif">every corner of life.</span></span>
           <span class="t-mobile">Your coach, for<br /><span class="serif">every corner</span><br /><span class="serif">of life.</span></span>
         </h1>
-        <p class="sub">Six coaches who actually talk with you — Spanish, French,<br /> interviews, dating, food, the stars. Ten minutes a day.</p>
+        <p class="sub">Six coaches who actually talk with you — Spanish, French,<br /> interviews, dating, food — and your stars. Ten minutes a day.</p>
         <div class="cta-wrap">
           <span class="cta-beam" aria-hidden="true"></span>
           <a class="cta" href="#coaches">Meet your coaches</a>
@@ -938,6 +1039,21 @@ const coaches = [
         </div>
       </section>
 
+      <!-- what people say — real store reviews, drifting by -->
+      <section class="reviews" aria-label="Reviews">
+        <div class="marquee">
+          <div class="marquee-track">
+            {[...REVIEWS, ...REVIEWS].map((r) => (
+              <figure class="review">
+                <span class="rev-avatar" style={`--ra:${r.color}`}>{r.name[0]}</span>
+                <blockquote>“{r.text}”</blockquote>
+                <figcaption>— {r.name}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <!-- proof -->
       <section class="proof" aria-label="Get the apps">
         <div class="laurel rv">Live on the App Store</div>
@@ -950,11 +1066,26 @@ const coaches = [
       </section>
     </div>
 
-    <footer>
-      <nav class="foot-apps" aria-label="Our apps">
-        <a href="/sofia/">Sofia</a><a href="/amelie/">Amélie</a><a href="/charm/">Charm</a><a href="/alex/">Alex</a><a href="/mila/">Mila</a><a href="/astra/">Astra</a>
+    <footer class="foot">
+      <div class="foot-grid" aria-hidden="true"></div>
+      <div class="foot-stickers" aria-hidden="true">
+        <span class="stk stk-1">TALK IT OUT</span>
+        <span class="stk stk-2">MORE THAN JUST CHATBOTS</span>
+        <span class="stk stk-3">SIX COACHES · ONE POCKET</span>
+      </div>
+      <div class="foot-board" role="navigation" aria-label="Our apps">
+        {['sofia', 'amelie', 'alex', 'charm', 'mila', 'astra'].map((sl) => (
+          <a href={withBase(`/${sl}/`)}><img src={withBase(`/icons/${sl}.jpg`)} alt={sl} width="54" height="54" loading="lazy" /></a>
+        ))}
+      </div>
+      <div class="foot-mark">Bliss <em>Coach</em></div>
+      <p class="foot-tag">One coach, one craft, done right.</p>
+      <nav class="foot-links" aria-label="Legal">
+        <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <span>© Bliss Coach</span>
       </nav>
-      <span>© Bliss Coach</span>
     </footer>
 
     <script>

@@ -24,7 +24,7 @@ const ogImageUrl = ogImage
   ? ogImage.startsWith('http')
     ? ogImage
     : new URL(ogImage, Astro.site).href
-  : new URL('/icons/sofia.jpg', Astro.site).href;
+  : new URL('/home/og.png', Astro.site).href;
 const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
@@ -46,7 +46,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta property="og:url" content={canonical.href} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:site_name" content="Bliss Coach" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
