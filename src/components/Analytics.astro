@@ -1,0 +1,17 @@
+---
+// Renders the Google Analytics 4 (gtag.js) tag — but only when a valid
+// Measurement ID is configured, so builds without an ID ship zero tracking.
+import { GA_MEASUREMENT_ID } from '../config/analytics';
+
+const id = GA_MEASUREMENT_ID.trim();
+const enabled = /^G-[A-Z0-9]+$/.test(id);
+---
+{enabled && (
+  <>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${id}`}></script>
+    <script
+      is:inline
+      set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');`}
+    />
+  </>
+)}

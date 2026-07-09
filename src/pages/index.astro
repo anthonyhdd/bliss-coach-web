@@ -1,5 +1,6 @@
 ---
 import { withBase } from '../config/apps';
+import Analytics from '../components/Analytics.astro';
 
 // Pixel-faithful clone of the original Framer landing page (bliss-coach.com).
 // All values below were measured on the live Framer page (computed styles):
@@ -41,6 +42,7 @@ const avatars = [
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <Analytics />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -127,10 +129,13 @@ const avatars = [
         /* keep "AI coaching apps" together on one line at every width */
         white-space: nowrap;
       }
-      /* Responsive line breaks in the headline.
+      /* Two explicit headline variants, toggled by viewport, so the line
+         count is fully deterministic and can never auto-wrap into extra
+         lines. nowrap forces the hard-coded <br> layout at any width.
          Desktop: "Building the world's largest" / "portfolio of" / "AI coaching apps"
          Mobile:  "Building the world's" / "largest portfolio of" / "AI coaching apps" */
-      h1 br.brk-m { display: none; }
+      h1 .t-mobile { display: none; }
+      h1 .t-desktop { display: inline; }
       .sub {
         margin-top: 27px;
         text-align: center;
@@ -250,11 +255,11 @@ const avatars = [
       @media (max-width: 640px) {
         .content { padding: 0 20px; }
         .logo-mark { margin-top: 56px; }
-        /* scale the headline with the viewport so it always wraps cleanly
-           inside the screen instead of being clipped at the 38px floor */
-        h1 { font-size: clamp(26px, 8vw, 40px); overflow-wrap: break-word; }
-        h1 br.brk-m { display: inline; }
-        h1 br.brk-d { display: none; }
+        /* scale the headline with the viewport so it always fits the screen
+           instead of being clipped at the 38px floor */
+        h1 { font-size: clamp(24px, 7.6vw, 40px); }
+        h1 .t-desktop { display: none; }
+        h1 .t-mobile { display: inline; white-space: nowrap; }
         .sub { font-size: 16px; line-height: 24px; }
         .cta-wrap { margin-top: 44px; }
         .horizon { margin-top: 60px; }
@@ -272,8 +277,8 @@ const avatars = [
       <div class="content">
         <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss Coach logo" width="52" height="52" />
         <h1>
-          Building the world's<br class="brk-m" /> largest<br class="brk-d" /> portfolio of<br />
-          <span class="serif">AI coaching apps</span>
+          <span class="t-desktop">Building the world's largest<br />portfolio of<br /><span class="serif">AI coaching apps</span></span>
+          <span class="t-mobile">Building the world's<br />largest portfolio of<br /><span class="serif">AI coaching apps</span></span>
         </h1>
         <p class="sub">Specialized AI coaches<br />for every area of life.</p>
         <div class="cta-wrap">
