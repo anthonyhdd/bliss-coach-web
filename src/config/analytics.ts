@@ -10,4 +10,4 @@
 // You can also override it at build time with the PUBLIC_GA_ID env var
 // (e.g. in the GitHub Actions deploy workflow) without editing this file.
 export const GA_MEASUREMENT_ID: string =
-  import.meta.env.PUBLIC_GA_ID ?? '';
+  import.meta.env.PUBLIC_GA_ID ?? 'G-P6FHL7KTC4';
