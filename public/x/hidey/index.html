@@ -239,7 +239,7 @@ async function startCamera(){
       cam.srcObject = stream;
       cam.style.display="block"; photo.style.display="none"; placeholder.style.display="none";
       try{ await cam.play(); }catch(_){}
-      bgKind = "cam";
+      bgKind = "cam"; showControls();
       showHint("➕ Ajoute un bonhomme et cache-le");
       return;
     }catch(e){ lastErr=e; }
@@ -255,6 +255,7 @@ function usePhoto(file){
   photo.onload = ()=>{ URL.revokeObjectURL(url); };
   photo.src = url; bgKind="photo"; photo.style.display="block"; cam.style.display="none"; placeholder.style.display="none";
   if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  showControls();
   showHint("➕ Ajoute un bonhomme et cache-le");
 }
 
@@ -470,6 +471,23 @@ $("#btnSave").onclick=()=>saveImg(null);
 
 buildSwatches();
 window.addEventListener("resize", ()=>{ dpr=Math.max(1,Math.min(3,window.devicePixelRatio||1)); });
+
+/* the bottom bar (Add / Capture…) only appears once a background is loaded,
+   so nobody taps "Capturer la scène" on an empty stage */
+function showControls(){ document.getElementById("controls").style.display="block"; }
+document.getElementById("controls").style.display="none";
+
+/* iPhone + non-Safari (Chrome/Firefox/Edge on iOS) can't access the web camera */
+(function(){
+  const ua=navigator.userAgent||"";
+  const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  if(isIOS && /CriOS|FxiOS|EdgiOS/.test(ua)){
+    const b=document.createElement("div");
+    b.style.cssText="margin-top:12px;font-size:12.5px;line-height:1.45;color:#ffd27c;background:rgba(255,180,60,.12);border:1px solid rgba(255,180,60,.35);padding:9px 13px;border-radius:12px;max-width:300px;";
+    b.innerHTML="⚠️ Sur iPhone, la caméra ne marche que dans <b>Safari</b>. Ouvre ce lien dans Safari — ou tape « choisir une photo » pour tester tout de suite.";
+    placeholder.appendChild(b);
+  }
+})();
 
 /* debug bridge (only with ?debug) — used for headless preview testing, no-op for users */
 if(location.search.includes("debug")){
