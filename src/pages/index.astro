@@ -6,6 +6,7 @@ import Analytics from '../components/Analytics.astro';
 // Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
 // card upgrades from portrait to a muted looping video at the next build.
 const hasVideo = (slug: string) => fs.existsSync(`public/home/video/${slug}.mp4`);
+const hasIdle = (slug: string) => fs.existsSync(`public/home/video/${slug}-idle.mp4`);
 
 // Pixel-faithful clone of the original Framer landing page (bliss-coach.com).
 // All values below were measured on the live Framer page (computed styles):
@@ -425,6 +426,17 @@ const coaches = [
         object-fit: cover;
         box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
       }
+      .chapter .pwrap {
+        position: relative;
+        flex: 0 0 auto;
+        width: clamp(96px, 14vw, 148px);
+        height: clamp(118px, 17vw, 180px);
+      }
+      .chapter .pwrap .portrait {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+      }
+      .chapter .v-idle { opacity: 0; transition: opacity 0.4s ease; }
+      .chapter:hover .v-idle, .chapter.idle-on .v-idle { opacity: 1; }
       .chapter .txt { min-width: 0; }
       .chapter .bubble {
         display: inline-block;
@@ -486,6 +498,8 @@ const coaches = [
       @media (max-width: 640px) {
         .chapter { flex-direction: row; align-items: flex-start; gap: 16px; }
         .chapter .portrait { width: 86px; height: 106px; border-radius: 18px; }
+        .chapter .pwrap { width: 86px; height: 106px; }
+        .chapter .pwrap .portrait { width: 100%; height: 100%; }
         .chapter .bubble-reply { margin-left: 10px; }
       }
 
@@ -695,7 +709,12 @@ const coaches = [
         {coaches.map((c) => (
           <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2}`}>
             {hasVideo(c.slug) ? (
-              <video class="portrait" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
+              <span class="pwrap">
+                <video class="portrait v-stand" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
+                {hasIdle(c.slug) && (
+                  <video class="portrait v-idle" src={withBase(`/home/video/${c.slug}-idle.mp4`)} muted loop playsinline preload="metadata" aria-hidden="true" width="148" height="180"></video>
+                )}
+              </span>
             ) : (
               <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
             )}
@@ -947,18 +966,41 @@ const coaches = [
         }, { passive: true });
       }
 
-      // coach videos: play on hover (desktop) / press (touch), never autoplay
-      document.querySelectorAll<HTMLVideoElement>('.chapter video').forEach((v) => {
-        v.autoplay = false;
-        v.pause();
-        const start = () => { v.play().catch(() => {}); };
-        const stop = () => { v.pause(); };
-        v.closest('.chapter')?.addEventListener('pointerenter', start);
-        v.closest('.chapter')?.addEventListener('pointerleave', stop);
-        v.closest('.chapter')?.addEventListener('touchstart', () => {
-          v.paused ? start() : stop();
+      // coach chapter media: the standing loop plays by default; hovering
+      // (or tapping) crossfades to the livelier idle loop.
+      document.querySelectorAll<HTMLElement>('.chapter').forEach((card) => {
+        const stand = card.querySelector<HTMLVideoElement>('.v-stand');
+        const idle = card.querySelector<HTMLVideoElement>('.v-idle');
+        if (!stand) return;
+        // Reduced motion: no ambient autoplay, but hover/tap (an explicit
+        // gesture) still brings the coach to life.
+        if (reduceMotion) { stand.autoplay = false; stand.pause(); }
+        const live = idle ?? stand;
+        const on = () => { live.play().catch(() => {}); if (idle) card.classList.add('idle-on'); };
+        const off = () => {
+          card.classList.remove('idle-on');
+          if (idle) setTimeout(() => idle.pause(), 400);
+          else if (reduceMotion) stand.pause();
+        };
+        card.addEventListener('pointerenter', on);
+        card.addEventListener('pointerleave', off);
+        card.addEventListener('touchstart', () => {
+          card.classList.contains('idle-on') ? off() : on();
         }, { passive: true });
       });
+      // Chrome pauses offscreen muted videos — nudge the standing loops
+      // back to life whenever their card scrolls into view.
+      if (!reduceMotion) {
+        const vio = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            const v = (e.target as HTMLElement).querySelector<HTMLVideoElement>('.v-stand');
+            if (!v) continue;
+            if (e.isIntersecting) v.play().catch(() => {});
+            else v.pause();
+          }
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.chapter').forEach((c) => vio.observe(c));
+      }
 
       // ---- the story ----
       if (!reduceMotion) {
