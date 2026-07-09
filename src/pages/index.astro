@@ -349,11 +349,11 @@ const coaches = [
       /* backdrop hue shifts as chapters scroll by */
       .story {
         position: relative;
-        background: #0a0a0a;
+        background: var(--world, #0a0a0a);
         transition: background 1.2s ease;
+        overflow-x: clip;
       }
-      .story.phase-manifesto { background: #120d1e; }
-      .story.phase-coaches { background: #0a0a0a; }
+      .story.phase-manifesto { --world: #120d1e; }
 
       /* --- manifesto: words fill in as you scroll --- */
       .manifesto {
@@ -391,6 +391,75 @@ const coaches = [
       @media (prefers-reduced-motion: reduce) {
         .manifesto .w { color: #fff; }
         .manifesto p:last-child .w { color: transparent; }
+      }
+
+      /* floating props — the tangible world of the manifesto */
+      .manifesto { position: relative; }
+      .manifesto .props { position: absolute; inset: 0; pointer-events: none; }
+      .prop {
+        position: absolute;
+        border-radius: 10px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        will-change: transform;
+      }
+      .prop-invoice {
+        top: 9%; left: calc(50% - 645px);
+        width: 190px; padding: 14px 16px;
+        background: #f7f4ec; color: #26241d;
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 10.5px; line-height: 1.7;
+        rotate: -7deg;
+      }
+      .prop-invoice .inv-head { font-weight: 700; letter-spacing: 0.1em; border-bottom: 1px dashed #b9b4a4; padding-bottom: 5px; margin-bottom: 7px; }
+      .prop-invoice .inv-row, .prop-invoice .inv-total { display: flex; justify-content: space-between; gap: 12px; }
+      .prop-invoice .inv-total { font-weight: 700; border-top: 1px dashed #b9b4a4; margin-top: 6px; padding-top: 5px; }
+      .prop-invoice .inv-foot { text-align: center; margin-top: 7px; font-size: 9px; color: #8b8574; letter-spacing: 0.08em; }
+      .prop-edamame {
+        bottom: 16%; left: calc(50% - 605px);
+        width: 168px; padding: 12px 14px;
+        background: #ffffff; color: #17221b; border-radius: 14px;
+        font-family: 'Inter', sans-serif; font-size: 11px;
+        rotate: 5deg;
+      }
+      .prop-edamame .ed-name { font-weight: 800; font-size: 13px; margin-bottom: 7px; }
+      .prop-edamame .ed-bar { height: 6px; border-radius: 99px; background: #e8f2ea; overflow: hidden; margin-bottom: 7px; }
+      .prop-edamame .ed-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #22c55e, #84cc16); }
+      .prop-edamame .ed-row b { font-weight: 800; }
+      .prop-ticket {
+        top: 13%; right: calc(50% - 645px);
+        width: 200px; padding: 12px 16px 13px;
+        background: #fff8ef; color: #3a2c18; border-radius: 12px;
+        rotate: 6deg;
+      }
+      .prop-ticket .tk-punch { position: absolute; left: -7px; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--world, #0a0a0a); transform: translateY(-50%); transition: background 1.2s ease; }
+      .prop-ticket .tk-title { font-weight: 800; font-size: 10.5px; letter-spacing: 0.18em; color: #b3541e; margin-bottom: 4px; }
+      .prop-ticket .tk-line { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 15px; }
+      .prop-tarot {
+        bottom: 13%; right: calc(50% - 585px);
+        width: 108px; padding: 10px 10px 12px;
+        background: linear-gradient(160deg, #17131f, #0d0a14);
+        border: 1px solid rgba(232, 195, 117, 0.5); border-radius: 12px;
+        text-align: center;
+        rotate: -6deg;
+      }
+      .prop-tarot svg { width: 64px; height: 64px; }
+      .prop-tarot .ta-label { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; color: #E8C375; }
+      @media (prefers-reduced-motion: no-preference) {
+        .prop { animation: prop-drift 9s ease-in-out infinite; }
+        .prop-edamame { animation-delay: -3s; }
+        .prop-ticket { animation-delay: -5s; }
+        .prop-tarot { animation-delay: -7s; }
+        @keyframes prop-drift {
+          0%, 100% { translate: 0 0; }
+          50%      { translate: 0 -12px; }
+        }
+      }
+      @media (max-width: 900px) {
+        .prop { transform: scale(0.72); opacity: 0.4; }
+        .prop-invoice { left: -2%; top: 3%; }
+        .prop-ticket { right: -4%; top: 2%; }
+        .prop-edamame { left: -3%; bottom: 4%; }
+        .prop-tarot { right: -2%; bottom: 3%; }
       }
 
       /* --- coach chapters --- */
@@ -713,6 +782,29 @@ const coaches = [
     <div class="story" id="story">
       <!-- manifesto: fills in word by word as you scroll -->
       <section class="manifesto" id="manifesto" aria-label="Our manifesto">
+        <div class="props" aria-hidden="true">
+          <div class="prop prop-invoice" data-depth="0.9">
+            <div class="inv-head">LIFE COACHING LLC</div>
+            <div class="inv-row"><span>1:1 session — 1 hr</span><span>$200.00</span></div>
+            <div class="inv-row"><span>Travel fee</span><span>$35.00</span></div>
+            <div class="inv-total"><span>TOTAL</span><span>$235.00</span></div>
+            <div class="inv-foot">CASH ONLY · NO REFUNDS</div>
+          </div>
+          <div class="prop prop-edamame" data-depth="0.6">
+            <div class="ed-name">Edamame 🫛</div>
+            <div class="ed-bar"><i style="width:38%"></i></div>
+            <div class="ed-row"><b>120</b> kcal · <b>11g</b> prot · <b>10g</b> carbs</div>
+          </div>
+          <div class="prop prop-ticket" data-depth="1.1">
+            <span class="tk-punch"></span>
+            <div class="tk-title">CINE ★ ADMIT ONE</div>
+            <div class="tk-line">¿Vamos al cine después?</div>
+          </div>
+          <div class="prop prop-tarot" data-depth="0.75">
+            <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="14" fill="none" stroke="#E8C375" stroke-width="1.4"/><circle cx="36" cy="26" r="10" fill="#0d0a14"/><circle cx="24" cy="34" r="1.6" fill="#E8C375"/><circle cx="40" cy="40" r="1.2" fill="#F4E3B8"/></svg>
+            <div class="ta-label">THE MOON</div>
+          </div>
+        </div>
         {manifesto.map((sentence) => (
           <p>
             {sentence.split(' ').map((word) => (
@@ -954,6 +1046,7 @@ const coaches = [
       if (!reduceMotion && matchMedia('(pointer: fine)').matches) {
         const nebula = document.querySelector('.nebula') as HTMLElement;
         const dock = document.querySelector('.avatars') as HTMLElement;
+        const props = Array.from(document.querySelectorAll<HTMLElement>('.prop'));
         let tx = 0, ty = 0, cx = 0, cy = 0;
         window.addEventListener('mousemove', (e) => {
           tx = (e.clientX / window.innerWidth - 0.5);
@@ -965,6 +1058,10 @@ const coaches = [
           canvas.style.transform = `translate(${cx * -14}px, ${cy * -8}px)`;
           if (nebula) nebula.style.transform = `translate(${cx * -26}px, ${cy * -14}px)`;
           if (dock) dock.style.transform = `translateX(calc(-50% + ${cx * 10}px))`;
+          for (const pr of props) {
+            const d = parseFloat(pr.dataset.depth || '0.8');
+            pr.style.transform = `translate(${cx * d * 30}px, ${cy * d * 18}px)`;
+          }
           requestAnimationFrame(lerp);
         })();
       }
@@ -1057,17 +1154,29 @@ const coaches = [
         }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
         document.querySelectorAll('.rv').forEach((el) => io.observe(el));
 
-        // backdrop hue shifts with the chapter you're in
+        // backdrop dresses in each coach's colors as their chapter passes
         const story = document.getElementById('story')!;
         const phases = new IntersectionObserver((entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
             story.classList.toggle('phase-manifesto', e.target.id === 'manifesto');
-            story.classList.toggle('phase-coaches', e.target.id !== 'manifesto');
+            if (e.target.id !== 'manifesto') story.style.removeProperty('--world');
           }
         }, { threshold: 0.25 });
         phases.observe(manifesto);
-        phases.observe(document.getElementById('coaches')!);
+        const worlds = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const c1 = (e.target as HTMLElement).style.getPropertyValue('--c1');
+            if (c1) story.style.setProperty('--world', `color-mix(in srgb, ${c1} 7%, #0a0a0a)`);
+          }
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.chapter').forEach((c) => worlds.observe(c));
+        // back to black past the chapters
+        const resetW = new IntersectionObserver((es) => {
+          for (const e of es) if (e.isIntersecting) story.style.removeProperty('--world');
+        }, { threshold: 0.2 });
+        resetW.observe(document.querySelector('.pillars')!);
       } else {
         document.querySelectorAll('#manifesto .w').forEach((w) => w.classList.add('on'));
       }
