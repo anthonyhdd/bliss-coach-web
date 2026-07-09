@@ -138,6 +138,6 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenPos: '50% 30%',
     screenVariant: 'sky',
     chatUser: 'Why does today feel heavy?',
-    featureArts: ['glyphs', 'wheel', 'chat'],
+    featureArts: ['glyphs', 'crest', 'chat'],
   },
 };

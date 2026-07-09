@@ -1,0 +1,73 @@
+---
+// Astra's celestial crest, ported 1:1 from the app
+// (SPANISH/src/screens/onboarding/astra/CelestialCrest.tsx): gradient
+// crescent moon with craters + rim light, a planet orbiting on a dashed
+// ring, two out-of-phase groups of twinkling stars and a soft gold aura.
+// Colors are the app's exact constants (ASTRA_GOLD #E8C375 etc.).
+interface Props {
+  size?: number;
+}
+const { size = 140 } = Astro.props;
+---
+
+<span class="crest" style={`width:${size}px;height:${size}px`} aria-hidden="true">
+  <span class="crest-aura"></span>
+  <svg class="crest-orbit" viewBox="0 0 132 132">
+    <ellipse cx="66" cy="66" rx="59" ry="59" fill="none" stroke="#F4E3B8" stroke-opacity="0.22" stroke-width="0.8" stroke-dasharray="2 6" />
+    <circle cx="66" cy="7" r="4.5" fill="#E8C375" opacity="0.22" />
+    <circle cx="66" cy="7" r="2.3" fill="#E8C375" />
+  </svg>
+  <svg class="crest-moon" viewBox="0 0 132 132">
+    <defs>
+      <radialGradient id="cc-moonFill" cx="38%" cy="34%" r="78%">
+        <stop offset="0" stop-color="#FBEED0" />
+        <stop offset="0.45" stop-color="#E8C375" />
+        <stop offset="1" stop-color="#AE8230" />
+      </radialGradient>
+      <radialGradient id="cc-moonRim" cx="50%" cy="50%" r="50%">
+        <stop offset="0.8" stop-color="#FDF4DA" stop-opacity="0" />
+        <stop offset="1" stop-color="#FDF4DA" stop-opacity="0.55" />
+      </radialGradient>
+      <mask id="cc-crescent">
+        <circle cx="62" cy="66" r="34" fill="#ffffff" />
+        <circle cx="81" cy="53" r="31" fill="#000000" />
+      </mask>
+    </defs>
+    <g mask="url(#cc-crescent)">
+      <circle cx="62" cy="66" r="34" fill="url(#cc-moonFill)" />
+      <circle cx="49" cy="57" r="5.2" fill="#8A6626" opacity="0.3" />
+      <circle cx="44" cy="78" r="3.4" fill="#8A6626" opacity="0.24" />
+      <circle cx="57" cy="87" r="2.6" fill="#8A6626" opacity="0.22" />
+      <circle cx="39" cy="66" r="2.1" fill="#8A6626" opacity="0.2" />
+      <circle cx="62" cy="66" r="34" fill="url(#cc-moonRim)" />
+    </g>
+  </svg>
+  <svg class="crest-stars-a" viewBox="0 0 132 132">
+    <circle cx="20" cy="30" r="1.7" fill="#FFFFFF" />
+    <circle cx="106" cy="104" r="1.5" fill="#FFFFFF" />
+    <circle cx="70" cy="15" r="1.3" fill="#FFFFFF" />
+  </svg>
+  <svg class="crest-stars-b" viewBox="0 0 132 132">
+    <circle cx="114" cy="40" r="2" fill="#FDF4DA" />
+    <circle cx="28" cy="108" r="1.8" fill="#FDF4DA" />
+  </svg>
+</span>
+
+<style>
+  .crest { position: relative; display: inline-block; }
+  .crest svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .crest-aura {
+    position: absolute; inset: -25%;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(232, 195, 117, 0.35), transparent 70%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    /* same rhythms as the app: 5.2s breathe, 28s orbit, 3s twinkle */
+    .crest-moon { animation: cc-breathe 5.2s ease-in-out infinite; }
+    .crest-orbit { animation: cc-spin 28s linear infinite; }
+    .crest-stars-a { animation: cc-tw 3s ease-in-out infinite; }
+    .crest-stars-b { animation: cc-tw 3s ease-in-out infinite reverse; }
+  }
+  @keyframes cc-breathe { 0%, 100% { transform: scale(0.97); } 50% { transform: scale(1.03); } }
+  @keyframes cc-spin { to { transform: rotate(360deg); } }
+  @keyframes cc-tw { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+</style>
