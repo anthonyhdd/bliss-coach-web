@@ -243,6 +243,21 @@ const coaches = [
         color: rgba(255, 255, 255, 0.7);
         font-weight: 400;
       }
+      /* highlighter marks — mobilefirst marker strokes */
+      .hl {
+        background: linear-gradient(104deg, transparent 2%, rgba(255, 220, 131, 0.38) 8%, rgba(255, 220, 131, 0.42) 92%, transparent 98%);
+        border-radius: 3px;
+        padding: 0 4px;
+        color: inherit;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+      }
+      .manifesto .w.hlw {
+        background: linear-gradient(104deg, transparent 3%, rgba(255, 220, 131, 0.34) 10%, rgba(255, 220, 131, 0.38) 90%, transparent 97%);
+        border-radius: 3px;
+        padding: 0 3px;
+      }
+
       /* CTA — 1.5px conic border + blurred conic glow behind */
       .cta-wrap {
         position: relative;
@@ -504,6 +519,31 @@ const coaches = [
       .prop-ticket .tk-punch { position: absolute; left: -7px; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--world, #0a0a0a); transform: translateY(-50%); transition: background 1.2s ease; }
       .prop-ticket .tk-title { font-weight: 800; font-size: 10.5px; letter-spacing: 0.18em; color: #b3541e; margin-bottom: 4px; }
       .prop-ticket .tk-line { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 15px; }
+      .prop-postit {
+        top: 40%; right: calc(50% - 665px);
+        width: 172px; padding: 14px 14px 16px;
+        background: #ffe9a8;
+        border-radius: 3px;
+        rotate: 4deg;
+        font-family: 'Bradley Hand', 'Segoe Script', 'Comic Sans MS', cursive;
+        font-size: 13.5px; line-height: 1.9; color: #4a3d18;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      }
+      .prop-postit::before {
+        content: '';
+        position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+        width: 64px; height: 18px;
+        background: rgba(255, 255, 255, 0.45);
+        border-left: 1px solid rgba(0,0,0,0.06);
+        border-right: 1px solid rgba(0,0,0,0.06);
+      }
+      .prop-postit .pi-line.done { text-decoration: line-through; opacity: 0.72; }
+      .prop-postit .pi-line.done::after { content: ' ✓'; text-decoration: none; }
+      .prop-postit .pi-line.nope { text-decoration: line-through; opacity: 0.72; }
+      .prop-postit .pi-line.nope::after { content: ' ✗'; }
+      .prop-postit .pi-line.todo { font-weight: 700; }
+      .prop-postit .pi-line.todo::after { content: ' ☐'; }
+      @media (max-width: 900px) { .prop-postit { display: none; } }
       .prop-tarot {
         bottom: 13%; right: calc(50% - 585px);
         width: 108px; padding: 10px 10px 12px;
@@ -518,7 +558,32 @@ const coaches = [
         .prop { animation: prop-drift 9s ease-in-out infinite; }
         .prop-edamame { animation-delay: -3s; }
         .prop-ticket { animation-delay: -5s; }
-        .prop-tarot { animation-delay: -7s; }
+        .prop-postit {
+        top: 40%; right: calc(50% - 665px);
+        width: 172px; padding: 14px 14px 16px;
+        background: #ffe9a8;
+        border-radius: 3px;
+        rotate: 4deg;
+        font-family: 'Bradley Hand', 'Segoe Script', 'Comic Sans MS', cursive;
+        font-size: 13.5px; line-height: 1.9; color: #4a3d18;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      }
+      .prop-postit::before {
+        content: '';
+        position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+        width: 64px; height: 18px;
+        background: rgba(255, 255, 255, 0.45);
+        border-left: 1px solid rgba(0,0,0,0.06);
+        border-right: 1px solid rgba(0,0,0,0.06);
+      }
+      .prop-postit .pi-line.done { text-decoration: line-through; opacity: 0.72; }
+      .prop-postit .pi-line.done::after { content: ' ✓'; text-decoration: none; }
+      .prop-postit .pi-line.nope { text-decoration: line-through; opacity: 0.72; }
+      .prop-postit .pi-line.nope::after { content: ' ✗'; }
+      .prop-postit .pi-line.todo { font-weight: 700; }
+      .prop-postit .pi-line.todo::after { content: ' ☐'; }
+      @media (max-width: 900px) { .prop-postit { display: none; } }
+      .prop-tarot { animation-delay: -7s; }
         @keyframes prop-drift {
           0%, 100% { translate: 0 0; }
           50%      { translate: 0 -12px; }
@@ -529,7 +594,32 @@ const coaches = [
         .prop-invoice { left: -2%; top: 3%; }
         .prop-ticket { right: -4%; top: 2%; }
         .prop-edamame { left: -3%; bottom: 4%; }
-        .prop-tarot { right: -2%; bottom: 3%; }
+        .prop-postit {
+        top: 40%; right: calc(50% - 665px);
+        width: 172px; padding: 14px 14px 16px;
+        background: #ffe9a8;
+        border-radius: 3px;
+        rotate: 4deg;
+        font-family: 'Bradley Hand', 'Segoe Script', 'Comic Sans MS', cursive;
+        font-size: 13.5px; line-height: 1.9; color: #4a3d18;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      }
+      .prop-postit::before {
+        content: '';
+        position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+        width: 64px; height: 18px;
+        background: rgba(255, 255, 255, 0.45);
+        border-left: 1px solid rgba(0,0,0,0.06);
+        border-right: 1px solid rgba(0,0,0,0.06);
+      }
+      .prop-postit .pi-line.done { text-decoration: line-through; opacity: 0.72; }
+      .prop-postit .pi-line.done::after { content: ' ✓'; text-decoration: none; }
+      .prop-postit .pi-line.nope { text-decoration: line-through; opacity: 0.72; }
+      .prop-postit .pi-line.nope::after { content: ' ✗'; }
+      .prop-postit .pi-line.todo { font-weight: 700; }
+      .prop-postit .pi-line.todo::after { content: ' ☐'; }
+      @media (max-width: 900px) { .prop-postit { display: none; } }
+      .prop-tarot { right: -2%; bottom: 3%; }
       }
 
       /* --- coach chapters --- */
@@ -778,8 +868,39 @@ const coaches = [
         .art-memory .cl { stroke-dashoffset: 0; }
       }
 
-      /* --- reviews marquee --- */
-      .reviews { padding: 2vh 0 4vh; overflow: hidden; }
+      /* --- reviews: the cream paper chapter (mobilefirst light/dark rhythm) --- */
+      .reviews {
+        padding: 9vh 0 10vh;
+        overflow: hidden;
+        background: #f7f4ec;
+        position: relative;
+      }
+      .reviews .rev-head {
+        text-align: center;
+        margin-bottom: 38px;
+        position: relative;
+      }
+      .reviews .rev-kicker {
+        font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase;
+        color: #8b8574; margin-bottom: 10px;
+      }
+      .reviews .rev-title {
+        font-size: clamp(24px, 3.6vw, 38px); font-weight: 600; letter-spacing: -0.02em;
+        color: #17130a;
+      }
+      .reviews .rev-title em {
+        font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400;
+      }
+      .reviews .rev-stk {
+        position: absolute;
+        font-size: 10.5px; font-weight: 800; letter-spacing: 0.13em;
+        padding: 7px 13px; border-radius: 999px;
+        box-shadow: 0 10px 24px rgba(23, 19, 10, 0.18);
+        white-space: nowrap;
+      }
+      .reviews .rev-stk-1 { left: calc(50% - 430px); top: -6px; rotate: -7deg; background: #ffdc83; color: #17130a; }
+      .reviews .rev-stk-2 { right: calc(50% - 440px); top: 10px; rotate: 5deg; background: #17130a; color: #ffdc83; }
+      @media (max-width: 940px) { .reviews .rev-stk { display: none; } }
       .marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
       .marquee-track { display: flex; gap: 18px; width: max-content; }
       @media (prefers-reduced-motion: no-preference) {
@@ -790,21 +911,22 @@ const coaches = [
       .review {
         flex: 0 0 auto;
         width: 320px;
-        background: #101014;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #ffffff;
+        border: 1px solid rgba(23, 19, 10, 0.1);
         border-radius: 18px;
         padding: 18px 20px 16px;
+        box-shadow: 0 10px 30px rgba(23, 19, 10, 0.07);
       }
       .review .rev-avatar {
         display: inline-flex; align-items: center; justify-content: center;
         width: 30px; height: 30px; border-radius: 50%;
-        background: color-mix(in srgb, var(--ra) 30%, #17171c);
-        color: color-mix(in srgb, var(--ra) 80%, #fff);
+        background: color-mix(in srgb, var(--ra) 22%, #ffffff);
+        color: color-mix(in srgb, var(--ra) 75%, #17130a);
         font-weight: 800; font-size: 13px;
         margin-bottom: 10px;
       }
-      .review blockquote { font-size: 14.5px; line-height: 1.55; color: rgba(255, 255, 255, 0.85); margin-bottom: 8px; }
-      .review figcaption { font-size: 12.5px; color: rgba(255, 255, 255, 0.45); font-weight: 600; }
+      .review blockquote { font-size: 14.5px; line-height: 1.55; color: #26221a; margin-bottom: 8px; }
+      .review figcaption { font-size: 12.5px; color: #8b8574; font-weight: 600; }
 
       /* --- proof band --- */
       .proof {
@@ -857,7 +979,7 @@ const coaches = [
           <span class="t-desktop">Your coach, for<br /><span class="serif">every corner of life.</span></span>
           <span class="t-mobile">Your coach, for<br /><span class="serif">every corner</span><br /><span class="serif">of life.</span></span>
         </h1>
-        <p class="sub">Six coaches who actually talk with you — Spanish, French,<br /> interviews, dating, food — and your stars. Ten minutes a day.</p>
+        <p class="sub">Six coaches who actually talk with you — Spanish, French,<br /> interviews, dating, food — and your stars. <mark class="hl">Ten minutes a day.</mark></p>
         <div class="cta-wrap">
           <span class="cta-beam" aria-hidden="true"></span>
           <a class="cta" href="#coaches">Meet your coaches</a>
@@ -901,15 +1023,20 @@ const coaches = [
             <div class="tk-title">CINE ★ ADMIT ONE</div>
             <div class="tk-line">¿Vamos al cine después?</div>
           </div>
+          <div class="prop prop-postit" data-depth="1.0">
+            <div class="pi-line done">cancel the $200/h coach</div>
+            <div class="pi-line nope">buy another textbook</div>
+            <div class="pi-line todo">talk to Sofia — 10 min</div>
+          </div>
           <div class="prop prop-tarot" data-depth="0.75">
             <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="14" fill="none" stroke="#E8C375" stroke-width="1.4"/><circle cx="36" cy="26" r="10" fill="#0d0a14"/><circle cx="24" cy="34" r="1.6" fill="#E8C375"/><circle cx="40" cy="40" r="1.2" fill="#F4E3B8"/></svg>
             <div class="ta-label">THE MOON</div>
           </div>
         </div>
-        {manifesto.map((sentence) => (
+        {manifesto.map((sentence, si) => (
           <p>
             {sentence.split(' ').map((word) => (
-              <><span class="w">{word}</span>{' '}</>
+              <><span class={si === 1 && ['$200', 'an', 'hour,'].includes(word) ? 'w hlw' : 'w'}>{word}</span>{' '}</>
             ))}
           </p>
         ))}
@@ -1041,6 +1168,12 @@ const coaches = [
 
       <!-- what people say — real store reviews, drifting by -->
       <section class="reviews" aria-label="Reviews">
+        <div class="rev-head rv">
+          <span class="rev-stk rev-stk-1">REAL REVIEWS</span>
+          <span class="rev-stk rev-stk-2">FROM THE APP STORE</span>
+          <div class="rev-kicker">Word of mouth</div>
+          <div class="rev-title">People talk. <em>So do their coaches.</em></div>
+        </div>
         <div class="marquee">
           <div class="marquee-track">
             {[...REVIEWS, ...REVIEWS].map((r) => (
