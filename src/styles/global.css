@@ -61,8 +61,16 @@ a { color: inherit; text-decoration: none; }
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .header-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 40%, transparent); }
-@media (max-width: 900px) { .header-cta { display: none; } }
+@media (max-width: 900px) { .site-header:not(.site-header--solo) .header-cta { display: none; } }
 .article-page .header-cta { color: #fff; }
+
+.site-header--solo .inner { justify-content: space-between; }
+.solo-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+.solo-brand img { border-radius: 8px; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4); }
+.header-cta.is-soon { background: none; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); color: var(--accent); }
+@media (max-width: 640px) {
+  .site-header.site-header--solo .inner { flex-direction: row; height: 56px; padding-top: 0; padding-bottom: 0; gap: 12px; }
+}
 
 /* Mobile header: the logo + 6-item nav can't share one 375px row without the
    logo wrapping and "Astra" getting clipped. Stack them: logo on top, nav as a

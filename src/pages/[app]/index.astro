@@ -46,6 +46,7 @@ const jsonLd = {
   appStoreId={app.appStoreId}
   ogImage={`/icons/${app.slug}.jpg`}
   activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon }}
   jsonLd={jsonLd}
 >
   <div style={brandStyle}>

@@ -3,20 +3,38 @@ import { APPS, withBase } from '../config/apps';
 
 interface Props {
   activeApp?: string;
+  /** app-scoped landing header: only this app's identity + its store CTA */
+  solo?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean };
 }
-const { activeApp } = Astro.props;
+const { activeApp, solo } = Astro.props;
 ---
 
-<header class="site-header">
-  <div class="container inner">
-    <a class="logo" href={withBase('/')}>Bliss <span>Coach</span></a>
-    <nav class="nav" aria-label="Apps">
-      {Object.values(APPS).map((app) => (
-        <a href={withBase(`/${app.slug}/`)} aria-current={activeApp === app.slug ? 'true' : undefined}>
-          {app.name}
-        </a>
-      ))}
-    </nav>
-    <a class="header-cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
-  </div>
-</header>
+{solo ? (
+  <header class="site-header site-header--solo">
+    <div class="container inner">
+      <a class="solo-brand" href={withBase(`/${solo.slug}/`)}>
+        <img src={withBase(`/icons/${solo.slug}.jpg`)} alt="" width="30" height="30" loading="eager" />
+        <span>{solo.name}</span>
+      </a>
+      {solo.comingSoon ? (
+        <span class="header-cta is-soon">Coming soon</span>
+      ) : (
+        <a class="header-cta" href={solo.appStoreUrl}>Download</a>
+      )}
+    </div>
+  </header>
+) : (
+  <header class="site-header">
+    <div class="container inner">
+      <a class="logo" href={withBase('/')}>Bliss <span>Coach</span></a>
+      <nav class="nav" aria-label="Apps">
+        {Object.values(APPS).map((app) => (
+          <a href={withBase(`/${app.slug}/`)} aria-current={activeApp === app.slug ? 'true' : undefined}>
+            {app.name}
+          </a>
+        ))}
+      </nav>
+      <a class="header-cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
+    </div>
+  </header>
+)}
