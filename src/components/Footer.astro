@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../config/apps';
+
 interface Props {
   /** app-scoped landing footer: the app's serif wordmark, no cross-links */
   solo?: { name: string };
@@ -11,7 +13,7 @@ const year = new Date().getFullYear();
   <footer class="site-footer site-footer--solo">
     <div class="container">
       <div class="solo-mark">{solo.name}</div>
-      <p class="solo-sub">a Bliss Coach app</p>
+      <p class="solo-sub">a <a class="solo-home" href={withBase('/')}>Bliss Coach</a> app</p>
       <nav class="links" aria-label="Legal">
         <a href="/privacy/" rel="nofollow">Privacy Policy</a>
         <a href="/terms/" rel="nofollow">Terms of Use</a>
