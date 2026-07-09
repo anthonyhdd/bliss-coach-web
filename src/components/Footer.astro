@@ -1,14 +1,33 @@
 ---
+interface Props {
+  /** app-scoped landing footer: the app's serif wordmark, no cross-links */
+  solo?: { name: string };
+}
+const { solo } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
-  <div class="container inner">
-    <span>© {year} Bliss Coach — AI coaching apps</span>
-    <nav class="links" aria-label="Legal">
-      <a href="/privacy/" rel="nofollow">Privacy Policy</a>
-      <a href="/terms/" rel="nofollow">Terms of Use</a>
-      <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
-    </nav>
-  </div>
-</footer>
+{solo ? (
+  <footer class="site-footer site-footer--solo">
+    <div class="container">
+      <div class="solo-mark">{solo.name}</div>
+      <p class="solo-sub">a Bliss Coach app</p>
+      <nav class="links" aria-label="Legal">
+        <a href="/privacy/" rel="nofollow">Privacy Policy</a>
+        <a href="/terms/" rel="nofollow">Terms of Use</a>
+        <span>© {year}</span>
+      </nav>
+    </div>
+  </footer>
+) : (
+  <footer class="site-footer">
+    <div class="container inner">
+      <span>© {year} Bliss Coach — AI coaching apps</span>
+      <nav class="links" aria-label="Legal">
+        <a href="/privacy/" rel="nofollow">Privacy Policy</a>
+        <a href="/terms/" rel="nofollow">Terms of Use</a>
+        <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
+      </nav>
+    </div>
+  </footer>
+)}

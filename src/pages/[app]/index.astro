@@ -51,6 +51,9 @@ const jsonLd = {
 >
   <div style={brandStyle}>
     <div class="brand-strip" aria-hidden="true"></div>
+    {app.comingSoon && (
+      <div class="app-banner"><span><i>&gt;</i> {app.name} is in the lab — <mark>coming soon</mark> to the App Store <b>✦</b></span></div>
+    )}
 
     <!-- hero: pitch + the product itself in a phone -->
     <section class="app-hero2">
@@ -79,6 +82,11 @@ const jsonLd = {
         </div>
 
         <div class="phone-wrap">
+          <div class="hprop hprop-paper" aria-hidden="true">
+            <b>{show.paper.title}</b>
+            <span>{show.paper.line}</span>
+          </div>
+          <span class="hprop hprop-sticker" aria-hidden="true">{show.sticker}</span>
           <div class="phone" role="img" aria-label={`${app.name} app — “${show.screenLine}”`}>
             <div class="screen">
               {show.screenVariant === 'sky' ? (
@@ -108,9 +116,13 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- signature line -->
+    <!-- signature line — fills in word by word -->
     <section class="craft-strip">
-      <p class="serif-line">{show.craftLine}</p>
+      <p class="serif-line">
+        {show.craftLine.split(' ').map((w, i) => (
+          <><span class="cw" style={`--i:${i}`}>{w}</span>{' '}</>
+        ))}
+      </p>
     </section>
 
     <!-- features as an animated bento — art types themed per app -->
@@ -238,4 +250,42 @@ const jsonLd = {
       </div>
     </section>
   </div>
+
+  <script>
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // signature line fills in as it enters the viewport
+    const strip = document.querySelector('.craft-strip');
+    if (strip) {
+      if (reduce) strip.classList.add('lit');
+      else {
+        const io = new IntersectionObserver((es) => {
+          for (const e of es) if (e.isIntersecting) { strip.classList.add('lit'); io.disconnect(); }
+        }, { threshold: 0.5 });
+        io.observe(strip);
+      }
+    }
+
+    // the phone leans gently toward the pointer
+    if (!reduce && matchMedia('(pointer: fine)').matches) {
+      const hero = document.querySelector('.app-hero2') as HTMLElement | null;
+      const phone = document.querySelector('.phone') as HTMLElement | null;
+      if (hero && phone) {
+        let raf = 0;
+        hero.addEventListener('pointermove', (e) => {
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            raf = 0;
+            const r = hero.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            phone.style.transform = `perspective(900px) rotateY(${nx * 7}deg) rotateX(${ny * -6}deg)`;
+          });
+        });
+        hero.addEventListener('pointerleave', () => {
+          phone.style.transform = 'perspective(900px) rotateY(0deg) rotateX(0deg)';
+        });
+      }
+    }
+  </script>
 </Base>

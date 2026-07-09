@@ -321,6 +321,19 @@ a { color: inherit; text-decoration: none; }
   .app-hero p.sub { margin-bottom: 24px; }
 }
 
+/* ---------- app terminal banner ---------- */
+.app-banner {
+  background: #101014;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center; padding: 9px 16px;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 12.5px; color: rgba(255, 255, 255, 0.8);
+}
+.app-banner i { color: #7ee787; font-style: normal; margin-right: 6px; }
+.app-banner mark { background: color-mix(in srgb, var(--accent) 85%, #fff); color: #0a0a0a; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.app-banner b { color: var(--accent); }
+@media (max-width: 640px) { .app-banner { font-size: 11px; } }
+
 /* ---------- app hero v2: pitch + phone ---------- */
 .app-hero2 { position: relative; overflow: hidden; padding: 72px 0 84px; }
 .app-hero2 .glow {
@@ -375,7 +388,38 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* the phone — pure CSS iPhone frame showing the actual product moment */
-.phone-wrap { flex: 0 0 auto; }
+.phone-wrap { flex: 0 0 auto; position: relative; }
+.hprop { position: absolute; z-index: 2; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55); }
+.hprop-paper {
+  top: 26px; left: -74px; width: 168px;
+  background: #f7f4ec; color: #26241d; border-radius: 10px;
+  padding: 12px 14px; rotate: -8deg;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+.hprop-paper b { display: block; font-size: 10px; letter-spacing: 0.14em; border-bottom: 1px dashed #b9b4a4; padding-bottom: 5px; margin-bottom: 6px; }
+.hprop-paper span { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 14.5px; line-height: 1.35; display: block; }
+.hprop-sticker {
+  bottom: 44px; right: -58px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
+  padding: 9px 15px; border-radius: 999px; rotate: 6deg;
+  background: color-mix(in srgb, var(--accent) 85%, #fff); color: #131108;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hprop-paper { animation: hprop-drift 8s ease-in-out infinite; }
+  .hprop-sticker { animation: hprop-drift 7s ease-in-out infinite -3.5s; }
+  @keyframes hprop-drift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -9px; } }
+}
+@media (max-width: 1150px) {
+  .hprop-paper { left: -30px; }
+  .hprop-sticker { right: -18px; }
+}
+@media (max-width: 860px) {
+  .hprop-paper { left: -8px; top: -26px; transform: scale(0.85); transform-origin: top left; }
+  .hprop-sticker { right: -6px; bottom: 24px; }
+}
+
+.phone { will-change: transform; transition: transform 0.25s ease; }
 .phone {
   width: min(300px, 78vw);
   border-radius: 48px;
@@ -486,6 +530,9 @@ a { color: inherit; text-decoration: none; }
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
+.craft-strip .serif-line .cw { opacity: 0.13; transition: opacity 0.5s ease; transition-delay: calc(var(--i) * 70ms); }
+.craft-strip.lit .serif-line .cw { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .craft-strip .serif-line .cw { opacity: 1; } }
 .craft-strip .serif-line {
   font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic;
@@ -593,6 +640,16 @@ a { color: inherit; text-decoration: none; }
 .article-page .site-footer { border-top-color: rgba(0,0,0,0.07); }
 .article-page .site-footer, .article-page .site-footer a { color: #6b6b76; }
 .article-page .site-footer a:hover { color: #17171c; }
+
+.site-footer--solo { text-align: center; }
+.site-footer--solo .solo-mark {
+  font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
+  font-size: 30px; color: var(--text);
+  background: linear-gradient(92deg, var(--accent), color-mix(in srgb, var(--brand-3) 45%, #fff));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.site-footer--solo .solo-sub { font-size: 12.5px; color: var(--text-dim); margin: 4px 0 16px; }
+.site-footer--solo .links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 
 /* layout shell */
 .page { min-height: 100vh; display: flex; flex-direction: column; }
