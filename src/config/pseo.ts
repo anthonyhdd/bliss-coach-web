@@ -37,6 +37,13 @@ export const PSEO_SECTIONS: Record<string, PseoSection> = {
       'Straight answers about everyday foods: what they bring nutritionally, sensible portions, and easy ways to eat them.',
     itemLabel: 'food guide',
   },
+  amelie: {
+    base: 'how-to-say',
+    hubTitle: 'How to say it in French',
+    hubIntro:
+      'Phrase-by-phrase guides: the natural translation, variations, pronunciation, and real example conversations.',
+    itemLabel: 'phrase guide',
+  },
   astra: {
     base: 'signs',
     hubTitle: 'Zodiac signs explained',
