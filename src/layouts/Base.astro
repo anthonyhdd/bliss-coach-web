@@ -62,5 +62,33 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       </main>
       <Footer />
     </div>
+    <script>
+      // Progressive scroll-reveal: elements start visible for no-JS / reduced
+      // motion; only when motion is allowed do we hide then fade them in.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce && 'IntersectionObserver' in window) {
+        const els = document.querySelectorAll(
+          '.feature, .article-card, .section > h2, .section > .lead, .app-hero .kicker, .app-hero h1, .app-hero p.sub',
+        );
+        els.forEach((el) => {
+          el.classList.add('reveal');
+          // small stagger among siblings for a cascading feel
+          const i = Array.prototype.indexOf.call(el.parentElement?.children ?? [], el);
+          (el as HTMLElement).style.transitionDelay = `${Math.min(i, 5) * 70}ms`;
+        });
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('in-view');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
   </body>
 </html>
