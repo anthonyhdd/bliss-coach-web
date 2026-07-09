@@ -2,8 +2,8 @@
 import { withBase } from '../config/apps';
 
 interface Props {
-  /** app-scoped landing footer: the app's serif wordmark, no cross-links */
-  solo?: { name: string };
+  /** app-scoped landing footer: quiet app identity, no cross-links */
+  solo?: { name: string; slug?: string };
 }
 const { solo } = Astro.props;
 const year = new Date().getFullYear();
@@ -12,8 +12,12 @@ const year = new Date().getFullYear();
 {solo ? (
   <footer class="site-footer site-footer--solo">
     <div class="container">
-      <div class="solo-mark">{solo.name}</div>
-      <p class="solo-sub">a <a class="solo-home" href={withBase('/')}>Bliss Coach</a> app</p>
+      <div class="solo-id">
+        {solo.slug && <img src={withBase(`/icons/${solo.slug}.jpg`)} alt="" width="22" height="22" loading="lazy" />}
+        <span>{solo.name}</span>
+        <i>·</i>
+        <span class="solo-sub">a <a class="solo-home" href={withBase('/')}>Bliss Coach</a> app</span>
+      </div>
       <nav class="links" aria-label="Legal">
         <a href="/privacy/" rel="nofollow">Privacy Policy</a>
         <a href="/terms/" rel="nofollow">Terms of Use</a>

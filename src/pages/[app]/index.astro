@@ -47,6 +47,7 @@ const jsonLd = {
   ogImage={`/icons/${app.slug}.jpg`}
   activeApp={app.slug}
   soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon }}
+  brandStyle={brandStyle}
   jsonLd={jsonLd}
 >
   <div style={brandStyle}>
@@ -266,26 +267,5 @@ const jsonLd = {
       }
     }
 
-    // the phone leans gently toward the pointer
-    if (!reduce && matchMedia('(pointer: fine)').matches) {
-      const hero = document.querySelector('.app-hero2') as HTMLElement | null;
-      const phone = document.querySelector('.phone') as HTMLElement | null;
-      if (hero && phone) {
-        let raf = 0;
-        hero.addEventListener('pointermove', (e) => {
-          if (raf) return;
-          raf = requestAnimationFrame(() => {
-            raf = 0;
-            const r = hero.getBoundingClientRect();
-            const nx = (e.clientX - r.left) / r.width - 0.5;
-            const ny = (e.clientY - r.top) / r.height - 0.5;
-            phone.style.transform = `perspective(900px) rotateY(${nx * 7}deg) rotateX(${ny * -6}deg)`;
-          });
-        });
-        hero.addEventListener('pointerleave', () => {
-          phone.style.transform = 'perspective(900px) rotateY(0deg) rotateX(0deg)';
-        });
-      }
-    }
   </script>
 </Base>
