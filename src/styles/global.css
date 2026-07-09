@@ -44,7 +44,7 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; justify-content: space-between;
   height: 60px;
 }
-.logo { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+.logo { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; white-space: nowrap; }
 .logo span { background: linear-gradient(90deg, var(--brand-1), var(--brand-3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav { display: flex; gap: 4px; }
 .nav a {
@@ -52,7 +52,29 @@ a { color: inherit; text-decoration: none; }
   transition: color 0.15s, background 0.15s;
 }
 .nav a:hover, .nav a[aria-current='true'] { color: var(--text); background: rgba(255,255,255,0.07); }
-@media (max-width: 640px) { .nav a { padding: 7px 8px; font-size: 13px; } }
+
+/* Mobile header: the logo + 6-item nav can't share one 375px row without the
+   logo wrapping and "Astra" getting clipped. Stack them: logo on top, nav as a
+   centered row below that scrolls horizontally if it ever runs out of room. */
+@media (max-width: 640px) {
+  .site-header .inner {
+    flex-direction: column;
+    height: auto;
+    gap: 6px;
+    padding-top: 11px;
+    padding-bottom: 9px;
+  }
+  .nav {
+    width: 100%;
+    justify-content: center;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a { padding: 6px 10px; font-size: 13px; flex: 0 0 auto; }
+}
 
 /* ---------- hero ---------- */
 .hero { padding: 96px 0 72px; text-align: center; position: relative; overflow: hidden; }
@@ -119,6 +141,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- sections ---------- */
 .section { padding: 72px 0; }
+@media (max-width: 640px) { .section { padding: 40px 0; } }
 .section h2 { font-size: clamp(26px, 4vw, 36px); letter-spacing: -0.02em; margin-bottom: 12px; }
 .section .lead { color: var(--text-dim); max-width: 640px; margin-bottom: 40px; }
 
@@ -149,7 +172,12 @@ a { color: inherit; text-decoration: none; }
 /* ---------- app hero ---------- */
 .app-hero { padding: 80px 0 64px; position: relative; overflow: hidden; }
 .app-hero .inner { display: flex; align-items: center; gap: 40px; position: relative; }
-@media (max-width: 760px) { .app-hero .inner { flex-direction: column; text-align: center; } }
+@media (max-width: 760px) { .app-hero .inner { flex-direction: column; text-align: center; gap: 22px; } }
+@media (max-width: 640px) {
+  .app-hero { padding: 40px 0 36px; }
+  .app-hero img.icon { width: 104px; height: 104px; border-radius: 23px; }
+  .app-hero p.sub { margin-bottom: 24px; }
+}
 .app-hero img.icon { width: 120px; height: 120px; border-radius: 27px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
 .app-hero h1 { font-size: clamp(30px, 5vw, 48px); letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 14px; }
 .app-hero .kicker { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; color: color-mix(in srgb, var(--accent) 85%, white); }
