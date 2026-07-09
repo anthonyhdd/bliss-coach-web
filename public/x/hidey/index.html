@@ -30,8 +30,8 @@
   #placeholder h1{font-size:26px;margin:0;letter-spacing:.5px}
   #placeholder p{opacity:.7;margin:0;font-size:14px;max-width:280px;line-height:1.45}
   #placeholder .primary{flex:0 0 auto;width:min(260px,82%);margin-top:6px;}
-  .figLayer{position:absolute;inset:0;}
-  .fig{position:absolute;transform-origin:center center;will-change:transform;cursor:grab;filter:drop-shadow(0 6px 12px rgba(0,0,0,.45));}
+  .figLayer{position:absolute;inset:0;pointer-events:none;}   /* never intercept taps on empty stage / start screen */
+  .fig{position:absolute;transform-origin:center center;will-change:transform;cursor:grab;pointer-events:auto;filter:drop-shadow(0 6px 12px rgba(0,0,0,.45));}
   .fig svg{display:block;width:100%;height:100%;pointer-events:none;}
   .fig.selected{outline:2px dashed var(--accent);outline-offset:6px;border-radius:8px;}
 
@@ -315,7 +315,7 @@ figbar.addEventListener("click", e=>{
 
 /* deselect on empty stage tap (compose) */
 stage.addEventListener("pointerdown", e=>{
-  if(mode==="compose" && e.target===figLayer) select(null);
+  if(mode==="compose" && !e.target.closest(".fig")) select(null);
 });
 
 /* ---------- capture : freeze bg + figures into <canvas> ---------- */
