@@ -35,12 +35,12 @@ const jsonLd = {
 };
 
 const avatars = [
-  { src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 12%' },
-  { src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 16%' },
-  { src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 10%' },
-  { src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 14%' },
-  { src: 'mila.jpg', href: '/mila/', alt: 'Mila — AI dietician', pos: '50% 50%' },
-  { src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 50%' },
+  { slug: 'amelie', src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 12%' },
+  { slug: 'sofia', src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 16%' },
+  { slug: 'alex', src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 10%' },
+  { slug: 'charm', src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 14%' },
+  { slug: 'mila', src: 'mila.jpg', href: '/mila/', alt: 'Mila — AI dietician', pos: '50% 50%' },
+  { slug: 'astra', src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 50%' },
 ];
 
 // Scroll-story manifesto — revealed word by word as you scroll.
@@ -311,6 +311,14 @@ const coaches = [
         transition: transform 0.18s;
       }
       .avatars a:hover img { transform: translateY(-4px); }
+      .dock-chip { position: relative; }
+      .dock-vid {
+        position: absolute; inset: 0; width: 54px; height: 66px;
+        object-fit: cover; border-radius: 16px; display: block;
+        opacity: 0; transition: opacity 0.3s ease, transform 0.18s;
+        pointer-events: none;
+      }
+      .dock-chip:hover .dock-vid { opacity: 1; transform: translateY(-4px); }
       .foot-apps { display: flex; gap: 22px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
       .foot-apps a { color: rgba(255, 255, 255, 0.55); font-size: 13px; text-decoration: none; transition: color 0.15s; }
       .foot-apps a:hover { color: #fff; }
@@ -691,8 +699,11 @@ const coaches = [
         <div class="flare" aria-hidden="true"></div>
         <nav class="avatars" aria-label="Our apps">
           {avatars.map((a) => (
-            <a href={withBase(a.href)} title={a.alt}>
+            <a href={withBase(a.href)} title={a.alt} class="dock-chip">
               <img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="54" height="66" loading="eager" />
+              {hasVideo(a.slug) && (
+                <video class="dock-vid" src={withBase(`/home/video/${a.slug}.mp4`)} muted loop playsinline preload="none" aria-hidden="true" width="54" height="66"></video>
+              )}
             </a>
           ))}
         </nav>
@@ -996,6 +1007,14 @@ const coaches = [
           card.classList.contains('idle-on') ? off() : on();
         }, { passive: true });
       });
+      // hero dock: the 54px chips come alive on hover
+      document.querySelectorAll<HTMLElement>('.dock-chip').forEach((chip) => {
+        const v = chip.querySelector<HTMLVideoElement>('.dock-vid');
+        if (!v) return;
+        chip.addEventListener('pointerenter', () => { v.play().catch(() => {}); });
+        chip.addEventListener('pointerleave', () => { v.pause(); });
+      });
+
       // Chrome pauses offscreen muted videos — nudge the standing loops
       // back to life whenever their card scrolls into view.
       if (!reduceMotion) {

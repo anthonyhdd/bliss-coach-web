@@ -396,7 +396,7 @@ a { color: inherit; text-decoration: none; }
 .phone .screen .sky .sky-crest {
   position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%);
 }
-.phone .screen > img {
+.phone .screen > img, .phone .screen > video {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
 }
 .phone .screen-shade {
