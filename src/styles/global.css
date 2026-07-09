@@ -236,6 +236,7 @@ a { color: inherit; text-decoration: none; }
 .fchip {
   padding: 9px 15px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--text);
   background: rgba(255, 255, 255, 0.06); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  white-space: nowrap;
 }
 @keyframes chip-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 
@@ -248,6 +249,11 @@ a { color: inherit; text-decoration: none; }
 .fart-glyphs { display: flex; justify-content: space-around; padding: 0 12%; }
 .fart-glyphs .fcol { display: flex; flex-direction: column; gap: 16px; font-family: ui-monospace, Menlo, monospace; font-size: 18px; color: color-mix(in srgb, var(--accent) 80%, #fff); }
 @keyframes ffall { from { transform: translateY(-55%); } to { transform: translateY(10%); } }
+
+/* wheel: rotating natal chart */
+.fart-wheel { display: flex; align-items: center; justify-content: center; }
+.fwheel { width: 150px; height: 150px; }
+@keyframes wheel-spin { to { transform: rotate(360deg); } }
 
 /* orbit: moon around sun */
 .fart-orbit { display: flex; align-items: center; justify-content: center; }
@@ -268,6 +274,7 @@ a { color: inherit; text-decoration: none; }
   .fchip { animation: chip-bob 3.4s ease-in-out infinite; }
   .fring .arc { animation: arc-grow 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
   .fart-glyphs .fcol { animation: ffall linear infinite; }
+  .fwheel { animation: wheel-spin 60s linear infinite; }
   .fmoon { animation: orbit-spin 9s linear infinite; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -311,6 +318,12 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; gap: clamp(36px, 6vw, 80px);
 }
 .app-hero2 .pitch { flex: 1 1 auto; min-width: 0; }
+.hero-appicon {
+  width: 64px; height: 64px; border-radius: 15px; display: block;
+  margin-bottom: 18px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
+}
+@media (max-width: 860px) { .hero-appicon { margin-left: auto; margin-right: auto; } }
 .app-hero2 .kicker {
   font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
   margin-bottom: 14px; color: color-mix(in srgb, var(--accent) 85%, white);
@@ -364,6 +377,31 @@ a { color: inherit; text-decoration: none; }
   border-radius: 38px;
   overflow: hidden;
   background: #000;
+}
+.phone .screen .sky {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 110%, rgba(201, 161, 74, 0.25), transparent 60%),
+    radial-gradient(100% 70% at 50% 0%, rgba(49, 46, 129, 0.85), transparent 80%),
+    linear-gradient(#0b0b16, #14122a 55%, #0b0b12);
+}
+.phone .screen .sky::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, rgba(255,255,255,0.9), transparent 60%),
+    radial-gradient(1px 1px at 32% 12%, rgba(255,255,255,0.7), transparent 60%),
+    radial-gradient(1.6px 1.6px at 56% 30%, rgba(255,255,255,0.8), transparent 60%),
+    radial-gradient(1px 1px at 72% 16%, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(1.4px 1.4px at 86% 34%, rgba(255,255,255,0.8), transparent 60%),
+    radial-gradient(1px 1px at 22% 48%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1.2px 1.2px at 66% 52%, rgba(255,255,255,0.65), transparent 60%);
+}
+.phone .screen .sky .wheel {
+  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+  width: 78%; height: auto;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .phone .screen .sky .wheel { animation: wheel-spin 90s linear infinite; }
 }
 .phone .screen > img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;

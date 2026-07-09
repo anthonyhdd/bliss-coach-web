@@ -25,6 +25,10 @@ export interface Showcase {
   /** which /home/ portrait fills the phone screen + focal point */
   screenImg: string;
   screenPos: string;
+  /** 'sky' renders an app-style night sky + natal wheel instead of the portrait */
+  screenVariant?: 'sky';
+  /** the user's line in 'chat' art cards */
+  chatUser?: string;
 }
 
 export const SHOWCASE: Record<string, Showcase> = {
@@ -60,6 +64,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'amelie.webp',
     screenPos: '50% 18%',
+    chatUser: 'Je suis allé… allée au parc ?',
     featureArts: ['replies', 'track', 'chat'],
   },
   charm: {
@@ -79,6 +84,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'coach.png',
     screenPos: '50% 16%',
+    chatUser: 'What do I text back?',
     featureArts: ['chat', 'scan', 'chips'],
   },
   alex: {
@@ -96,6 +102,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'alex.png',
     screenPos: '50% 12%',
+    chatUser: 'I have a final round on Friday.',
     featureArts: ['chat', 'track', 'scan'],
   },
   mila: {
@@ -129,6 +136,8 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'astra.jpg',
     screenPos: '50% 30%',
-    featureArts: ['glyphs', 'orbit', 'chat'],
+    screenVariant: 'sky',
+    chatUser: 'Why does today feel heavy?',
+    featureArts: ['glyphs', 'wheel', 'chat'],
   },
 };
