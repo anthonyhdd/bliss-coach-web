@@ -1,0 +1,1 @@
+Drop coach videos here as {slug}.mp4 (sofia.mp4, amelie.mp4, alex.mp4, charm.mp4, mila.mp4, astra.mp4). Muted vertical loops, ~5-10s, <5MB each recommended. They are picked up automatically at build time.

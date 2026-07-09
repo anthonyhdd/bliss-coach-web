@@ -1,6 +1,11 @@
 ---
+import fs from 'node:fs';
 import { withBase } from '../config/apps';
 import Analytics from '../components/Analytics.astro';
+
+// Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
+// card upgrades from portrait to a muted looping video at the next build.
+const hasVideo = (slug: string) => fs.existsSync(`public/home/video/${slug}.mp4`);
 
 // Pixel-faithful clone of the original Framer landing page (bliss-coach.com).
 // All values below were measured on the live Framer page (computed styles):
@@ -122,7 +127,7 @@ const coaches = [
       }
       .card {
         position: relative;
-        max-width: 1320px;
+        width: 100%;
         margin: 0 auto;
         height: max(800px, calc(100vh - 53px));
         overflow: hidden;
@@ -350,20 +355,8 @@ const coaches = [
         transition: color 0.35s ease;
       }
       .manifesto .w.on { color: #fff; }
-      .manifesto p:last-child .w.on {
-        background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
       @media (prefers-reduced-motion: reduce) {
         .manifesto .w { color: #fff; }
-        .manifesto p:last-child .w {
-          background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
       }
 
       /* --- coach chapters --- */
@@ -444,6 +437,11 @@ const coaches = [
         font-weight: 600;
         letter-spacing: -0.02em;
         margin: 6px 0 6px;
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      }
+      .chapter h3 .app-ic {
+        width: 30px; height: 30px; border-radius: 8px; display: inline-block;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
       }
       .chapter h3 .craft {
         font-family: 'Instrument Serif', Georgia, serif;
@@ -482,6 +480,117 @@ const coaches = [
       }
       .rv.in { opacity: 1; transform: none; }
       @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+
+      /* --- pillars bento --- */
+      .pillars {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 8vh 24px 6vh;
+      }
+      .pillars-head { text-align: center; margin-bottom: clamp(28px, 4vw, 46px); }
+      .pillars-head .kicker {
+        font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.45); margin-bottom: 12px;
+      }
+      .pillars-head h2 {
+        font-size: clamp(26px, 4.4vw, 46px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.08;
+      }
+      .pillars-head h2 em {
+        font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400;
+        padding-right: 0.06em;
+      }
+      .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+      .b7 { grid-column: span 7; } .b5 { grid-column: span 5; }
+      .bcell {
+        border-radius: 24px; overflow: hidden; position: relative;
+        background: #101014; border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex; flex-direction: column;
+      }
+      .bcell .art { position: relative; height: 210px; flex: 0 0 auto; }
+      .bcell .btxt { padding: 4px 26px 24px; }
+      .bcell h3 { font-size: 21px; letter-spacing: -0.02em; margin-bottom: 6px; font-weight: 700; }
+      .bcell p { color: rgba(255, 255, 255, 0.62); font-size: 14.5px; line-height: 1.55; max-width: 46ch; }
+      .bcell p em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; color: #fff; }
+      @media (max-width: 780px) {
+        .b7, .b5 { grid-column: span 12; }
+        .bcell .art { height: 180px; }
+      }
+
+      /* voice: equalizer */
+      .art-voice { background: radial-gradient(90% 120% at 50% 110%, rgba(255, 107, 53, 0.26), transparent 70%); display: flex; align-items: center; justify-content: center; gap: 7px; }
+      .art-voice .bar { width: 9px; border-radius: 99px; background: linear-gradient(180deg, #ffdc83, #ff6b35); height: 34%; }
+      @keyframes eq { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+
+      /* memory: constellation */
+      .art-memory { background: radial-gradient(80% 120% at 80% -10%, rgba(124, 58, 237, 0.28), transparent 70%); }
+      .art-memory svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .art-memory .st { fill: #fff; }
+      @keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+      .art-memory .cl { stroke: rgba(255, 255, 255, 0.28); stroke-width: 1; fill: none; stroke-dasharray: 220; stroke-dashoffset: 220; }
+      @keyframes draw { 40% { stroke-dashoffset: 0; } 85% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+
+      /* craft: coach tiles */
+      .art-craft { display: flex; align-items: center; justify-content: center; background: radial-gradient(90% 130% at 15% -10%, rgba(255, 171, 173, 0.15), transparent 70%); }
+      .art-craft .tiles { display: grid; grid-template-columns: repeat(3, 56px); gap: 11px; }
+      .art-craft .tile {
+        width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); display: block;
+      }
+      .art-craft .tile:nth-child(5) { transform: rotate(-9deg) translateY(-9px); box-shadow: 0 20px 36px rgba(0, 0, 0, 0.7); }
+      @keyframes tile-bob { 0%, 100% { transform: rotate(-9deg) translateY(-9px); } 50% { transform: rotate(-6deg) translateY(-15px); } }
+
+      /* rigor: falling astro glyphs */
+      .art-rigor { background: radial-gradient(80% 130% at 50% -20%, rgba(201, 161, 74, 0.22), transparent 72%); display: flex; justify-content: space-around; padding: 0 8%; overflow: hidden; }
+      .art-rigor .fcol { display: flex; flex-direction: column; gap: 17px; font-family: ui-monospace, Menlo, monospace; font-size: 19px; color: rgba(255, 220, 131, 0.78); }
+      @keyframes fall { from { transform: translateY(-55%); } to { transform: translateY(10%); } }
+
+      /* character: typing chat */
+      .art-character { background: radial-gradient(90% 130% at 85% 110%, rgba(192, 132, 252, 0.22), transparent 70%); display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 26px; }
+      .art-character .cb {
+        align-self: flex-start; max-width: 86%;
+        background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 16px 16px 16px 4px; padding: 9px 15px;
+        font-size: 14px; font-weight: 600;
+      }
+      .art-character .cb.reply {
+        align-self: flex-end; border-radius: 16px 16px 4px 16px;
+        background: linear-gradient(92deg, #c084fc, #ffc1f7); color: #14061f; border: 0;
+      }
+      .art-character .typing { display: inline-flex; gap: 4px; align-items: center; }
+      .art-character .typing i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); }
+      @keyframes blink { 0%, 100% { opacity: 0.25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
+      /* pocket: floating phone */
+      .art-pocket { background: radial-gradient(90% 140% at 50% 120%, rgba(34, 197, 94, 0.2), transparent 72%); display: flex; align-items: center; justify-content: center; }
+      .minphone {
+        width: 82px; height: 166px; border-radius: 22px;
+        background: linear-gradient(160deg, #191920, #0d0d11);
+        border: 1px solid rgba(255, 255, 255, 0.2); position: relative;
+      }
+      .minphone::before { content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 27px; height: 8px; border-radius: 99px; background: #000; }
+      .minphone::after {
+        content: ''; position: absolute; left: 20%; right: 20%; bottom: -24px; height: 11px; border-radius: 50%;
+        background: rgba(0, 0, 0, 0.65); filter: blur(6px);
+      }
+      .minphone .dot { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #ffdc83, #ffabad); box-shadow: 0 0 16px rgba(255, 220, 131, 0.5); }
+      @keyframes hover-y { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-13px) rotate(-2deg); } }
+      @keyframes shadow-b { 0%, 100% { transform: scaleX(1); opacity: 0.65; } 50% { transform: scaleX(0.78); opacity: 0.4; } }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .art-voice .bar { animation: eq 1.15s ease-in-out infinite; }
+        .art-memory .st { animation: twinkle 3.2s ease-in-out infinite; }
+        .art-memory .cl { animation: draw 6s ease forwards infinite; }
+        .art-craft .tile:nth-child(5) { animation: tile-bob 4.5s ease-in-out infinite; }
+        .art-rigor .fcol { animation: fall linear infinite; }
+        .art-character .typing i { animation: blink 1.2s ease-in-out infinite; }
+        .art-character .typing i:nth-child(2) { animation-delay: 0.18s; }
+        .art-character .typing i:nth-child(3) { animation-delay: 0.36s; }
+        .minphone { animation: hover-y 5s ease-in-out infinite; }
+        .minphone::after { animation: shadow-b 5s ease-in-out infinite; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .art-memory .cl { stroke-dashoffset: 0; }
+      }
 
       /* --- proof band --- */
       .proof {
@@ -568,11 +677,15 @@ const coaches = [
         <div class="coaches-kicker rv">Meet the coaches</div>
         {coaches.map((c) => (
           <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2}`}>
-            <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
+            {hasVideo(c.slug) ? (
+              <video class="portrait" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
+            ) : (
+              <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
+            )}
             <div class="txt">
               <span class="bubble">{c.line}</span>
               {c.reply && <><br /><span class="bubble-reply">{c.reply}</span></>}
-              <h3>{c.name} <span class="craft">{c.craft}</span></h3>
+              <h3><img class="app-ic" src={withBase(`/icons/${c.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" /> {c.name} <span class="craft">{c.craft}</span></h3>
               <p class="blurb">{c.blurb}</p>
               <span class="go">Meet {c.name} →</span>
             </div>
@@ -580,10 +693,108 @@ const coaches = [
         ))}
       </section>
 
+      <!-- the pillars: what makes every coach great -->
+      <section class="pillars" aria-label="The pillars of every coach">
+        <div class="pillars-head rv">
+          <div class="kicker">Why they work</div>
+          <h2>The pillars of <em>every coach</em></h2>
+        </div>
+        <div class="bento">
+
+          <div class="bcell b7 rv">
+            <div class="art art-voice" aria-hidden="true">
+              <div class="bar" style="animation-delay:0s"></div><div class="bar" style="animation-delay:.12s"></div>
+              <div class="bar" style="animation-delay:.24s"></div><div class="bar" style="animation-delay:.06s"></div>
+              <div class="bar" style="animation-delay:.3s"></div><div class="bar" style="animation-delay:.18s"></div>
+              <div class="bar" style="animation-delay:.02s"></div><div class="bar" style="animation-delay:.26s"></div>
+              <div class="bar" style="animation-delay:.1s"></div><div class="bar" style="animation-delay:.22s"></div>
+              <div class="bar" style="animation-delay:.34s"></div><div class="bar" style="animation-delay:.16s"></div>
+            </div>
+            <div class="btxt">
+              <h3>Voice</h3>
+              <p>You talk. She talks back. Every session is a <em>real conversation</em> — out loud, in real time, no typing required.</p>
+            </div>
+          </div>
+
+          <div class="bcell b5 rv">
+            <div class="art art-memory" aria-hidden="true">
+              <svg viewBox="0 0 400 210">
+                <path class="cl" d="M60 160 L140 70 L230 115 L330 45" />
+                <circle class="st" cx="60" cy="160" r="3" style="animation-delay:0s"/>
+                <circle class="st" cx="140" cy="70" r="4" style="animation-delay:.6s"/>
+                <circle class="st" cx="230" cy="115" r="3" style="animation-delay:1.2s"/>
+                <circle class="st" cx="330" cy="45" r="4" style="animation-delay:1.8s"/>
+                <circle class="st" cx="90" cy="50" r="2" style="animation-delay:.3s"/>
+                <circle class="st" cx="300" cy="150" r="2" style="animation-delay:.9s"/>
+                <circle class="st" cx="360" cy="105" r="2" style="animation-delay:1.5s"/>
+              </svg>
+            </div>
+            <div class="btxt">
+              <h3>Memory</h3>
+              <p>Your coach remembers — goals, slip-ups, wins. <em>Session 12 builds on session 11.</em></p>
+            </div>
+          </div>
+
+          <div class="bcell b5 rv">
+            <div class="art art-craft" aria-hidden="true">
+              <div class="tiles">
+                <img class="tile" src={withBase('/icons/sofia.jpg')} alt="" width="56" height="56" loading="lazy" />
+                <img class="tile" src={withBase('/icons/amelie.jpg')} alt="" width="56" height="56" loading="lazy" />
+                <img class="tile" src={withBase('/icons/alex.jpg')} alt="" width="56" height="56" loading="lazy" />
+                <img class="tile" src={withBase('/icons/charm.jpg')} alt="" width="56" height="56" loading="lazy" />
+                <img class="tile" src={withBase('/icons/mila.jpg')} alt="" width="56" height="56" loading="lazy" />
+                <img class="tile" src={withBase('/icons/astra.jpg')} alt="" width="56" height="56" loading="lazy" />
+              </div>
+            </div>
+            <div class="btxt">
+              <h3>Craft</h3>
+              <p>One coach, one craft. Sofia does Spanish. Mila does meals. <em>Nobody does everything.</em></p>
+            </div>
+          </div>
+
+          <div class="bcell b7 rv">
+            <div class="art art-rigor" aria-hidden="true">
+              <div class="fcol" style="animation-duration:14s"><span>♄</span><span>3</span><span>☽</span><span>7</span><span>♀</span><span>1</span><span>☉</span><span>9</span><span>♄</span><span>3</span><span>☽</span><span>7</span></div>
+              <div class="fcol" style="animation-duration:22s"><span>2</span><span>♆</span><span>8</span><span>☿</span><span>5</span><span>♃</span><span>0</span><span>♂</span><span>2</span><span>♆</span><span>8</span><span>☿</span></div>
+              <div class="fcol" style="animation-duration:11s"><span>☉</span><span>6</span><span>♓</span><span>4</span><span>♌</span><span>8</span><span>☽</span><span>2</span><span>☉</span><span>6</span><span>♓</span><span>4</span></div>
+              <div class="fcol" style="animation-duration:18s"><span>1</span><span>♀</span><span>9</span><span>♎</span><span>3</span><span>☿</span><span>7</span><span>♑</span><span>1</span><span>♀</span><span>9</span><span>♎</span></div>
+              <div class="fcol" style="animation-duration:26s"><span>♃</span><span>5</span><span>☽</span><span>0</span><span>♒</span><span>6</span><span>♄</span><span>4</span><span>♃</span><span>5</span><span>☽</span><span>0</span></div>
+            </div>
+            <div class="btxt">
+              <h3>Rigor</h3>
+              <p>Computed, not recycled. Plans, corrections and horoscopes are built from <em>your data, fresh every day.</em></p>
+            </div>
+          </div>
+
+          <div class="bcell b7 rv">
+            <div class="art art-character">
+              <span class="cb">Okay — tell me about the interview. What's the company?</span>
+              <span class="cb reply">A fintech startup, final round 😬</span>
+              <span class="cb"><span class="typing"><i></i><i></i><i></i></span></span>
+            </div>
+            <div class="btxt">
+              <h3>Character</h3>
+              <p>A coach is a person, not a chatbot. Ours have <em>faces, moods and opinions</em> — and they use them.</p>
+            </div>
+          </div>
+
+          <div class="bcell b5 rv">
+            <div class="art art-pocket" aria-hidden="true">
+              <div class="minphone"><div class="dot"></div></div>
+            </div>
+            <div class="btxt">
+              <h3>Pocket</h3>
+              <p>Coaching used to cost $200 an hour. Now it lives in your pocket — <em>ten minutes a day,</em> wherever you are.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- proof -->
       <section class="proof" aria-label="Get the apps">
         <div class="laurel rv">Live on the App Store</div>
-        <h2 class="rv">50,000+ people already <em>talking to their coach</em></h2>
+        <h2 class="rv">Six coaches, already <em>taking conversations</em></h2>
         <p class="rv">Every conversation is voice-first, personal, and gets better the more you talk.</p>
         <div class="cta-wrap rv" style="display:inline-block">
           <span class="cta-beam" aria-hidden="true"></span>
