@@ -213,6 +213,13 @@ const jsonLd = {
                 {art === 'scan' && (
                   <div class="fscan"><div class="fdoc"></div><div class="fbeam"></div></div>
                 )}
+                {art === 'fix' && (
+                  <div class="ffix">
+                    <i class="l1"></i><i class="l2"></i><i class="l3"></i>
+                    <span class="fx-under"></span>
+                    <svg class="fx-check" viewBox="0 0 24 24"><path d="M5 13l4 4 9-10" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                )}
                 {art === 'chips' && (
                   <div class="fchips">{show.chips?.map((c, j) => <span class="fchip" style={`animation-delay:${j * 0.5}s`}>{c}</span>)}</div>
                 )}
