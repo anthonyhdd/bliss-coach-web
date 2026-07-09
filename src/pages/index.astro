@@ -367,7 +367,14 @@ const coaches = [
         font-weight: 400;
         letter-spacing: 0;
         font-size: clamp(28px, 4vw, 50px);
+        /* ONE gradient across the whole line — painted on the paragraph,
+           clipped by all its words at once; words reveal it by turning
+           transparent, so the ramp never restarts per word */
+        background: linear-gradient(92deg, #ffdc83 0%, #ffabad 50%, #ffc1f7 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
       }
+      .manifesto p:last-child .w.on { color: transparent; }
       .manifesto .w {
         color: rgba(255, 255, 255, 0.16);
         transition: color 0.35s ease;
@@ -375,6 +382,7 @@ const coaches = [
       .manifesto .w.on { color: #fff; }
       @media (prefers-reduced-motion: reduce) {
         .manifesto .w { color: #fff; }
+        .manifesto p:last-child .w { color: transparent; }
       }
 
       /* --- coach chapters --- */
