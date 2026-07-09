@@ -14,8 +14,10 @@ export interface Showcase {
   replies?: string[];
   /** tool chips under the line (utility apps) */
   chips?: string[];
-  /** headline stat, straight from the store listing */
+  /** headline stat (omit numbers we can't substantiate) */
   stat?: { value: string; label: string };
+  /** animated art type for each feature card, aligned with app.features */
+  featureArts: [string, string, string];
   laurels?: string[];
   /** full-bleed tinted strip line */
   craftLine: string;
@@ -33,7 +35,6 @@ export const SHOWCASE: Record<string, Showcase> = {
       'Real conversations with Sofia, your AI tutor from Mexico. She listens, corrects you instantly, and cheers you on. No drills, no flashcards — just talking.',
     screenLine: '¿Vamos al cine después?',
     replies: ['¡Buena idea, vamos!', 'Hoy no puedo, lo siento'],
-    stat: { value: '50,000+', label: 'learners · 4.9★' },
     laurels: ['Apps We Love', 'Best AI Teacher'],
     craftLine: 'Stop translating in your head. Start talking.',
     quotes: [
@@ -42,6 +43,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'sofia.png',
     screenPos: '50% 20%',
+    featureArts: ['wave', 'replies', 'track'],
   },
   amelie: {
     heroTitle: 'Learn French with a Parisian,',
@@ -58,6 +60,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'amelie.webp',
     screenPos: '50% 18%',
+    featureArts: ['replies', 'track', 'chat'],
   },
   charm: {
     heroTitle: 'Never stare at a blank text',
@@ -66,7 +69,6 @@ export const SHOWCASE: Record<string, Showcase> = {
       'Paste the convo. Charm reads the subtext and writes the reply — openers, comebacks, date prep. Works with Hinge, Tinder, Bumble, whatever you’re on.',
     screenLine: 'Be more gentle and calm. Don’t stress her out…',
     chips: ['Profile Analyzer', 'Message decoder', 'Reply generator'],
-    stat: { value: '50K', label: 'people who stopped guessing' },
     laurels: ['Apps We Love', 'Best AI Avatar'],
     craftLine: 'Honest coaching, not generic pickup lines.',
     quotes: [
@@ -77,6 +79,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'coach.png',
     screenPos: '50% 16%',
+    featureArts: ['chat', 'scan', 'chips'],
   },
   alex: {
     heroTitle: 'Get hired.',
@@ -85,7 +88,6 @@ export const SHOWCASE: Record<string, Showcase> = {
       'Paste the job link — Alex builds your prep around the real role. Realistic mock interviews, STAR stories that land, salary talk without the sweat.',
     screenLine: 'Let’s talk about your experience.',
     chips: ['Mock Interview', 'STAR prep', 'Tough questions'],
-    stat: { value: '20,000+', label: 'offers received' },
     laurels: ['Apps We Love', 'Best AI Avatar'],
     craftLine: 'Scripts for every scenario, practice in real time.',
     quotes: [
@@ -94,6 +96,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'alex.png',
     screenPos: '50% 12%',
+    featureArts: ['chat', 'track', 'scan'],
   },
   mila: {
     heroTitle: 'Lose the weight.',
@@ -110,6 +113,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'mila.jpg',
     screenPos: '50% 40%',
+    featureArts: ['scan', 'chips', 'ring'],
   },
   astra: {
     heroTitle: 'Your chart,',
@@ -125,5 +129,6 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'astra.jpg',
     screenPos: '50% 30%',
+    featureArts: ['glyphs', 'orbit', 'chat'],
   },
 };
