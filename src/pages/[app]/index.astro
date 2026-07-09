@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import AppStoreButton from '../../components/AppStoreButton.astro';
 import { APPS, withBase } from '../../config/apps';
+import { SHOWCASE } from '../../config/showcase';
 import { PSEO_SECTIONS } from '../../config/pseo';
 
 export function getStaticPaths() {
@@ -11,6 +12,7 @@ export function getStaticPaths() {
 
 const { app: slug } = Astro.params;
 const app = APPS[slug!];
+const show = SHOWCASE[slug!];
 
 const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft)).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
@@ -44,21 +46,57 @@ const jsonLd = {
 >
   <div style={brandStyle}>
     <div class="brand-strip" aria-hidden="true"></div>
-    <section class="app-hero">
-      <div class="glow" aria-hidden="true" style="position:absolute;inset:-30% -10% auto;height:120%;pointer-events:none;background:radial-gradient(560px 300px at 25% 25%, color-mix(in srgb, var(--brand-1) 20%, transparent), transparent 70%), radial-gradient(560px 300px at 75% 15%, color-mix(in srgb, var(--brand-3) 18%, transparent), transparent 70%);"></div>
-      <div class="container inner">
-        <img class="icon" src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="120" height="120" />
-        <div>
+
+    <!-- hero: pitch + the product itself in a phone -->
+    <section class="app-hero2">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="container inner2">
+        <div class="pitch">
           <div class="kicker">{app.category}</div>
-          <h1>{app.tagline}</h1>
-          <p class="sub">{app.subtitle}</p>
-          {app.comingSoon ? (
-            <span class="coming-soon" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid color-mix(in srgb, var(--accent) 55%, transparent);border-radius:999px;font-size:14px;font-weight:600;color:var(--accent);letter-spacing:0.02em;">Coming soon to the App Store</span>
-          ) : (
-            <AppStoreButton href={app.appStoreUrl} />
+          <h1>{show.heroTitle} <em class="serif-em">{show.heroEm}</em></h1>
+          <p class="sub">{show.heroSub}</p>
+          <div class="hero-cta">
+            {app.comingSoon ? (
+              <span class="coming-soon">Coming soon to the App Store</span>
+            ) : (
+              <AppStoreButton href={app.appStoreUrl} />
+            )}
+          </div>
+          {(show.stat || show.laurels) && (
+            <div class="cred">
+              {show.stat && (
+                <span class="stat"><strong>{show.stat.value}</strong> {show.stat.label}</span>
+              )}
+              {show.laurels?.map((l) => <span class="laurel-chip">{l}</span>)}
+            </div>
           )}
         </div>
+
+        <div class="phone-wrap">
+          <div class="phone" role="img" aria-label={`${app.name} app — “${show.screenLine}”`}>
+            <div class="screen">
+              <img src={withBase(`/home/${show.screenImg}`)} alt="" style={`object-position:${show.screenPos}`} width="290" height="620" loading="eager" />
+              <div class="screen-shade" aria-hidden="true"></div>
+              <div class="island" aria-hidden="true"></div>
+              <p class="say">{show.screenLine}</p>
+              <div class="screen-foot">
+                {show.replies && show.replies.map((r) => <span class="reply">{r}</span>)}
+                {show.chips && <div class="tool-chips">{show.chips.map((c) => <span class="tool-chip">{c}</span>)}</div>}
+                <span class="mic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
+
+    <!-- signature line -->
+    <section class="craft-strip">
+      <p class="serif-line">{show.craftLine}</p>
     </section>
 
     <section class="section container">
@@ -71,6 +109,19 @@ const jsonLd = {
         ))}
       </div>
     </section>
+
+    {show.quotes && show.quotes.length > 0 && (
+      <section class="section container quotes">
+        <div class="quote-grid" data-count={show.quotes.length}>
+          {show.quotes.map((q) => (
+            <figure class="quote feature">
+              <blockquote>“{q.text}”</blockquote>
+              <figcaption>— {q.name}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
 
     {pseoCount > 0 && (
       <section class="section container">
@@ -102,5 +153,21 @@ const jsonLd = {
         )}
       </section>
     )}
+
+    <!-- final invitation -->
+    <section class="cta-band">
+      <div class="container inner-cta">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="72" height="72" loading="lazy" />
+        <div class="txt">
+          <h2>Meet {app.name}.</h2>
+          <p>{app.tagline}.</p>
+        </div>
+        {app.comingSoon ? (
+          <span class="coming-soon">Coming soon to the App Store</span>
+        ) : (
+          <AppStoreButton href={app.appStoreUrl} />
+        )}
+      </div>
+    </section>
   </div>
 </Base>
