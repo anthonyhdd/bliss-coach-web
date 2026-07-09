@@ -397,6 +397,7 @@ a { color: inherit; text-decoration: none; }
   padding: 12px 14px; rotate: -8deg;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
 }
+.hprop-paper .paper-art { display: block; width: 100%; height: auto; margin-bottom: 8px; }
 .hprop-paper b { display: block; font-size: 10px; letter-spacing: 0.14em; border-bottom: 1px dashed #b9b4a4; padding-bottom: 5px; margin-bottom: 6px; }
 .hprop-paper span { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 14.5px; line-height: 1.35; display: block; }
 .hprop-sticker {
