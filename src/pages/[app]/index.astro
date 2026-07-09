@@ -181,6 +181,7 @@ const jsonLd = {
         <div class="quote-grid" data-count={show.quotes.length}>
           {show.quotes.map((q) => (
             <figure class="quote feature">
+              <span class="q-avatar">{q.name[0]}</span>
               <blockquote>“{q.text}”</blockquote>
               <figcaption>— {q.name}</figcaption>
             </figure>
