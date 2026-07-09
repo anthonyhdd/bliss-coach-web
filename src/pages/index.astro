@@ -36,6 +36,54 @@ const avatars = [
   { src: 'mila.jpg', href: '/mila/', alt: 'Mila — AI dietician', pos: '50% 50%' },
   { src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 50%' },
 ];
+
+// Scroll-story manifesto — revealed word by word as you scroll.
+const manifesto = [
+  'A great coach changes everything.',
+  'Most people never get one — coaching was a luxury. $200 an hour, if you knew the right people.',
+  'So we build coaches that live in your pocket. They talk with you, listen to you, and remember you.',
+  'One coach, one craft, done right.',
+];
+
+// Six chapters — one per coach, with a real line from each app.
+const coaches = [
+  {
+    slug: 'sofia', name: 'Sofia', craft: 'teaches Spanish', img: 'sofia.png', pos: '50% 16%',
+    line: '¿Vamos al cine después?', reply: '¡Buena idea, vamos!',
+    blurb: 'Real conversations, instant corrections, zero drills. Fluent 10 minutes a day.',
+    c1: '#FF2D2D', c2: '#FF4D9E',
+  },
+  {
+    slug: 'amelie', name: 'Amélie', craft: 'teaches French', img: 'amelie.webp', pos: '50% 12%',
+    line: 'Ça vous dit un ciné ce soir ?', reply: 'Oui, on va voir quoi ?',
+    blurb: 'Real Parisian French, corrected as you go. Finally fit in anywhere.',
+    c1: '#6D28D9', c2: '#DB2777',
+  },
+  {
+    slug: 'alex', name: 'Alex', craft: 'lands your next job', img: 'alex.png', pos: '50% 10%',
+    line: "Let's talk about your experience.", reply: null,
+    blurb: 'Mock interviews built around the real job posting. Walk in prepared.',
+    c1: '#60A5FA', c2: '#C084FC',
+  },
+  {
+    slug: 'charm', name: 'Charm', craft: 'fixes your texting game', img: 'coach.png', pos: '50% 14%',
+    line: 'Be more gentle and calm. Don’t stress her out…', reply: null,
+    blurb: 'Paste the convo. Charm reads the subtext and writes the reply.',
+    c1: '#C9A14A', c2: '#8a6a1f',
+  },
+  {
+    slug: 'mila', name: 'Mila', craft: 'plans your plate', img: 'mila.jpg', pos: '50% 50%',
+    line: 'One pizza 🍕 isn’t a setback. It’s Tuesday.', reply: null,
+    blurb: 'Snap your meal, get answers. No counting, no guilt — just progress.',
+    c1: '#16A34A', c2: '#14B8A6',
+  },
+  {
+    slug: 'astra', name: 'Astra', craft: 'reads your sky', img: 'astra.jpg', pos: '50% 50%',
+    line: 'Sun in Leo, moon in Pisces — no wonder today felt big.', reply: null,
+    blurb: 'Your natal chart, decoded in plain language. Daily guidance from your own sky.',
+    c1: '#6366F1', c2: '#C9A14A',
+  },
+];
 ---
 
 <!doctype html>
@@ -264,6 +312,209 @@ const avatars = [
         .cta-wrap { margin-top: 44px; }
         .horizon { margin-top: 60px; }
       }
+
+      /* ============ the story below the hero ============ */
+
+      /* backdrop hue shifts as chapters scroll by */
+      .story {
+        position: relative;
+        background: #0a0a0a;
+        transition: background 1.2s ease;
+      }
+      .story.phase-manifesto { background: #120d1e; }
+      .story.phase-coaches { background: #0a0a0a; }
+
+      /* --- manifesto: words fill in as you scroll --- */
+      .manifesto {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 20vh 24px 18vh;
+        text-align: center;
+      }
+      .manifesto p {
+        font-size: clamp(24px, 3.4vw, 42px);
+        line-height: 1.35;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin-bottom: clamp(28px, 4vw, 48px);
+      }
+      .manifesto p:last-child {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: 0;
+        font-size: clamp(28px, 4vw, 50px);
+      }
+      .manifesto .w {
+        color: rgba(255, 255, 255, 0.16);
+        transition: color 0.35s ease;
+      }
+      .manifesto .w.on { color: #fff; }
+      .manifesto p:last-child .w.on {
+        background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .manifesto .w { color: #fff; }
+        .manifesto p:last-child .w {
+          background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+      }
+
+      /* --- coach chapters --- */
+      .coaches {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 4vh 24px 10vh;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(20px, 3vw, 32px);
+      }
+      .coaches-kicker {
+        text-align: center;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.45);
+        margin-bottom: clamp(24px, 4vw, 44px);
+      }
+      .chapter {
+        --c1: #fff; --c2: #fff;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: clamp(20px, 4vw, 44px);
+        padding: clamp(22px, 3.4vw, 40px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          radial-gradient(120% 160% at 12% 0%, color-mix(in srgb, var(--c1) 16%, transparent), transparent 55%),
+          radial-gradient(120% 160% at 95% 110%, color-mix(in srgb, var(--c2) 12%, transparent), transparent 55%),
+          #101014;
+        overflow: hidden;
+        text-decoration: none;
+        color: #fff;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+      .chapter:hover {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--c2) 45%, rgba(255,255,255,0.08));
+        box-shadow: 0 24px 70px color-mix(in srgb, var(--c1) 22%, transparent);
+      }
+      .chapter .portrait {
+        flex: 0 0 auto;
+        width: clamp(96px, 14vw, 148px);
+        height: clamp(118px, 17vw, 180px);
+        border-radius: 22px;
+        object-fit: cover;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
+      }
+      .chapter .txt { min-width: 0; }
+      .chapter .bubble {
+        display: inline-block;
+        max-width: 100%;
+        background: rgba(255, 255, 255, 0.09);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(6px);
+        border-radius: 16px 16px 16px 4px;
+        padding: 10px 16px;
+        font-size: clamp(14px, 1.7vw, 16.5px);
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+      .chapter .bubble-reply {
+        display: inline-block;
+        border-radius: 16px 16px 4px 16px;
+        padding: 8px 14px;
+        font-size: clamp(13px, 1.5vw, 14.5px);
+        font-weight: 600;
+        color: #0a0a0a;
+        background: linear-gradient(92deg, color-mix(in srgb, var(--c1) 80%, #fff), color-mix(in srgb, var(--c2) 80%, #fff));
+        margin: 0 0 14px 22px;
+      }
+      .chapter h3 {
+        font-size: clamp(20px, 2.6vw, 28px);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 6px 0 6px;
+      }
+      .chapter h3 .craft {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        background: linear-gradient(92deg, color-mix(in srgb, var(--c1) 85%, #fff), color-mix(in srgb, var(--c2) 85%, #fff));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        padding-right: 0.08em;
+      }
+      .chapter .blurb {
+        color: rgba(255, 255, 255, 0.62);
+        font-size: clamp(14px, 1.6vw, 15.5px);
+        line-height: 1.55;
+        max-width: 52ch;
+      }
+      .chapter .go {
+        margin-top: 10px;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 600;
+        color: color-mix(in srgb, var(--c2) 70%, #fff);
+      }
+      @media (max-width: 640px) {
+        .chapter { flex-direction: row; align-items: flex-start; gap: 16px; }
+        .chapter .portrait { width: 86px; height: 106px; border-radius: 18px; }
+        .chapter .bubble-reply { margin-left: 10px; }
+      }
+
+      /* chapters float up on reveal */
+      .rv {
+        opacity: 0;
+        transform: translateY(26px);
+        transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .rv.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+
+      /* --- proof band --- */
+      .proof {
+        text-align: center;
+        padding: 6vh 24px 14vh;
+        max-width: 760px;
+        margin: 0 auto;
+      }
+      .proof .laurel {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 18px;
+      }
+      .proof h2 {
+        font-size: clamp(26px, 4vw, 44px);
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        margin-bottom: 14px;
+      }
+      .proof h2 em {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-weight: 400;
+        background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        padding-right: 0.06em;
+      }
+      .proof p { color: rgba(255, 255, 255, 0.6); font-size: 16px; margin-bottom: 34px; }
     </style>
   </head>
   <body>
@@ -298,6 +549,47 @@ const avatars = [
           ))}
         </nav>
       </div>
+    </div>
+
+    <div class="story" id="story">
+      <!-- manifesto: fills in word by word as you scroll -->
+      <section class="manifesto" id="manifesto" aria-label="Our manifesto">
+        {manifesto.map((sentence) => (
+          <p>
+            {sentence.split(' ').map((word) => (
+              <><span class="w">{word}</span>{' '}</>
+            ))}
+          </p>
+        ))}
+      </section>
+
+      <!-- six coaches, six chapters -->
+      <section class="coaches" id="coaches" aria-label="Meet the coaches">
+        <div class="coaches-kicker rv">Meet the coaches</div>
+        {coaches.map((c) => (
+          <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2}`}>
+            <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
+            <div class="txt">
+              <span class="bubble">{c.line}</span>
+              {c.reply && <><br /><span class="bubble-reply">{c.reply}</span></>}
+              <h3>{c.name} <span class="craft">{c.craft}</span></h3>
+              <p class="blurb">{c.blurb}</p>
+              <span class="go">Meet {c.name} →</span>
+            </div>
+          </a>
+        ))}
+      </section>
+
+      <!-- proof -->
+      <section class="proof" aria-label="Get the apps">
+        <div class="laurel rv">Live on the App Store</div>
+        <h2 class="rv">50,000+ people already <em>talking to their coach</em></h2>
+        <p class="rv">Every conversation is voice-first, personal, and gets better the more you talk.</p>
+        <div class="cta-wrap rv" style="display:inline-block">
+          <span class="cta-beam" aria-hidden="true"></span>
+          <a class="cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
+        </div>
+      </section>
     </div>
 
     <footer>
@@ -356,6 +648,49 @@ const avatars = [
       seed();
       draw();
       window.addEventListener('resize', seed);
+
+      // ---- the story ----
+      if (!reduceMotion) {
+        // words fill in, scroll-linked (and reversible), like reading aloud
+        const words = Array.from(document.querySelectorAll('#manifesto .w'));
+        const manifesto = document.getElementById('manifesto')!;
+        let ticking = false;
+        function paintWords() {
+          ticking = false;
+          const r = manifesto.getBoundingClientRect();
+          const vh = window.innerHeight;
+          // progress: 0 when section enters, 1 when its bottom nears the top third
+          const total = r.height - vh * 0.25;
+          const gone = Math.min(Math.max(vh * 0.75 - r.top, 0), total);
+          const p = total > 0 ? gone / total : 1;
+          const n = Math.round(p * words.length);
+          words.forEach((w, i) => w.classList.toggle('on', i < n));
+        }
+        window.addEventListener('scroll', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(paintWords); }
+        }, { passive: true });
+        paintWords();
+
+        // chapters & proof float up
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+        // backdrop hue shifts with the chapter you're in
+        const story = document.getElementById('story')!;
+        const phases = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            story.classList.toggle('phase-manifesto', e.target.id === 'manifesto');
+            story.classList.toggle('phase-coaches', e.target.id !== 'manifesto');
+          }
+        }, { threshold: 0.25 });
+        phases.observe(manifesto);
+        phases.observe(document.getElementById('coaches')!);
+      } else {
+        document.querySelectorAll('#manifesto .w').forEach((w) => w.classList.add('on'));
+      }
     </script>
   </body>
 </html>
