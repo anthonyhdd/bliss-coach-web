@@ -242,8 +242,13 @@ const avatars = [
         color: rgba(255, 255, 255, 0.45);
       }
       @media (max-width: 640px) {
+        .content { padding: 0 20px; }
         .logo-mark { margin-top: 56px; }
+        /* scale the headline with the viewport so it always wraps cleanly
+           inside the screen instead of being clipped at the 38px floor */
+        h1 { font-size: clamp(26px, 8vw, 40px); overflow-wrap: break-word; }
         .sub { font-size: 16px; line-height: 24px; }
+        .cta-wrap { margin-top: 44px; }
         .horizon { margin-top: 60px; }
       }
     </style>
