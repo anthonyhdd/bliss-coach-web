@@ -29,6 +29,9 @@ export interface Showcase {
   screenVariant?: 'sky';
   /** the user's line in 'chat' art cards */
   chatUser?: string;
+  /** floating hero props — a paper card + a sticker, mobilefirst-style */
+  paper: { title: string; line: string };
+  sticker: string;
 }
 
 export const SHOWCASE: Record<string, Showcase> = {
@@ -48,6 +51,8 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenImg: 'sofia.png',
     screenPos: '50% 20%',
     featureArts: ['wave', 'replies', 'track'],
+    paper: { title: 'CINE ★ ADMIT ONE', line: 'Sala 3 · Sábado, 21:30' },
+    sticker: 'NO DRILLS',
   },
   amelie: {
     heroTitle: 'Learn French with a Parisian,',
@@ -66,6 +71,8 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenPos: '50% 18%',
     chatUser: 'Je suis allé… allée au parc ?',
     featureArts: ['replies', 'track', 'chat'],
+    paper: { title: 'LEÇON DU JOUR ✓', line: 'Basic vocabulary → real conversations' },
+    sticker: 'OH LÀ LÀ',
   },
   charm: {
     heroTitle: 'Never stare at a blank text',
@@ -86,6 +93,8 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenPos: '50% 16%',
     chatUser: 'What do I text back?',
     featureArts: ['chat', 'scan', 'chips'],
+    paper: { title: "IT'S A MATCH 💘", line: "Now don't blow it." },
+    sticker: 'STOP GUESSING',
   },
   alex: {
     heroTitle: 'Get hired.',
@@ -104,6 +113,8 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenPos: '50% 12%',
     chatUser: 'I have a final round on Friday.',
     featureArts: ['chat', 'track', 'scan'],
+    paper: { title: 'OFFER LETTER', line: 'Senior role — signed ✓' },
+    sticker: 'STAR METHOD',
   },
   mila: {
     heroTitle: 'Lose the weight.',
@@ -121,6 +132,8 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenImg: 'mila.jpg',
     screenPos: '50% 40%',
     featureArts: ['scan', 'chips', 'ring'],
+    paper: { title: 'EDAMAME \U0001fadb', line: '120 kcal · 11g protein · zero guilt' },
+    sticker: 'NO LOGGING',
   },
   astra: {
     heroTitle: 'Your chart,',
@@ -139,5 +152,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenVariant: 'sky',
     chatUser: 'Why does today feel heavy?',
     featureArts: ['glyphs', 'crest', 'chat'],
+    paper: { title: 'THE MOON', line: 'New moon in Pisces — big feelings ahead.' },
+    sticker: 'MERCURY-PROOF',
   },
 };

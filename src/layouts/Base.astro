@@ -61,7 +61,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <main>
         <slot />
       </main>
-      <Footer />
+      <Footer solo={soloHeader ? { name: soloHeader.name } : undefined} />
     </div>
     <script>
       // Progressive scroll-reveal: elements start visible for no-JS / reduced
