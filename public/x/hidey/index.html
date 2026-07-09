@@ -218,17 +218,37 @@ function showHint(t, ms=2200){ hint.textContent=t; hint.style.opacity=1; clearTi
 function haptic(){ if(navigator.vibrate) navigator.vibrate(8); }
 
 /* ---------- camera ---------- */
+function camFail(msg){ showHint(msg, 0); console.warn("[HIDEY cam]", msg); }
 async function startCamera(){
-  try{
-    if(stream) stream.getTracks().forEach(t=>t.stop());
-    stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:facing }, width:{ideal:1920}, height:{ideal:1080} }, audio:false });
-    cam.srcObject = stream; await cam.play();
-    bgKind = "cam"; photo.style.display="none"; cam.style.display="block"; placeholder.style.display="none";
-    showHint("➕ Ajoute un bonhomme et cache-le");
-  }catch(e){
-    showHint("Caméra indisponible — choisis une photo 🖼️", 3500);
-    console.warn("camera error", e);
+  // secure-context / support checks (in-app browsers often lack these)
+  if(!window.isSecureContext){ camFail("Ouvre le lien en HTTPS (barre Safari) pour activer la caméra."); return; }
+  if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
+    camFail("Caméra bloquée par ce navigateur. Ouvre le lien dans Safari (pas dans une app), ou choisis une photo 🖼️."); return;
   }
+  showHint("Ouverture de la caméra…", 0);
+  const tries = [
+    { video:{ facingMode:{ ideal:facing } }, audio:false },  // preferred side
+    { video:{ facingMode:facing }, audio:false },
+    { video:true, audio:false }                              // any camera
+  ];
+  let lastErr;
+  for(const constraints of tries){
+    try{
+      if(stream) stream.getTracks().forEach(t=>t.stop());
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      cam.srcObject = stream;
+      cam.style.display="block"; photo.style.display="none"; placeholder.style.display="none";
+      try{ await cam.play(); }catch(_){}
+      bgKind = "cam";
+      showHint("➕ Ajoute un bonhomme et cache-le");
+      return;
+    }catch(e){ lastErr=e; }
+  }
+  const n = lastErr && lastErr.name;
+  if(n==="NotAllowedError") camFail("Accès caméra refusé. Réglages → Safari → Appareil photo → Autoriser, puis recharge. Ou choisis une photo 🖼️.");
+  else if(n==="NotFoundError"||n==="OverconstrainedError") camFail("Aucune caméra utilisable — choisis une photo 🖼️.");
+  else if(n==="NotReadableError") camFail("Caméra occupée par une autre app — ferme-la et réessaie.");
+  else camFail("Caméra indisponible (souvent : lien ouvert dans une app). Ouvre-le dans Safari, ou choisis une photo 🖼️.");
 }
 function usePhoto(file){
   const url = URL.createObjectURL(file);
