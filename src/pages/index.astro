@@ -118,6 +118,7 @@ const coaches = [
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
       html, body { background: #0a0a0a; }
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -157,7 +158,22 @@ const coaches = [
         position: relative;
         display: flex; flex-direction: column; align-items: center;
         padding: 0 24px;
+        will-change: transform, opacity;
       }
+      /* mobilefirst-style entrance: hero sharpens out of a blur */
+      @media (prefers-reduced-motion: no-preference) {
+        .logo-mark, h1, .sub, .cta-wrap {
+          animation: hero-in 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        }
+        .sub { animation-delay: 0.12s; }
+        .cta-wrap { animation-delay: 0.24s; }
+        @keyframes hero-in {
+          from { opacity: 0; filter: blur(14px); transform: translateY(14px); }
+          to   { opacity: 1; filter: blur(0);    transform: none; }
+        }
+      }
+      /* parallax layers driven by the pointer */
+      #stars, .nebula { will-change: transform; }
       .logo-mark {
         width: 52px; height: 52px; margin: 69px auto 26px;
         filter: brightness(1.25) drop-shadow(0 0 14px rgba(200, 170, 255, 0.28));
@@ -509,8 +525,8 @@ const coaches = [
       .bcell .art { position: relative; height: 210px; flex: 0 0 auto; }
       .bcell .btxt { padding: 4px 26px 24px; }
       .bcell h3 { font-size: 21px; letter-spacing: -0.02em; margin-bottom: 6px; font-weight: 700; }
-      .bcell p { color: rgba(255, 255, 255, 0.62); font-size: 14.5px; line-height: 1.55; max-width: 46ch; }
-      .bcell p em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; color: #fff; }
+      .bcell p { color: rgba(255, 255, 255, 0.62); font-size: 15.5px; line-height: 1.6; max-width: 46ch; }
+      .bcell p em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; color: #fff; font-size: 1.3em; line-height: 1; }
       @media (max-width: 780px) {
         .b7, .b5 { grid-column: span 12; }
         .bcell .art { height: 180px; }
@@ -637,13 +653,13 @@ const coaches = [
       <div class="content">
         <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss Coach logo" width="52" height="52" />
         <h1>
-          <span class="t-desktop">Building the world's largest<br />portfolio of <span class="serif">AI coaching apps</span></span>
-          <span class="t-mobile">Building the world's<br />largest portfolio of<br /><span class="serif">AI coaching apps</span></span>
+          <span class="t-desktop">Your coach, for<br /><span class="serif">every corner of life.</span></span>
+          <span class="t-mobile">Your coach, for<br /><span class="serif">every corner</span><br /><span class="serif">of life.</span></span>
         </h1>
-        <p class="sub">Specialized AI coaches<br />for every area of life.</p>
+        <p class="sub">Six coaches who actually talk with you — Spanish, French,<br />interviews, dating, food, the stars. Ten minutes a day.</p>
         <div class="cta-wrap">
           <span class="cta-beam" aria-hidden="true"></span>
-          <a class="cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get Started</a>
+          <a class="cta" href="#coaches">Meet your coaches</a>
         </div>
       </div>
 
@@ -678,7 +694,7 @@ const coaches = [
         {coaches.map((c) => (
           <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2}`}>
             {hasVideo(c.slug) ? (
-              <video class="portrait" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
+              <video class="portrait" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
             ) : (
               <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
             )}
@@ -794,7 +810,7 @@ const coaches = [
       <!-- proof -->
       <section class="proof" aria-label="Get the apps">
         <div class="laurel rv">Live on the App Store</div>
-        <h2 class="rv">Six coaches, already <em>taking conversations</em></h2>
+        <h2 class="rv">Pick your coach. <em>Start talking.</em></h2>
         <p class="rv">Every conversation is voice-first, personal, and gets better the more you talk.</p>
         <div class="cta-wrap rv" style="display:inline-block">
           <span class="cta-beam" aria-hidden="true"></span>
@@ -856,9 +872,92 @@ const coaches = [
         requestAnimationFrame(draw);
       }
 
+      // occasional shooting star across the hero
+      let shooting: { x: number; y: number; vx: number; vy: number; life: number } | null = null;
+      if (!reduceMotion) {
+        setInterval(() => {
+          if (!shooting && Math.random() < 0.6) {
+            shooting = {
+              x: Math.random() * canvas.offsetWidth * 0.7 + canvas.offsetWidth * 0.15,
+              y: Math.random() * canvas.offsetHeight * 0.25,
+              vx: 6 + Math.random() * 5,
+              vy: 2.4 + Math.random() * 2,
+              life: 1,
+            };
+          }
+        }, 5000);
+      }
       seed();
       draw();
       window.addEventListener('resize', seed);
+
+      // shooting star painter (separate rAF to keep the original loop untouched)
+      function paintShooting() {
+        if (shooting) {
+          const s = shooting;
+          ctx.save();
+          ctx.globalAlpha = Math.max(s.life, 0) * 0.9;
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(s.x - s.vx * 5, s.y - s.vy * 5);
+          ctx.stroke();
+          ctx.restore();
+          s.x += s.vx; s.y += s.vy; s.life -= 0.022;
+          if (s.life <= 0 || s.x > canvas.offsetWidth + 60) shooting = null;
+        }
+        requestAnimationFrame(paintShooting);
+      }
+      if (!reduceMotion) paintShooting();
+
+      // pointer parallax: stars, nebula and the coach dock drift with the cursor
+      if (!reduceMotion && matchMedia('(pointer: fine)').matches) {
+        const nebula = document.querySelector('.nebula') as HTMLElement;
+        const dock = document.querySelector('.avatars') as HTMLElement;
+        let tx = 0, ty = 0, cx = 0, cy = 0;
+        window.addEventListener('mousemove', (e) => {
+          tx = (e.clientX / window.innerWidth - 0.5);
+          ty = (e.clientY / window.innerHeight - 0.5);
+        }, { passive: true });
+        (function lerp() {
+          cx += (tx - cx) * 0.06;
+          cy += (ty - cy) * 0.06;
+          canvas.style.transform = `translate(${cx * -14}px, ${cy * -8}px)`;
+          if (nebula) nebula.style.transform = `translate(${cx * -26}px, ${cy * -14}px)`;
+          if (dock) dock.style.transform = `translateX(calc(-50% + ${cx * 10}px))`;
+          requestAnimationFrame(lerp);
+        })();
+      }
+
+      // hero content gently recedes as you scroll away
+      if (!reduceMotion) {
+        const heroContent = document.querySelector('.card .content') as HTMLElement;
+        let hTick = false;
+        window.addEventListener('scroll', () => {
+          if (hTick) return;
+          hTick = true;
+          requestAnimationFrame(() => {
+            hTick = false;
+            const y = Math.min(window.scrollY, 700);
+            heroContent.style.transform = `translateY(${y * 0.18}px)`;
+            heroContent.style.opacity = String(1 - y / 900);
+          });
+        }, { passive: true });
+      }
+
+      // coach videos: play on hover (desktop) / press (touch), never autoplay
+      document.querySelectorAll<HTMLVideoElement>('.chapter video').forEach((v) => {
+        v.autoplay = false;
+        v.pause();
+        const start = () => { v.play().catch(() => {}); };
+        const stop = () => { v.pause(); };
+        v.closest('.chapter')?.addEventListener('pointerenter', start);
+        v.closest('.chapter')?.addEventListener('pointerleave', stop);
+        v.closest('.chapter')?.addEventListener('touchstart', () => {
+          v.paused ? start() : stop();
+        }, { passive: true });
+      });
 
       // ---- the story ----
       if (!reduceMotion) {
