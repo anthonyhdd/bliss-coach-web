@@ -127,6 +127,10 @@ const avatars = [
         /* keep "AI coaching apps" together on one line at every width */
         white-space: nowrap;
       }
+      /* Responsive line breaks in the headline.
+         Desktop: "Building the world's largest" / "portfolio of" / "AI coaching apps"
+         Mobile:  "Building the world's" / "largest portfolio of" / "AI coaching apps" */
+      h1 br.brk-m { display: none; }
       .sub {
         margin-top: 27px;
         text-align: center;
@@ -249,6 +253,8 @@ const avatars = [
         /* scale the headline with the viewport so it always wraps cleanly
            inside the screen instead of being clipped at the 38px floor */
         h1 { font-size: clamp(26px, 8vw, 40px); overflow-wrap: break-word; }
+        h1 br.brk-m { display: inline; }
+        h1 br.brk-d { display: none; }
         .sub { font-size: 16px; line-height: 24px; }
         .cta-wrap { margin-top: 44px; }
         .horizon { margin-top: 60px; }
@@ -266,8 +272,7 @@ const avatars = [
       <div class="content">
         <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss Coach logo" width="52" height="52" />
         <h1>
-          Building the world's largest<br />
-          portfolio of<br />
+          Building the world's<br class="brk-m" /> largest<br class="brk-d" /> portfolio of<br />
           <span class="serif">AI coaching apps</span>
         </h1>
         <p class="sub">Specialized AI coaches<br />for every area of life.</p>
