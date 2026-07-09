@@ -1,0 +1,49 @@
+name: Analytics data refresh
+
+# Pulls funnel metrics from the Amplitude Dashboard REST API every 6 hours and
+# commits an ENCRYPTED payload to public/analytics/data.json, which the
+# password-protected /analytics page decrypts in the browser.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   AMPLITUDE_API_KEY      Amplitude project API key   (Amplitude → Settings → Projects)
+#   AMPLITUDE_SECRET_KEY   Amplitude project secret key
+#   ANALYTICS_PASSWORD     Password of the /analytics page
+
+on:
+  schedule:
+    - cron: "13 */6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: analytics-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Fetch metrics from Amplitude and encrypt
+        env:
+          AMPLITUDE_API_KEY: ${{ secrets.AMPLITUDE_API_KEY }}
+          AMPLITUDE_SECRET_KEY: ${{ secrets.AMPLITUDE_SECRET_KEY }}
+          ANALYTICS_PASSWORD: ${{ secrets.ANALYTICS_PASSWORD }}
+        run: node scripts/fetch-analytics.mjs
+      - name: Commit refreshed data
+        run: |
+          git config user.name "analytics-bot"
+          git config user.email "analytics-bot@users.noreply.github.com"
+          git add public/analytics/data.json
+          if git diff --cached --quiet; then
+            echo "No change in analytics data."
+          else
+            git commit -m "chore(analytics): refresh dashboard data"
+            git pull --rebase origin main
+            git push origin main
+          fi

@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>BlissCoach — Analytics</title>
+<style>
+  :root{
+    --surface-1:#fcfcfb; --page:#f9f9f7;
+    --ink-1:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+    --grid:#e1e0d9; --baseline:#c3c2b7; --ring:rgba(11,11,11,.10);
+    --delta-good:#006300; --delta-bad:#d03b3b;
+    --s-sofia:#2a78d6; --s-amelie:#1baf7a; --s-charm:#eda100;
+    --s-alex:#008300; --s-mila:#4a3aa7; --s-astra:#e34948;
+    --f1:#86b6ef; --f2:#5598e7; --f3:#2a78d6; --f4:#1c5cab; --f5:#104281;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --surface-1:#1a1a19; --page:#0d0d0d;
+      --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
+      --grid:#2c2c2a; --baseline:#383835; --ring:rgba(255,255,255,.10);
+      --delta-good:#0ca30c; --delta-bad:#e66767;
+      --s-sofia:#3987e5; --s-amelie:#199e70; --s-charm:#c98500;
+      --s-alex:#008300; --s-mila:#9085e9; --s-astra:#e66767;
+      --f1:#86b6ef; --f2:#5598e7; --f3:#3987e5; --f4:#256abf; --f5:#184f95;
+    }
+  }
+  *{box-sizing:border-box;margin:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--page);color:var(--ink-1);line-height:1.45}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 64px}
+  header.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  header.top h1{font-size:20px;font-weight:700}
+  header.top .sub{color:var(--ink-muted);font-size:13px}
+  header.top .spacer{flex:1}
+  button.ghost{background:none;border:1px solid var(--ring);border-radius:8px;color:var(--ink-2);font-size:12px;padding:4px 10px;cursor:pointer}
+  /* lock screen */
+  #lock{min-height:70vh;display:flex;align-items:center;justify-content:center}
+  #lock form{background:var(--surface-1);border:1px solid var(--ring);border-radius:14px;padding:32px;width:320px;display:flex;flex-direction:column;gap:12px}
+  #lock h1{font-size:17px}
+  #lock p{font-size:13px;color:var(--ink-2)}
+  #lock input{font-size:15px;padding:9px 12px;border:1px solid var(--baseline);border-radius:8px;background:var(--page);color:var(--ink-1)}
+  #lock button{font-size:14px;font-weight:600;padding:9px;border:none;border-radius:8px;background:var(--s-sofia);color:#fff;cursor:pointer}
+  #lockErr{color:var(--delta-bad);font-size:13px;display:none}
+  /* filters */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:10px 12px;margin-bottom:16px}
+  .filters .lbl{font-size:12px;color:var(--ink-muted);margin-right:2px}
+  .chip{border:1px solid var(--ring);background:none;border-radius:999px;padding:4px 12px;font-size:13px;color:var(--ink-2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .chip .dot{width:9px;height:9px;border-radius:50%;background:var(--c,transparent);display:inline-block}
+  .chip[aria-pressed="true"]{background:var(--page);border-color:var(--baseline);color:var(--ink-1);font-weight:600}
+  .chip[aria-pressed="true"]::before{content:"✓";font-weight:700;font-size:12px}
+  .filters input[type=date]{font-size:13px;border:1px solid var(--ring);background:none;color:var(--ink-2);border-radius:8px;padding:3px 6px}
+  .vr{width:1px;align-self:stretch;background:var(--grid);margin:0 4px}
+  /* KPI tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+  .tile{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:12px 14px}
+  .tile .k{font-size:12px;color:var(--ink-muted)}
+  .tile .v{font-size:26px;font-weight:700;margin:2px 0}
+  .tile .d{font-size:12px;color:var(--ink-muted)}
+  .tile .d.up{color:var(--delta-good)} .tile .d.down{color:var(--delta-bad)}
+  /* cards + charts */
+  .card{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:14px 16px;margin-bottom:16px;overflow-x:auto}
+  .card h2{font-size:14px;font-weight:700;margin-bottom:2px}
+  .card .note{font-size:12px;color:var(--ink-muted);margin-bottom:8px}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:4px 0 2px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  svg text{font-family:inherit}
+  .tooltip{position:fixed;pointer-events:none;background:var(--surface-1);border:1px solid var(--ring);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.15);padding:8px 10px;font-size:12px;z-index:50;display:none;min-width:130px}
+  .tooltip b{font-size:11px;color:var(--ink-muted);font-weight:600;display:block;margin-bottom:3px}
+  .tooltip .row{display:flex;align-items:center;gap:6px;justify-content:space-between}
+  .tooltip .row .nm{display:inline-flex;align-items:center;gap:5px;color:var(--ink-2)}
+  .tooltip .row .vl{font-variant-numeric:tabular-nums;font-weight:600}
+  /* funnels */
+  .funnels{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  .funnel h3{font-size:13px;display:flex;align-items:center;gap:6px;margin-bottom:6px}
+  .funnel h3 i{width:10px;height:10px;border-radius:50%}
+  .frow{display:grid;grid-template-columns:92px 1fr 88px;align-items:center;gap:8px;font-size:12px;margin:5px 0}
+  .frow .nm{color:var(--ink-2)}
+  .frow .bar{display:block;height:18px;border-radius:0 4px 4px 0;background:var(--fc);min-width:2px}
+  .frow .val{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+  .frow .val b{color:var(--ink-1)}
+  /* table */
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{padding:7px 10px;text-align:right;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--grid)}
+  th{color:var(--ink-muted);font-weight:600;font-size:12px}
+  th:first-child,td:first-child{text-align:left}
+  td:first-child{font-weight:600}
+  td .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+  td .pc{color:var(--ink-muted);font-size:11px}
+  tr.total td{border-top:2px solid var(--baseline);font-weight:700}
+  footer{color:var(--ink-muted);font-size:12px;margin-top:20px}
+  #app{display:none}
+  .empty{padding:40px;text-align:center;color:var(--ink-muted);font-size:14px}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <form id="lockForm">
+    <h1>BlissCoach Analytics</h1>
+    <p>Espace privé. Entrez le mot de passe pour déchiffrer les données.</p>
+    <input type="password" id="pw" placeholder="Mot de passe" autocomplete="current-password" autofocus>
+    <div id="lockErr">Mot de passe incorrect.</div>
+    <button type="submit">Entrer</button>
+  </form>
+</div>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <h1>Portfolio analytics</h1>
+    <span class="sub" id="updatedAt"></span>
+    <span class="spacer"></span>
+    <button class="ghost" id="logout">Verrouiller</button>
+  </header>
+
+  <div class="filters" id="filters">
+    <span class="lbl">Période</span>
+    <button class="chip" data-days="7">7 j</button>
+    <button class="chip" data-days="14">14 j</button>
+    <button class="chip" data-days="30" aria-pressed="true">30 j</button>
+    <button class="chip" data-days="90">90 j</button>
+    <input type="date" id="d1"> <span class="lbl">→</span> <input type="date" id="d2">
+    <span class="vr"></span>
+    <span class="lbl">Apps</span>
+    <span id="variantChips"></span>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2>Funnel produit par app</h2>
+    <div class="note">Utilisateurs uniques sur la période · conversion en % de l’étape précédente (entre parenthèses : % du départ)</div>
+    <div class="funnels" id="funnels"></div>
+  </div>
+
+  <div class="card">
+    <h2>Taux de conversion — tableau récapitulatif</h2>
+    <div class="note">Uniques sur la période sélectionnée. Achats Amplitude sous-comptés : RevenueCat = vérité revenu.</div>
+    <div style="overflow-x:auto"><table id="convTable"></table></div>
+  </div>
+
+  <div class="grid2" id="charts"></div>
+
+  <footer>
+    Données Amplitude (uniques/jour, propriété <code>app_variant</code>), rafraîchies automatiquement toutes les 6 h par GitHub Actions.
+    Le funnel est fenêtré par période : un utilisateur peut apparaître à une étape sans l’étape précédente (ex. user existant qui chatte).
+  </footer>
+</div>
+
+<div class="tooltip" id="tip"></div>
+
+<script>
+(() => {
+'use strict';
+
+const VMETA = {
+  sofia:  {label:'Sofia · ES',        color:'var(--s-sofia)'},
+  amelie: {label:'Amélie · FR',       color:'var(--s-amelie)'},
+  charm:  {label:'Charm · dating',    color:'var(--s-charm)'},
+  alex:   {label:'Alex · interview',  color:'var(--s-alex)'},
+  mila:   {label:'Mila · diet',       color:'var(--s-mila)'},
+  astra:  {label:'Astra · astro',     color:'var(--s-astra)'},
+};
+const STEPS = [
+  {ev:'onboarding_started',   label:'Onboarding démarré'},
+  {ev:'onboarding_completed', label:'Onboarding complété'},
+  {ev:'chat_session_started', label:'Premier chat'},
+  {ev:'paywall_viewed',       label:'Paywall vu'},
+  {ev:'trial_started',        label:'Trial démarré'},
+  {ev:'purchase_completed',   label:'Achat'},
+];
+const CHART_DEFS = [
+  {ev:'onboarding_started',   title:'Onboardings démarrés / jour'},
+  {ev:'_onb_rate',            title:'Complétion onboarding — moyenne glissante 7 j (%)', pct:true},
+  {ev:'chat_session_started', title:'Premiers chats / jour'},
+  {ev:'paywall_viewed',       title:'Paywalls vus / jour'},
+  {ev:'trial_started',        title:'Trials démarrés / jour'},
+  {ev:'app_open',             title:'Utilisateurs actifs (app_open) / jour'},
+];
+
+let DATA = null;
+const state = { from:null, to:null, variants:new Set(Object.keys(VMETA)) };
+const $ = (s) => document.querySelector(s);
+const el = (t, cls) => { const n = document.createElement(t); if (cls) n.className = cls; return n; };
+const fmtN = (n) => n.toLocaleString('fr-FR');
+const pct = (a,b) => b ? Math.round(a/b*1000)/10 : 0;
+
+/* ---------- crypto ---------- */
+const b64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function decrypt(envelope, password){
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt:b64(envelope.salt), iterations:envelope.iterations, hash:'SHA-256'},
+    base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(envelope.iv)}, key, b64(envelope.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+async function unlock(password){
+  const res = await fetch('./data.json', {cache:'no-store'});
+  if (!res.ok) throw new Error('nodata');
+  const envelope = await res.json();
+  if (!envelope.ct) throw new Error('nodata');
+  DATA = await decrypt(envelope, password);
+}
+
+/* ---------- data helpers ---------- */
+function idxRange(){
+  const i1 = Math.max(0, DATA.dates.indexOf(state.from));
+  let i2 = DATA.dates.indexOf(state.to);
+  if (i2 < 0) i2 = DATA.dates.length - 1;
+  return [i1, i2];
+}
+function sumRange(ev, variant, i1, i2){
+  const d = (DATA.metrics[ev] || {})[variant];
+  if (!d) return 0;
+  let s = 0; for (let i = i1; i <= i2; i++) s += d[i] || 0;
+  return s;
+}
+function sumSel(ev, i1, i2){
+  let s = 0; for (const v of state.variants) s += sumRange(ev, v, i1, i2);
+  return s;
+}
+function daily(ev, variant){ return (DATA.metrics[ev] || {})[variant] || null; }
+
+/* ---------- KPI tiles ---------- */
+function renderTiles(){
+  const [i1,i2] = idxRange();
+  const len = i2 - i1 + 1;
+  const p2 = i1 - 1, p1 = i1 - len;           // previous window of equal length
+  const hasPrev = p1 >= 0;
+  const defs = [
+    {k:'Onboardings',      f:(a,b)=>sumSel('onboarding_started',a,b)},
+    {k:'Complétion onb.',  f:(a,b)=>pct(sumSel('onboarding_completed',a,b), sumSel('onboarding_started',a,b)), pct:true},
+    {k:'Premiers chats',   f:(a,b)=>sumSel('chat_session_started',a,b)},
+    {k:'Paywalls vus',     f:(a,b)=>sumSel('paywall_viewed',a,b)},
+    {k:'Trials',           f:(a,b)=>sumSel('trial_started',a,b)},
+    {k:'Achats',           f:(a,b)=>sumSel('purchase_completed',a,b)},
+  ];
+  const root = $('#tiles'); root.innerHTML = '';
+  for (const d of defs){
+    const cur = d.f(i1,i2);
+    const tile = el('div','tile');
+    tile.innerHTML = `<div class="k">${d.k}</div><div class="v">${d.pct?cur+' %':fmtN(cur)}</div>`;
+    const dd = el('div','d');
+    if (hasPrev){
+      const prev = d.f(p1,p2);
+      const diff = d.pct ? Math.round((cur-prev)*10)/10 : cur - prev;
+      const up = diff > 0, flat = diff === 0;
+      dd.className = 'd ' + (flat?'':(up?'up':'down'));
+      dd.textContent = flat ? '= période préc.' :
+        `${up?'▲':'▼'} ${d.pct?Math.abs(diff)+' pt':fmtN(Math.abs(diff))} vs période préc.`;
+    } else dd.textContent = 'pas de période de comparaison';
+    tile.appendChild(dd);
+    root.appendChild(tile);
+  }
+}
+
+/* ---------- funnels ---------- */
+function renderFunnels(){
+  const [i1,i2] = idxRange();
+  const root = $('#funnels'); root.innerHTML = '';
+  const ramp = ['var(--f1)','var(--f2)','var(--f3)','var(--f4)','var(--f5)','var(--f5)'];
+  for (const v of Object.keys(VMETA)){
+    if (!state.variants.has(v)) continue;
+    const counts = STEPS.map(s => sumRange(s.ev, v, i1, i2));
+    const max = Math.max(...counts, 1);
+    const box = el('div','funnel');
+    box.innerHTML = `<h3><i style="background:${VMETA[v].color}"></i>${VMETA[v].label}</h3>`;
+    STEPS.forEach((s, i) => {
+      const row = el('div','frow');
+      const stepPct = i === 0 ? null : pct(counts[i], counts[i-1]);
+      const fromTop = i === 0 ? null : pct(counts[i], counts[0]);
+      row.innerHTML =
+        `<span class="nm">${s.label}</span>` +
+        `<span><span class="bar" style="--fc:${ramp[i]};width:${Math.max(counts[i]/max*100,1)}%"></span></span>` +
+        `<span class="val"><b>${fmtN(counts[i])}</b>${stepPct===null?'':` · ${stepPct}%`}${fromTop===null?'':` <span class="pc">(${fromTop}%)</span>`}</span>`;
+      box.appendChild(row);
+    });
+    root.appendChild(box);
+  }
+  if (!root.children.length) root.innerHTML = '<div class="empty">Sélectionne au moins une app.</div>';
+}
+
+/* ---------- conversion table ---------- */
+function renderTable(){
+  const [i1,i2] = idxRange();
+  const t = $('#convTable');
+  const head = ['App','Onb. démarrés','Onb. complétés','Premiers chats','Paywalls','Trials','Achats','Paywall→Trial','Départ→Trial'];
+  let html = '<thead><tr>' + head.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+  const tot = [0,0,0,0,0,0];
+  for (const v of Object.keys(VMETA)){
+    if (!state.variants.has(v)) continue;
+    const c = STEPS.map(s => sumRange(s.ev, v, i1, i2));
+    c.forEach((x,i)=>tot[i]+=x);
+    html += `<tr><td><span class="dot" style="background:${VMETA[v].color}"></span>${VMETA[v].label}</td>` +
+      `<td>${fmtN(c[0])}</td>` +
+      `<td>${fmtN(c[1])} <span class="pc">${pct(c[1],c[0])}%</span></td>` +
+      `<td>${fmtN(c[2])} <span class="pc">${pct(c[2],c[0])}%</span></td>` +
+      `<td>${fmtN(c[3])} <span class="pc">${pct(c[3],c[0])}%</span></td>` +
+      `<td>${fmtN(c[4])}</td><td>${fmtN(c[5])}</td>` +
+      `<td>${pct(c[4],c[3])}%</td><td>${pct(c[4],c[0])}%</td></tr>`;
+  }
+  html += `<tr class="total"><td>TOTAL</td><td>${fmtN(tot[0])}</td>` +
+    `<td>${fmtN(tot[1])} <span class="pc">${pct(tot[1],tot[0])}%</span></td>` +
+    `<td>${fmtN(tot[2])} <span class="pc">${pct(tot[2],tot[0])}%</span></td>` +
+    `<td>${fmtN(tot[3])} <span class="pc">${pct(tot[3],tot[0])}%</span></td>` +
+    `<td>${fmtN(tot[4])}</td><td>${fmtN(tot[5])}</td>` +
+    `<td>${pct(tot[4],tot[3])}%</td><td>${pct(tot[4],tot[0])}%</td></tr></tbody>`;
+  t.innerHTML = html;
+}
+
+/* ---------- line charts (SVG, crosshair + tooltip) ---------- */
+function seriesFor(def, v, i1, i2){
+  if (def.ev === '_onb_rate'){
+    const a = daily('onboarding_completed', v), b = daily('onboarding_started', v);
+    if (!a || !b) return null;
+    // 7-day rolling ratio: readable trend instead of daily spaghetti
+    return DATA.dates.slice(i1,i2+1).map((_,j) => {
+      const i = i1 + j, lo = Math.max(0, i - 6);
+      let num = 0, den = 0;
+      for (let k = lo; k <= i; k++){ num += a[k] || 0; den += b[k] || 0; }
+      return den ? Math.round(num/den*100) : null;
+    });
+  }
+  const d = daily(def.ev, v);
+  return d ? d.slice(i1, i2+1) : null;
+}
+
+function renderCharts(){
+  const root = $('#charts'); root.innerHTML = '';
+  const [i1,i2] = idxRange();
+  const dates = DATA.dates.slice(i1, i2+1);
+  for (const def of CHART_DEFS){
+    const card = el('div','card');
+    card.innerHTML = `<h2>${def.title}</h2>`;
+    const legend = el('div','legend');
+    const series = [];
+    for (const v of Object.keys(VMETA)){
+      if (!state.variants.has(v)) continue;
+      const s = seriesFor(def, v, i1, i2);
+      if (!s) continue;
+      series.push({v, data:s});
+      legend.innerHTML += `<span><i style="background:${VMETA[v].color}"></i>${VMETA[v].label.split(' · ')[0]}</span>`;
+    }
+    if (series.length > 1) card.appendChild(legend);
+    card.appendChild(lineChart(dates, series, def));
+    root.appendChild(card);
+  }
+}
+
+function lineChart(dates, series, def){
+  const W = 520, H = 190, L = 34, R = 8, T = 10, B = 24;
+  const iw = W - L - R, ih = H - T - B;
+  const max = Math.max(1, ...series.flatMap(s => s.data.filter(x => x !== null)));
+  const yMax = def.pct ? 100 : Math.ceil(max * 1.15);
+  const x = (i) => L + (dates.length === 1 ? iw/2 : i/(dates.length-1)*iw);
+  const y = (v) => T + ih - (v/yMax)*ih;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.style.width = '100%';
+
+  // grid: 3 hairlines + baseline, y labels
+  [0,.5,1].forEach(f=>{
+    const gy = y(yMax*f);
+    const ln = document.createElementNS(ns,'line');
+    ln.setAttribute('x1',L); ln.setAttribute('x2',W-R);
+    ln.setAttribute('y1',gy); ln.setAttribute('y2',gy);
+    ln.setAttribute('stroke', f===0 ? 'var(--baseline)':'var(--grid)');
+    ln.setAttribute('stroke-width','1');
+    svg.appendChild(ln);
+    const tx = document.createElementNS(ns,'text');
+    tx.setAttribute('x',L-5); tx.setAttribute('y',gy+3.5);
+    tx.setAttribute('text-anchor','end');
+    tx.setAttribute('font-size','9'); tx.setAttribute('fill','var(--ink-muted)');
+    tx.textContent = Math.round(yMax*f) + (def.pct?'%':'');
+    svg.appendChild(tx);
+  });
+  // x labels: first / mid / last
+  [0, Math.floor((dates.length-1)/2), dates.length-1].forEach(i=>{
+    if (i < 0) return;
+    const tx = document.createElementNS(ns,'text');
+    tx.setAttribute('x',x(i)); tx.setAttribute('y',H-8);
+    tx.setAttribute('text-anchor', i===0?'start':(i===dates.length-1?'end':'middle'));
+    tx.setAttribute('font-size','9'); tx.setAttribute('fill','var(--ink-muted)');
+    tx.textContent = dates[i]?.slice(5).replace('-','/');
+    svg.appendChild(tx);
+  });
+  // series
+  for (const s of series){
+    const pts = s.data.map((v,i)=> v===null?null:`${x(i)},${y(v)}`);
+    const path = document.createElementNS(ns,'polyline');
+    path.setAttribute('points', pts.filter(Boolean).join(' '));
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke', VMETA[s.v].color);
+    path.setAttribute('stroke-width','2');
+    path.setAttribute('stroke-linejoin','round');
+    path.setAttribute('stroke-linecap','round');
+    svg.appendChild(path);
+  }
+  // crosshair + tooltip
+  const cross = document.createElementNS(ns,'line');
+  cross.setAttribute('y1',T); cross.setAttribute('y2',T+ih);
+  cross.setAttribute('stroke','var(--baseline)'); cross.setAttribute('stroke-dasharray','3 3');
+  cross.style.display = 'none';
+  svg.appendChild(cross);
+  const dots = series.map(s=>{
+    const c = document.createElementNS(ns,'circle');
+    c.setAttribute('r','4'); c.setAttribute('fill',VMETA[s.v].color);
+    c.setAttribute('stroke','var(--surface-1)'); c.setAttribute('stroke-width','2');
+    c.style.display = 'none'; svg.appendChild(c); return c;
+  });
+  const tip = $('#tip');
+  svg.addEventListener('pointermove', (e)=>{
+    const r = svg.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width * W;
+    const i = Math.round((px - L)/iw*(dates.length-1));
+    if (i < 0 || i > dates.length-1) return;
+    cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i));
+    cross.style.display = '';
+    let rows = '';
+    series.forEach((s,k)=>{
+      const v = s.data[i];
+      if (v === null || v === undefined){ dots[k].style.display='none'; return; }
+      dots[k].setAttribute('cx',x(i)); dots[k].setAttribute('cy',y(v));
+      dots[k].style.display='';
+      rows += `<div class="row"><span class="nm"><i style="width:8px;height:8px;border-radius:50%;background:${VMETA[s.v].color};display:inline-block"></i>${VMETA[s.v].label.split(' · ')[0]}</span><span class="vl">${v}${def.pct?'%':''}</span></div>`;
+    });
+    tip.innerHTML = `<b>${dates[i]}</b>${rows}`;
+    tip.style.display = 'block';
+    tip.style.left = Math.min(e.clientX + 14, innerWidth - 170) + 'px';
+    tip.style.top = (e.clientY + 14) + 'px';
+  });
+  svg.addEventListener('pointerleave', ()=>{
+    cross.style.display='none'; dots.forEach(d=>d.style.display='none');
+    tip.style.display='none';
+  });
+  return svg;
+}
+
+/* ---------- filters ---------- */
+function setRangeDays(days){
+  const last = DATA.dates[DATA.dates.length-1];
+  const i = Math.max(0, DATA.dates.length - days);
+  state.from = DATA.dates[i]; state.to = last;
+  $('#d1').value = state.from; $('#d2').value = state.to;
+}
+function renderAll(){
+  renderTiles(); renderFunnels(); renderTable(); renderCharts();
+}
+function initFilters(){
+  document.querySelectorAll('.chip[data-days]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.chip[data-days]').forEach(x=>x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true');
+      setRangeDays(+b.dataset.days); renderAll();
+    });
+  });
+  const vc = $('#variantChips');
+  for (const v of Object.keys(VMETA)){
+    const b = el('button','chip');
+    b.setAttribute('aria-pressed','true');
+    b.innerHTML = `<span class="dot" style="--c:${VMETA[v].color}"></span>${VMETA[v].label.split(' · ')[0]}`;
+    b.addEventListener('click', ()=>{
+      const on = b.getAttribute('aria-pressed') === 'true';
+      if (on && state.variants.size === 1) return;   // keep at least one
+      b.setAttribute('aria-pressed', on?'false':'true');
+      on ? state.variants.delete(v) : state.variants.add(v);
+      renderAll();
+    });
+    vc.appendChild(b);
+  }
+  const onDate = ()=>{
+    const a = $('#d1').value, b = $('#d2').value;
+    if (!a || !b || a > b) return;
+    state.from = a; state.to = b;
+    document.querySelectorAll('.chip[data-days]').forEach(x=>x.setAttribute('aria-pressed','false'));
+    renderAll();
+  };
+  $('#d1').addEventListener('change', onDate);
+  $('#d2').addEventListener('change', onDate);
+  const [min, max] = [DATA.dates[0], DATA.dates[DATA.dates.length-1]];
+  ['#d1','#d2'].forEach(s=>{ $(s).min = min; $(s).max = max; });
+}
+
+/* ---------- boot ---------- */
+async function boot(password){
+  await unlock(password);
+  sessionStorage.setItem('bc_pw', password);
+  $('#lock').style.display = 'none';
+  $('#app').style.display = 'block';
+  $('#updatedAt').textContent =
+    'Données du ' + new Date(DATA.generatedAt).toLocaleString('fr-FR', {dateStyle:'medium', timeStyle:'short'});
+  setRangeDays(30);
+  initFilters();
+  renderAll();
+}
+
+$('#lockForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const err = $('#lockErr');
+  err.style.display = 'none';
+  try { await boot($('#pw').value); }
+  catch (ex) {
+    err.textContent = ex.message === 'nodata'
+      ? 'Pas encore de données : lance le workflow "Analytics data refresh" (secrets requis).'
+      : 'Mot de passe incorrect.';
+    err.style.display = 'block';
+  }
+});
+$('#logout').addEventListener('click', ()=>{
+  sessionStorage.removeItem('bc_pw'); location.reload();
+});
+const saved = sessionStorage.getItem('bc_pw');
+if (saved) boot(saved).catch(()=>sessionStorage.removeItem('bc_pw'));
+})();
+</script>
+</body>
+</html>
