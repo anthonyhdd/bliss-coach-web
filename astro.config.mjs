@@ -7,5 +7,13 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://bliss-coach.com',
   base: process.env.BASE_PATH || '/',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // Freshness hints for crawlers post Framer->Astro migration.
+      // lastmod is stamped at build time so every deploy signals recency.
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date(),
+    }),
+  ],
 });
