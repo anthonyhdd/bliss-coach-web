@@ -4,7 +4,7 @@ import { APPS } from '../config/apps';
 import { PSEO_SECTIONS } from '../config/pseo';
 
 export const GET: APIRoute = async () => {
-  const posts = await getCollection('blog', (p) => !p.data.draft);
+  const posts = await getCollection('blog', (p) => !p.data.draft && p.data.lang === 'en');
   const lines: string[] = [
     '# Bliss Coach',
     '',

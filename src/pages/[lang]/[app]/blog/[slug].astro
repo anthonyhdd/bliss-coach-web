@@ -1,17 +1,25 @@
 ---
 import { getCollection, render } from 'astro:content';
-import Base from '../../../layouts/Base.astro';
-import { APPS, withBase } from '../../../config/apps';
+import Base from '../../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../../config/apps';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', (p) => !p.data.draft && p.data.lang === 'en');
+  const posts = await getCollection('blog', (p) => !p.data.draft && p.data.lang !== 'en');
   return posts.map((post) => ({
-    params: { app: post.data.app, slug: post.id.split('/')[1] },
+    params: { lang: post.data.lang, app: post.data.app, slug: post.id.split('/')[2] },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
+const lang = post.data.lang;
+
+/** UI labels for the template chrome, per locale. */
+const L: Record<string, { keepReading: string; read: string; byTeam: string; free: string; dateLocale: string }> = {
+  fr: { keepReading: 'À lire ensuite', read: 'Lire le guide →', byTeam: "par l'équipe", free: 'Essayer {app} gratuitement', dateLocale: 'fr-FR' },
+  es: { keepReading: 'Sigue leyendo', read: 'Leer la guía →', byTeam: 'por el equipo de', free: 'Prueba {app} gratis', dateLocale: 'es-MX' },
+};
+const t = L[lang];
 
 /**
  * Build FAQPage JSON-LD from the article's visible "## … FAQ" section
@@ -22,14 +30,13 @@ function extractFaq(body: string): { q: string; a: string }[] {
   const sec = /^##[^\n]*FAQ[^\n]*$([\s\S]*?)(?=^## |^---$|\s*$(?![\s\S]))/m.exec(body);
   if (!sec) return [];
   const out: { q: string; a: string }[] = [];
-  const strip = (t: string) =>
-    t
+  const strip = (x: string) =>
+    x
       .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
       .replace(/[*_`]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
   let m: RegExpExecArray | null;
-  // "### Question" format (older articles)
   const h3rx = /^### (.+)$\n([\s\S]*?)(?=^### |^## |^---$|\s*$(?![\s\S]))/gm;
   while ((m = h3rx.exec(sec[1])) !== null) {
     const q = strip(m[1]);
@@ -37,7 +44,6 @@ function extractFaq(body: string): { q: string; a: string }[] {
     if (q && a) out.push({ q, a });
   }
   if (out.length) return out;
-  // "**Question?**" bold format (newer articles)
   const rx = /\*\*(.+?)\*\*\s*\n?([\s\S]*?)(?=\n\*\*|\n---|\n## |$)/g;
   while ((m = rx.exec(sec[1])) !== null) {
     const q = strip(m[1]);
@@ -51,30 +57,25 @@ const faq = extractFaq(post.body ?? '');
 const app = APPS[post.data.app];
 const { Content } = await render(post);
 
-const related = (await getCollection('blog', (p) => p.data.app === post.data.app && !p.data.draft && p.data.lang === 'en' && p.id !== post.id))
+const related = (
+  await getCollection('blog', (p) => p.data.app === post.data.app && !p.data.draft && p.data.lang === lang && p.id !== post.id)
+)
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
   .slice(0, 3);
 
 const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
-const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-const slug = post.id.split('/')[1];
-const canonicalPath = `/${app.slug}/blog/${slug}/`;
+const fmt = (d: Date) => d.toLocaleDateString(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
+const slug = post.id.split('/')[2];
+const canonicalPath = `/${lang}/${app.slug}/blog/${slug}/`;
 
-// hreflang alternates: translated twins point at this slug via translationOf
-const translations = await getCollection(
-  'blog',
-  (p) => p.data.app === post.data.app && !p.data.draft && p.data.lang !== 'en' && p.data.translationOf === slug,
-);
-const alternates = translations.length
-  ? [
-      { hreflang: 'en', href: `https://bliss-coach.com${canonicalPath}` },
-      { hreflang: 'x-default', href: `https://bliss-coach.com${canonicalPath}` },
-      ...translations.map((t) => ({
-        hreflang: t.data.lang,
-        href: `https://bliss-coach.com/${t.data.lang}/${app.slug}/blog/${t.id.split('/')[2]}/`,
-      })),
-    ]
-  : [];
+// hreflang alternates: this page + its English twin (which is also x-default)
+const alternates: { hreflang: string; href: string }[] = [
+  { hreflang: lang, href: `https://bliss-coach.com${canonicalPath}` },
+];
+if (post.data.translationOf) {
+  const enPath = `https://bliss-coach.com/${app.slug}/blog/${post.data.translationOf}/`;
+  alternates.push({ hreflang: 'en', href: enPath }, { hreflang: 'x-default', href: enPath });
+}
 
 const jsonLd = [
   {
@@ -82,6 +83,7 @@ const jsonLd = [
     '@type': 'Article',
     headline: post.data.title,
     description: post.data.description,
+    inLanguage: lang,
     datePublished: post.data.publishDate.toISOString(),
     dateModified: (post.data.updatedDate ?? post.data.publishDate).toISOString(),
     author: { '@type': 'Organization', name: `${app.name} by Bliss Coach`, url: `https://bliss-coach.com/${app.slug}/` },
@@ -121,6 +123,7 @@ if (faq.length >= 2) {
   bodyClass="article-page"
   activeApp={app.slug}
   jsonLd={jsonLd}
+  lang={lang}
   alternates={alternates}
 >
   <article style={brandStyle}>
@@ -131,12 +134,9 @@ if (faq.length >= 2) {
         <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
         {app.name} · {app.category}
       </a>
-      <span class="crumb">
-        <a href={withBase(`/${app.slug}/blog/`)}>{app.blogTitle}</a>
-      </span>
       <h1>{post.data.title}</h1>
       <p class="meta">
-        {fmt(post.data.publishDate)} · by the {app.name} team
+        {fmt(post.data.publishDate)} · {t.byTeam} {app.name}
       </p>
     </header>
 
@@ -146,13 +146,13 @@ if (faq.length >= 2) {
 
     {related.length > 0 && (
       <section class="related">
-        <h2>Keep reading</h2>
+        <h2>{t.keepReading}</h2>
         <div class="article-list">
           {related.map((r) => (
-            <a class="article-card" href={withBase(`/${app.slug}/blog/${r.id.split('/')[1]}/`)}>
+            <a class="article-card" href={withBase(`/${lang}/${app.slug}/blog/${r.id.split('/')[2]}/`)}>
               <h3>{r.data.title}</h3>
               <p>{r.data.description}</p>
-              <span class="read">Read the guide →</span>
+              <span class="read">{t.read}</span>
             </a>
           ))}
         </div>
@@ -164,9 +164,9 @@ if (faq.length >= 2) {
         <img src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="72" height="72" />
         <div>
           <h3>{app.tagline}</h3>
-          <p>{app.name} — {app.category.toLowerCase()} with an AI coach that talks back. Free to try on iPhone.</p>
+          <p>{app.name} — {app.category}.</p>
         </div>
-        <a class="btn" href={app.appStoreUrl}>Get {app.name} free</a>
+        <a class="btn" href={app.appStoreUrl}>{t.free.replace('{app}', app.name)}</a>
       </div>
     </aside>
   </article>

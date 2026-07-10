@@ -10,7 +10,7 @@ export function getStaticPaths() {
 const { app: slug } = Astro.params;
 const app = APPS[slug!];
 
-const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft)).sort(
+const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft && p.data.lang === 'en')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
 );
 
