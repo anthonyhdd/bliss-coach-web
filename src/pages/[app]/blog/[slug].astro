@@ -12,6 +12,42 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+
+/**
+ * Build FAQPage JSON-LD from the article's visible "## … FAQ" section
+ * (bold-question + answer-paragraph format). Google requires the markup to
+ * mirror on-page content — we only emit what the reader actually sees.
+ */
+function extractFaq(body: string): { q: string; a: string }[] {
+  const sec = /^##[^\n]*FAQ[^\n]*$([\s\S]*?)(?=^## |^---$|\s*$(?![\s\S]))/m.exec(body);
+  if (!sec) return [];
+  const out: { q: string; a: string }[] = [];
+  const strip = (t: string) =>
+    t
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/[*_`]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  let m: RegExpExecArray | null;
+  // "### Question" format (older articles)
+  const h3rx = /^### (.+)$\n([\s\S]*?)(?=^### |^## |^---$|\s*$(?![\s\S]))/gm;
+  while ((m = h3rx.exec(sec[1])) !== null) {
+    const q = strip(m[1]);
+    const a = strip(m[2]);
+    if (q && a) out.push({ q, a });
+  }
+  if (out.length) return out;
+  // "**Question?**" bold format (newer articles)
+  const rx = /\*\*(.+?)\*\*\s*\n?([\s\S]*?)(?=\n\*\*|\n---|\n## |$)/g;
+  while ((m = rx.exec(sec[1])) !== null) {
+    const q = strip(m[1]);
+    const a = strip(m[2]);
+    if (q && a) out.push({ q, a });
+  }
+  return out;
+}
+const faq = extractFaq(post.body ?? '');
+
 const app = APPS[post.data.app];
 const { Content } = await render(post);
 
@@ -46,6 +82,18 @@ const jsonLd = [
     ],
   },
 ];
+
+if (faq.length >= 2) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  } as any);
+}
 ---
 
 <Base

@@ -139,3 +139,17 @@ Reading phrase lists the night before works about as well as reading about swimm
 3. **Simulate the pressure.** Give yourself the answer-in-three-seconds test. If you want a live partner who talks back, [Sofia, an AI Spanish tutor with a real Mexican accent](https://apps.apple.com/app/id6761907539) can role-play the waiter, the taxi driver, and the hotel clerk with you before your trip — so the first time you order *al pastor* in Spanish isn't the first time you've done it out loud.
 
 However far you get, lead with Spanish. Even a bumpy *buenos días, ¿habla inglés?* changes the whole interaction — in Mexico especially, the attempt is what counts, and people will meet you more than halfway.
+
+## FAQ
+
+**How much Spanish do I need for a trip to Mexico?**
+Less than you think. The ~50 phrases in this guide cover greetings, ordering, directions, transport, and emergencies. Rehearsed out loud by scenario, that's enough to handle a normal tourist day without switching to English.
+
+**Should I learn Mexican Spanish or Spain Spanish for travel?**
+Learn the vocabulary of where you're going. The core phrases are identical, but everyday words differ — in Mexico you'll hear *¿mande?* instead of *¿qué?*, and *camión* can mean city bus. This guide leans Mexican because that's where most travelers use Spanish first.
+
+**What's the most useful single phrase for travelers?**
+*"¿Me puede ayudar?"* (Can you help me?) opens almost any interaction politely, and *"No entiendo, ¿puede repetir más despacio?"* (I don't understand, can you repeat more slowly?) rescues you when the reply comes too fast.
+
+**How early should I start practicing before the trip?**
+Two to three weeks of 10–15 minutes a day is enough to make the core scenarios automatic. The goal isn't fluency — it's that the restaurant script and the numbers don't require thinking when you're jet-lagged.
