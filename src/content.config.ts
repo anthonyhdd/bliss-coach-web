@@ -11,6 +11,10 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().optional(),
     keywords: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** article language; non-'en' entries live under <app>/<lang>/<slug>.md and render at /<lang>/<app>/blog/<slug>/ */
+    lang: z.enum(['en', 'fr', 'es']).default('en'),
+    /** slug of the English twin, used for hreflang alternates */
+    translationOf: z.string().optional(),
   }),
 });
 

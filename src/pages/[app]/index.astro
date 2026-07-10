@@ -18,7 +18,7 @@ const show = SHOWCASE[slug!];
 // the coach's real standing loop plays inside the phone when available
 const phoneVideo = fs.existsSync(`public/home/video/${slug}.mp4`) ? `/home/video/${slug}.mp4` : null;
 
-const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft)).sort(
+const posts = (await getCollection('blog', (p) => p.data.app === slug && !p.data.draft && p.data.lang === 'en')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
 );
 const pseoSection = PSEO_SECTIONS[slug!];

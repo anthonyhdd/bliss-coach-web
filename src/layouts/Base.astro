@@ -18,9 +18,13 @@ interface Props {
   soloHeader?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean };
   /** per-app brand CSS vars, applied at body level so header/footer inherit */
   brandStyle?: string;
+  /** html lang attribute (default en) */
+  lang?: string;
+  /** hreflang alternates, rendered as <link rel="alternate"> */
+  alternates?: { hreflang: string; href: string }[];
 }
 
-const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd, soloHeader, brandStyle } = Astro.props;
+const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd, soloHeader, brandStyle, lang = 'en', alternates = [] } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL, '/').replace('//', '/'), Astro.site);
 const ogImageUrl = ogImage
@@ -32,7 +36,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <Analytics />
@@ -40,6 +44,9 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+    ))}
     <link rel="icon" type="image/jpeg" href={withBase('/icons/sofia.jpg')} />
     <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
     {appStoreId && <meta name="apple-itunes-app" content={`app-id=${appStoreId}`} />}
