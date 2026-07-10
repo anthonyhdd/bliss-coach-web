@@ -101,7 +101,7 @@
 <div id="lock">
   <form id="lockForm">
     <h1>BlissCoach Analytics</h1>
-    <p>Espace privé. Entrez le mot de passe pour déchiffrer les données.</p>
+    <p>Espace privé. Entrez le mot de passe pour charger les données.</p>
     <input type="password" id="pw" placeholder="Mot de passe" autocomplete="current-password" autofocus>
     <div id="lockErr">Mot de passe incorrect.</div>
     <button type="submit">Entrer</button>
@@ -145,7 +145,7 @@
   <div class="grid2" id="charts"></div>
 
   <footer>
-    Données Amplitude (uniques/jour, propriété <code>app_variant</code>), rafraîchies automatiquement toutes les 6 h par GitHub Actions.
+    Données Amplitude (uniques/jour, propriété <code>app_variant</code>), chargées en direct via l’API Dashboard (cache serveur 30 min).
     Le funnel est fenêtré par période : un utilisateur peut apparaître à une étape sans l’étape précédente (ex. user existant qui chatte).
   </footer>
 </div>
@@ -188,24 +188,17 @@ const el = (t, cls) => { const n = document.createElement(t); if (cls) n.classNa
 const fmtN = (n) => n.toLocaleString('fr-FR');
 const pct = (a,b) => b ? Math.round(a/b*1000)/10 : 0;
 
-/* ---------- crypto ---------- */
-const b64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-async function decrypt(envelope, password){
-  const enc = new TextEncoder();
-  const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey(
-    {name:'PBKDF2', salt:b64(envelope.salt), iterations:envelope.iterations, hash:'SHA-256'},
-    base, {name:'AES-GCM', length:256}, false, ['decrypt']);
-  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(envelope.iv)}, key, b64(envelope.ct));
-  return JSON.parse(new TextDecoder().decode(pt));
-}
-
+/* ---------- live data (Supabase edge proxy -> Amplitude) ---------- */
+const DATA_URL = 'https://wbxuxcvxyzmbyshupycs.supabase.co/functions/v1/analytics-data';
 async function unlock(password){
-  const res = await fetch('./data.json', {cache:'no-store'});
+  const res = await fetch(DATA_URL, {
+    headers: {'x-analytics-password': password},
+    cache: 'no-store',
+  });
+  if (res.status === 401) throw new Error('badpw');
   if (!res.ok) throw new Error('nodata');
-  const envelope = await res.json();
-  if (!envelope.ct) throw new Error('nodata');
-  DATA = await decrypt(envelope, password);
+  DATA = await res.json();
+  if (!DATA || !DATA.dates || !DATA.dates.length) throw new Error('nodata');
 }
 
 /* ---------- data helpers ---------- */
@@ -504,14 +497,19 @@ async function boot(password){
 $('#lockForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const err = $('#lockErr');
+  const btn = $('#lockForm button');
   err.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Chargement des données…';
   try { await boot($('#pw').value); }
   catch (ex) {
-    err.textContent = ex.message === 'nodata'
-      ? 'Pas encore de données : lance le workflow "Analytics data refresh" (secrets requis).'
-      : 'Mot de passe incorrect.';
+    err.textContent = ex.message === 'badpw'
+      ? 'Mot de passe incorrect.'
+      : 'Erreur de chargement des données — réessaie dans une minute.';
     err.style.display = 'block';
   }
+  btn.disabled = false;
+  btn.textContent = 'Entrer';
 });
 $('#logout').addEventListener('click', ()=>{
   sessionStorage.removeItem('bc_pw'); location.reload();
