@@ -61,7 +61,7 @@ const jsonLd = {
       <div class="glow" aria-hidden="true"></div>
       <div class="container inner2">
         <div class="pitch">
-          <img class="hero-appicon" src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="64" height="64" loading="eager" />
+          <img class="hero-appicon" src={withBase(`/icons/${app.slug}.jpg`)} alt={`${app.name} app icon`} width="64" height="64" loading="eager" transition:name={`appicon-${app.slug}`} />
           <div class="kicker">{app.category}</div>
           <h1>{show.heroTitle} <em class="serif-em">{show.heroEm}</em></h1>
           <p class="sub">{show.heroSub}</p>
@@ -328,6 +328,10 @@ const jsonLd = {
   </div>
 
   <script>
+    // Re-runs after every client-side navigation (ClientRouter) — all hooks are
+    // element-scoped IntersectionObservers, so stale instances die with the old DOM.
+    function initLanding() {
+    if (!document.querySelector('.app-hero2')) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // the page dresses in the app's color as the signature strip passes (home pattern)
@@ -368,6 +372,8 @@ const jsonLd = {
         io.observe(strip);
       }
     }
+    }
+    document.addEventListener('astro:page-load', initLanding);
 
   </script>
 </Base>

@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -39,6 +40,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
+    <ClientRouter />
     <Analytics />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
@@ -75,6 +77,8 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <script>
       // Progressive scroll-reveal: elements start visible for no-JS / reduced
       // motion; only when motion is allowed do we hide then fade them in.
+      // Re-runs after every client-side navigation (ClientRouter).
+      function initReveal() {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!reduce && 'IntersectionObserver' in window) {
         const els = document.querySelectorAll(
@@ -99,6 +103,8 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
         );
         els.forEach((el) => io.observe(el));
       }
+      }
+      document.addEventListener('astro:page-load', initReveal);
     </script>
   </body>
 </html>

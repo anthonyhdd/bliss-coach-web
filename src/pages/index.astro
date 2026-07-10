@@ -1,5 +1,6 @@
 ---
 import fs from 'node:fs';
+import { ClientRouter } from 'astro:transitions';
 import { withBase } from '../config/apps';
 import Analytics from '../components/Analytics.astro';
 
@@ -106,6 +107,7 @@ const coaches = [
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <ClientRouter />
     <Analytics />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
@@ -1060,7 +1062,7 @@ const coaches = [
             <div class="txt">
               <span class="bubble">{c.line}</span>
               {c.reply && <><br /><span class="bubble-reply">{c.reply}</span></>}
-              <h3><img class="app-ic" src={withBase(`/icons/${c.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" /> {c.name} <span class="craft">{c.craft}</span></h3>
+              <h3><img class="app-ic" src={withBase(`/icons/${c.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" transition:name={`appicon-${c.slug}`} /> {c.name} <span class="craft">{c.craft}</span></h3>
               <p class="blurb">{c.blurb}</p>
               <span class="go">Meet {c.name} →</span>
             </div>
@@ -1222,8 +1224,22 @@ const coaches = [
     </footer>
 
     <script>
-      // Twinkling starfield, same spirit as the Framer canvas.
-      const canvas = document.getElementById('stars') as HTMLCanvasElement;
+      // Home bootstrap — re-runs after every client-side navigation (ClientRouter).
+      // A generation counter kills the previous visit's rAF loops, and an
+      // AbortController detaches its window listeners, so re-entering the home
+      // never double-binds anything.
+      declare global {
+        interface Window { __homeGen?: number; __homeAbort?: AbortController }
+      }
+      function initHome() {
+      const canvas = document.getElementById('stars') as HTMLCanvasElement | null;
+      if (!canvas) return; // navigated to a non-home page
+      const gen = (window.__homeGen = (window.__homeGen || 0) + 1);
+      const live = () => window.__homeGen === gen;
+      window.__homeAbort?.abort();
+      const ac = new AbortController();
+      window.__homeAbort = ac;
+      const L: AddEventListenerOptions = { signal: ac.signal };
       const ctx = canvas.getContext('2d')!;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let stars: { x: number; y: number; r: number; a: number; s: number; vx: number; vy: number }[] = [];
@@ -1247,6 +1263,7 @@ const coaches = [
 
       let t = 0;
       function draw() {
+        if (!live()) return;
         t++;
         ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
         for (const st of stars) {
@@ -1270,7 +1287,7 @@ const coaches = [
       // occasional shooting star across the hero
       let shooting: { x: number; y: number; vx: number; vy: number; life: number } | null = null;
       if (!reduceMotion) {
-        setInterval(() => {
+        const shootId = setInterval(() => {
           if (!shooting && Math.random() < 0.6) {
             shooting = {
               x: Math.random() * canvas.offsetWidth * 0.7 + canvas.offsetWidth * 0.15,
@@ -1281,13 +1298,15 @@ const coaches = [
             };
           }
         }, 5000);
+        ac.signal.addEventListener('abort', () => clearInterval(shootId));
       }
       seed();
       draw();
-      window.addEventListener('resize', seed);
+      window.addEventListener('resize', seed, L);
 
       // shooting star painter (separate rAF to keep the original loop untouched)
       function paintShooting() {
+        if (!live()) return;
         if (shooting) {
           const s = shooting;
           ctx.save();
@@ -1315,8 +1334,9 @@ const coaches = [
         window.addEventListener('mousemove', (e) => {
           tx = (e.clientX / window.innerWidth - 0.5);
           ty = (e.clientY / window.innerHeight - 0.5);
-        }, { passive: true });
+        }, { passive: true, signal: ac.signal });
         (function lerp() {
+          if (!live()) return;
           cx += (tx - cx) * 0.06;
           cy += (ty - cy) * 0.06;
           canvas.style.transform = `translate(${cx * -14}px, ${cy * -8}px)`;
@@ -1343,7 +1363,7 @@ const coaches = [
             heroContent.style.transform = `translateY(${y * 0.18}px)`;
             heroContent.style.opacity = String(1 - y / 900);
           });
-        }, { passive: true });
+        }, { passive: true, signal: ac.signal });
       }
 
       // coach chapter media: the standing loop plays by default; hovering
@@ -1409,7 +1429,7 @@ const coaches = [
         }
         window.addEventListener('scroll', () => {
           if (!ticking) { ticking = true; requestAnimationFrame(paintWords); }
-        }, { passive: true });
+        }, { passive: true, signal: ac.signal });
         paintWords();
 
         // chapters & proof float up
@@ -1444,6 +1464,8 @@ const coaches = [
       } else {
         document.querySelectorAll('#manifesto .w').forEach((w) => w.classList.add('on'));
       }
+      }
+      document.addEventListener('astro:page-load', initHome);
     </script>
   </body>
 </html>
