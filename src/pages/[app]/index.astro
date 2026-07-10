@@ -69,7 +69,11 @@ const jsonLd = {
             {app.comingSoon ? (
               <span class="coming-soon">Coming soon to the App Store</span>
             ) : (
-              <AppStoreButton href={app.appStoreUrl} />
+              <>
+                <AppStoreButton href={app.appStoreUrl} />
+                {/* same friction-reducers as the app's own welcome screen */}
+                <p class="cta-note">Free to download · No credit card to start</p>
+              </>
             )}
           </div>
           {(show.stat || show.laurels) && (
@@ -276,24 +280,34 @@ const jsonLd = {
     )}
 
     {posts.length > 0 && (
-      <section class="section container">
-        <h2>{app.blogTitle}</h2>
-        <p class="lead">{app.blogDescription}</p>
-        <div class="article-list">
-          {posts.slice(0, 6).map((post) => (
-            <a class="article-card" href={withBase(`/${app.slug}/blog/${post.id.split('/')[1]}/`)}>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-              <span class="read">Read the guide →</span>
-            </a>
-          ))}
+      <section class="section guides-band">
+        <div class="container">
+          <h2>{app.blogTitle}</h2>
+          <p class="lead">{app.blogDescription}</p>
         </div>
-        {posts.length > 6 && (
-          <p style="margin-top:28px">
-            <a class="btn btn-ghost" href={withBase(`/${app.slug}/blog/`)}>All articles</a>
-          </p>
-        )}
+        <div class="gmarquee" aria-label="Guides">
+          <div class="gmarquee-track">
+            {[...posts.slice(0, 8), ...posts.slice(0, 8)].map((post) => (
+              <a class="article-card gcard" href={withBase(`/${app.slug}/blog/${post.id.split('/')[1]}/`)}>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+                <span class="read">Read the guide →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+        <div class="container" style="margin-top:26px">
+          <a class="btn btn-ghost" href={withBase(`/${app.slug}/blog/`)}>All articles</a>
+        </div>
       </section>
+    )}
+
+    {!app.comingSoon && (
+      <a class="sticky-cta" href={app.appStoreUrl} aria-label={`Download ${app.name} on the App Store`}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" />
+        <span class="sc-txt"><b>Get {app.name}</b> — free on the App Store</span>
+        <span class="sc-btn">Download</span>
+      </a>
     )}
 
     <!-- final invitation -->
@@ -315,6 +329,33 @@ const jsonLd = {
 
   <script>
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // the page dresses in the app's color as the signature strip passes (home pattern)
+    const stripEl = document.querySelector('.craft-strip');
+    if (stripEl) {
+      document.body.style.transition = 'background-color 1.2s ease';
+      const worlds = new IntersectionObserver((es) => {
+        for (const e of es) {
+          if (e.isIntersecting) {
+            const b1 = getComputedStyle(document.body).getPropertyValue('--brand-1').trim();
+            if (b1) document.body.style.backgroundColor = `color-mix(in srgb, ${b1} 7%, #0b0b0f)`;
+          } else {
+            document.body.style.removeProperty('background-color');
+          }
+        }
+      }, { threshold: 0.4 });
+      worlds.observe(stripEl);
+    }
+
+    // sticky mobile CTA appears once the hero CTA scrolls out of view
+    const heroCta = document.querySelector('.hero-cta');
+    const sticky = document.querySelector('.sticky-cta');
+    if (heroCta && sticky) {
+      const io = new IntersectionObserver((es) => {
+        for (const e of es) sticky.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0);
+      }, { threshold: 0 });
+      io.observe(heroCta);
+    }
 
     // signature line fills in as it enters the viewport
     const strip = document.querySelector('.craft-strip');
