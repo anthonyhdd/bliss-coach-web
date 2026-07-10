@@ -567,6 +567,53 @@ a { color: inherit; text-decoration: none; }
   .cred { justify-content: center; }
 }
 
+/* ---------- hero CTA note + sticky mobile CTA ---------- */
+.cta-note { font-size: 12.5px; color: var(--text-dim); margin-top: 10px; }
+.sticky-cta {
+  position: fixed; left: 12px; right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  z-index: 80;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(16, 16, 22, 0.92);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  opacity: 0; transform: translateY(80px); pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.sticky-cta.on { opacity: 1; transform: none; pointer-events: auto; }
+.sticky-cta img { width: 30px; height: 30px; border-radius: 8px; display: block; }
+.sticky-cta .sc-txt { flex: 1; min-width: 0; font-size: 13px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sticky-cta .sc-txt b { color: var(--text); }
+.sticky-cta .sc-btn {
+  font-size: 13px; font-weight: 700; white-space: nowrap;
+  padding: 9px 16px; border-radius: 999px;
+  background: linear-gradient(92deg, var(--brand-1), var(--brand-3));
+  color: var(--on-gradient);
+}
+@media (min-width: 641px) { .sticky-cta { display: none; } }
+
+/* ---------- guides marquee (landings) ---------- */
+.guides-band { overflow: hidden; }
+.gmarquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.gmarquee-track { display: flex; gap: 18px; width: max-content; padding: 4px 0; }
+.gcard { flex: 0 0 auto; width: 300px; }
+@media (prefers-reduced-motion: no-preference) {
+  .gmarquee-track { animation: gmarquee 55s linear infinite; }
+  .gmarquee:hover .gmarquee-track { animation-play-state: paused; }
+  @keyframes gmarquee { to { transform: translateX(-50%); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gmarquee { overflow-x: auto; mask-image: none; -webkit-mask-image: none; }
+}
+
 /* ---------- signature strip ---------- */
 .craft-strip {
   padding: clamp(40px, 7vw, 76px) 24px;
