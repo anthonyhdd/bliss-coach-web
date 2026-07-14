@@ -47,8 +47,32 @@ const app = APPS[entry.data.app];
 const section = PSEO_SECTIONS[entry.data.app];
 const { Content } = await render(entry);
 
-const related = (await getCollection('pseo', (p) => p.data.app === entry.data.app && !p.data.draft && p.id !== entry.id))
-  .sort(() => 0.5 - Math.random())
+// Deterministic sibling selection: alphabetical adjacency by slug. Stable
+// across builds (no per-build reshuffle / link churn) and clusters related
+// slugs together instead of the old Math.random() reshuffle.
+const siblings = (await getCollection('pseo', (p) => p.data.app === entry.data.app && !p.data.draft))
+  .map((e) => ({ entry: e, slug: e.id.split('/')[1] }))
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+const selfIdx = siblings.findIndex((s) => s.entry.id === entry.id);
+const related = (selfIdx === -1 ? [] : [...siblings.slice(selfIdx + 1), ...siblings.slice(0, selfIdx)])
+  .slice(0, 3)
+  .map((s) => s.entry);
+
+// Cross-silo internal links: surface this app's blog hub + a few topical
+// articles so the pSEO and blog content pools link into each other.
+// Deterministic: rank by shared keywords, tie-break by recency then slug.
+const entryKw = new Set(entry.data.keywords.map((k) => k.toLowerCase()));
+const relatedBlog = (await getCollection('blog', (p) => p.data.app === entry.data.app && !p.data.draft && p.data.lang === 'en'))
+  .map((p) => ({ post: p, slug: p.id.split('/')[1] }))
+  .sort((a, b) => {
+    const score = (x: { post: typeof a.post }) =>
+      x.post.data.keywords.reduce((n, k) => n + (entryKw.has(k.toLowerCase()) ? 1 : 0), 0);
+    return (
+      score(b) - score(a) ||
+      b.post.data.publishDate.valueOf() - a.post.data.publishDate.valueOf() ||
+      a.slug.localeCompare(b.slug)
+    );
+  })
   .slice(0, 3);
 
 const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
@@ -129,6 +153,24 @@ if (faq.length >= 2) {
               <h3>{r.data.subject}</h3>
               <p>{r.data.description}</p>
               <span class="read">Read →</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {relatedBlog.length > 0 && (
+      <section class="related">
+        <h2>{app.blogTitle}</h2>
+        <p class="related-hub">
+          <a href={withBase(`/${app.slug}/blog/`)}>Read the {app.name} blog →</a>
+        </p>
+        <div class="article-list">
+          {relatedBlog.map((r) => (
+            <a class="article-card" href={withBase(`/${app.slug}/blog/${r.slug}/`)}>
+              <h3>{r.post.data.title}</h3>
+              <p>{r.post.data.description}</p>
+              <span class="read">Read the guide →</span>
             </a>
           ))}
         </div>
