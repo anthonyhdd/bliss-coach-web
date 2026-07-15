@@ -871,11 +871,53 @@ const coaches = [
       @keyframes shadow-b { 0%, 100% { transform: scaleX(1); opacity: 0.65; } 50% { transform: scaleX(0.78); opacity: 0.4; } }
       @keyframes dot-pulse { 0%, 100% { box-shadow: 0 0 16px rgba(255, 220, 131, 0.5); } 50% { box-shadow: 0 0 30px rgba(255, 220, 131, 0.9); } }
 
+      /* --- empowering energy layer: ambient aura + signature effects --- */
+      .bcell .art { isolation: isolate; }
+      .bcell .art::before {
+        content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+        background: radial-gradient(52% 52% at 50% 52%, var(--aura, transparent), transparent 70%);
+        opacity: 0.3;
+      }
+      .art-voice { --aura: rgba(255, 107, 53, 0.30); }
+      .art-memory { --aura: rgba(124, 58, 237, 0.32); }
+      .art-craft { --aura: rgba(255, 171, 173, 0.20); }
+      .art-rigor { --aura: rgba(201, 161, 74, 0.26); }
+      .art-character { --aura: rgba(192, 132, 252, 0.26); }
+      .art-pocket { --aura: rgba(34, 197, 94, 0.24); }
+      @keyframes art-breathe { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
+
+      /* voice: your voice projecting outward */
+      .art-voice .vring {
+        position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px;
+        border-radius: 50%; border: 1.5px solid rgba(255, 150, 90, 0.5);
+        opacity: 0; pointer-events: none;
+      }
+      @keyframes vring-out { 0% { transform: scale(0.5); opacity: 0.6; } 100% { transform: scale(2.7); opacity: 0; } }
+
+      /* memory: the latest node flares — you're at your peak */
+      .art-memory .peak { filter: drop-shadow(0 0 5px rgba(210, 190, 255, 0.9)); }
+      @keyframes peak-flare { 0%, 100% { r: 4; opacity: 0.85; } 50% { r: 5.6; opacity: 1; } }
+
+      /* craft: each coach lights up in turn */
+      @keyframes tile-glow { 0%, 100% { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); } 50% { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 200, 180, 0.55); } }
+
+      /* pocket: coaching energy radiating from your pocket */
+      .pring {
+        position: absolute; left: 50%; bottom: 12px; width: 20px; height: 20px; margin-left: -10px;
+        border-radius: 50%; border: 1.5px solid rgba(255, 220, 131, 0.55);
+        opacity: 0; pointer-events: none;
+      }
+      @keyframes pring-out { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(2.6); opacity: 0; } }
+
       @media (prefers-reduced-motion: no-preference) {
+        .bcell .art::before { animation: art-breathe 6s ease-in-out infinite; }
         .art-voice .bar { animation: eq 1.15s ease-in-out infinite; }
+        .art-voice .vring { animation: vring-out 3.2s ease-out infinite; }
+        .art-voice .vring2 { animation-delay: 1.6s; }
         .art-memory .st { animation: twinkle 3.2s ease-in-out infinite; }
+        .art-memory .peak { animation: peak-flare 2.6s ease-in-out infinite; }
         .art-memory .cl { animation: draw 6s ease forwards infinite; }
-        .art-craft .tile { animation: tile-drift 5s ease-in-out infinite; }
+        .art-craft .tile { animation: tile-drift 5s ease-in-out infinite, tile-glow 5.5s ease-in-out infinite; }
         .art-craft .tile:nth-child(2) { animation-delay: 0.5s; }
         .art-craft .tile:nth-child(3) { animation-delay: 1s; }
         .art-craft .tile:nth-child(4) { animation-delay: 0.8s; }
@@ -888,6 +930,8 @@ const coaches = [
         .minphone { animation: hover-y 5s ease-in-out infinite; }
         .minphone::after { animation: shadow-b 5s ease-in-out infinite; }
         .minphone .dot { animation: dot-pulse 3s ease-in-out infinite; }
+        .pring { animation: pring-out 3s ease-out infinite; }
+        .pring2 { animation-delay: 1.5s; }
       }
       @media (prefers-reduced-motion: reduce) {
         .art-memory .cl { stroke-dashoffset: 0; }
@@ -1103,6 +1147,7 @@ const coaches = [
 
           <div class="bcell b7 rv">
             <div class="art art-voice" aria-hidden="true">
+              <span class="vring"></span><span class="vring vring2"></span>
               <div class="bar" style="animation-delay:0s"></div><div class="bar" style="animation-delay:.12s"></div>
               <div class="bar" style="animation-delay:.24s"></div><div class="bar" style="animation-delay:.06s"></div>
               <div class="bar" style="animation-delay:.3s"></div><div class="bar" style="animation-delay:.18s"></div>
@@ -1123,7 +1168,7 @@ const coaches = [
                 <circle class="st" cx="60" cy="160" r="3" style="animation-delay:0s"/>
                 <circle class="st" cx="140" cy="70" r="4" style="animation-delay:.6s"/>
                 <circle class="st" cx="230" cy="115" r="3" style="animation-delay:1.2s"/>
-                <circle class="st" cx="330" cy="45" r="4" style="animation-delay:1.8s"/>
+                <circle class="st peak" cx="330" cy="45" r="4" style="animation-delay:1.8s"/>
                 <circle class="st" cx="90" cy="50" r="2" style="animation-delay:.3s"/>
                 <circle class="st" cx="300" cy="150" r="2" style="animation-delay:.9s"/>
                 <circle class="st" cx="360" cy="105" r="2" style="animation-delay:1.5s"/>
@@ -1180,7 +1225,7 @@ const coaches = [
 
           <div class="bcell b5 rv">
             <div class="art art-pocket" aria-hidden="true">
-              <div class="minphone"><div class="dot"></div></div>
+              <div class="minphone"><span class="pring"></span><span class="pring pring2"></span><div class="dot"></div></div>
             </div>
             <div class="btxt">
               <h3>Pocket</h3>
