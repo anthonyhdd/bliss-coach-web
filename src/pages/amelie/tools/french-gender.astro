@@ -1,0 +1,843 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+const app = APPS.amelie;
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+const pageTitle = 'French Noun Gender Checker (le/la)';
+const pageDescription =
+  'Is it le or la, un or une? Check 110+ common French nouns, learn the reliable ending rules, and practice with an instant-feedback quiz. Free, no signup.';
+const canonicalUrl = 'https://bliss-coach.com/amelie/tools/french-gender/';
+
+const faqs = [
+  {
+    q: 'How do I know if a French noun is le or la?',
+    a: 'There is no way to tell from meaning alone — gender is a property of the word, so the safest habit is to learn every noun with its article (say "la table", never just "table"). That said, the word ending is a strong clue. Endings like -tion, -té, -ée, -ette, -ance and -ure are almost always feminine (la), while -age, -ment, -eau, -isme and -eil are almost always masculine (le). This tool checks 110+ common nouns for you and shows the rule behind each one.',
+  },
+  {
+    q: 'Which French endings are feminine?',
+    a: 'The most reliable feminine endings are -tion / -sion (la nation, la décision), -té (la liberté), -ée (la journée), -ette (la fourchette), -ance / -ence (la chance, la science), -ure (la voiture) and -ie (la vie). They hold the vast majority of the time. Watch a few masculine exceptions: le musée and le lycée end in -ée, and le silence ends in -ence.',
+  },
+  {
+    q: 'Which French endings are masculine?',
+    a: 'The most reliable masculine endings are -age (le fromage), -ment (le gouvernement), -eau (le bureau), -isme (le tourisme), -ail / -eil / -euil (le travail, le soleil, le fauteuil) and -oir (le miroir). The classic exceptions to learn: la plage, la page, la cage and l\'image end in -age but are feminine, and l\'eau and la peau end in -eau but are feminine.',
+  },
+  {
+    q: 'Does un / une follow the same rule as le / la?',
+    a: 'Yes. French gender is one property of the noun, so the same word takes le and un when masculine (le livre, un livre) and la and une when feminine (la table, une table). Learn the gender once and every article — le/la, un/une, ce/cette, mon/ma — falls into place. Before a vowel or silent h, le and la both shorten to l\' (l\'ami, l\'eau), which hides the gender, so those words are especially worth memorising with un or une.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'French Noun Gender Checker & Practice',
+    applicationCategory: 'EducationalApplication',
+    operatingSystem: 'Web',
+    url: canonicalUrl,
+    description: pageDescription,
+    isAccessibleForFree: true,
+    inLanguage: 'en',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Amélie', item: 'https://bliss-coach.com/amelie/' },
+      { '@type': 'ListItem', position: 3, name: 'French Noun Gender', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl }}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase('/amelie/')}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb"><a href={withBase('/amelie/')}>Learn French</a> · Free tool</span>
+      <h1>French Noun Gender Checker — le or la?</h1>
+      <p class="meta">Every French noun is masculine or feminine, and the article (le/la, un/une) has to match. Learn the reliable ending rules, check any of 110+ common nouns, then drill 20 with instant feedback. Everything runs in your browser.</p>
+    </header>
+
+    <!-- Intro (also visible without JS) -->
+    <div class="prose tool-intro">
+      <p>
+        The single biggest headache in French grammar is <strong>noun gender</strong>: is it
+        <strong>le</strong> or <strong>la</strong>, <strong>un</strong> or <strong>une</strong>? Gender is baked
+        into each word, so the golden habit is to always learn a noun <em>with</em> its article — say
+        <em>"la table"</em>, never just <em>"table"</em>. But you're not flying blind: the
+        <strong>ending</strong> of a noun predicts its gender most of the time. Learn the patterns below, use the
+        checker when you're stuck, and practise until <em>le</em> and <em>la</em> feel automatic.
+      </p>
+    </div>
+
+    <!-- RULES cheat-sheet (pure HTML, always visible) -->
+    <section class="rules" aria-label="French gender ending rules">
+      <div class="rule-card fem">
+        <div class="rc-head">
+          <span class="rc-verb">Usually LA</span>
+          <span class="rc-tag">feminine endings</span>
+        </div>
+        <ul>
+          <li><b>-tion / -sion</b> · <span class="ex">la na<u>tion</u>, la déci<u>sion</u></span></li>
+          <li><b>-té / -tié</b> · <span class="ex">la liber<u>té</u>, l'ami<u>tié</u></span> <span class="exc">except le côté, l'été</span></li>
+          <li><b>-ée</b> · <span class="ex">la journ<u>ée</u>, l'id<u>ée</u></span> <span class="exc">except le musée, le lycée</span></li>
+          <li><b>-ette</b> · <span class="ex">la fourch<u>ette</u>, la bagu<u>ette</u></span></li>
+          <li><b>-ance / -ence</b> · <span class="ex">la ch<u>ance</u>, la sci<u>ence</u></span> <span class="exc">except le silence</span></li>
+          <li><b>-ure</b> · <span class="ex">la voit<u>ure</u>, la nat<u>ure</u></span></li>
+          <li><b>-ie</b> · <span class="ex">la v<u>ie</u>, la boulanger<u>ie</u></span> <span class="exc">except le génie, l'incendie</span></li>
+        </ul>
+      </div>
+
+      <div class="rule-card masc">
+        <div class="rc-head">
+          <span class="rc-verb">Usually LE</span>
+          <span class="rc-tag">masculine endings</span>
+        </div>
+        <ul>
+          <li><b>-age</b> · <span class="ex">le from<u>age</u>, le voy<u>age</u></span> <span class="exc">except la plage, la page, l'image</span></li>
+          <li><b>-ment</b> · <span class="ex">le gouverne<u>ment</u>, le mo<u>ment</u></span></li>
+          <li><b>-eau</b> · <span class="ex">le bur<u>eau</u>, le chât<u>eau</u></span> <span class="exc">except l'eau, la peau</span></li>
+          <li><b>-isme</b> · <span class="ex">le tour<u>isme</u>, le cap<u>italisme</u></span></li>
+          <li><b>-ail / -eil / -euil</b> · <span class="ex">le trav<u>ail</u>, le sol<u>eil</u></span></li>
+          <li><b>-in / -oir</b> · <span class="ex">le v<u>in</u>, le mir<u>oir</u></span> <span class="exc">except la main, la fin</span></li>
+          <li><b>-eur (people &amp; machines)</b> · <span class="ex">le mot<u>eur</u>, le profess<u>eur</u></span> <span class="exc">but la peur, la couleur</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CHECKER -->
+    <section class="tool checker" aria-label="French noun gender checker">
+      <h2 class="tool-h2">Check a noun's gender</h2>
+      <p class="tool-lead">Type a French noun (or pick one below) to get its article — <em>le/la</em> and <em>un/une</em> — plus the ending rule behind it.</p>
+
+      <form id="gender-form" class="gender-form" novalidate>
+        <label class="visually-hidden" for="noun-input">French noun</label>
+        <input id="noun-input" name="noun" type="text" autocomplete="off" spellcheck="false"
+          list="noun-list" placeholder="e.g. table, fromage, décision…" />
+        <button type="submit" class="tbtn tbtn-brand">Check</button>
+      </form>
+      <datalist id="noun-list"></datalist>
+
+      <div class="quick-picks" id="quick-picks" aria-label="Common nouns"></div>
+
+      <div id="gender-result" class="gender-result" hidden aria-live="polite"></div>
+
+      <noscript>
+        <p class="noscript-note">
+          This checker needs JavaScript. Without it, use the two rule cards above: match your noun's ending to a
+          pattern. Endings like <strong>-tion, -té, -ée, -ette, -ance, -ure, -ie</strong> are almost always
+          feminine (<strong>la</strong>); endings like <strong>-age, -ment, -eau, -isme, -eil</strong> are almost
+          always masculine (<strong>le</strong>).
+        </p>
+      </noscript>
+    </section>
+
+    <!-- PRACTICE quiz -->
+    <section class="tool practice" aria-label="French gender practice quiz">
+      <div class="quiz-head">
+        <h2 class="tool-h2">Practice: le or la?</h2>
+        <div class="quiz-meta">
+          <span id="q-progress" class="stat-pill">Question 1 of 20</span>
+          <span id="q-score" class="stat-pill">Score 0/0</span>
+        </div>
+      </div>
+
+      <div id="quiz" class="quiz-card">
+        <p id="q-sentence" class="q-sentence">Loading…</p>
+        <p id="q-en" class="q-en"></p>
+        <div id="q-options" class="q-options"></div>
+        <div id="q-feedback" class="q-feedback" hidden aria-live="polite"></div>
+        <div class="q-buttons">
+          <button type="button" id="q-next" class="tbtn tbtn-brand" hidden>Next →</button>
+        </div>
+      </div>
+
+      <div id="quiz-summary" class="quiz-summary" hidden>
+        <h3 id="qs-title">Bravo !</h3>
+        <p id="qs-line"></p>
+        <button type="button" id="q-restart" class="tbtn tbtn-brand">Try again (reshuffle)</button>
+      </div>
+
+      <div class="tool-actions-top" style="margin-top:14px">
+        <button type="button" id="q-shuffle" class="tbtn tbtn-ghost">Shuffle &amp; restart</button>
+      </div>
+
+      <noscript>
+        <p class="noscript-note">
+          The practice quiz needs JavaScript. Three worked examples to study meanwhile:
+          <br />• <strong>la décision</strong> — feminine, because -tion / -sion endings are feminine.
+          <br />• <strong>le fromage</strong> — masculine, because -age endings are masculine.
+          <br />• <strong>la liberté</strong> — feminine, because -té endings are feminine.
+        </p>
+      </noscript>
+    </section>
+
+    <!-- SEO / teaching content -->
+    <div class="prose tool-explainer">
+      <h2>Why French gender feels random (and how to beat it)</h2>
+      <p>
+        A table isn't "more feminine" than a book — grammatical gender has nothing to do with meaning. It's a
+        label attached to each noun, and the only way to be fully sure is to learn the article with the word.
+        The good news: French spelling is regular enough that the <strong>last few letters</strong> of a noun
+        predict its gender correctly around 80–90% of the time, which is exactly what the rules above capture.
+      </p>
+
+      <h2>The exceptions worth memorising</h2>
+      <ul>
+        <li><strong>-age is masculine, but</strong> <em>la plage, la page, la cage, l'image, la nage</em> and <em>la rage</em> are feminine.</li>
+        <li><strong>-eau is masculine, but</strong> <em>l'eau</em> (water) and <em>la peau</em> (skin) are feminine.</li>
+        <li><strong>-ée is feminine, but</strong> <em>le musée, le lycée</em> and <em>le trophée</em> are masculine.</li>
+        <li><strong>-eur splits:</strong> people and machines are masculine (<em>le professeur, le moteur</em>), but many abstract nouns are feminine (<em>la peur, la couleur, la fleur, la valeur</em>). Note <em>le bonheur</em> and <em>l'honneur</em> stay masculine.</li>
+        <li><strong>Before a vowel or silent h,</strong> both <em>le</em> and <em>la</em> shrink to <em>l'</em> (<em>l'ami, l'eau</em>), hiding the gender — learn those nouns with <em>un</em> or <em>une</em> instead.</li>
+      </ul>
+
+      <h2>Frequently asked questions</h2>
+      {faqs.map((f) => (
+        <>
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </>
+      ))}
+    </div>
+
+    <!-- Internal links -->
+    <section class="section container" style="padding-top:8px">
+      <div class="tool-links">
+        <a class="article-card" href={withBase('/amelie/how-to-say/')}>
+          <h3>How to say it in French →</h3>
+          <p>Phrase-by-phrase guides: natural translations, pronunciation, and real example conversations.</p>
+          <span class="read">Browse phrases →</span>
+        </a>
+        <a class="article-card" href={withBase('/amelie/')}>
+          <h3>Meet Amélie →</h3>
+          <p>Your witty AI French teacher from Paris — practise le and la out loud in real voice conversations.</p>
+          <span class="read">See the app →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Secondary CTA -->
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="Amélie app icon" width="72" height="72" />
+        <div>
+          <h3>Make le vs la automatic — talk it out with Amélie</h3>
+          <p>Gender sticks when you use it out loud. Amélie is an AI French teacher from Paris who chats with you, corrects your articles in real time, and adapts to your level — free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.appStoreUrl}>Get Amélie free</a>
+      </div>
+    </aside>
+  </div>
+
+  <style>
+    /* Inherits the light "article-page" theme + Amélie brand vars */
+    .tool-intro { padding-bottom: 8px; }
+    .tool {
+      max-width: var(--prose-w);
+      margin: 0 auto;
+      padding: 8px 24px;
+    }
+    .tool-h2 { font-size: 22px; letter-spacing: -0.02em; color: #121216; margin: 0 0 6px; }
+    .tool-lead { font-size: 15px; color: #6b6b76; margin: 0 0 16px; line-height: 1.5; }
+    .tool-actions-top { display: flex; justify-content: flex-end; }
+    .article-header .crumb a { color: var(--accent); }
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    /* Rules cheat-sheet */
+    .rules {
+      max-width: var(--prose-w);
+      margin: 8px auto 4px;
+      padding: 8px 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    }
+    @media (max-width: 640px) { .rules { grid-template-columns: 1fr; } }
+    .rule-card {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 14px;
+      padding: 18px 18px 16px;
+    }
+    .rule-card.fem { border-top: 3px solid var(--brand-2); }
+    .rule-card.masc { border-top: 3px solid var(--brand-3); }
+    .rc-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .rc-verb { font-size: 20px; font-weight: 800; letter-spacing: 0.01em; color: #17171c; }
+    .rule-card.fem .rc-verb { color: color-mix(in srgb, var(--brand-2) 82%, #17171c); }
+    .rule-card.masc .rc-verb { color: color-mix(in srgb, var(--brand-3) 80%, #17171c); }
+    .rc-tag { font-size: 12.5px; color: #8a8a94; font-weight: 600; }
+    .rule-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .rule-card li { font-size: 14.5px; line-height: 1.5; color: #33333c; }
+    .rule-card li b { color: #17171c; }
+    .rule-card .ex { color: #6b6b76; }
+    .rule-card .ex u { text-decoration: none; font-weight: 700; }
+    .rule-card.fem .ex u { color: color-mix(in srgb, var(--brand-2) 76%, #17171c); }
+    .rule-card.masc .ex u { color: color-mix(in srgb, var(--brand-3) 74%, #17171c); }
+    .rule-card .exc { display: block; font-size: 12.5px; color: #a06a2c; margin-top: 2px; }
+
+    /* Checker */
+    .gender-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    #noun-input {
+      flex: 1 1 260px; min-width: 0;
+      font: inherit; font-size: 16px; color: #17171c;
+      background: #fbfbfc;
+      border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 12px;
+      padding: 12px 15px;
+    }
+    #noun-input:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.14)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }
+    #noun-input::placeholder { color: #a6a6b0; }
+
+    .quick-picks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .pick-chip {
+      font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.13); color: #33333c;
+      border-radius: 99px; padding: 7px 13px;
+      transition: transform 0.12s, border-color 0.12s, background 0.12s;
+    }
+    .pick-chip:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.13)); }
+    .pick-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .gender-result {
+      margin-top: 16px;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .gender-result.fem { border-left-color: var(--brand-2); }
+    .gender-result.masc { border-left-color: var(--brand-3); }
+    .gr-article { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 4px; color: #17171c; }
+    .gender-result.fem .gr-article b { color: color-mix(in srgb, var(--brand-2) 78%, #17171c); }
+    .gender-result.masc .gr-article b { color: color-mix(in srgb, var(--brand-3) 74%, #17171c); }
+    .gr-gender { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9a9aa4; margin: 0 0 10px; }
+    .gr-en { font-size: 15px; color: #55555f; margin: 0 0 10px; }
+    .gr-en b { color: #33333c; }
+    .gr-why { font-size: 15px; line-height: 1.6; color: #33333c; margin: 0; background: #f6f6f9; border-radius: 9px; padding: 10px 14px; }
+    .gr-why em { font-style: normal; font-weight: 700; }
+    .gr-guess { font-size: 13px; color: #a06a2c; margin: 10px 0 0; }
+
+    /* Practice quiz */
+    .quiz-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+    .quiz-meta { display: flex; gap: 8px; }
+    .stat-pill {
+      font-size: 13px; font-weight: 600; color: #55555f;
+      background: #f1f1f5; border-radius: 99px; padding: 5px 12px;
+    }
+    .quiz-card {
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 14px; padding: 22px 22px 18px;
+    }
+    .q-sentence { font-size: 24px; line-height: 1.4; color: #17171c; margin: 0 0 6px; letter-spacing: -0.01em; }
+    .q-sentence .blank { color: var(--accent); font-weight: 800; }
+    .q-en { font-size: 14.5px; color: #8a8a94; font-style: italic; margin: 0 0 18px; }
+    .q-options { display: flex; gap: 12px; flex-wrap: wrap; }
+    .q-opt {
+      flex: 1 1 0; min-width: 130px;
+      font: inherit; cursor: pointer; text-align: center;
+      background: #fbfbfc; border: 1.5px solid rgba(0, 0, 0, 0.12); border-radius: 12px;
+      padding: 14px 16px;
+      transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s, background 0.12s;
+    }
+    .q-opt:hover:not(:disabled) { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.12)); }
+    .q-opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .q-opt .form { display: block; font-size: 22px; font-weight: 800; color: #17171c; }
+    .q-opt:disabled { cursor: default; }
+    .q-opt.correct { background: color-mix(in srgb, #16a34a 12%, #fff); border-color: #16a34a; }
+    .q-opt.correct .form { color: #15683a; }
+    .q-opt.wrong { background: color-mix(in srgb, #dc2626 10%, #fff); border-color: #dc2626; }
+    .q-opt.wrong .form { color: #b4231b; }
+
+    .q-feedback {
+      margin-top: 16px; border-radius: 11px; padding: 12px 15px;
+      font-size: 14.5px; line-height: 1.55;
+    }
+    .q-feedback.good { background: color-mix(in srgb, #16a34a 12%, #fff); color: #15683a; border: 1px solid color-mix(in srgb, #16a34a 24%, transparent); }
+    .q-feedback.bad { background: color-mix(in srgb, #f59e0b 13%, #fff); color: #8a5a08; border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent); }
+    .q-feedback b { font-weight: 800; }
+    .q-buttons { margin-top: 16px; display: flex; justify-content: flex-end; }
+
+    .quiz-summary {
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 14px; padding: 22px; text-align: center;
+    }
+    .quiz-summary h3 { font-size: 24px; margin: 0 0 6px; color: #121216; }
+    .quiz-summary p { font-size: 16px; color: #55555f; margin: 0 0 16px; }
+
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 99px;
+      font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .tbtn-brand {
+      background: linear-gradient(92deg, var(--brand-1), var(--brand-2), var(--brand-3));
+      color: var(--on-gradient);
+      box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+    .tbtn-brand:hover { transform: translateY(-2px); box-shadow: 0 12px 34px color-mix(in srgb, var(--accent) 45%, transparent); }
+    .tbtn-ghost { background: #fff; border-color: rgba(0, 0, 0, 0.14); color: #33333c; }
+    .tbtn-ghost:hover { background: #f3f3f7; }
+    .tbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .noscript-note {
+      margin: 16px 0 0;
+      font-size: 14.5px; color: #6b6b76; line-height: 1.6;
+    }
+    .tool-explainer { padding-top: 40px; }
+    .tool-links { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .tool-links { grid-template-columns: 1fr; } }
+  </style>
+
+  <script>
+    function initFrenchGender() {
+      const form = document.getElementById('gender-form') as HTMLFormElement | null;
+      const quiz = document.getElementById('quiz');
+      if (!form && !quiz) return;
+      // Guard against double-binding across ClientRouter navigations
+      if ((form as any)?.__fgBound) return;
+      if (form) (form as any).__fgBound = true;
+
+      // ---------- Verified dictionary of common French nouns ----------
+      // g: 'm' | 'f'  ·  en: English  ·  rule: the ending rule / note
+      type Noun = { fr: string; g: 'm' | 'f'; en: string; rule: string };
+      const DICT: Noun[] = [
+        // Feminine — -tion / -sion / -son
+        { fr: 'nation', g: 'f', en: 'nation', rule: '-tion endings are feminine.' },
+        { fr: 'question', g: 'f', en: 'question', rule: '-tion endings are feminine.' },
+        { fr: 'solution', g: 'f', en: 'solution', rule: '-tion endings are feminine.' },
+        { fr: 'situation', g: 'f', en: 'situation', rule: '-tion endings are feminine.' },
+        { fr: 'décision', g: 'f', en: 'decision', rule: '-sion endings are feminine.' },
+        { fr: 'télévision', g: 'f', en: 'television', rule: '-sion endings are feminine.' },
+        { fr: 'maison', g: 'f', en: 'house', rule: '-son endings are usually feminine.' },
+        { fr: 'raison', g: 'f', en: 'reason', rule: '-son endings are usually feminine.' },
+        { fr: 'saison', g: 'f', en: 'season', rule: '-son endings are usually feminine.' },
+        { fr: 'chanson', g: 'f', en: 'song', rule: '-son endings are usually feminine.' },
+        { fr: 'boisson', g: 'f', en: 'drink', rule: '-son endings are usually feminine.' },
+        { fr: 'leçon', g: 'f', en: 'lesson', rule: '-çon here is feminine (unlike most -on nouns).' },
+        // Feminine — -té / -tié
+        { fr: 'liberté', g: 'f', en: 'freedom', rule: '-té endings are feminine.' },
+        { fr: 'beauté', g: 'f', en: 'beauty', rule: '-té endings are feminine.' },
+        { fr: 'santé', g: 'f', en: 'health', rule: '-té endings are feminine.' },
+        { fr: 'société', g: 'f', en: 'society', rule: '-té endings are feminine.' },
+        { fr: 'vérité', g: 'f', en: 'truth', rule: '-té endings are feminine.' },
+        { fr: 'université', g: 'f', en: 'university', rule: '-té endings are feminine.' },
+        { fr: 'amitié', g: 'f', en: 'friendship', rule: '-tié endings are feminine.' },
+        // Feminine — -ée
+        { fr: 'journée', g: 'f', en: 'day', rule: '-ée endings are feminine.' },
+        { fr: 'idée', g: 'f', en: 'idea', rule: '-ée endings are feminine.' },
+        { fr: 'année', g: 'f', en: 'year', rule: '-ée endings are feminine.' },
+        { fr: 'pensée', g: 'f', en: 'thought', rule: '-ée endings are feminine.' },
+        { fr: 'soirée', g: 'f', en: 'evening', rule: '-ée endings are feminine.' },
+        // Feminine — -ette
+        { fr: 'fourchette', g: 'f', en: 'fork', rule: '-ette endings are feminine.' },
+        { fr: 'baguette', g: 'f', en: 'baguette', rule: '-ette endings are feminine.' },
+        { fr: 'assiette', g: 'f', en: 'plate', rule: '-ette endings are feminine.' },
+        { fr: 'chaussette', g: 'f', en: 'sock', rule: '-ette endings are feminine.' },
+        // Feminine — -ance / -ence
+        { fr: 'chance', g: 'f', en: 'luck', rule: '-ance endings are feminine.' },
+        { fr: 'distance', g: 'f', en: 'distance', rule: '-ance endings are feminine.' },
+        { fr: 'science', g: 'f', en: 'science', rule: '-ence endings are feminine.' },
+        { fr: 'patience', g: 'f', en: 'patience', rule: '-ence endings are feminine.' },
+        { fr: 'différence', g: 'f', en: 'difference', rule: '-ence endings are feminine.' },
+        // Feminine — -ure
+        { fr: 'voiture', g: 'f', en: 'car', rule: '-ure endings are feminine.' },
+        { fr: 'nature', g: 'f', en: 'nature', rule: '-ure endings are feminine.' },
+        { fr: 'peinture', g: 'f', en: 'painting', rule: '-ure endings are feminine.' },
+        { fr: 'ceinture', g: 'f', en: 'belt', rule: '-ure endings are feminine.' },
+        { fr: 'culture', g: 'f', en: 'culture', rule: '-ure endings are feminine.' },
+        // Feminine — -ie
+        { fr: 'vie', g: 'f', en: 'life', rule: '-ie endings are feminine.' },
+        { fr: 'boulangerie', g: 'f', en: 'bakery', rule: '-ie endings are feminine.' },
+        { fr: 'pharmacie', g: 'f', en: 'pharmacy', rule: '-ie endings are feminine.' },
+        { fr: 'partie', g: 'f', en: 'part', rule: '-ie endings are feminine.' },
+        { fr: 'sortie', g: 'f', en: 'exit', rule: '-ie endings are feminine.' },
+        // Feminine — -esse / -ade
+        { fr: 'vitesse', g: 'f', en: 'speed', rule: '-esse endings are feminine.' },
+        { fr: 'richesse', g: 'f', en: 'wealth', rule: '-esse endings are feminine.' },
+        { fr: 'promesse', g: 'f', en: 'promise', rule: '-esse endings are feminine.' },
+        { fr: 'salade', g: 'f', en: 'salad', rule: '-ade endings are feminine.' },
+        { fr: 'limonade', g: 'f', en: 'lemonade', rule: '-ade endings are feminine.' },
+        // Feminine — -age / -eau exceptions
+        { fr: 'plage', g: 'f', en: 'beach', rule: 'Exception: -age is usually masculine, but la plage is feminine.' },
+        { fr: 'page', g: 'f', en: 'page', rule: 'Exception: -age is usually masculine, but la page is feminine.' },
+        { fr: 'cage', g: 'f', en: 'cage', rule: 'Exception: -age is usually masculine, but la cage is feminine.' },
+        { fr: 'image', g: 'f', en: 'image', rule: 'Exception: -age is usually masculine, but l\'image is feminine.' },
+        { fr: 'eau', g: 'f', en: 'water', rule: 'Exception: -eau is usually masculine, but l\'eau is feminine.' },
+        { fr: 'peau', g: 'f', en: 'skin', rule: 'Exception: -eau is usually masculine, but la peau is feminine.' },
+        // Feminine — -eur (abstract) & others
+        { fr: 'peur', g: 'f', en: 'fear', rule: 'Abstract -eur nouns like la peur are feminine.' },
+        { fr: 'couleur', g: 'f', en: 'colour', rule: 'Abstract -eur nouns like la couleur are feminine.' },
+        { fr: 'fleur', g: 'f', en: 'flower', rule: 'Abstract -eur nouns like la fleur are feminine.' },
+        { fr: 'valeur', g: 'f', en: 'value', rule: 'Abstract -eur nouns like la valeur are feminine.' },
+        { fr: 'chaleur', g: 'f', en: 'heat', rule: 'Abstract -eur nouns like la chaleur are feminine.' },
+        { fr: 'main', g: 'f', en: 'hand', rule: 'Exception: -in is usually masculine, but la main is feminine.' },
+        { fr: 'fin', g: 'f', en: 'end', rule: 'Exception: -in is usually masculine, but la fin is feminine.' },
+        { fr: 'mer', g: 'f', en: 'sea', rule: 'Exception: -er is usually masculine, but la mer is feminine.' },
+        { fr: 'table', g: 'f', en: 'table', rule: 'Learn this common noun as la table.' },
+        { fr: 'porte', g: 'f', en: 'door', rule: 'Learn this common noun as la porte.' },
+        { fr: 'fenêtre', g: 'f', en: 'window', rule: 'Learn this common noun as la fenêtre.' },
+        { fr: 'chaise', g: 'f', en: 'chair', rule: 'Learn this common noun as la chaise.' },
+        { fr: 'fille', g: 'f', en: 'girl / daughter', rule: '-ille endings are feminine; also natural gender.' },
+        { fr: 'femme', g: 'f', en: 'woman', rule: 'Natural gender: la femme is feminine.' },
+        { fr: 'ville', g: 'f', en: 'city', rule: 'Learn this common noun as la ville.' },
+        { fr: 'nuit', g: 'f', en: 'night', rule: 'Learn this common noun as la nuit.' },
+        { fr: 'clé', g: 'f', en: 'key', rule: 'Learn this common noun as la clé.' },
+        { fr: 'voix', g: 'f', en: 'voice', rule: 'Learn this common noun as la voix.' },
+        { fr: 'faim', g: 'f', en: 'hunger', rule: 'Learn this common noun as la faim.' },
+        // Masculine — -age
+        { fr: 'fromage', g: 'm', en: 'cheese', rule: '-age endings are masculine.' },
+        { fr: 'voyage', g: 'm', en: 'trip', rule: '-age endings are masculine.' },
+        { fr: 'garage', g: 'm', en: 'garage', rule: '-age endings are masculine.' },
+        { fr: 'message', g: 'm', en: 'message', rule: '-age endings are masculine.' },
+        { fr: 'village', g: 'm', en: 'village', rule: '-age endings are masculine.' },
+        { fr: 'nuage', g: 'm', en: 'cloud', rule: '-age endings are masculine.' },
+        { fr: 'courage', g: 'm', en: 'courage', rule: '-age endings are masculine.' },
+        // Masculine — -ment
+        { fr: 'gouvernement', g: 'm', en: 'government', rule: '-ment endings are masculine.' },
+        { fr: 'moment', g: 'm', en: 'moment', rule: '-ment endings are masculine.' },
+        { fr: 'appartement', g: 'm', en: 'apartment', rule: '-ment endings are masculine.' },
+        { fr: 'vêtement', g: 'm', en: 'garment', rule: '-ment endings are masculine.' },
+        { fr: 'document', g: 'm', en: 'document', rule: '-ment endings are masculine.' },
+        // Masculine — -eau
+        { fr: 'bureau', g: 'm', en: 'office / desk', rule: '-eau endings are masculine.' },
+        { fr: 'château', g: 'm', en: 'castle', rule: '-eau endings are masculine.' },
+        { fr: 'gâteau', g: 'm', en: 'cake', rule: '-eau endings are masculine.' },
+        { fr: 'cadeau', g: 'm', en: 'gift', rule: '-eau endings are masculine.' },
+        { fr: 'couteau', g: 'm', en: 'knife', rule: '-eau endings are masculine.' },
+        { fr: 'manteau', g: 'm', en: 'coat', rule: '-eau endings are masculine.' },
+        { fr: 'chapeau', g: 'm', en: 'hat', rule: '-eau endings are masculine.' },
+        // Masculine — -isme
+        { fr: 'tourisme', g: 'm', en: 'tourism', rule: '-isme endings are masculine.' },
+        { fr: 'organisme', g: 'm', en: 'organism', rule: '-isme endings are masculine.' },
+        // Masculine — -ail / -eil / -euil
+        { fr: 'travail', g: 'm', en: 'work', rule: '-ail endings are masculine.' },
+        { fr: 'soleil', g: 'm', en: 'sun', rule: '-eil endings are masculine.' },
+        { fr: 'réveil', g: 'm', en: 'alarm clock', rule: '-eil endings are masculine.' },
+        { fr: 'fauteuil', g: 'm', en: 'armchair', rule: '-euil endings are masculine.' },
+        // Masculine — -in / -oir / -ain
+        { fr: 'vin', g: 'm', en: 'wine', rule: '-in endings are masculine.' },
+        { fr: 'jardin', g: 'm', en: 'garden', rule: '-in endings are masculine.' },
+        { fr: 'matin', g: 'm', en: 'morning', rule: '-in endings are masculine.' },
+        { fr: 'magasin', g: 'm', en: 'shop', rule: '-in endings are masculine.' },
+        { fr: 'pain', g: 'm', en: 'bread', rule: '-ain endings are masculine.' },
+        { fr: 'train', g: 'm', en: 'train', rule: '-ain endings are masculine.' },
+        { fr: 'miroir', g: 'm', en: 'mirror', rule: '-oir endings are masculine.' },
+        { fr: 'soir', g: 'm', en: 'evening', rule: '-oir endings are masculine.' },
+        { fr: 'devoir', g: 'm', en: 'duty / homework', rule: '-oir endings are masculine.' },
+        { fr: 'couloir', g: 'm', en: 'hallway', rule: '-oir endings are masculine.' },
+        // Masculine — -eur (people & machines) + exceptions
+        { fr: 'ordinateur', g: 'm', en: 'computer', rule: '-eur for machines is masculine.' },
+        { fr: 'moteur', g: 'm', en: 'engine', rule: '-eur for machines is masculine.' },
+        { fr: 'professeur', g: 'm', en: 'teacher', rule: '-eur for people/roles is masculine.' },
+        { fr: 'bonheur', g: 'm', en: 'happiness', rule: 'Exception: le bonheur is masculine despite the -eur ending.' },
+        // Masculine — -on / misc
+        { fr: 'poisson', g: 'm', en: 'fish', rule: '-on endings are usually masculine.' },
+        { fr: 'garçon', g: 'm', en: 'boy', rule: '-on endings are usually masculine; also natural gender.' },
+        { fr: 'camion', g: 'm', en: 'truck', rule: '-on endings are usually masculine.' },
+        { fr: 'avion', g: 'm', en: 'plane', rule: '-on endings are usually masculine.' },
+        { fr: 'livre', g: 'm', en: 'book', rule: 'Learn this common noun as le livre.' },
+        { fr: 'stylo', g: 'm', en: 'pen', rule: 'Learn this common noun as le stylo.' },
+        { fr: 'café', g: 'm', en: 'coffee / café', rule: 'Learn this common noun as le café.' },
+        { fr: 'musée', g: 'm', en: 'museum', rule: 'Exception: le musée is masculine despite the -ée ending.' },
+        { fr: 'lycée', g: 'm', en: 'high school', rule: 'Exception: le lycée is masculine despite the -ée ending.' },
+        { fr: 'problème', g: 'm', en: 'problem', rule: '-ème endings are masculine.' },
+        { fr: 'système', g: 'm', en: 'system', rule: '-ème endings are masculine.' },
+        { fr: 'téléphone', g: 'm', en: 'telephone', rule: 'Learn this common noun as le téléphone.' },
+        { fr: 'jour', g: 'm', en: 'day', rule: 'Learn this common noun as le jour.' },
+        { fr: 'temps', g: 'm', en: 'time / weather', rule: 'Learn this common noun as le temps.' },
+        { fr: 'homme', g: 'm', en: 'man', rule: 'Natural gender: l\'homme is masculine.' },
+        { fr: 'argent', g: 'm', en: 'money / silver', rule: 'Learn this common noun as l\'argent.' },
+        { fr: 'chien', g: 'm', en: 'dog', rule: 'Learn this common noun as le chien.' },
+        { fr: 'chat', g: 'm', en: 'cat', rule: 'Learn this common noun as le chat.' },
+      ];
+
+      // Strip accents + lower-case for matching so "decision" finds "décision"
+      const norm = (s: string) =>
+        (s || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[̀-ͯ]/g, '')
+          .replace(/^(le |la |l'|un |une |les |des )/, '')
+          .replace(/[^a-z]/g, '')
+          .trim();
+
+      const byNorm = new Map<string, Noun>();
+      DICT.forEach((n) => byNorm.set(norm(n.fr), n));
+
+      const startsVowel = (w: string) => /^[aeiouhàâäéèêëïîôùûü]/i.test(w);
+      const defArticle = (n: { g: 'm' | 'f'; fr: string }) =>
+        startsVowel(n.fr) ? "l'" + n.fr : (n.g === 'm' ? 'le ' : 'la ') + n.fr;
+      const indef = (g: 'm' | 'f') => (g === 'm' ? 'un' : 'une');
+
+      // Heuristic guesser for words NOT in the dictionary (labelled as a guess)
+      function guess(word: string): { g: 'm' | 'f'; rule: string } | null {
+        const w = norm(word);
+        if (!w) return null;
+        // feminine endings
+        if (/(tion|sion|té|tié|ette|ance|ence|ure|esse|ade)$/.test(word.toLowerCase())) return { g: 'f', rule: 'This ending is typically feminine.' };
+        if (/(tion|sion|tte|ance|ence|ure|esse|ade)$/.test(w)) return { g: 'f', rule: 'This ending is typically feminine.' };
+        // masculine endings
+        if (/(ment|isme|eau|ail|eil|euil|oir)$/.test(w)) return { g: 'm', rule: 'This ending is typically masculine.' };
+        if (/age$/.test(w)) return { g: 'm', rule: '-age endings are typically masculine (watch: la plage, la page).' };
+        if (/(ee|tie)$/.test(w)) return { g: 'f', rule: 'This ending is typically feminine.' };
+        if (/ie$/.test(w)) return { g: 'f', rule: '-ie endings are typically feminine.' };
+        if (/eur$/.test(w)) return { g: 'm', rule: '-eur is mixed: masculine for people/machines, feminine for many abstract nouns — verify this one.' };
+        return null;
+      }
+
+      /* ---------- Checker ---------- */
+      const input = document.getElementById('noun-input') as HTMLInputElement | null;
+      const resultBox = document.getElementById('gender-result') as HTMLElement | null;
+      const datalist = document.getElementById('noun-list') as HTMLElement | null;
+      const picksBox = document.getElementById('quick-picks') as HTMLElement | null;
+
+      if (datalist) {
+        datalist.innerHTML = '';
+        DICT.slice().sort((a, b) => a.fr.localeCompare(b.fr, 'fr')).forEach((n) => {
+          const opt = document.createElement('option');
+          opt.value = n.fr;
+          datalist.appendChild(opt);
+        });
+      }
+
+      function showResult(query: string) {
+        if (!resultBox) return;
+        const key = norm(query);
+        if (!key) { resultBox.hidden = true; return; }
+        const hit = byNorm.get(key);
+        resultBox.classList.remove('fem', 'masc');
+        if (hit) {
+          const isF = hit.g === 'f';
+          resultBox.classList.add(isF ? 'fem' : 'masc');
+          resultBox.innerHTML =
+            '<p class="gr-article"><b>' + defArticle(hit) + '</b></p>' +
+            '<p class="gr-gender">' + (isF ? 'Feminine' : 'Masculine') + ' · ' + indef(hit.g) + ' ' + hit.fr + '</p>' +
+            '<p class="gr-en">English: <b>' + hit.en + '</b></p>' +
+            '<p class="gr-why"><em>Why:</em> ' + hit.rule + '</p>';
+          resultBox.hidden = false;
+          return;
+        }
+        // Not in dictionary — offer an honest heuristic guess
+        const g = guess(query);
+        if (g) {
+          const isF = g.g === 'f';
+          resultBox.classList.add(isF ? 'fem' : 'masc');
+          resultBox.innerHTML =
+            '<p class="gr-article"><b>' + (isF ? 'la ' : 'le ') + query.trim().toLowerCase() + '</b> ?</p>' +
+            '<p class="gr-gender">Likely ' + (isF ? 'feminine' : 'masculine') + '</p>' +
+            '<p class="gr-why"><em>Best guess:</em> ' + g.rule + '</p>' +
+            '<p class="gr-guess">⚠ This word isn\'t in our checked list — it\'s an ending-based guess, so confirm it in a dictionary.</p>';
+          resultBox.hidden = false;
+          return;
+        }
+        resultBox.classList.add('masc');
+        resultBox.innerHTML =
+          '<p class="gr-article">Not found</p>' +
+          '<p class="gr-why">We don\'t have <b>' + query.trim() + '</b> in the checked list and its ending doesn\'t match a clear rule. Try one of the common nouns below, or learn this one with its article from a dictionary.</p>';
+        resultBox.hidden = false;
+      }
+
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (input) showResult(input.value);
+        });
+      }
+
+      if (picksBox) {
+        const picks = ['table', 'fromage', 'décision', 'voyage', 'liberté', 'bureau', 'plage', 'eau', 'question', 'soleil', 'couleur', 'jardin'];
+        picksBox.innerHTML = '';
+        picks.forEach((p) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'pick-chip';
+          b.textContent = p;
+          b.addEventListener('click', () => {
+            if (input) input.value = p;
+            showResult(p);
+            resultBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+          picksBox.appendChild(b);
+        });
+      }
+
+      /* ---------- Practice quiz ---------- */
+      if (!quiz) return;
+      // 20 nouns with a clear rule, drawn from the verified dictionary.
+      type Q = { fr: string; g: 'm' | 'f'; en: string; why: string };
+      const BANK: Q[] = [
+        { fr: 'décision', g: 'f', en: 'decision', why: '-tion / -sion endings are feminine.' },
+        { fr: 'fromage', g: 'm', en: 'cheese', why: '-age endings are masculine.' },
+        { fr: 'liberté', g: 'f', en: 'freedom', why: '-té endings are feminine.' },
+        { fr: 'bureau', g: 'm', en: 'office / desk', why: '-eau endings are masculine.' },
+        { fr: 'voiture', g: 'f', en: 'car', why: '-ure endings are feminine.' },
+        { fr: 'gouvernement', g: 'm', en: 'government', why: '-ment endings are masculine.' },
+        { fr: 'journée', g: 'f', en: 'day', why: '-ée endings are feminine.' },
+        { fr: 'travail', g: 'm', en: 'work', why: '-ail endings are masculine.' },
+        { fr: 'chance', g: 'f', en: 'luck', why: '-ance / -ence endings are feminine.' },
+        { fr: 'tourisme', g: 'm', en: 'tourism', why: '-isme endings are masculine.' },
+        { fr: 'fourchette', g: 'f', en: 'fork', why: '-ette endings are feminine.' },
+        { fr: 'soleil', g: 'm', en: 'sun', why: '-eil endings are masculine.' },
+        { fr: 'boulangerie', g: 'f', en: 'bakery', why: '-ie endings are feminine.' },
+        { fr: 'jardin', g: 'm', en: 'garden', why: '-in endings are masculine.' },
+        { fr: 'plage', g: 'f', en: 'beach', why: 'Exception: -age is usually masculine, but la plage is feminine.' },
+        { fr: 'musée', g: 'm', en: 'museum', why: 'Exception: -ée is usually feminine, but le musée is masculine.' },
+        { fr: 'couleur', g: 'f', en: 'colour', why: 'Abstract -eur nouns like la couleur are feminine.' },
+        { fr: 'miroir', g: 'm', en: 'mirror', why: '-oir endings are masculine.' },
+        { fr: 'eau', g: 'f', en: 'water', why: 'Exception: -eau is usually masculine, but l\'eau is feminine.' },
+        { fr: 'question', g: 'f', en: 'question', why: '-tion endings are feminine.' },
+      ];
+
+      const $ = (id: string) => document.getElementById(id);
+      const sentenceEl = $('q-sentence') as HTMLElement;
+      const enEl = $('q-en') as HTMLElement;
+      const optionsEl = $('q-options') as HTMLElement;
+      const feedbackEl = $('q-feedback') as HTMLElement;
+      const nextBtn = $('q-next') as HTMLButtonElement;
+      const progressEl = $('q-progress') as HTMLElement;
+      const scoreEl = $('q-score') as HTMLElement;
+      const summaryEl = $('quiz-summary') as HTMLElement;
+      const quizCard = $('quiz') as HTMLElement;
+
+      let order: number[] = [];
+      let pos = 0;
+      let correct = 0;
+      let answered = 0;
+      let locked = false;
+
+      function shuffle(n: number) {
+        const a = Array.from({ length: n }, (_, i) => i);
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function updateMeta() {
+        progressEl.textContent = 'Question ' + Math.min(pos + 1, BANK.length) + ' of ' + BANK.length;
+        scoreEl.textContent = 'Score ' + correct + '/' + answered;
+      }
+
+      function render() {
+        const item = BANK[order[pos]];
+        locked = false;
+        feedbackEl.hidden = true;
+        feedbackEl.className = 'q-feedback';
+        feedbackEl.innerHTML = '';
+        nextBtn.hidden = true;
+        nextBtn.textContent = pos === BANK.length - 1 ? 'See results →' : 'Next →';
+
+        sentenceEl.innerHTML = '<span class="blank">___</span> ' + item.fr;
+        enEl.textContent = 'the ' + item.en;
+
+        optionsEl.innerHTML = '';
+        for (const art of ['le', 'la'] as const) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'q-opt';
+          btn.innerHTML = '<span class="form">' + art + '</span>';
+          btn.addEventListener('click', () => choose(btn, art, item));
+          optionsEl.appendChild(btn);
+        }
+        updateMeta();
+      }
+
+      function choose(btn: HTMLButtonElement, art: 'le' | 'la', item: Q) {
+        if (locked) return;
+        locked = true;
+        answered++;
+        const correctArt = item.g === 'm' ? 'le' : 'la';
+        const isRight = art === correctArt;
+        const opts = Array.prototype.slice.call(optionsEl.querySelectorAll('.q-opt')) as HTMLButtonElement[];
+        opts.forEach((o) => {
+          o.disabled = true;
+          const v = (o.querySelector('.form') as HTMLElement).textContent;
+          if (v === correctArt) o.classList.add('correct');
+          else if (o === btn) o.classList.add('wrong');
+        });
+        // display form (l' before a vowel)
+        const disp = startsVowel(item.fr) ? "l'" + item.fr : correctArt + ' ' + item.fr;
+        if (isRight) {
+          correct++;
+          feedbackEl.className = 'q-feedback good';
+          feedbackEl.innerHTML = '✓ Correct — <b>' + disp + '</b> (' + item.en + '). ' + item.why;
+        } else {
+          feedbackEl.className = 'q-feedback bad';
+          feedbackEl.innerHTML = '✗ It\'s <b>' + disp + '</b> (' + item.en + '). ' + item.why;
+        }
+        feedbackEl.hidden = false;
+        nextBtn.hidden = false;
+        updateMeta();
+      }
+
+      function finish() {
+        quizCard.hidden = true;
+        summaryEl.hidden = false;
+        const pct = Math.round((correct / BANK.length) * 100);
+        const title = $('qs-title') as HTMLElement;
+        const line = $('qs-line') as HTMLElement;
+        if (pct >= 90) title.textContent = 'Parfait ! ' + correct + '/' + BANK.length;
+        else if (pct >= 70) title.textContent = 'Très bien ! ' + correct + '/' + BANK.length;
+        else if (pct >= 50) title.textContent = 'Good start — ' + correct + '/' + BANK.length;
+        else title.textContent = 'Keep practising — ' + correct + '/' + BANK.length;
+        line.textContent = 'You got ' + correct + ' of ' + BANK.length + ' right (' + pct + '%). Review the ending rules above, then reshuffle for a fresh round.';
+        progressEl.textContent = 'Done · ' + BANK.length + ' of ' + BANK.length;
+        scoreEl.textContent = 'Score ' + correct + '/' + BANK.length;
+      }
+
+      function start() {
+        order = shuffle(BANK.length);
+        pos = 0; correct = 0; answered = 0;
+        quizCard.hidden = false;
+        summaryEl.hidden = true;
+        render();
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (pos >= BANK.length - 1) { finish(); return; }
+        pos++;
+        render();
+      });
+      $('q-restart')?.addEventListener('click', start);
+      $('q-shuffle')?.addEventListener('click', start);
+
+      start();
+    }
+
+    document.addEventListener('astro:page-load', initFrenchGender);
+  </script>
+</Base>
