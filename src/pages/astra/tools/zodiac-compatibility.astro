@@ -1,0 +1,599 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+const app = APPS.astra;
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+const pageTitle = 'Free Zodiac Compatibility Checker';
+const pageDescription =
+  'Pick two star signs and get an instant compatibility read — score, vibe, strengths and friction — from the classic zodiac element system. Free, no signup.';
+const canonicalUrl = 'https://bliss-coach.com/astra/tools/zodiac-compatibility/';
+
+const faqs = [
+  {
+    q: 'How does zodiac compatibility work?',
+    a: 'Astrologers group the 12 signs into four elements — Fire, Earth, Air and Water — and three modalities (cardinal, fixed, mutable). Signs that share an element tend to click naturally, and certain elements complement each other (Fire with Air, Earth with Water). This checker reads the two elements and modalities of your signs and generates a compatibility vibe, a score, and where the sparks and the friction usually show up.',
+  },
+  {
+    q: 'Which signs are most compatible?',
+    a: 'Same-element pairs (like Aries and Leo, both Fire) usually feel instantly in sync, and complementary pairs — Fire with Air, or Earth with Water — often balance each other beautifully. That said, "opposite" pairings can be some of the most magnetic once both people meet in the middle. Compatibility is about how two energies mix, not a pass-or-fail grade.',
+  },
+  {
+    q: 'Do star signs really decide who you match with?',
+    a: 'No — and this tool is for fun, not fate. Real relationships come down to communication, timing, values and effort, none of which a sun sign can measure. Think of a compatibility read as a playful conversation starter and a fresh lens on how two personalities might blend, not a verdict on your love life.',
+  },
+  {
+    q: 'Is the Zodiac Compatibility Checker free?',
+    a: 'Yes. It runs entirely in your browser, stores nothing on a server, and needs no account or email. Check as many pairings as you like. When you want a reading built on your actual birth chart — not just your sun sign — that is what the Astra app is for.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Zodiac Compatibility Checker',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Web',
+    url: canonicalUrl,
+    description: pageDescription,
+    isAccessibleForFree: true,
+    inLanguage: 'en',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Astra', item: 'https://bliss-coach.com/astra/' },
+      { '@type': 'ListItem', position: 3, name: 'Zodiac Compatibility Checker', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+
+// The 12 signs, in zodiac order, with element + modality + symbol + dates.
+const SIGNS = [
+  { name: 'Aries', symbol: '♈', dates: 'Mar 21 – Apr 19', element: 'Fire', modality: 'Cardinal' },
+  { name: 'Taurus', symbol: '♉', dates: 'Apr 20 – May 20', element: 'Earth', modality: 'Fixed' },
+  { name: 'Gemini', symbol: '♊', dates: 'May 21 – Jun 20', element: 'Air', modality: 'Mutable' },
+  { name: 'Cancer', symbol: '♋', dates: 'Jun 21 – Jul 22', element: 'Water', modality: 'Cardinal' },
+  { name: 'Leo', symbol: '♌', dates: 'Jul 23 – Aug 22', element: 'Fire', modality: 'Fixed' },
+  { name: 'Virgo', symbol: '♍', dates: 'Aug 23 – Sep 22', element: 'Earth', modality: 'Mutable' },
+  { name: 'Libra', symbol: '♎', dates: 'Sep 23 – Oct 22', element: 'Air', modality: 'Cardinal' },
+  { name: 'Scorpio', symbol: '♏', dates: 'Oct 23 – Nov 21', element: 'Water', modality: 'Fixed' },
+  { name: 'Sagittarius', symbol: '♐', dates: 'Nov 22 – Dec 21', element: 'Fire', modality: 'Mutable' },
+  { name: 'Capricorn', symbol: '♑', dates: 'Dec 22 – Jan 19', element: 'Earth', modality: 'Cardinal' },
+  { name: 'Aquarius', symbol: '♒', dates: 'Jan 20 – Feb 18', element: 'Air', modality: 'Fixed' },
+  { name: 'Pisces', symbol: '♓', dates: 'Feb 19 – Mar 20', element: 'Water', modality: 'Mutable' },
+];
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon }}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase('/astra/')}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb"><a href={withBase('/astra/')}>Astrology</a> · Free tool</span>
+      <h1>Free Zodiac Compatibility Checker</h1>
+      <p class="meta">Pick two star signs and get an instant compatibility read — the overall vibe, a score, and exactly where the chemistry and the friction tend to live. Everything runs in your browser.</p>
+    </header>
+
+    <!-- Intro (also visible without JS) -->
+    <div class="prose tool-intro">
+      <p>
+        Every zodiac sign belongs to one of four <strong>elements</strong> — <strong>Fire</strong>, <strong>Earth</strong>,
+        <strong>Air</strong> and <strong>Water</strong> — and that element is the single biggest clue to how two signs
+        get along. Same-element pairs speak the same emotional language; <strong>Fire</strong> and <strong>Air</strong>
+        feed each other, and so do <strong>Earth</strong> and <strong>Water</strong>. Choose two signs below and this
+        checker reads their elements and modalities to build a fun compatibility snapshot. It's for entertainment — a
+        fresh lens on two personalities, not a verdict on your love life.
+      </p>
+    </div>
+
+    <!-- The tool -->
+    <section class="tool" aria-label="Zodiac compatibility checker">
+      <div class="pick-grid">
+        <div class="pick-field">
+          <label for="sign-a">Sign A</label>
+          <select id="sign-a" class="sign-select">
+            <option value="" disabled selected>Choose a sign…</option>
+            {SIGNS.map((s, i) => (
+              <option value={i}>{s.symbol} {s.name} · {s.dates}</option>
+            ))}
+          </select>
+        </div>
+
+        <button type="button" id="swap-btn" class="swap-btn" aria-label="Swap the two signs" title="Swap signs">⇄</button>
+
+        <div class="pick-field">
+          <label for="sign-b">Sign B</label>
+          <select id="sign-b" class="sign-select">
+            <option value="" disabled selected>Choose a sign…</option>
+            {SIGNS.map((s, i) => (
+              <option value={i}>{s.symbol} {s.name} · {s.dates}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <!-- Output (populated by JS) -->
+      <div id="compat-output" class="compat-output" hidden aria-live="polite"></div>
+
+      <div id="compat-empty" class="compat-empty">
+        <span class="ce-glyph" aria-hidden="true">✦</span>
+        <p>Pick a sign on each side to reveal the reading.</p>
+      </div>
+
+      <noscript>
+        <p class="noscript-note">
+          This checker builds its reading with JavaScript. With JavaScript off, you can still read any pairing by
+          hand using the element system: find each sign's element in the table below. <strong>Same element</strong> =
+          naturally harmonious. <strong>Fire + Air</strong> and <strong>Earth + Water</strong> = complementary, they
+          lift each other. <strong>Fire + Water</strong>, <strong>Fire + Earth</strong>, <strong>Air + Water</strong>
+          and <strong>Air + Earth</strong> = opposites-attract pairings that take a little more work.
+        </p>
+      </noscript>
+    </section>
+
+    <!-- SEO / teaching content -->
+    <div class="prose tool-explainer">
+      <h2>The four elements, in one glance</h2>
+      <ul>
+        <li><strong>🔥 Fire</strong> — <em>Aries, Leo, Sagittarius.</em> Bold, spontaneous, driven by passion and momentum.</li>
+        <li><strong>🌍 Earth</strong> — <em>Taurus, Virgo, Capricorn.</em> Grounded, loyal, practical — builders of things that last.</li>
+        <li><strong>💨 Air</strong> — <em>Gemini, Libra, Aquarius.</em> Curious and social, living in ideas and conversation.</li>
+        <li><strong>💧 Water</strong> — <em>Cancer, Scorpio, Pisces.</em> Emotional, intuitive, deeply feeling and protective.</li>
+      </ul>
+
+      <h2>How the elements mix</h2>
+      <ul>
+        <li><strong>Same element</strong> — instant understanding; you run on the same wavelength (with the same blind spots).</li>
+        <li><strong>Fire + Air</strong> — air feeds the flame: ideas turn into action and the energy keeps building.</li>
+        <li><strong>Earth + Water</strong> — water nourishes the soil: feeling meets stability and something real grows.</li>
+        <li><strong>Fire + Water / Fire + Earth / Air + Water / Air + Earth</strong> — the "opposites attract" mixes: magnetic, but they ask both people to stretch toward the middle.</li>
+      </ul>
+
+      <h2>Modalities add the finishing note</h2>
+      <p>
+        Beyond element, each sign has a <strong>modality</strong> — <em>cardinal</em> (initiators),
+        <em>fixed</em> (sustainers) or <em>mutable</em> (adapters). Two cardinals both want to lead; two fixed signs
+        both dig in; two mutables can drift without an anchor. A cardinal-plus-fixed or fixed-plus-mutable mix often
+        flows more smoothly because each person covers what the other lacks. That's why two signs in the same element
+        can still feel quite different.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+      {faqs.map((f) => (
+        <>
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </>
+      ))}
+    </div>
+
+    <!-- Internal links -->
+    <section class="section container" style="padding-top:8px">
+      <div class="tool-links">
+        <a class="article-card" href={withBase('/astra/')}>
+          <h3>Meet Astra →</h3>
+          <p>Your AI astrologer reads your full birth chart — sun, moon and rising — and talks you through it in real conversations.</p>
+          <span class="read">See the app →</span>
+        </a>
+        <a class="article-card" href={withBase('/astra/blog/')}>
+          <h3>Astrology guides →</h3>
+          <p>Signs, houses, elements and transits explained in plain language — no jargon, no gatekeeping.</p>
+          <span class="read">Read the guides →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Secondary CTA -->
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="Astra app icon" width="72" height="72" />
+        <div>
+          <h3>Go beyond your sun sign with Astra</h3>
+          <p>A compatibility read from two sun signs is just the surface. Astra reads your whole birth chart and talks you through your relationships, your day and your timing — in real voice conversations. Coming soon to the App Store.</p>
+        </div>
+        <a class="btn" href={withBase('/astra/')}>Discover Astra</a>
+      </div>
+    </aside>
+  </div>
+
+  <style>
+    /* Inherits the light "article-page" theme + Astra brand vars (gold accent) */
+    .tool-intro { padding-bottom: 8px; }
+    .tool {
+      max-width: var(--prose-w);
+      margin: 0 auto;
+      padding: 8px 24px;
+    }
+    .article-header .crumb a { color: color-mix(in srgb, var(--accent) 80%, #6b5a1e); }
+
+    /* Sign pickers */
+    .pick-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 14px;
+    }
+    @media (max-width: 560px) {
+      .pick-grid { grid-template-columns: 1fr; }
+      .swap-btn { justify-self: center; }
+    }
+    .pick-field { display: flex; flex-direction: column; gap: 8px; }
+    .pick-field label {
+      font-weight: 700; font-size: 14px; letter-spacing: 0.02em;
+      text-transform: uppercase; color: #55555f;
+    }
+    .sign-select {
+      width: 100%;
+      font: inherit; font-size: 16px; color: #17171c;
+      background: #fff;
+      border: 1.5px solid rgba(0, 0, 0, 0.14);
+      border-radius: 12px;
+      padding: 13px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .sign-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .swap-btn {
+      display: inline-grid; place-items: center;
+      width: 46px; height: 46px; margin-bottom: 1px;
+      border-radius: 12px; cursor: pointer;
+      font-size: 20px; font-weight: 700; color: var(--accent);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 14%, #fff), color-mix(in srgb, var(--accent) 14%, #fff));
+      border: 1.5px solid color-mix(in srgb, var(--accent) 45%, rgba(0,0,0,0.12));
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .swap-btn:hover { transform: rotate(180deg) translateY(1px); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 30%, transparent); }
+    .swap-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Empty state */
+    .compat-empty {
+      margin-top: 22px;
+      border: 1px dashed rgba(0, 0, 0, 0.16);
+      border-radius: 16px;
+      padding: 34px 24px;
+      text-align: center;
+      color: #8a8a94;
+    }
+    .compat-empty .ce-glyph {
+      display: block; font-size: 30px; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .compat-empty p { margin: 0; font-size: 15px; }
+
+    /* Output card */
+    .compat-output {
+      margin-top: 22px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 44px rgba(11, 11, 18, 0.10);
+    }
+    .co-banner {
+      position: relative;
+      display: flex; align-items: center; justify-content: center; gap: 18px;
+      padding: 26px 22px 24px;
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-2) 62%, color-mix(in srgb, var(--accent) 70%, var(--brand-2)));
+      color: var(--on-gradient);
+      overflow: hidden;
+    }
+    .co-banner::after {
+      content: '✦ ✧ · ✦ · ✧ ✦ · ✧ · ✦ ✧ · ✦';
+      position: absolute; inset: 0;
+      font-size: 13px; letter-spacing: 6px; line-height: 2.4;
+      color: color-mix(in srgb, var(--accent) 55%, #fff);
+      opacity: 0.18; pointer-events: none;
+      transform: rotate(-8deg) scale(1.4);
+    }
+    .co-sign { position: relative; text-align: center; z-index: 1; }
+    .co-sign .glyph { font-size: 34px; line-height: 1; display: block; }
+    .co-sign .nm { font-size: 15px; font-weight: 700; margin-top: 4px; }
+    .co-sign .el { font-size: 11.5px; opacity: 0.85; letter-spacing: 0.06em; text-transform: uppercase; }
+    .co-amp { position: relative; z-index: 1; font-size: 22px; opacity: 0.7; }
+
+    .co-body { padding: 22px 24px 24px; }
+    .co-scorerow {
+      display: flex; align-items: center; gap: 18px;
+      padding-bottom: 18px; margin-bottom: 18px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .co-ring {
+      flex: none;
+      width: 84px; height: 84px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: conic-gradient(var(--accent) var(--pct), rgba(0,0,0,0.08) 0);
+      position: relative;
+    }
+    .co-ring::before {
+      content: ''; position: absolute; inset: 7px; border-radius: 50%; background: #fff;
+    }
+    .co-ring .num { position: relative; font-size: 24px; font-weight: 800; color: #17171c; }
+    .co-ring .num small { font-size: 12px; font-weight: 700; color: #8a8a94; }
+    .co-verdict { min-width: 0; }
+    .co-verdict .label {
+      font-size: 20px; font-weight: 800; letter-spacing: -0.01em; color: #121216; margin: 0 0 4px;
+    }
+    .co-verdict .stars { font-size: 16px; letter-spacing: 2px; color: var(--accent); }
+    .co-verdict .stars .off { color: rgba(0, 0, 0, 0.16); }
+
+    .co-vibe { font-size: 16.5px; line-height: 1.6; color: #26262e; margin: 0 0 18px; }
+
+    .co-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 560px) { .co-cols { grid-template-columns: 1fr; } }
+    .co-col h3 {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+    .co-col.good h3 { color: #15683a; }
+    .co-col.friction h3 { color: #8a5a08; }
+    .co-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+    .co-col li {
+      font-size: 14.5px; line-height: 1.5; color: #33333c;
+      padding-left: 22px; position: relative;
+    }
+    .co-col li::before { position: absolute; left: 0; top: 0; }
+    .co-col.good li::before { content: '✓'; color: #16a34a; font-weight: 800; }
+    .co-col.friction li::before { content: '⚡'; }
+
+    .co-foot {
+      margin: 18px 0 0; font-size: 13px; color: #8a8a94; line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 7px;
+    }
+    .co-foot .st { color: var(--accent); }
+
+    .noscript-note {
+      margin: 18px 0 0;
+      font-size: 14.5px; color: #6b6b76; line-height: 1.6;
+    }
+    .tool-explainer { padding-top: 40px; }
+    .tool-links { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .tool-links { grid-template-columns: 1fr; } }
+  </style>
+
+  <script>
+    function initZodiacCompat() {
+      const selA = document.getElementById('sign-a') as HTMLSelectElement | null;
+      const selB = document.getElementById('sign-b') as HTMLSelectElement | null;
+      const out = document.getElementById('compat-output') as HTMLElement | null;
+      const empty = document.getElementById('compat-empty') as HTMLElement | null;
+      const swap = document.getElementById('swap-btn') as HTMLButtonElement | null;
+      if (!selA || !selB || !out || !empty) return;
+      // Guard against double-binding across ClientRouter navigations
+      if ((out as any).__zcBound) return;
+      (out as any).__zcBound = true;
+
+      const SIGNS = [
+        { name: 'Aries', symbol: '♈', element: 'Fire', modality: 'Cardinal' },
+        { name: 'Taurus', symbol: '♉', element: 'Earth', modality: 'Fixed' },
+        { name: 'Gemini', symbol: '♊', element: 'Air', modality: 'Mutable' },
+        { name: 'Cancer', symbol: '♋', element: 'Water', modality: 'Cardinal' },
+        { name: 'Leo', symbol: '♌', element: 'Fire', modality: 'Fixed' },
+        { name: 'Virgo', symbol: '♍', element: 'Earth', modality: 'Mutable' },
+        { name: 'Libra', symbol: '♎', element: 'Air', modality: 'Cardinal' },
+        { name: 'Scorpio', symbol: '♏', element: 'Water', modality: 'Fixed' },
+        { name: 'Sagittarius', symbol: '♐', element: 'Fire', modality: 'Mutable' },
+        { name: 'Capricorn', symbol: '♑', element: 'Earth', modality: 'Cardinal' },
+        { name: 'Aquarius', symbol: '♒', element: 'Air', modality: 'Fixed' },
+        { name: 'Pisces', symbol: '♓', element: 'Water', modality: 'Mutable' },
+      ];
+
+      const ELEMENT_EMOJI: Record<string, string> = { Fire: '🔥', Earth: '🌍', Air: '💨', Water: '💧' };
+
+      // Element-pair narrative, keyed by a sorted "El+El" key.
+      const COMBO: Record<string, { vibe: string; strengths: string[]; friction: string[] }> = {
+        'Fire+Fire': {
+          vibe: 'Two open flames — instant heat, shared drive, and zero patience for anything boring.',
+          strengths: ["You match each other's pace and ambition, so neither of you feels held back.", 'Adventure comes easy — you dare each other to be bolder and life rarely gets dull.'],
+          friction: ['Two big personalities means you both want the spotlight at once.', 'Neither of you likes to back down, so a small spark can flare into a wildfire.'],
+        },
+        'Earth+Earth': {
+          vibe: 'Both feet firmly on the ground — a steady, dependable, built-to-last kind of bond.',
+          strengths: ['You share the same values around security, loyalty and playing the long game.', 'You both show love through actions and reliability, not empty words.'],
+          friction: ['Comfort can quietly slide into a rut — someone has to break the routine.', 'Two stubborn streaks make compromise a slow negotiation.'],
+        },
+        'Air+Air': {
+          vibe: 'A true meeting of minds — endless conversation, shared curiosity, friendship at the core.',
+          strengths: ['The talking never runs dry; you get each other’s ideas almost instantly.', 'Plenty of freedom and breathing room — neither of you clings or smothers.'],
+          friction: ['Big on ideas, lighter on follow-through and deep emotional talk.', 'Too much heady logic can leave the feelings side undernourished.'],
+        },
+        'Water+Water': {
+          vibe: 'A deep emotional current — intuitive, tender, and almost telepathic at its best.',
+          strengths: ['You feel each other without needing the words spelled out.', 'Empathy runs deep — together you build a safe, nurturing little world.'],
+          friction: ['Two big moods can amplify each other into a storm.', 'Without an anchor you can drown in feelings and overthink everything.'],
+        },
+        'Air+Fire': {
+          vibe: 'Air feeds the flame — ideas spark into action and the energy just keeps building.',
+          strengths: ['One dreams it up, the other makes it happen — a natural creative team.', 'Playful, social and rarely bored in each other’s company.'],
+          friction: ['Fire can run hot while Air stays cool and detached.', 'You both prize freedom, so the commitment talk may need a gentle nudge.'],
+        },
+        'Earth+Water': {
+          vibe: 'Water nourishes the soil — feeling meets stability and something real grows.',
+          strengths: ['Earth gives Water a sense of safety; Water gives Earth warmth and depth.', 'A quietly devoted, home-building kind of love.'],
+          friction: ['Earth’s practicality can read as cold to sensitive Water.', 'Water’s changing moods can unsettle Earth’s need for steadiness.'],
+        },
+        'Earth+Fire': {
+          vibe: 'Spark meets anchor — thrilling in small doses, a tug-of-war over pace in bigger ones.',
+          strengths: ['Earth grounds Fire’s wild ideas into something actually achievable.', 'Fire brings excitement and spontaneity to Earth’s steady world.'],
+          friction: ['Fire finds Earth slow; Earth finds Fire reckless.', 'One wants to leap now, the other wants a plan — timing rarely lines up.'],
+        },
+        'Fire+Water': {
+          vibe: 'Steam rising — intense attraction, big feelings, and a real risk of boiling over.',
+          strengths: ['Passion and depth in the same room — nothing about this runs lukewarm.', 'Fire warms Water’s heart; Water gives Fire a soul.'],
+          friction: ['Fire’s bluntness can wound Water’s tender feelings.', 'Water’s emotional depth can feel like a lot to freedom-loving Fire.'],
+        },
+        'Air+Earth': {
+          vibe: 'Ideas meet reality — a mind-and-matter pairing that has to work to meet in the middle.',
+          strengths: ['Air brings fresh thinking; Earth turns it into a solid, workable plan.', 'You cover each other’s blind spots beautifully when you actually listen.'],
+          friction: ['Earth wants roots; Air wants room to roam.', 'Air’s spontaneity can feel flaky to security-minded Earth.'],
+        },
+        'Air+Water': {
+          vibe: 'Head meets heart — fascinating and tender, but speaking different native languages.',
+          strengths: ['Air offers perspective; Water offers empathy and emotional depth.', 'Conversations that move fluidly between big ideas and real feelings.'],
+          friction: ['Air rationalizes what Water simply feels — and that can sting.', 'Water needs reassurance; detached Air keeps forgetting to give it.'],
+        },
+      };
+
+      // Modality relationship → an extra line, tagged good or friction.
+      function modalityLine(a: string, b: string): { type: 'good' | 'friction'; text: string } {
+        if (a === b) {
+          if (a === 'Cardinal') return { type: 'friction', text: 'You both love to lead and start things, so expect the occasional power struggle over who steers.' };
+          if (a === 'Fixed') return { type: 'friction', text: 'Two fixed signs means two immovable objects — digging in is your shared default setting.' };
+          return { type: 'friction', text: 'Both adaptable and a little scattered — plans can dissolve unless someone holds the line.' };
+        }
+        const pair = [a, b].sort().join('+');
+        if (pair === 'Cardinal+Fixed') return { type: 'good', text: 'One of you initiates, the other sustains — a natural start-it-and-finish-it rhythm.' };
+        if (pair === 'Cardinal+Mutable') return { type: 'good', text: 'One leads, the other flexes, so you move together without stepping on each other’s toes.' };
+        return { type: 'good', text: 'One brings staying power, the other keeps things fresh — steady but never stale.' };
+      }
+
+      function comboKey(a: string, b: string) {
+        return [a, b].sort().join('+');
+      }
+
+      function elementRelation(a: string, b: string): 'same' | 'complementary' | 'challenging' {
+        if (a === b) return 'same';
+        const k = comboKey(a, b);
+        if (k === 'Air+Fire' || k === 'Earth+Water') return 'complementary';
+        return 'challenging';
+      }
+
+      function clamp(n: number, lo: number, hi: number) { return Math.max(lo, Math.min(hi, n)); }
+
+      function computeScore(ia: number, ib: number) {
+        const a = SIGNS[ia], b = SIGNS[ib];
+        const sameSign = ia === ib;
+        const rel = elementRelation(a.element, b.element);
+        let base: number;
+        if (sameSign) base = 82;
+        else if (rel === 'same') base = 88;
+        else if (rel === 'complementary') base = 85;
+        else base = 63;
+        base += a.modality === b.modality ? -6 : 3;
+        // Deterministic per-pair variance so scores vary within a category.
+        const variance = ((ia * 3 + ib * 7 + 5) % 7) - 3;
+        return clamp(base + variance, 42, 98);
+      }
+
+      function labelFor(score: number) {
+        if (score >= 88) return 'Cosmic match';
+        if (score >= 80) return 'Strong harmony';
+        if (score >= 70) return 'Naturally in sync';
+        if (score >= 60) return 'Balanced with spark';
+        return 'Opposites-attract growth';
+      }
+
+      function esc(s: string) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function render() {
+        const va = selA!.value, vb = selB!.value;
+        if (va === '' || vb === '') {
+          out!.hidden = true;
+          empty!.hidden = false;
+          return;
+        }
+        const ia = parseInt(va, 10), ib = parseInt(vb, 10);
+        const a = SIGNS[ia], b = SIGNS[ib];
+        const sameSign = ia === ib;
+        const score = computeScore(ia, ib);
+        const stars = clamp(Math.round(score / 20), 2, 5);
+        const label = labelFor(score);
+
+        const combo = COMBO[comboKey(a.element, b.element)];
+        let vibe = combo.vibe;
+        if (sameSign) {
+          vibe = 'Pure mirror energy. ' + vibe + ' Everything you love — and everything that drives you up the wall — comes back to you doubled.';
+        }
+
+        const strengths = combo.strengths.slice();
+        const friction = combo.friction.slice();
+        const ml = modalityLine(a.modality, b.modality);
+        if (ml.type === 'good') strengths.push(ml.text);
+        else friction.push(ml.text);
+
+        const starHtml =
+          '★'.repeat(stars) + '<span class="off">' + '★'.repeat(5 - stars) + '</span>';
+
+        out!.innerHTML =
+          '<div class="co-banner">' +
+            '<div class="co-sign"><span class="glyph">' + a.symbol + '</span>' +
+              '<span class="nm">' + a.name + '</span>' +
+              '<span class="el">' + ELEMENT_EMOJI[a.element] + ' ' + a.element + '</span></div>' +
+            '<span class="co-amp">&amp;</span>' +
+            '<div class="co-sign"><span class="glyph">' + b.symbol + '</span>' +
+              '<span class="nm">' + b.name + '</span>' +
+              '<span class="el">' + ELEMENT_EMOJI[b.element] + ' ' + b.element + '</span></div>' +
+          '</div>' +
+          '<div class="co-body">' +
+            '<div class="co-scorerow">' +
+              '<div class="co-ring" style="--pct:' + score + '%"><span class="num">' + score + '<small>%</small></span></div>' +
+              '<div class="co-verdict">' +
+                '<p class="label">' + label + '</p>' +
+                '<div class="stars" aria-label="' + stars + ' out of 5">' + starHtml + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<p class="co-vibe">' + esc(vibe) + '</p>' +
+            '<div class="co-cols">' +
+              '<div class="co-col good"><h3>Where it clicks</h3><ul>' +
+                strengths.map((s) => '<li>' + esc(s) + '</li>').join('') +
+              '</ul></div>' +
+              '<div class="co-col friction"><h3>Where it rubs</h3><ul>' +
+                friction.map((s) => '<li>' + esc(s) + '</li>').join('') +
+              '</ul></div>' +
+            '</div>' +
+            '<p class="co-foot"><span class="st">✦</span> Just for fun — real chemistry comes down to two people, not two sun signs.</p>' +
+          '</div>';
+
+        empty!.hidden = true;
+        out!.hidden = false;
+      }
+
+      selA.addEventListener('change', render);
+      selB.addEventListener('change', render);
+      swap?.addEventListener('click', () => {
+        const tmp = selA.value;
+        selA.value = selB.value;
+        selB.value = tmp;
+        render();
+      });
+    }
+
+    document.addEventListener('astro:page-load', initZodiacCompat);
+  </script>
+</Base>
