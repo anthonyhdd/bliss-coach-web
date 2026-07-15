@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import AppStoreButton from '../../components/AppStoreButton.astro';
 import CelestialCrest from '../../components/CelestialCrest.astro';
-import { APPS, withBase } from '../../config/apps';
+import { APPS, withBase, avatarFor } from '../../config/apps';
 import { SHOWCASE } from '../../config/showcase';
 import { PSEO_SECTIONS } from '../../config/pseo';
 
@@ -296,7 +296,9 @@ const jsonLd = {
         <div class="quote-grid" data-count={show.quotes.length}>
           {show.quotes.map((q) => (
             <figure class="quote feature">
-              <span class="q-avatar">{q.name[0]}</span>
+              {avatarFor(q.name)
+                ? <img class="q-avatar q-photo" src={withBase(avatarFor(q.name)!)} alt="" width="32" height="32" loading="lazy" />
+                : <span class="q-avatar">{q.name[0]}</span>}
               <blockquote>“{q.text}”</blockquote>
               <figcaption>— {q.name}</figcaption>
             </figure>

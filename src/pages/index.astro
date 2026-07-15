@@ -1,7 +1,7 @@
 ---
 import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
-import { withBase } from '../config/apps';
+import { withBase, avatarFor } from '../config/apps';
 import Analytics from '../components/Analytics.astro';
 
 // Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
@@ -994,6 +994,7 @@ const coaches = [
         font-weight: 800; font-size: 13px;
         margin-bottom: 10px;
       }
+      .review img.rev-avatar { object-fit: cover; background: none; }
       .review blockquote { font-size: 14.5px; line-height: 1.55; color: #26221a; margin-bottom: 8px; }
       .review figcaption { font-size: 12.5px; color: #8b8574; font-weight: 600; }
 
@@ -1248,7 +1249,9 @@ const coaches = [
           <div class="marquee-track">
             {[...REVIEWS, ...REVIEWS].map((r) => (
               <figure class="review">
-                <span class="rev-avatar" style={`--ra:${r.color}`}>{r.name[0]}</span>
+                {avatarFor(r.name)
+                  ? <img class="rev-avatar rev-photo" src={withBase(avatarFor(r.name)!)} alt="" width="30" height="30" loading="lazy" />
+                  : <span class="rev-avatar" style={`--ra:${r.color}`}>{r.name[0]}</span>}
                 <blockquote>“{r.text}”</blockquote>
                 <figcaption>— {r.name}</figcaption>
               </figure>

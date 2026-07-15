@@ -208,3 +208,19 @@ export function withBase(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return `${base}${path}`;
 }
+
+/** Named reviewers with a consistent portrait — used on the home marquee and coach quotes.
+ *  Feature-label "quotes" (e.g. "Snap a meal") have no entry and keep the initial avatar. */
+const REVIEW_AVATARS: Record<string, string> = {
+  jane: '/avatars/jane.jpg',
+  marcus: '/avatars/marcus.jpg',
+  emily: '/avatars/emily.jpg',
+  tom: '/avatars/tom.jpg',
+  jake: '/avatars/jake.jpg',
+  rayan: '/avatars/rayan.jpg',
+};
+
+/** Portrait path for a reviewer name, or null for non-person labels. */
+export function avatarFor(name: string): string | null {
+  return REVIEW_AVATARS[name.trim().toLowerCase()] ?? null;
+}
