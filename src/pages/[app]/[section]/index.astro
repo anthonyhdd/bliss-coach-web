@@ -38,6 +38,13 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
       </a>
       <h2 style="font-size:clamp(30px,5vw,44px)">{section.hubTitle}</h2>
       <p class="lead">{section.hubIntro}</p>
+      {slug === 'alex' && (
+        <a class="article-card" href={withBase('/alex/tools/star-answer-builder/')} style="display:block;margin-bottom:22px">
+          <h3>Free tool: STAR Answer Builder →</h3>
+          <p>Build a clean, structured STAR answer from a rough story, with live tips on length, detail and impact. No signup.</p>
+          <span class="read">Open the builder →</span>
+        </a>
+      )}
       <div class="article-list">
         {entries.map((e) => (
           <a class="article-card" href={withBase(`/${app.slug}/${section.base}/${e.id.split('/')[1]}/`)}>
