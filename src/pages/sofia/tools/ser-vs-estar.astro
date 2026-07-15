@@ -1,0 +1,609 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+const app = APPS.sofia;
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+const pageTitle = 'Ser vs Estar: Free Checker & Practice';
+const pageDescription =
+  'Ser or estar? Learn the difference in plain English with the DOCTOR & PLACE rules, then practice with 20 instant-feedback quiz sentences. Free, no signup.';
+const canonicalUrl = 'https://bliss-coach.com/sofia/tools/ser-vs-estar/';
+
+const faqs = [
+  {
+    q: "What's the difference between ser and estar?",
+    a: 'Both mean "to be." Ser describes permanent, essential things — identity, origin, characteristics, time. Estar describes temporary states — location, feelings, conditions, and ongoing actions. Quick test: if it is part of what something IS, use ser; if it is how or where something is right now, use estar.',
+  },
+  {
+    q: 'When do I use ser?',
+    a: 'Use ser for identity and things that define what someone or something is: origin ("Soy de México"), profession ("Es médico"), personality and physical traits ("Es amable", "Es alto"), time and dates ("Son las dos"), possession, relationships, and the location of events ("La fiesta es en mi casa"). The DOCTOR mnemonic covers it: Descriptions, Occupations, Characteristics, Time, Origin, Relationships.',
+  },
+  {
+    q: 'When do I use estar?',
+    a: 'Use estar for temporary states and where things are: location ("Estoy en casa"), feelings and emotions ("Estoy feliz"), physical or health conditions ("Está cansada"), and ongoing actions ("Estoy comiendo"). The PLACE mnemonic helps: Position, Location, Action (ongoing), Condition, Emotion.',
+  },
+  {
+    q: 'Can the same adjective work with both ser and estar?',
+    a: 'Yes, and it changes the meaning. "Ser aburrido" means to be boring (a trait); "estar aburrido" means to be bored (right now). "Ser listo" means clever; "estar listo" means ready. "La manzana es verde" means the apple is green in color; "está verde" means it is unripe. Ser points to essence, estar to a current state.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Ser vs Estar Checker & Practice',
+    applicationCategory: 'EducationalApplication',
+    operatingSystem: 'Web',
+    url: canonicalUrl,
+    description: pageDescription,
+    isAccessibleForFree: true,
+    inLanguage: 'en',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Sofia', item: 'https://bliss-coach.com/sofia/' },
+      { '@type': 'ListItem', position: 3, name: 'Ser vs Estar', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl }}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase('/sofia/')}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb"><a href={withBase('/sofia/')}>Learn Spanish</a> · Free tool</span>
+      <h1>Ser vs Estar — Checker &amp; Practice</h1>
+      <p class="meta">The two Spanish verbs for "to be", finally untangled. Read the rules, use the picker when you're stuck, then drill 20 sentences with instant feedback. Everything runs in your browser.</p>
+    </header>
+
+    <!-- Intro (also visible without JS) -->
+    <div class="prose tool-intro">
+      <p>
+        Spanish has <strong>two</strong> verbs for "to be" — <strong>ser</strong> and <strong>estar</strong> — and
+        choosing the wrong one is the number-one grammar slip for English speakers. The golden rule:
+        <strong>ser</strong> describes what something <em>is</em> (identity, origin, essential traits, time), while
+        <strong>estar</strong> describes how or where something <em>is right now</em> (location, feelings,
+        conditions, ongoing actions). Learn the two mnemonics below, then practice until it's automatic.
+      </p>
+    </div>
+
+    <!-- RULES cheat-sheet (pure HTML, always visible) -->
+    <section class="rules" aria-label="Ser vs Estar rules">
+      <div class="rule-card ser">
+        <div class="rc-head">
+          <span class="rc-verb">SER</span>
+          <span class="rc-tag">permanent · essence · identity</span>
+        </div>
+        <p class="rc-mnem"><strong>DOCTOR</strong></p>
+        <ul>
+          <li><b>D</b>escriptions — defining traits · <span class="ex">Ella <u>es</u> alta.</span></li>
+          <li><b>O</b>ccupations — jobs &amp; roles · <span class="ex">Yo <u>soy</u> profesor.</span></li>
+          <li><b>C</b>haracteristics — personality · <span class="ex">Tú <u>eres</u> amable.</span></li>
+          <li><b>T</b>ime — hours, days, dates · <span class="ex">Hoy <u>es</u> lunes.</span></li>
+          <li><b>O</b>rigin — where you're from · <span class="ex">Somos <u>de</u> España.</span></li>
+          <li><b>R</b>elationships — plus events &amp; possession · <span class="ex">Él <u>es</u> mi hermano.</span></li>
+        </ul>
+      </div>
+
+      <div class="rule-card estar">
+        <div class="rc-head">
+          <span class="rc-verb">ESTAR</span>
+          <span class="rc-tag">temporary · state · location</span>
+        </div>
+        <p class="rc-mnem"><strong>PLACE</strong></p>
+        <ul>
+          <li><b>P</b>osition — where a thing sits · <span class="ex">El libro <u>está</u> en la mesa.</span></li>
+          <li><b>L</b>ocation — where you are · <span class="ex">Nosotros <u>estamos</u> en casa.</span></li>
+          <li><b>A</b>ction — ongoing (-ando/-iendo) · <span class="ex">Ella <u>está</u> comiendo.</span></li>
+          <li><b>C</b>ondition — temporary state · <span class="ex">Yo <u>estoy</u> cansado.</span></li>
+          <li><b>E</b>motion — how you feel · <span class="ex">Tú <u>estás</u> feliz.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CHECKER: decision helper -->
+    <section class="tool checker" aria-label="Ser or estar decision helper">
+      <h2 class="tool-h2">Not sure which one? Pick what you mean.</h2>
+      <p class="tool-lead">Tap the idea you're trying to express and get an instant, always-correct answer with an example.</p>
+
+      <div class="chip-wrap" role="group" aria-label="Meaning options">
+        <button type="button" class="ctx-chip" data-i="0">Origin / where someone is from</button>
+        <button type="button" class="ctx-chip" data-i="1">Profession or role</button>
+        <button type="button" class="ctx-chip" data-i="2">Time, day or date</button>
+        <button type="button" class="ctx-chip" data-i="3">Personality / character</button>
+        <button type="button" class="ctx-chip" data-i="4">Physical description (defining trait)</button>
+        <button type="button" class="ctx-chip" data-i="5">Possession — whose it is</button>
+        <button type="button" class="ctx-chip" data-i="6">Relationship between people</button>
+        <button type="button" class="ctx-chip" data-i="7">What it's made of</button>
+        <button type="button" class="ctx-chip" data-i="8">Where an event takes place</button>
+        <button type="button" class="ctx-chip" data-i="9">Location / position of a thing or person</button>
+        <button type="button" class="ctx-chip" data-i="10">An ongoing action (right now)</button>
+        <button type="button" class="ctx-chip" data-i="11">A feeling or emotion</button>
+        <button type="button" class="ctx-chip" data-i="12">Physical condition or health</button>
+        <button type="button" class="ctx-chip" data-i="13">A temporary state (how it is now)</button>
+        <button type="button" class="ctx-chip" data-i="14">The result of a change</button>
+      </div>
+
+      <div id="ctx-result" class="ctx-result" hidden aria-live="polite"></div>
+
+      <noscript>
+        <p class="noscript-note">
+          This picker needs JavaScript. Without it, use the two mnemonic cards above: if your meaning is on the
+          <strong>DOCTOR</strong> list (identity, origin, traits, time, possession, events) choose <strong>ser</strong>;
+          if it's on the <strong>PLACE</strong> list (location, ongoing action, condition, emotion) choose <strong>estar</strong>.
+        </p>
+      </noscript>
+    </section>
+
+    <!-- PRACTICE: quiz -->
+    <section class="tool practice" aria-label="Ser vs estar practice quiz">
+      <div class="quiz-head">
+        <h2 class="tool-h2">Practice: fill in the blank</h2>
+        <div class="quiz-meta">
+          <span id="q-progress" class="stat-pill">Question 1 of 20</span>
+          <span id="q-score" class="stat-pill">Score 0/0</span>
+        </div>
+      </div>
+
+      <div id="quiz" class="quiz-card">
+        <p id="q-sentence" class="q-sentence">Loading…</p>
+        <p id="q-en" class="q-en"></p>
+        <div id="q-options" class="q-options"></div>
+        <div id="q-feedback" class="q-feedback" hidden aria-live="polite"></div>
+        <div class="q-buttons">
+          <button type="button" id="q-next" class="tbtn tbtn-brand" hidden>Next →</button>
+        </div>
+      </div>
+
+      <div id="quiz-summary" class="quiz-summary" hidden>
+        <h3 id="qs-title">Nice work!</h3>
+        <p id="qs-line"></p>
+        <button type="button" id="q-restart" class="tbtn tbtn-brand">Try again (reshuffle)</button>
+      </div>
+
+      <div class="tool-actions-top" style="margin-top:14px">
+        <button type="button" id="q-shuffle" class="tbtn tbtn-ghost">Shuffle &amp; restart</button>
+      </div>
+
+      <noscript>
+        <p class="noscript-note">
+          The practice quiz needs JavaScript. Here are three worked examples to study meanwhile:
+          <br />• <strong>La sopa está caliente.</strong> — estar (a temporary condition: how the soup is right now).
+          <br />• <strong>Yo soy de México.</strong> — ser (origin: where you're from).
+          <br />• <strong>Los niños están en el parque.</strong> — estar (location).
+        </p>
+      </noscript>
+    </section>
+
+    <!-- SEO / teaching content -->
+    <div class="prose tool-explainer">
+      <h2>The one-line test</h2>
+      <p>
+        When you hesitate, ask: <em>"Am I saying what this thing IS, or how/where it IS right now?"</em>
+        Identity, origin and defining qualities don't change from moment to moment — that's <strong>ser</strong>.
+        A location, a mood, or a passing condition can change tomorrow — that's <strong>estar</strong>.
+      </p>
+
+      <h2>The traps everyone hits</h2>
+      <ul>
+        <li><strong>Events use ser, not estar.</strong> A concert or a party is an event, so <em>"La fiesta <u>es</u> en mi casa"</em> — even though it feels like a location.</li>
+        <li><strong>Location of things and people uses estar.</strong> <em>"El baño <u>está</u> a la derecha."</em> Only <em>events</em> flip to ser.</li>
+        <li><strong>Feelings are always estar,</strong> even lasting ones: <em>"<u>Estoy</u> enamorado."</em></li>
+        <li><strong>Some adjectives change meaning.</strong> <em>ser listo</em> = clever, <em>estar listo</em> = ready. <em>ser aburrido</em> = boring, <em>estar aburrido</em> = bored.</li>
+      </ul>
+
+      <h2>Frequently asked questions</h2>
+      {faqs.map((f) => (
+        <>
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </>
+      ))}
+    </div>
+
+    <!-- Internal links -->
+    <section class="section container" style="padding-top:8px">
+      <div class="tool-links">
+        <a class="article-card" href={withBase('/sofia/how-to-say/')}>
+          <h3>How to say it in Spanish →</h3>
+          <p>Phrase-by-phrase guides: natural translations, pronunciation, and real example conversations.</p>
+          <span class="read">Browse phrases →</span>
+        </a>
+        <a class="article-card" href={withBase('/sofia/')}>
+          <h3>Meet Sofia →</h3>
+          <p>Your AI Spanish teacher from Mexico — practice ser and estar out loud in real voice conversations.</p>
+          <span class="read">See the app →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Secondary CTA -->
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="Sofia app icon" width="72" height="72" />
+        <div>
+          <h3>Make ser vs estar automatic — talk it out with Sofia</h3>
+          <p>Rules stick when you use them out loud. Sofia is an AI Spanish teacher who chats with you, corrects your ser/estar in real time, and adapts to your level — free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.appStoreUrl}>Get Sofia free</a>
+      </div>
+    </aside>
+  </div>
+
+  <style>
+    /* Inherits the light "article-page" theme + Sofia brand vars */
+    .tool-intro { padding-bottom: 8px; }
+    .tool {
+      max-width: var(--prose-w);
+      margin: 0 auto;
+      padding: 8px 24px;
+    }
+    .tool-h2 { font-size: 22px; letter-spacing: -0.02em; color: #121216; margin: 0 0 6px; }
+    .tool-lead { font-size: 15px; color: #6b6b76; margin: 0 0 16px; line-height: 1.5; }
+    .tool-actions-top { display: flex; justify-content: flex-end; }
+    .article-header .crumb a { color: var(--accent); }
+
+    /* Rules cheat-sheet */
+    .rules {
+      max-width: var(--prose-w);
+      margin: 8px auto 4px;
+      padding: 8px 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    }
+    @media (max-width: 640px) { .rules { grid-template-columns: 1fr; } }
+    .rule-card {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 14px;
+      padding: 18px 18px 16px;
+    }
+    .rule-card.ser { border-top: 3px solid var(--accent); }
+    .rule-card.estar { border-top: 3px solid var(--brand-3); }
+    .rc-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .rc-verb {
+      font-size: 20px; font-weight: 800; letter-spacing: 0.02em; color: #17171c;
+    }
+    .rule-card.ser .rc-verb { color: var(--accent); }
+    .rule-card.estar .rc-verb { color: color-mix(in srgb, var(--brand-3) 78%, #17171c); }
+    .rc-tag { font-size: 12.5px; color: #8a8a94; font-weight: 600; }
+    .rc-mnem { font-size: 13px; letter-spacing: 0.14em; color: #55555f; margin: 0 0 10px; }
+    .rule-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+    .rule-card li { font-size: 14.5px; line-height: 1.5; color: #33333c; }
+    .rule-card li b { color: #17171c; }
+    .rule-card .ex { display: block; font-size: 14px; color: #6b6b76; margin-top: 1px; }
+    .rule-card .ex u { text-decoration: none; font-weight: 700; color: var(--accent); }
+    .rule-card.estar .ex u { color: color-mix(in srgb, var(--brand-3) 72%, #17171c); }
+
+    /* Checker */
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
+    .ctx-chip {
+      font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.13); color: #33333c;
+      border-radius: 99px; padding: 9px 15px;
+      transition: transform 0.12s, border-color 0.12s, background 0.12s, box-shadow 0.12s;
+    }
+    .ctx-chip:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.13)); }
+    .ctx-chip.active {
+      background: color-mix(in srgb, var(--accent) 12%, #fff);
+      border-color: var(--accent); color: #17171c;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+    .ctx-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .ctx-result {
+      margin-top: 16px;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .ctx-result.estar { border-left-color: var(--brand-3); }
+    .cr-verb { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 6px; color: var(--accent); }
+    .ctx-result.estar .cr-verb { color: color-mix(in srgb, var(--brand-3) 76%, #17171c); }
+    .cr-why { font-size: 15.5px; line-height: 1.6; color: #33333c; margin: 0 0 10px; }
+    .cr-ex { font-size: 16px; color: #17171c; background: #f6f6f9; border-radius: 9px; padding: 10px 14px; margin: 0; }
+    .cr-ex b { color: var(--accent); }
+    .ctx-result.estar .cr-ex b { color: color-mix(in srgb, var(--brand-3) 72%, #17171c); }
+
+    /* Practice quiz */
+    .quiz-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+    .quiz-meta { display: flex; gap: 8px; }
+    .stat-pill {
+      font-size: 13px; font-weight: 600; color: #55555f;
+      background: #f1f1f5; border-radius: 99px; padding: 5px 12px;
+    }
+    .quiz-card {
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 14px; padding: 22px 22px 18px;
+    }
+    .q-sentence { font-size: 22px; line-height: 1.5; color: #17171c; margin: 0 0 6px; letter-spacing: -0.01em; }
+    .q-sentence .blank { color: var(--accent); font-weight: 800; }
+    .q-en { font-size: 14.5px; color: #8a8a94; font-style: italic; margin: 0 0 18px; }
+    .q-options { display: flex; gap: 12px; flex-wrap: wrap; }
+    .q-opt {
+      flex: 1 1 0; min-width: 130px;
+      font: inherit; cursor: pointer; text-align: center;
+      background: #fbfbfc; border: 1.5px solid rgba(0, 0, 0, 0.12); border-radius: 12px;
+      padding: 14px 16px;
+      transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s, background 0.12s;
+    }
+    .q-opt:hover:not(:disabled) { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.12)); }
+    .q-opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .q-opt .form { display: block; font-size: 20px; font-weight: 800; color: #17171c; }
+    .q-opt .verb { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9a9aa4; margin-top: 3px; }
+    .q-opt:disabled { cursor: default; }
+    .q-opt.correct { background: color-mix(in srgb, #16a34a 12%, #fff); border-color: #16a34a; }
+    .q-opt.correct .form { color: #15683a; }
+    .q-opt.wrong { background: color-mix(in srgb, #dc2626 10%, #fff); border-color: #dc2626; }
+    .q-opt.wrong .form { color: #b4231b; }
+
+    .q-feedback {
+      margin-top: 16px; border-radius: 11px; padding: 12px 15px;
+      font-size: 14.5px; line-height: 1.55;
+    }
+    .q-feedback.good { background: color-mix(in srgb, #16a34a 12%, #fff); color: #15683a; border: 1px solid color-mix(in srgb, #16a34a 24%, transparent); }
+    .q-feedback.bad { background: color-mix(in srgb, #f59e0b 13%, #fff); color: #8a5a08; border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent); }
+    .q-feedback b { font-weight: 800; }
+    .q-buttons { margin-top: 16px; display: flex; justify-content: flex-end; }
+
+    .quiz-summary {
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 14px; padding: 22px; text-align: center;
+    }
+    .quiz-summary h3 { font-size: 24px; margin: 0 0 6px; color: #121216; }
+    .quiz-summary p { font-size: 16px; color: #55555f; margin: 0 0 16px; }
+
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 99px;
+      font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .tbtn-brand {
+      background: linear-gradient(92deg, var(--brand-1), var(--brand-2), var(--brand-3));
+      color: var(--on-gradient);
+      box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+    .tbtn-brand:hover { transform: translateY(-2px); box-shadow: 0 12px 34px color-mix(in srgb, var(--accent) 45%, transparent); }
+    .tbtn-ghost { background: #fff; border-color: rgba(0, 0, 0, 0.14); color: #33333c; }
+    .tbtn-ghost:hover { background: #f3f3f7; }
+    .tbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .noscript-note {
+      margin: 16px 0 0;
+      font-size: 14.5px; color: #6b6b76; line-height: 1.6;
+    }
+    .tool-explainer { padding-top: 40px; }
+    .tool-links { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .tool-links { grid-template-columns: 1fr; } }
+  </style>
+
+  <script>
+    function initSerEstar() {
+      const quiz = document.getElementById('quiz');
+      const checker = document.getElementById('ctx-result');
+      if (!quiz && !checker) return;
+      // Guard against double-binding across ClientRouter navigations
+      if ((quiz as any)?.__seBound) return;
+      if (quiz) (quiz as any).__seBound = true;
+
+      /* ---------- Decision helper (checker) ---------- */
+      const CTX = [
+        { verb: 'SER', why: 'Origin — where a person or thing is from is part of its identity, so it takes ser.', ex: 'Yo <b>soy</b> de Colombia.' },
+        { verb: 'SER', why: 'Profession or role defines who someone is, so it takes ser.', ex: 'Ella <b>es</b> doctora.' },
+        { verb: 'SER', why: 'Time, days and dates always use ser.', ex: 'Hoy <b>es</b> martes.' },
+        { verb: 'SER', why: 'Personality and character are lasting traits, so they take ser.', ex: 'Tú <b>eres</b> muy generoso.' },
+        { verb: 'SER', why: 'A defining physical description (a fixed trait) uses ser.', ex: 'Mi hermano <b>es</b> alto.' },
+        { verb: 'SER', why: 'Possession — whose something is — uses ser.', ex: 'El coche <b>es</b> de mi padre.' },
+        { verb: 'SER', why: 'Relationships between people use ser.', ex: 'Nosotros <b>somos</b> amigos.' },
+        { verb: 'SER', why: 'What something is made of uses ser.', ex: 'La mesa <b>es</b> de madera.' },
+        { verb: 'SER', why: 'The location of an EVENT is the famous exception — events use ser, not estar.', ex: 'La fiesta <b>es</b> en mi casa.' },
+        { verb: 'ESTAR', why: 'Location or position of a thing or person uses estar (events are the only exception).', ex: 'El baño <b>está</b> a la derecha.' },
+        { verb: 'ESTAR', why: 'An ongoing action right now uses estar + the -ando/-iendo form.', ex: 'Yo <b>estoy</b> trabajando.' },
+        { verb: 'ESTAR', why: 'Feelings and emotions always use estar, even lasting ones.', ex: 'Ella <b>está</b> feliz.' },
+        { verb: 'ESTAR', why: 'Physical condition and health use estar.', ex: 'Él <b>está</b> enfermo.' },
+        { verb: 'ESTAR', why: 'A temporary state — how something is at the moment — uses estar.', ex: 'El café <b>está</b> frío.' },
+        { verb: 'ESTAR', why: 'The result of a change or action uses estar.', ex: 'La tienda <b>está</b> cerrada.' },
+      ];
+      const chips = Array.prototype.slice.call(document.querySelectorAll('.ctx-chip'));
+      const crBox = document.getElementById('ctx-result') as HTMLElement | null;
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const i = parseInt((chip as HTMLElement).dataset.i || '0', 10);
+          const c = CTX[i];
+          if (!c || !crBox) return;
+          chips.forEach((x) => x.classList.remove('active'));
+          chip.classList.add('active');
+          const isEstar = c.verb === 'ESTAR';
+          crBox.classList.toggle('estar', isEstar);
+          crBox.innerHTML =
+            '<p class="cr-verb">Use ' + c.verb + '</p>' +
+            '<p class="cr-why">' + c.why + '</p>' +
+            '<p class="cr-ex">' + c.ex + '</p>';
+          crBox.hidden = false;
+        });
+      });
+
+      /* ---------- Practice quiz ---------- */
+      if (!quiz) return;
+      // Each item: sentence with ___, the two conjugated forms, the correct verb,
+      // the English translation, and the one-line rule.
+      const BANK = [
+        { s: 'La sopa ___ caliente.', ser: 'es', estar: 'está', ans: 'estar', en: 'The soup is hot.', why: 'a temporary condition — how the soup is right now.' },
+        { s: 'Yo ___ de México.', ser: 'soy', estar: 'estoy', ans: 'ser', en: "I'm from Mexico.", why: 'origin — where you are from.' },
+        { s: 'Nosotros ___ cansados.', ser: 'somos', estar: 'estamos', ans: 'estar', en: 'We are tired.', why: 'a temporary physical condition.' },
+        { s: 'El hielo ___ frío.', ser: 'es', estar: 'está', ans: 'ser', en: 'Ice is cold.', why: 'an inherent, defining quality of ice.' },
+        { s: 'Ella ___ profesora.', ser: 'es', estar: 'está', ans: 'ser', en: 'She is a teacher.', why: 'profession / identity.' },
+        { s: '¿Dónde ___ el baño?', ser: 'es', estar: 'está', ans: 'estar', en: 'Where is the bathroom?', why: 'location of a thing.' },
+        { s: 'Hoy ___ lunes.', ser: 'es', estar: 'está', ans: 'ser', en: 'Today is Monday.', why: 'days and dates use ser.' },
+        { s: 'La ventana ___ abierta.', ser: 'es', estar: 'está', ans: 'estar', en: 'The window is open.', why: 'a state resulting from an action.' },
+        { s: 'Mi hermano ___ alto.', ser: 'es', estar: 'está', ans: 'ser', en: 'My brother is tall.', why: 'a defining physical trait.' },
+        { s: 'Los niños ___ en el parque.', ser: 'son', estar: 'están', ans: 'estar', en: 'The children are in the park.', why: 'location of people.' },
+        { s: 'La fiesta ___ en mi casa.', ser: 'es', estar: 'está', ans: 'ser', en: 'The party is at my house.', why: 'the location of an EVENT uses ser (the classic exception).' },
+        { s: 'Ahora mismo ___ estudiando.', ser: 'soy', estar: 'estoy', ans: 'estar', en: 'Right now I am studying.', why: 'an ongoing action (estar + -ando/-iendo).' },
+        { s: 'El coche ___ de mi padre.', ser: 'es', estar: 'está', ans: 'ser', en: "The car is my father's.", why: 'possession — whose it is.' },
+        { s: 'Ella ___ enferma.', ser: 'es', estar: 'está', ans: 'estar', en: 'She is sick.', why: 'health / a temporary condition.' },
+        { s: 'El libro ___ interesante.', ser: 'es', estar: 'está', ans: 'ser', en: 'The book is interesting.', why: 'a defining characteristic of the book.' },
+        { s: 'Son las tres; ya ___ tarde.', ser: 'es', estar: 'está', ans: 'ser', en: "It's three o'clock; it's late already.", why: 'telling time uses ser.' },
+        { s: 'Mis abuelos ___ muy amables.', ser: 'son', estar: 'están', ans: 'ser', en: 'My grandparents are very kind.', why: 'personality / character.' },
+        { s: 'El café ___ delicioso hoy.', ser: 'es', estar: 'está', ans: 'estar', en: 'The coffee is delicious today.', why: 'how it tastes right now (with "hoy") — a current state.' },
+        { s: 'La reunión ___ a las diez.', ser: 'es', estar: 'está', ans: 'ser', en: 'The meeting is at ten.', why: 'the time of an event uses ser.' },
+        { s: 'Nosotros ___ listos para salir.', ser: 'somos', estar: 'estamos', ans: 'estar', en: 'We are ready to leave.', why: 'estar listo = ready (ser listo would mean clever).' },
+      ];
+
+      const $ = (id: string) => document.getElementById(id);
+      const sentenceEl = $('q-sentence') as HTMLElement;
+      const enEl = $('q-en') as HTMLElement;
+      const optionsEl = $('q-options') as HTMLElement;
+      const feedbackEl = $('q-feedback') as HTMLElement;
+      const nextBtn = $('q-next') as HTMLButtonElement;
+      const progressEl = $('q-progress') as HTMLElement;
+      const scoreEl = $('q-score') as HTMLElement;
+      const summaryEl = $('quiz-summary') as HTMLElement;
+      const quizCard = $('quiz') as HTMLElement;
+
+      let order: number[] = [];
+      let pos = 0;
+      let correct = 0;
+      let answered = 0;
+      let locked = false;
+
+      function shuffle(n: number) {
+        const a = Array.from({ length: n }, (_, i) => i);
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function updateMeta() {
+        progressEl.textContent = 'Question ' + Math.min(pos + 1, BANK.length) + ' of ' + BANK.length;
+        scoreEl.textContent = 'Score ' + correct + '/' + answered;
+      }
+
+      function render() {
+        const item = BANK[order[pos]];
+        locked = false;
+        feedbackEl.hidden = true;
+        feedbackEl.className = 'q-feedback';
+        feedbackEl.innerHTML = '';
+        nextBtn.hidden = true;
+        nextBtn.textContent = pos === BANK.length - 1 ? 'See results →' : 'Next →';
+
+        sentenceEl.innerHTML = item.s.replace('___', '<span class="blank">___</span>');
+        enEl.textContent = item.en;
+
+        optionsEl.innerHTML = '';
+        // present the two conjugated forms as choices
+        const choices = [
+          { verb: 'ser', form: item.ser },
+          { verb: 'estar', form: item.estar },
+        ];
+        for (const ch of choices) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'q-opt';
+          btn.innerHTML = '<span class="form">' + ch.form + '</span><span class="verb">' + ch.verb + '</span>';
+          btn.addEventListener('click', () => choose(btn, ch.verb, item));
+          optionsEl.appendChild(btn);
+        }
+        updateMeta();
+      }
+
+      function choose(btn: HTMLButtonElement, verb: string, item: any) {
+        if (locked) return;
+        locked = true;
+        answered++;
+        const isRight = verb === item.ans;
+        const correctForm = item.ans === 'ser' ? item.ser : item.estar;
+        const opts = Array.prototype.slice.call(optionsEl.querySelectorAll('.q-opt')) as HTMLButtonElement[];
+        opts.forEach((o) => {
+          o.disabled = true;
+          const v = (o.querySelector('.verb') as HTMLElement).textContent;
+          if (v === item.ans) o.classList.add('correct');
+          else if (o === btn) o.classList.add('wrong');
+        });
+        if (isRight) {
+          correct++;
+          feedbackEl.className = 'q-feedback good';
+          feedbackEl.innerHTML = '✓ Correct — <b>' + item.s.replace('___', correctForm) + '</b> Uses <b>' + item.ans + '</b>: ' + item.why;
+        } else {
+          feedbackEl.className = 'q-feedback bad';
+          feedbackEl.innerHTML = '✗ It\'s <b>' + item.ans + '</b> → <b>' + item.s.replace('___', correctForm) + '</b> — ' + item.why;
+        }
+        feedbackEl.hidden = false;
+        nextBtn.hidden = false;
+        updateMeta();
+      }
+
+      function finish() {
+        quizCard.hidden = true;
+        summaryEl.hidden = false;
+        const pct = Math.round((correct / BANK.length) * 100);
+        const title = $('qs-title') as HTMLElement;
+        const line = $('qs-line') as HTMLElement;
+        if (pct >= 90) title.textContent = '¡Excelente! ' + correct + '/' + BANK.length;
+        else if (pct >= 70) title.textContent = '¡Muy bien! ' + correct + '/' + BANK.length;
+        else if (pct >= 50) title.textContent = 'Good start — ' + correct + '/' + BANK.length;
+        else title.textContent = 'Keep practicing — ' + correct + '/' + BANK.length;
+        line.textContent = 'You got ' + correct + ' of ' + BANK.length + ' right (' + pct + '%). Review the DOCTOR and PLACE rules above, then reshuffle for a fresh round.';
+        progressEl.textContent = 'Done · ' + BANK.length + ' of ' + BANK.length;
+        scoreEl.textContent = 'Score ' + correct + '/' + BANK.length;
+      }
+
+      function start() {
+        order = shuffle(BANK.length);
+        pos = 0; correct = 0; answered = 0;
+        quizCard.hidden = false;
+        summaryEl.hidden = true;
+        render();
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (pos >= BANK.length - 1) { finish(); return; }
+        pos++;
+        render();
+      });
+      $('q-restart')?.addEventListener('click', start);
+      $('q-shuffle')?.addEventListener('click', start);
+
+      start();
+    }
+
+    document.addEventListener('astro:page-load', initSerEstar);
+  </script>
+</Base>
