@@ -152,7 +152,7 @@ export const APPS: Record<string, AppDef> = {
     onGradient: '#ffffff',
     features: [
       {
-        title: 'Talk it out, out loud',
+        title: 'Say it out loud',
         body: 'Voice conversations with a dietician who listens first — no forms, no calorie shame, just real answers.',
       },
       {
