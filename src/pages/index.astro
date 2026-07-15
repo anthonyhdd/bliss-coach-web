@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
 import { withBase, avatarFor } from '../config/apps';
 import Analytics from '../components/Analytics.astro';
-import KamoFigure from '../components/KamoFigure.astro';
 
 // Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
 // card upgrades from portrait to a muted looping video at the next build.
@@ -374,8 +373,20 @@ const coaches = [
         text-align: center;
         overflow: hidden;
       }
-      /* KAMO easter egg — the draggable 3D figure lives in <KamoFigure/>; keep footer content above it */
-      .foot-board, .foot-mark, .foot-tag, .foot-links, .foot-stickers { position: relative; z-index: 2; }
+      /* KAMO easter egg — the hidden 3D figure peeking up in the footer; rises on hover */
+      .foot-kamo {
+        position: absolute;
+        left: clamp(18px, 8vw, 96px);
+        bottom: -96px;
+        width: 74px; height: auto;
+        opacity: 0.82;
+        pointer-events: none;
+        z-index: 0;
+        filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
+        transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.4s ease;
+      }
+      .foot:hover .foot-kamo { transform: translateY(-48px); opacity: 1; }
+      .foot-board, .foot-mark, .foot-tag, .foot-links, .foot-stickers { position: relative; z-index: 1; }
       @media (max-width: 640px) { .foot-kamo { width: 56px; bottom: -74px; left: 14px; } }
       @media (prefers-reduced-motion: reduce) { .foot-kamo { transition: none; } }
       .foot-grid {
@@ -1279,7 +1290,7 @@ const coaches = [
 
     <footer class="foot">
       <div class="foot-grid" aria-hidden="true"></div>
-      <KamoFigure />
+      <img class="foot-kamo" src={withBase('/kamo-peek.png')} alt="" aria-hidden="true" width="74" height="180" loading="lazy" />
 
       <div class="foot-stickers" aria-hidden="true">
         <span class="stk stk-1">PRACTICE OUT LOUD</span>
