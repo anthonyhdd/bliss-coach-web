@@ -45,6 +45,13 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
           <span class="read">Open the builder →</span>
         </a>
       )}
+      {slug === 'sofia' && (
+        <a class="article-card" href={withBase('/sofia/tools/ser-vs-estar/')} style="display:block;margin-bottom:22px">
+          <h3>Free tool: Ser vs Estar Checker &amp; Practice →</h3>
+          <p>Untangle Spanish's two verbs for "to be" — the DOCTOR &amp; PLACE rules, a meaning picker, and a 20-sentence quiz with instant feedback. No signup.</p>
+          <span class="read">Open the tool →</span>
+        </a>
+      )}
       {slug === 'mila' && (
         <a class="article-card" href={withBase('/mila/tools/protein-portion-helper/')} style="display:block;margin-bottom:22px">
           <h3>Free tool: Daily Protein &amp; Portion Helper →</h3>
