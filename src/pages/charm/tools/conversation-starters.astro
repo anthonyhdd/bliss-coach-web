@@ -1,0 +1,488 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+const app = APPS.charm;
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+const pageTitle = 'Free Conversation Starters & Icebreakers';
+const pageDescription =
+  'Stuck at the blank text box? Pick a context and vibe, get tasteful opener templates you can personalize in seconds. Free icebreaker generator, no signup.';
+const canonicalUrl = 'https://bliss-coach.com/charm/tools/conversation-starters/';
+
+const faqs = [
+  {
+    q: 'What makes a good conversation starter?',
+    a: 'A good opener is specific, easy to answer, and leaves room to reply. It references something real — their bio, where you met, a shared interest — instead of a generic "hey". The best starters ask a light question or make a playful observation so the other person has an obvious, low-effort way to respond.',
+  },
+  {
+    q: 'How do I start a text conversation without being boring?',
+    a: 'Skip "hey" and "how are you". Open with something they can actually react to: a detail from their profile, a callback to how you met, or a light this-or-that question. Keep it short, warm, and curious. This generator gives you templates with a [fill-in] slot so you personalize instead of copy-pasting the same line to everyone.',
+  },
+  {
+    q: 'Are these openers just cheesy pickup lines?',
+    a: 'No. These are conversation starters, not pickup lines. The goal is a natural, confident first message that invites a real reply — not a gimmick. They stay tasteful and genuine, because the openers that actually get responses are the ones that sound like a real person being curious.',
+  },
+  {
+    q: 'Is the conversation starter generator free?',
+    a: 'Yes. It runs entirely in your browser, stores nothing, and needs no account or email. Reshuffle for as many openers as you like. When you want live coaching on a specific match — including reading a screenshot of your chat — that is what the Charm app is for.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Conversation Starters & Icebreaker Generator',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Web',
+    url: canonicalUrl,
+    description: pageDescription,
+    isAccessibleForFree: true,
+    inLanguage: 'en',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Charm', item: 'https://bliss-coach.com/charm/' },
+      { '@type': 'ListItem', position: 3, name: 'Conversation Starters', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl }}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase('/charm/')}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb"><a href={withBase('/charm/')}>Dating Coach</a> · Free tool</span>
+      <h1>Conversation Starters &amp; Icebreakers</h1>
+      <p class="meta">Freeze at the blank text box? Pick where you're starting from, choose a vibe, and get tasteful opener templates you can personalize in seconds. Everything runs in your browser.</p>
+    </header>
+
+    <!-- Intro (also visible without JS) -->
+    <div class="prose tool-intro">
+      <p>
+        The first message does more work than any other. A generic <em>"hey"</em> gives the other person
+        nothing to grab onto, so it dies in the notifications. A good opener is <strong>specific</strong>,
+        <strong>easy to answer</strong>, and <strong>sounds like you</strong>. The templates below each have a
+        <span class="slot-demo">[fill-in]</span> slot — swap in a real detail from their profile, how you met,
+        or a shared interest, and a template becomes <em>your</em> message. Pick a context, choose a vibe, and
+        generate.
+      </p>
+    </div>
+
+    <!-- The tool -->
+    <section class="tool" aria-label="Conversation starter generator">
+      <h2 class="tool-h2">1 · Where are you starting from?</h2>
+      <div class="chip-wrap" role="group" aria-label="Context options">
+        <button type="button" class="ctx-chip active" data-ctx="match">New match on a dating app</button>
+        <button type="button" class="ctx-chip" data-ctx="irl">Someone you met in person</button>
+        <button type="button" class="ctx-chip" data-ctx="reconnect">Reconnecting after a while</button>
+        <button type="button" class="ctx-chip" data-ctx="bio">Their bio / a shared interest</button>
+        <button type="button" class="ctx-chip" data-ctx="group">Group chat → DM</button>
+      </div>
+
+      <h2 class="tool-h2" style="margin-top:22px">2 · Pick a vibe</h2>
+      <div class="chip-wrap vibe-wrap" role="group" aria-label="Vibe options">
+        <button type="button" class="vibe-chip active" data-vibe="any">Any</button>
+        <button type="button" class="vibe-chip" data-vibe="playful">Playful</button>
+        <button type="button" class="vibe-chip" data-vibe="genuine">Genuine</button>
+        <button type="button" class="vibe-chip" data-vibe="witty">Witty</button>
+      </div>
+
+      <div class="gen-buttons">
+        <button type="button" id="cs-generate" class="tbtn tbtn-brand">Generate openers</button>
+        <button type="button" id="cs-more" class="tbtn tbtn-ghost" hidden>Reshuffle · more →</button>
+      </div>
+
+      <div id="cs-output" class="cs-output" aria-live="polite" hidden></div>
+
+      <p class="tool-tip-inline">
+        Tip: the <span class="slot-demo">[bracket]</span> is your job — the one detail that proves you read their
+        profile. That single specific word is what turns a template into a reply.
+      </p>
+
+      <noscript>
+        <p class="noscript-note">
+          This generator uses JavaScript. Meanwhile, here are three openers you can adapt by hand:
+          <br />• <strong>"Okay, your profile says [their hobby] — are you actually good at it or just brave enough to put it on there?"</strong>
+          <br />• <strong>"We can't be the only two people who left that party early. What made you bail?"</strong> (someone you met IRL)
+          <br />• <strong>"I owe you a proper hello — [how you met] was not the moment to be smooth. How've you been?"</strong> (reconnecting)
+          <br />The rule for all of them: reference something real, keep it short, and end somewhere they can easily reply.
+        </p>
+      </noscript>
+    </section>
+
+    <!-- SEO / teaching content -->
+    <div class="prose tool-explainer">
+      <h2>What makes an opener actually get a reply</h2>
+      <ul>
+        <li><strong>Be specific, not generic.</strong> "Hey" says nothing. "That trip photo in Lisbon — was that the pastéis or the view that got you?" says you paid attention.</li>
+        <li><strong>Make it easy to answer.</strong> Give them an obvious on-ramp: a light question, a this-or-that, a playful guess they can correct.</li>
+        <li><strong>Keep it short.</strong> One or two lines. A wall of text on message one reads as trying too hard.</li>
+        <li><strong>Sound like a person, not a line.</strong> Confident and warm beats slick every time. If it feels like a script, they can tell.</li>
+        <li><strong>Leave the door open.</strong> End somewhere they can pick up — a question, a hook, a "prove me wrong". Don't close the loop yourself.</li>
+      </ul>
+
+      <h2>How to personalize the [fill-in]</h2>
+      <p>
+        The template is scaffolding; the bracket is the message. Fill it with the <em>most specific</em> real
+        detail you can find — the niche band in their bio, the dog in photo three, the fact that you both left
+        the same party early. Specific beats clever: a slightly awkward line about a real thing will always
+        out-perform a polished line about nothing. When in doubt, ask about the thing they clearly wanted you
+        to notice — people put it there on purpose.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+      {faqs.map((f) => (
+        <>
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </>
+      ))}
+    </div>
+
+    <!-- Internal links -->
+    <section class="section container" style="padding-top:8px">
+      <div class="tool-links">
+        <a class="article-card" href={withBase('/charm/blog/')}>
+          <h3>Texting &amp; dating guides →</h3>
+          <p>What to text, when to text, and how to keep a conversation alive past the opener.</p>
+          <span class="read">Read the guides →</span>
+        </a>
+        <a class="article-card" href={withBase('/charm/')}>
+          <h3>Meet Charm →</h3>
+          <p>Your AI dating coach. Screenshot a real conversation and get sharp, honest coaching on exactly what to send next.</p>
+          <span class="read">See the app →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Secondary CTA -->
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="Charm app icon" width="72" height="72" />
+        <div>
+          <h3>Nailed the opener? Charm handles what comes next.</h3>
+          <p>A great first message is step one. Charm reads a screenshot of your actual chat, catches the subtext, and tells you exactly what to send to keep it going — free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.appStoreUrl}>Get Charm free</a>
+      </div>
+    </aside>
+  </div>
+
+  <style>
+    /* Inherits the light "article-page" theme + Charm brand vars (black + gold) */
+    .tool-intro { padding-bottom: 8px; }
+    .slot-demo {
+      font-weight: 700; color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, #fff);
+      border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+      border-radius: 6px; padding: 1px 6px; white-space: nowrap;
+    }
+    .tool {
+      max-width: var(--prose-w);
+      margin: 0 auto;
+      padding: 8px 24px;
+    }
+    .tool-h2 { font-size: 18px; letter-spacing: -0.01em; color: #121216; margin: 0 0 12px; }
+    .article-header .crumb a { color: color-mix(in srgb, var(--accent) 76%, #17171c); }
+
+    /* Context + vibe chips */
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
+    .ctx-chip, .vibe-chip {
+      font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.13); color: #33333c;
+      border-radius: 99px; padding: 9px 15px;
+      transition: transform 0.12s, border-color 0.12s, background 0.12s, box-shadow 0.12s;
+    }
+    .ctx-chip:hover, .vibe-chip:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.13)); }
+    .ctx-chip.active, .vibe-chip.active {
+      background: color-mix(in srgb, var(--accent) 14%, #fff);
+      border-color: var(--accent); color: #17171c;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+    .ctx-chip:focus-visible, .vibe-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .vibe-wrap .vibe-chip { padding: 8px 16px; }
+
+    .gen-buttons { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 99px;
+      font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .tbtn-brand {
+      background: linear-gradient(92deg, var(--brand-1), var(--brand-2), var(--brand-3));
+      color: var(--on-gradient);
+      box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+    .tbtn-brand:hover { transform: translateY(-2px); box-shadow: 0 12px 34px color-mix(in srgb, var(--accent) 45%, transparent); }
+    .tbtn-ghost { background: #fff; border-color: rgba(0, 0, 0, 0.14); color: #33333c; }
+    .tbtn-ghost:hover { background: #f3f3f7; }
+    .tbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Output cards */
+    .cs-output { margin-top: 22px; display: grid; gap: 12px; }
+    .opener-card {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 16px 16px 14px;
+      display: grid; gap: 12px;
+    }
+    .opener-text { font-size: 16.5px; line-height: 1.6; color: #22222a; margin: 0; }
+    .opener-text .slot {
+      font-weight: 700; color: color-mix(in srgb, var(--accent) 80%, #17171c);
+      background: color-mix(in srgb, var(--accent) 13%, #fff);
+      border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+      border-radius: 6px; padding: 0 6px;
+    }
+    .opener-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .vibe-tag {
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase;
+      color: #8a7a44;
+      background: color-mix(in srgb, var(--accent) 12%, #fff);
+      border-radius: 99px; padding: 4px 11px;
+    }
+    .copy-btn {
+      font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.14); color: #33333c;
+      border-radius: 99px; padding: 7px 14px;
+      transition: background 0.14s, border-color 0.14s, color 0.14s;
+    }
+    .copy-btn:hover { background: #f6f6f4; border-color: color-mix(in srgb, var(--accent) 50%, rgba(0,0,0,0.14)); }
+    .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .copy-btn.done { border-color: #16a34a; color: #15683a; background: color-mix(in srgb, #16a34a 10%, #fff); }
+
+    .tool-tip-inline {
+      margin: 20px 0 0; font-size: 14px; line-height: 1.6; color: #6b6b76;
+      background: #f7f6f3; border-radius: 11px; padding: 13px 15px;
+    }
+
+    .noscript-note { margin: 16px 0 0; font-size: 14.5px; color: #6b6b76; line-height: 1.7; }
+    .tool-explainer { padding-top: 40px; }
+    .tool-links { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .tool-links { grid-template-columns: 1fr; } }
+  </style>
+
+  <script>
+    function initConversationStarters() {
+      const genBtn = document.getElementById('cs-generate');
+      if (!genBtn) return;
+      // Guard against double-binding across ClientRouter navigations
+      if ((genBtn as any).__csBound) return;
+      (genBtn as any).__csBound = true;
+
+      type Vibe = 'playful' | 'genuine' | 'witty';
+      interface Opener { vibe: Vibe; text: string }
+
+      // Curated, tasteful opener bank. [brackets] mark the personalize-me slot.
+      // Confident + charming, never crude. Each has a clear reply hook.
+      const BANK: Record<string, Opener[]> = {
+        match: [
+          { vibe: 'playful', text: "Okay, I have to ask about [something in their photos] before I lose my nerve — what's the story there?" },
+          { vibe: 'playful', text: "Your profile says [their hobby]. Are you genuinely good at it or just brave enough to put it on there?" },
+          { vibe: 'genuine', text: "[Their name], your bio actually made me smile — the part about [detail]. What got you into that?" },
+          { vibe: 'genuine', text: "Not going to open with 'hey' — that photo from [place/activity] deserves better. Where was that?" },
+          { vibe: 'witty', text: "I'm going to guess your ideal Sunday involves [playful guess based on bio]. How wrong am I?" },
+          { vibe: 'witty', text: "Two truths, one lie: I liked your profile, [detail] sold me, and I'm very smooth over text. Spot the lie." },
+          { vibe: 'playful', text: "Serious question that will decide everything: [light this-or-that from their interests]?" },
+          { vibe: 'genuine', text: "You seem like someone with actual taste in [topic from bio] — hit me with the recommendation you'd defend to the death." },
+        ],
+        irl: [
+          { vibe: 'genuine', text: "It's [your name] — from [where you met]. I enjoyed our conversation and figured I'd say hi properly." },
+          { vibe: 'playful', text: "We can't have been the only two people who [shared moment at the event]. Confirming you made it home okay?" },
+          { vibe: 'witty', text: "Statistically, most people who swap numbers never text. Let's be smug and beat the odds — how's your [day/week] going?" },
+          { vibe: 'genuine', text: "Really glad I caught you before you left [event/place]. What's the rest of your week looking like?" },
+          { vibe: 'playful', text: "I've decided our conversation about [topic you discussed] was unfinished and I need the ending. Free this week?" },
+          { vibe: 'witty', text: "Adding context so you don't panic-Google me: [your name], the one who [memorable detail from meeting]. Ring a bell?" },
+          { vibe: 'genuine', text: "You mentioned [something they said]. I've been thinking about it since — tell me more?" },
+        ],
+        reconnect: [
+          { vibe: 'genuine', text: "Hey [their name] — you crossed my mind today and I realized it's been too long. How have you been, really?" },
+          { vibe: 'playful', text: "This is a shamefully overdue text, so I'm skipping the apology and going straight to: what's new with you?" },
+          { vibe: 'witty', text: "Breaking my own record for slowest reply in history. In my defense, [light reason]. How've you been?" },
+          { vibe: 'genuine', text: "I saw [something that reminded you of them] and instantly thought of you. Had to reach out — how's life?" },
+          { vibe: 'playful', text: "Reintroducing myself in case I've been demoted to 'unknown number': it's [your name]. Miss our [shared thing]." },
+          { vibe: 'genuine', text: "No agenda, just genuinely wondering how you're doing since [last time / life event]. Catch me up?" },
+        ],
+        bio: [
+          { vibe: 'witty', text: "Your bio mentions [interest] and I have strong, possibly unhinged opinions about it. Are we compatible or at war?" },
+          { vibe: 'genuine', text: "Anyone who's into [their interest] gets my instant respect. What pulled you into it?" },
+          { vibe: 'playful', text: "I'll trade you my best [related recommendation] for yours — I think we might have overlapping taste in [topic]." },
+          { vibe: 'witty', text: "Controversial take incoming: [gentle hot take about their interest]. Defend your position." },
+          { vibe: 'genuine', text: "That line in your bio about [detail] is the most interesting thing I've read all day. Elaborate?" },
+          { vibe: 'playful', text: "So on a scale of casual to full obsession, where does your [hobby] actually land? Be honest." },
+          { vibe: 'witty', text: "Your profile is basically a dare to talk about [interest], and I never back down from a dare. So — [question]?" },
+        ],
+        group: [
+          { vibe: 'playful', text: "Taking this out of the group chat before [other person] steals the good jokes — that thing you said about [topic] was great." },
+          { vibe: 'genuine', text: "Figured a DM was overdue. You always have the sharpest takes in there — what's your read on [recent topic]?" },
+          { vibe: 'witty', text: "The group chat clearly can't handle our level of [inside-joke topic]. Moving the real conversation here. Hi." },
+          { vibe: 'genuine', text: "I've been meaning to say — your point about [something from the group] actually stuck with me. Wanted to hear more one-on-one." },
+          { vibe: 'playful', text: "Sliding one channel over. You + [topic] in the group was the highlight; let's continue where fewer people are watching." },
+          { vibe: 'witty', text: "Consider this a promotion from group chat to DM — you earned it with the [detail] comment. So, [light question]?" },
+        ],
+      };
+
+      const CTX_LABEL: Record<string, string> = {
+        match: 'new match',
+        irl: 'someone you met in person',
+        reconnect: 'reconnecting',
+        bio: 'their bio / a shared interest',
+        group: 'group chat → DM',
+      };
+
+      const $ = (id: string) => document.getElementById(id);
+      const output = $('cs-output') as HTMLElement;
+      const moreBtn = $('cs-more') as HTMLButtonElement;
+
+      let ctx = 'match';
+      let vibe = 'any';
+
+      const ctxChips = Array.prototype.slice.call(document.querySelectorAll('.ctx-chip'));
+      const vibeChips = Array.prototype.slice.call(document.querySelectorAll('.vibe-chip'));
+
+      ctxChips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          ctxChips.forEach((c) => c.classList.remove('active'));
+          chip.classList.add('active');
+          ctx = (chip as HTMLElement).dataset.ctx || 'match';
+        });
+      });
+      vibeChips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          vibeChips.forEach((c) => c.classList.remove('active'));
+          chip.classList.add('active');
+          vibe = (chip as HTMLElement).dataset.vibe || 'any';
+        });
+      });
+
+      function shuffle<T>(arr: T[]): T[] {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      // Render [slots] as styled spans, everything else as text (no HTML injection).
+      function renderText(text: string): string {
+        return text.replace(/\[([^\]]+)\]/g, (_m, inner) => {
+          const safe = String(inner).replace(/[&<>]/g, (ch) =>
+            ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : '&gt;'
+          );
+          return '<span class="slot">[' + safe + ']</span>';
+        });
+      }
+
+      function generate() {
+        let pool = BANK[ctx] || [];
+        if (vibe !== 'any') pool = pool.filter((o) => o.vibe === vibe);
+        // Fallback: if a vibe filter empties the pool, show all for that context.
+        if (pool.length === 0) pool = BANK[ctx] || [];
+
+        const picked = shuffle(pool).slice(0, Math.min(4, pool.length));
+
+        output.innerHTML = '';
+        if (picked.length === 0) {
+          output.hidden = true;
+          return;
+        }
+
+        for (const op of picked) {
+          const card = document.createElement('div');
+          card.className = 'opener-card';
+
+          const p = document.createElement('p');
+          p.className = 'opener-text';
+          p.innerHTML = renderText(op.text);
+
+          const foot = document.createElement('div');
+          foot.className = 'opener-foot';
+
+          const tag = document.createElement('span');
+          tag.className = 'vibe-tag';
+          tag.textContent = op.vibe;
+
+          const copy = document.createElement('button');
+          copy.type = 'button';
+          copy.className = 'copy-btn';
+          copy.textContent = 'Copy';
+          copy.addEventListener('click', () => copyText(op.text, copy));
+
+          foot.appendChild(tag);
+          foot.appendChild(copy);
+          card.appendChild(p);
+          card.appendChild(foot);
+          output.appendChild(card);
+        }
+
+        output.hidden = false;
+        moreBtn.hidden = false;
+      }
+
+      async function copyText(text: string, btn: HTMLButtonElement) {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch {}
+          document.body.removeChild(ta);
+        }
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('done');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('done');
+        }, 1800);
+      }
+
+      genBtn.addEventListener('click', generate);
+      moreBtn.addEventListener('click', generate);
+    }
+
+    document.addEventListener('astro:page-load', initConversationStarters);
+  </script>
+</Base>
