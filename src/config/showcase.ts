@@ -131,7 +131,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'mila.jpg',
     screenPos: '50% 40%',
-    featureArts: ['scan', 'chips', 'ring'],
+    featureArts: ['wave', 'chips', 'track'],
     paper: { title: 'EDAMAME 🫛', line: '120 kcal · 11g protein · zero guilt' },
     sticker: 'NO LOGGING',
   },
