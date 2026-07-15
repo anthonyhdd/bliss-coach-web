@@ -45,6 +45,13 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
           <span class="read">Open the builder →</span>
         </a>
       )}
+      {slug === 'mila' && (
+        <a class="article-card" href={withBase('/mila/tools/protein-portion-helper/')} style="display:block;margin-bottom:22px">
+          <h3>Free tool: Daily Protein &amp; Portion Helper →</h3>
+          <p>Get a daily protein target from your weight and goal, then turn it into simple hand portions and real food examples. No signup.</p>
+          <span class="read">Open the calculator →</span>
+        </a>
+      )}
       <div class="article-list">
         {entries.map((e) => (
           <a class="article-card" href={withBase(`/${app.slug}/${section.base}/${e.id.split('/')[1]}/`)}>
