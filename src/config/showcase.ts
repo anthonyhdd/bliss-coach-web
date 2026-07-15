@@ -112,7 +112,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     screenImg: 'alex.png',
     screenPos: '50% 12%',
     chatUser: 'I have a final round on Friday.',
-    featureArts: ['chat', 'track', 'scan'],
+    featureArts: ['interview', 'star', 'scan'],
     paper: { title: 'OFFER LETTER', line: 'Senior role — signed ✓' },
     sticker: 'STAR METHOD',
   },

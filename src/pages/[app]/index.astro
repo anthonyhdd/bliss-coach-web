@@ -228,9 +228,26 @@ const jsonLd = {
                     <span class="fbub"><span class="ftyping"><i></i><i></i><i></i></span></span>
                   </>
                 )}
+                {art === 'interview' && (
+                  <div class="finterview">
+                    <span class="fiv-q">“Tell me about a time you led under pressure.”</span>
+                    <div class="fiv-card">
+                      <span class="fiv-ring">8.5</span>
+                      <div class="fiv-meta">
+                        <b>Strong answer</b>
+                        <span class="fiv-tags"><i>Clear STAR</i><i>Real metrics</i></span>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {art === 'track' && (
                   <div class="ftrack">
                     {[1, 2, 3, 4].map((n) => <span class={`fstep${n < 3 ? ' done' : n === 3 ? ' now' : ''}`}>{n}</span>)}
+                  </div>
+                )}
+                {art === 'star' && (
+                  <div class="ftrack fstar">
+                    {['S', 'T', 'A', 'R'].map((l, i) => <span class={`fstep${i < 2 ? ' done' : i === 2 ? ' now' : ''}`}>{l}</span>)}
                   </div>
                 )}
                 {art === 'scan' && (
