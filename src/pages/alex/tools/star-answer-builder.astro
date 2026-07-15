@@ -1,0 +1,504 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+const app = APPS.alex;
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+const pageTitle = 'Free STAR Answer Builder — Interview Answer Tool';
+const pageDescription =
+  'Turn a messy work story into a clear STAR interview answer. Free STAR method builder with live tips on length, metrics and impact. No signup.';
+const canonicalUrl = 'https://bliss-coach.com/alex/tools/star-answer-builder/';
+
+const faqs = [
+  {
+    q: 'What is the STAR method?',
+    a: 'STAR is a framework for answering behavioral interview questions ("Tell me about a time you…"). You describe the Situation you were in, the Task you were responsible for, the Action you took, and the Result you achieved. It keeps your answer structured and easy for the interviewer to follow.',
+  },
+  {
+    q: 'How long should a STAR answer be?',
+    a: 'Aim for roughly 60–90 seconds spoken, which is about 150–230 words. Long enough to show depth, short enough to hold attention. This builder estimates your speaking time as you type so you can trim before the interview.',
+  },
+  {
+    q: 'Why does the Result need numbers?',
+    a: 'Numbers make impact concrete and believable. "Cut onboarding time by 40%" lands harder than "made onboarding faster." Even a rough metric — percent, time saved, revenue, headcount, satisfaction score — gives the interviewer something memorable to write down.',
+  },
+  {
+    q: 'Is the STAR Answer Builder really free?',
+    a: 'Yes. It runs entirely in your browser, stores nothing on a server, and needs no account or email. Build as many answers as you like. When you want to practice them out loud against real interview questions, that is what the Alex app is for.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'STAR Answer Builder',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    url: canonicalUrl,
+    description: pageDescription,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Alex', item: 'https://bliss-coach.com/alex/' },
+      { '@type': 'ListItem', position: 3, name: 'STAR Answer Builder', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl }}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase('/alex/')}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb"><a href={withBase('/alex/')}>Interview Prep</a> · Free tool</span>
+      <h1>Free STAR Answer Builder</h1>
+      <p class="meta">Paste a rough story, get a clean, structured STAR interview answer — with live tips on length, detail and impact.</p>
+    </header>
+
+    <!-- Intro (also visible without JS) -->
+    <div class="prose tool-intro">
+      <p>
+        Behavioral questions — <em>"Tell me about a time you…"</em> — trip up strong candidates because the story
+        comes out tangled. The <strong>STAR method</strong> fixes that. Answer in four beats:
+        <strong>S</strong>ituation, <strong>T</strong>ask, <strong>A</strong>ction, <strong>R</strong>esult.
+        Fill the four boxes below and this builder assembles a tight, ready-to-say answer, then flags anything
+        that will weaken it in the room. Everything runs in your browser — nothing is uploaded.
+      </p>
+    </div>
+
+    <!-- The tool -->
+    <section class="tool" aria-label="STAR answer builder">
+      <div class="tool-actions-top">
+        <button type="button" id="star-example" class="tbtn tbtn-ghost">Load a worked example</button>
+      </div>
+
+      <form id="star-form" class="star-grid" novalidate>
+        <div class="star-field">
+          <label for="f-situation"><span class="letter">S</span> Situation</label>
+          <p class="hint">Set the scene in one or two sentences. Where were you, and what was going on?</p>
+          <textarea id="f-situation" name="situation" rows="3"
+            placeholder="Our checkout page had a 30% cart-abandonment rate and support tickets were climbing during our busiest quarter."></textarea>
+        </div>
+
+        <div class="star-field">
+          <label for="f-task"><span class="letter">T</span> Task</label>
+          <p class="hint">What were <em>you</em> specifically responsible for? What was the goal or challenge?</p>
+          <textarea id="f-task" name="task" rows="3"
+            placeholder="As the lead engineer, I was asked to find why users dropped off and cut abandonment before Black Friday."></textarea>
+        </div>
+
+        <div class="star-field">
+          <label for="f-action"><span class="letter">A</span> Action</label>
+          <p class="hint">The heart of the answer. What steps did you take? Use "I", not "we", and be concrete.</p>
+          <textarea id="f-action" name="action" rows="4"
+            placeholder="I ran session recordings, found a broken address validation step, rebuilt it, and A/B tested a one-page checkout against the old flow."></textarea>
+        </div>
+
+        <div class="star-field">
+          <label for="f-result"><span class="letter">R</span> Result</label>
+          <p class="hint">How did it end? Quantify the impact — percentages, time, revenue, anything measurable.</p>
+          <textarea id="f-result" name="result" rows="3"
+            placeholder="Cart abandonment dropped from 30% to 18% in three weeks, recovering roughly $120k in monthly revenue, and the fix shipped before Black Friday."></textarea>
+        </div>
+
+        <div class="tool-buttons">
+          <button type="submit" id="star-build" class="tbtn tbtn-brand">Build my answer</button>
+          <button type="button" id="star-reset" class="tbtn tbtn-ghost">Start over</button>
+        </div>
+      </form>
+
+      <!-- Output (populated by JS) -->
+      <div id="star-output" class="star-output" hidden>
+        <div class="output-head">
+          <h2>Your STAR answer</h2>
+          <div class="output-meta">
+            <span id="star-wordcount" class="stat-pill">0 words</span>
+            <span id="star-time" class="stat-pill">~0s spoken</span>
+          </div>
+        </div>
+
+        <div id="star-hints" class="hints-list" aria-live="polite"></div>
+
+        <div id="star-answer" class="answer-body"></div>
+
+        <div class="output-buttons">
+          <button type="button" id="star-copy" class="tbtn tbtn-brand">Copy answer</button>
+          <span id="star-copied" class="copied-note" hidden>Copied ✓</span>
+        </div>
+      </div>
+
+      <noscript>
+        <p class="noscript-note">
+          This builder assembles your answer with JavaScript. With JavaScript off you can still use the four
+          prompts above as a template: write your Situation, Task, Action and Result in order, keep the whole
+          thing to about 150–230 words, and make sure the Result includes a number.
+        </p>
+      </noscript>
+    </section>
+
+    <!-- SEO / teaching content -->
+    <div class="prose tool-explainer">
+      <h2>What each STAR step should do</h2>
+      <ul>
+        <li><strong>Situation (10–15%)</strong> — just enough context to understand the stakes. Don't over-explain.</li>
+        <li><strong>Task (10–15%)</strong> — make <em>your</em> responsibility clear. Interviewers want to know what <em>you</em> owned.</li>
+        <li><strong>Action (50–60%)</strong> — the meat. Walk through what you did, step by step, in the first person.</li>
+        <li><strong>Result (15–20%)</strong> — the payoff, with a number. This is what the interviewer remembers.</li>
+      </ul>
+
+      <h2>A worked example</h2>
+      <p>
+        Here's the same story assembled into a STAR answer you could say out loud in about a minute. Click
+        <strong>"Load a worked example"</strong> above to drop it into the builder and edit it into your own.
+      </p>
+      <blockquote>
+        Our checkout page had a 30% cart-abandonment rate and support tickets were climbing during our busiest
+        quarter. As the lead engineer, I was asked to find why users dropped off and cut abandonment before
+        Black Friday. I ran session recordings, found a broken address-validation step, rebuilt it, and A/B
+        tested a one-page checkout against the old flow. Cart abandonment dropped from 30% to 18% in three
+        weeks, recovering roughly $120k in monthly revenue — and the fix shipped a week before Black Friday.
+      </blockquote>
+
+      <h2>Frequently asked questions</h2>
+      {faqs.map((f) => (
+        <>
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </>
+      ))}
+    </div>
+
+    <!-- Secondary CTA -->
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="Alex app icon" width="72" height="72" />
+        <div>
+          <h3>Practice this answer out loud with Alex</h3>
+          <p>A written STAR answer is step one. Alex runs realistic mock interviews, asks follow-ups, and grades how you actually deliver it — free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.appStoreUrl}>Get Alex free</a>
+      </div>
+    </aside>
+  </div>
+
+  <style>
+    /* Tool styling — inherits the light "article-page" theme + Alex brand vars */
+    .tool-intro { padding-bottom: 8px; }
+    .tool {
+      max-width: var(--prose-w);
+      margin: 0 auto;
+      padding: 8px 24px 8px;
+    }
+    .tool-actions-top { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+
+    .star-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 640px) { .star-grid { grid-template-columns: 1fr; } }
+
+    .star-field {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .star-field:focus-within {
+      border-color: color-mix(in srgb, var(--accent) 60%, rgba(0, 0, 0, 0.09));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+    .star-field label {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: #17171c; letter-spacing: -0.01em;
+    }
+    .star-field .letter {
+      display: inline-grid; place-items: center;
+      width: 30px; height: 30px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-3));
+      color: var(--on-gradient); font-size: 15px; font-weight: 800;
+      box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+    }
+    .star-field .hint { font-size: 13.5px; color: #6b6b76; margin: 8px 0 10px; line-height: 1.45; }
+    .star-field textarea {
+      width: 100%; resize: vertical; min-height: 74px;
+      font: inherit; font-size: 15.5px; line-height: 1.55; color: #17171c;
+      background: #fbfbfc;
+      border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px;
+      padding: 11px 12px;
+    }
+    .star-field textarea:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.1)); }
+    .star-field textarea::placeholder { color: #a6a6b0; }
+
+    .tool-buttons, .output-buttons {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 99px;
+      font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .tbtn-brand {
+      background: linear-gradient(92deg, var(--brand-1), var(--brand-2), var(--brand-3));
+      color: var(--on-gradient);
+      box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+    .tbtn-brand:hover { transform: translateY(-2px); box-shadow: 0 12px 34px color-mix(in srgb, var(--accent) 45%, transparent); }
+    .tbtn-ghost { background: #fff; border-color: rgba(0, 0, 0, 0.14); color: #33333c; }
+    .tbtn-ghost:hover { background: #f3f3f7; }
+    .tbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .star-output {
+      max-width: var(--prose-w);
+      margin: 22px auto 0;
+      padding: 0 24px;
+    }
+    .output-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+    .output-head h2 { font-size: 22px; letter-spacing: -0.02em; color: #121216; margin: 0; }
+    .output-meta { display: flex; gap: 8px; }
+    .stat-pill {
+      font-size: 13px; font-weight: 600; color: #55555f;
+      background: #f1f1f5; border-radius: 99px; padding: 5px 12px;
+    }
+    .stat-pill.warn { background: color-mix(in srgb, #f59e0b 22%, #fff); color: #92600b; }
+
+    .hints-list { display: grid; gap: 8px; margin-bottom: 18px; }
+    .hint-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14.5px; line-height: 1.5;
+      border-radius: 11px; padding: 11px 14px;
+    }
+    .hint-item .ico { flex: none; font-size: 15px; line-height: 1.5; }
+    .hint-item.good { background: color-mix(in srgb, #16a34a 12%, #fff); color: #15683a; border: 1px solid color-mix(in srgb, #16a34a 24%, transparent); }
+    .hint-item.warn { background: color-mix(in srgb, #f59e0b 13%, #fff); color: #8a5a08; border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent); }
+
+    .answer-body {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 22px 22px;
+      font-size: 16.5px; line-height: 1.7; color: #26262e;
+    }
+    .answer-body p { margin: 0 0 14px; }
+    .answer-body p:last-child { margin-bottom: 0; }
+    .answer-body .seg-label {
+      display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); margin-right: 8px;
+    }
+
+    .copied-note { font-size: 14px; font-weight: 600; color: #15683a; }
+    .noscript-note {
+      max-width: var(--prose-w); margin: 18px auto 0; padding: 0 24px;
+      font-size: 14.5px; color: #6b6b76;
+    }
+    .tool-explainer { padding-top: 40px; }
+    .article-header .crumb a { color: var(--accent); }
+  </style>
+
+  <script>
+    function initStarBuilder() {
+      const form = document.getElementById('star-form') as HTMLFormElement | null;
+      if (!form) return;
+      // Guard against double-binding across ClientRouter navigations
+      if ((form as any).__starBound) return;
+      (form as any).__starBound = true;
+
+      const $ = (id: string) => document.getElementById(id);
+      const fSit = $('f-situation') as HTMLTextAreaElement;
+      const fTask = $('f-task') as HTMLTextAreaElement;
+      const fAct = $('f-action') as HTMLTextAreaElement;
+      const fRes = $('f-result') as HTMLTextAreaElement;
+      const output = $('star-output') as HTMLElement;
+      const answerBox = $('star-answer') as HTMLElement;
+      const hintsBox = $('star-hints') as HTMLElement;
+      const wordEl = $('star-wordcount') as HTMLElement;
+      const timeEl = $('star-time') as HTMLElement;
+      const copiedNote = $('star-copied') as HTMLElement;
+
+      const clean = (s: string) =>
+        (s || '')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+      // Ensure a segment reads as a finished sentence.
+      const asSentence = (s: string) => {
+        s = clean(s);
+        if (!s) return '';
+        s = s.charAt(0).toUpperCase() + s.slice(1);
+        if (!/[.!?]$/.test(s)) s += '.';
+        return s;
+      };
+
+      const wordCount = (s: string) => (clean(s) ? clean(s).split(' ').length : 0);
+      const hasMetric = (s: string) => /\d/.test(s) || /\b(percent|doubled|tripled|halved|thousand|million|k\b)/i.test(s);
+
+      let lastPlain = '';
+
+      function build(e?: Event) {
+        if (e) e.preventDefault();
+        const parts = [
+          { key: 'Situation', v: asSentence(fSit.value), raw: fSit.value },
+          { key: 'Task', v: asSentence(fTask.value), raw: fTask.value },
+          { key: 'Action', v: asSentence(fAct.value), raw: fAct.value },
+          { key: 'Result', v: asSentence(fRes.value), raw: fRes.value },
+        ];
+        const filled = parts.filter((p) => p.v);
+
+        // Render the answer as labeled paragraphs
+        answerBox.innerHTML = '';
+        if (filled.length === 0) {
+          answerBox.innerHTML = '<p style="color:#6b6b76">Fill in at least one box above, then press <strong>Build my answer</strong>.</p>';
+        } else {
+          for (const p of parts) {
+            if (!p.v) continue;
+            const para = document.createElement('p');
+            const label = document.createElement('span');
+            label.className = 'seg-label';
+            label.textContent = p.key;
+            para.appendChild(label);
+            para.appendChild(document.createTextNode(p.v));
+            answerBox.appendChild(para);
+          }
+        }
+
+        // Plain-text version for clipboard (flowing paragraph, no labels)
+        lastPlain = parts.map((p) => p.v).filter(Boolean).join(' ');
+
+        // Word count + spoken time (~150 wpm conversational)
+        const total = wordCount(lastPlain);
+        const secs = Math.round((total / 150) * 60);
+        wordEl.textContent = total + (total === 1 ? ' word' : ' words');
+        const long = total > 230;
+        timeEl.textContent = '~' + secs + 's spoken';
+        timeEl.classList.toggle('warn', long);
+        wordEl.classList.toggle('warn', long);
+
+        // Quality hints
+        const hints: { type: 'good' | 'warn'; text: string }[] = [];
+        if (!clean(fSit.value)) hints.push({ type: 'warn', text: 'Add a Situation so the interviewer has context for the story.' });
+        if (!clean(fTask.value)) hints.push({ type: 'warn', text: 'Add a Task — spell out what you were personally responsible for.' });
+
+        const actWords = wordCount(fAct.value);
+        if (!actWords) {
+          hints.push({ type: 'warn', text: 'The Action is the heart of a STAR answer — describe the steps you took.' });
+        } else if (actWords < 18) {
+          hints.push({ type: 'warn', text: 'Your Action is thin. Add the specific steps you took, in the first person ("I…").' });
+        } else {
+          hints.push({ type: 'good', text: 'Your Action has solid detail — that’s where interviewers focus.' });
+        }
+
+        if (/\bwe\b/i.test(fAct.value) && !/\bi\b/i.test(fAct.value)) {
+          hints.push({ type: 'warn', text: 'Your Action says "we" but never "I". Make your own contribution unmistakable.' });
+        }
+
+        if (!clean(fRes.value)) {
+          hints.push({ type: 'warn', text: 'End with a Result — how did it turn out? This is what gets remembered.' });
+        } else if (!hasMetric(fRes.value)) {
+          hints.push({ type: 'warn', text: 'Your Result has no numbers. Quantify the impact (%, time, revenue, count) to make it land.' });
+        } else {
+          hints.push({ type: 'good', text: 'Your Result is quantified — that makes the impact concrete and believable.' });
+        }
+
+        if (long) {
+          hints.push({ type: 'warn', text: 'At ' + total + ' words this runs over ~90 seconds. Trim toward 150–230 words.' });
+        } else if (total >= 120 && total <= 230) {
+          hints.push({ type: 'good', text: 'Length is on target for a 60–90 second spoken answer.' });
+        } else if (total > 0 && total < 120) {
+          hints.push({ type: 'warn', text: 'A little short — add a touch more detail to fill 60–90 seconds.' });
+        }
+
+        hintsBox.innerHTML = '';
+        for (const h of hints) {
+          const row = document.createElement('div');
+          row.className = 'hint-item ' + h.type;
+          const ico = document.createElement('span');
+          ico.className = 'ico';
+          ico.textContent = h.type === 'good' ? '✓' : '⚠';
+          const txt = document.createElement('span');
+          txt.textContent = h.text;
+          row.appendChild(ico);
+          row.appendChild(txt);
+          hintsBox.appendChild(row);
+        }
+
+        output.hidden = false;
+        copiedNote.hidden = true;
+        output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      form.addEventListener('submit', build);
+
+      $('star-reset')?.addEventListener('click', () => {
+        form.reset();
+        output.hidden = true;
+        lastPlain = '';
+        fSit.focus();
+      });
+
+      $('star-copy')?.addEventListener('click', async () => {
+        const text = lastPlain || answerBox.textContent || '';
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          // Fallback for browsers without the async clipboard API
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch {}
+          document.body.removeChild(ta);
+        }
+        copiedNote.hidden = false;
+        setTimeout(() => { copiedNote.hidden = true; }, 2200);
+      });
+
+      $('star-example')?.addEventListener('click', () => {
+        fSit.value = 'Our checkout page had a 30% cart-abandonment rate and support tickets were climbing during our busiest quarter.';
+        fTask.value = 'As the lead engineer, I was asked to find why users dropped off and cut abandonment before Black Friday.';
+        fAct.value = 'I ran session recordings, found a broken address-validation step, rebuilt it, and A/B tested a one-page checkout against the old flow.';
+        fRes.value = 'Cart abandonment dropped from 30% to 18% in three weeks, recovering roughly $120k in monthly revenue, and the fix shipped a week before Black Friday.';
+        build();
+      });
+    }
+
+    document.addEventListener('astro:page-load', initStarBuilder);
+  </script>
+</Base>
