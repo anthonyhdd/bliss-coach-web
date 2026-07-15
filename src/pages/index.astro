@@ -785,7 +785,7 @@ const coaches = [
         display: flex; flex-direction: column;
       }
       .bcell .art { position: relative; height: 210px; flex: 0 0 auto; }
-      .bcell .btxt { padding: 4px 26px 24px; }
+      .bcell .btxt { padding: 22px 26px; }
       .bcell h3 { font-size: 21px; letter-spacing: -0.02em; margin-bottom: 6px; font-weight: 700; }
       .bcell p { color: rgba(255, 255, 255, 0.62); font-size: 15.5px; line-height: 1.6; max-width: 46ch; }
       .bcell p em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; color: #fff; font-size: 1.3em; line-height: 1; }
@@ -794,17 +794,24 @@ const coaches = [
         .bcell .art { height: 180px; }
       }
 
-      /* voice: equalizer */
-      .art-voice { background: radial-gradient(90% 120% at 50% 110%, rgba(255, 107, 53, 0.26), transparent 70%); display: flex; align-items: center; justify-content: center; gap: 7px; }
-      .art-voice .bar { width: 9px; border-radius: 99px; background: linear-gradient(180deg, #ffdc83, #ff6b35); height: 34%; }
-      @keyframes eq { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+      /* voice: equalizer — a confident living voice */
+      .art-voice { background: radial-gradient(90% 120% at 50% 110%, rgba(255, 107, 53, 0.26), transparent 70%); display: flex; align-items: center; justify-content: center; gap: 6px; }
+      .art-voice .bar {
+        width: 8px; border-radius: 99px; height: 30%;
+        background: linear-gradient(180deg, #fff, #ffdc83 42%, #ff6b35);
+        box-shadow: 0 0 16px rgba(255, 107, 53, 0.5), 0 0 4px rgba(255, 220, 131, 0.65);
+      }
+      .art-voice .bar:nth-child(odd) { height: 48%; }
+      .art-voice .bar:nth-child(3n) { height: 66%; }
+      .art-voice .bar:nth-child(5n) { height: 40%; }
+      @keyframes eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
 
       /* memory: constellation */
       .art-memory { background: radial-gradient(80% 120% at 80% -10%, rgba(124, 58, 237, 0.28), transparent 70%); }
       .art-memory svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-      .art-memory .st { fill: #fff; }
-      @keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
-      .art-memory .cl { stroke: rgba(255, 255, 255, 0.28); stroke-width: 1; fill: none; stroke-dasharray: 220; stroke-dashoffset: 220; }
+      .art-memory .st { fill: #fff; filter: drop-shadow(0 0 6px rgba(200, 180, 255, 0.9)); }
+      @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+      .art-memory .cl { stroke: rgba(200, 185, 255, 0.55); stroke-width: 1.4; fill: none; stroke-dasharray: 220; stroke-dashoffset: 220; filter: drop-shadow(0 0 4px rgba(170, 140, 255, 0.7)); }
       @keyframes draw { 40% { stroke-dashoffset: 0; } 85% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
 
       /* craft: coach tiles */
@@ -814,12 +821,21 @@ const coaches = [
         width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); display: block;
       }
-      .art-craft .tile:nth-child(5) { transform: rotate(-9deg) translateY(-9px); box-shadow: 0 20px 36px rgba(0, 0, 0, 0.7); }
+      .art-craft .tile:nth-child(5) {
+        transform: rotate(-9deg) translateY(-9px); z-index: 1;
+        box-shadow: 0 20px 36px rgba(0, 0, 0, 0.7), 0 0 24px rgba(255, 171, 173, 0.25);
+      }
       @keyframes tile-bob { 0%, 100% { transform: rotate(-9deg) translateY(-9px); } 50% { transform: rotate(-6deg) translateY(-15px); } }
+      @keyframes tile-drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
       /* rigor: falling astro glyphs */
-      .art-rigor { background: radial-gradient(80% 130% at 50% -20%, rgba(201, 161, 74, 0.22), transparent 72%); display: flex; justify-content: space-around; padding: 0 8%; overflow: hidden; }
-      .art-rigor .fcol { display: flex; flex-direction: column; gap: 17px; font-family: ui-monospace, Menlo, monospace; font-size: 19px; color: rgba(255, 220, 131, 0.78); }
+      .art-rigor {
+        background: radial-gradient(80% 130% at 50% -20%, rgba(201, 161, 74, 0.22), transparent 72%);
+        display: flex; justify-content: space-around; padding: 0 8%; overflow: hidden;
+        -webkit-mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+        mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+      }
+      .art-rigor .fcol { display: flex; flex-direction: column; gap: 17px; font-family: ui-monospace, Menlo, monospace; font-size: 19px; color: rgba(255, 220, 131, 0.78); text-shadow: 0 0 10px rgba(201, 161, 74, 0.35); }
       @keyframes fall { from { transform: translateY(-55%); } to { transform: translateY(10%); } }
 
       /* character: typing chat */
@@ -842,7 +858,7 @@ const coaches = [
       .art-pocket { background: radial-gradient(90% 140% at 50% 120%, rgba(34, 197, 94, 0.2), transparent 72%); display: flex; align-items: center; justify-content: center; }
       .minphone {
         width: 82px; height: 166px; border-radius: 22px;
-        background: linear-gradient(160deg, #191920, #0d0d11);
+        background: radial-gradient(62% 42% at 50% 80%, rgba(255, 220, 131, 0.2), transparent 70%), linear-gradient(160deg, #191920, #0d0d11);
         border: 1px solid rgba(255, 255, 255, 0.2); position: relative;
       }
       .minphone::before { content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 27px; height: 8px; border-radius: 99px; background: #000; }
@@ -853,11 +869,17 @@ const coaches = [
       .minphone .dot { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #ffdc83, #ffabad); box-shadow: 0 0 16px rgba(255, 220, 131, 0.5); }
       @keyframes hover-y { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-13px) rotate(-2deg); } }
       @keyframes shadow-b { 0%, 100% { transform: scaleX(1); opacity: 0.65; } 50% { transform: scaleX(0.78); opacity: 0.4; } }
+      @keyframes dot-pulse { 0%, 100% { box-shadow: 0 0 16px rgba(255, 220, 131, 0.5); } 50% { box-shadow: 0 0 30px rgba(255, 220, 131, 0.9); } }
 
       @media (prefers-reduced-motion: no-preference) {
         .art-voice .bar { animation: eq 1.15s ease-in-out infinite; }
         .art-memory .st { animation: twinkle 3.2s ease-in-out infinite; }
         .art-memory .cl { animation: draw 6s ease forwards infinite; }
+        .art-craft .tile { animation: tile-drift 5s ease-in-out infinite; }
+        .art-craft .tile:nth-child(2) { animation-delay: 0.5s; }
+        .art-craft .tile:nth-child(3) { animation-delay: 1s; }
+        .art-craft .tile:nth-child(4) { animation-delay: 0.8s; }
+        .art-craft .tile:nth-child(6) { animation-delay: 0.3s; }
         .art-craft .tile:nth-child(5) { animation: tile-bob 4.5s ease-in-out infinite; }
         .art-rigor .fcol { animation: fall linear infinite; }
         .art-character .typing i { animation: blink 1.2s ease-in-out infinite; }
@@ -865,6 +887,7 @@ const coaches = [
         .art-character .typing i:nth-child(3) { animation-delay: 0.36s; }
         .minphone { animation: hover-y 5s ease-in-out infinite; }
         .minphone::after { animation: shadow-b 5s ease-in-out infinite; }
+        .minphone .dot { animation: dot-pulse 3s ease-in-out infinite; }
       }
       @media (prefers-reduced-motion: reduce) {
         .art-memory .cl { stroke-dashoffset: 0; }

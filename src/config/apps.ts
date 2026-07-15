@@ -160,8 +160,8 @@ export const APPS: Record<string, AppDef> = {
         body: 'Restaurant menus, late-night cravings, busy weeks — Mila works with how you actually eat.',
       },
       {
-        title: 'Habits that stick',
-        body: 'Small, sustainable changes over crash plans. Mila remembers your goals and keeps you on track.',
+        title: 'Snap a meal',
+        body: 'Photo in, answers out — calories, macros and what to pair it with, in seconds. No logging, no counting.',
       },
     ],
     blogTitle: 'Nutrition — Guides & Tips',

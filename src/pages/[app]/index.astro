@@ -196,6 +196,25 @@ const jsonLd = {
                 {art === 'wave' && (
                   <>{[0, 0.12, 0.24, 0.06, 0.3, 0.18, 0.02, 0.26, 0.1, 0.22].map((d) => <span class="fbar" style={`animation-delay:${d}s`}></span>)}</>
                 )}
+                {art === 'voicemeal' && (
+                  <>
+                    <span class="fvm-disc">🥗</span>
+                    <span class="fvm-wave">{[0, 0.14, 0.28, 0.08, 0.32, 0.2].map((d) => <i style={`animation-delay:${d}s`}></i>)}</span>
+                  </>
+                )}
+                {art === 'plate' && (
+                  <div class="fplate"><div class="fplate-food"></div><span class="fplate-badge">✓</span></div>
+                )}
+                {art === 'mealscan' && (
+                  <div class="fmealscan">
+                    <img class="fms-photo" src={withBase('/home/mila-meal.jpg')} alt="" width="156" height="156" loading="lazy" />
+                    <span class="fms-corner tl"></span><span class="fms-corner tr"></span>
+                    <span class="fms-corner bl"></span><span class="fms-corner br"></span>
+                    <span class="fms-beam"></span>
+                    <span class="fms-tag fms-kcal">120 kcal</span>
+                    <span class="fms-tag fms-pro">11g protein</span>
+                  </div>
+                )}
                 {art === 'replies' && (
                   <>
                     <span class="fbub">{show.screenLine}</span>

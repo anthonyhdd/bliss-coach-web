@@ -190,12 +190,99 @@ a { color: inherit; text-decoration: none; }
   .fcell.fb12 .ftxt { padding: 4px 24px 22px; }
   .fcell .fart { height: 170px; }
 }
-.fart { background: radial-gradient(90% 130% at 50% -20%, color-mix(in srgb, var(--brand-2) 14%, transparent), transparent 72%); }
+.fart { position: relative; isolation: isolate; background: radial-gradient(90% 130% at 50% -20%, color-mix(in srgb, var(--brand-2) 14%, transparent), transparent 72%); }
+/* breathing ambient glow behind every art — carries each coach's accent */
+.fart::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(52% 52% at 50% 50%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%);
+  opacity: 0.6;
+}
+@keyframes fart-breathe { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 0.9; transform: scale(1.12); } }
 
-/* wave */
-.fart-wave { display: flex; align-items: center; justify-content: center; gap: 7px; }
-.fbar { width: 8px; height: 34%; border-radius: 99px; background: linear-gradient(180deg, color-mix(in srgb, var(--brand-2) 70%, #fff), var(--accent)); box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 40%, transparent); }
-@keyframes feq { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+/* wave — a living voice: varied-height bars, bright core, soft glow envelope */
+.fart-wave { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.fbar {
+  width: 7px; height: 30%; border-radius: 99px;
+  background: linear-gradient(180deg, #ffffff, color-mix(in srgb, var(--accent) 92%, #fff) 45%, var(--accent));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent), 0 0 4px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+.fbar:nth-child(odd) { height: 46%; }
+.fbar:nth-child(3n) { height: 64%; }
+.fbar:nth-child(5n) { height: 38%; }
+@keyframes feq { 0%, 100% { transform: scaleY(0.32); } 50% { transform: scaleY(1); } }
+
+/* voicemeal (Mila) — a healthy plate that "speaks": food + voice */
+.fart-voicemeal { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.fvm-disc {
+  width: 66px; height: 66px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 32px; line-height: 1;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 26%, transparent), rgba(255, 255, 255, 0.04));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+.fvm-wave { display: flex; align-items: center; gap: 6px; height: 56px; }
+.fvm-wave i {
+  width: 6px; height: 34%; border-radius: 99px;
+  background: linear-gradient(180deg, #fff, var(--accent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.fvm-wave i:nth-child(odd) { height: 52%; }
+.fvm-wave i:nth-child(3n) { height: 70%; }
+@keyframes fvm-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* plate (Mila) — a balanced plate, portions slowly turning, streak badge */
+.fart-plate { display: flex; align-items: center; justify-content: center; }
+.fplate {
+  position: relative; width: 126px; height: 126px; border-radius: 50%;
+  background: #f4f1ea;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.38), inset 0 0 0 6px #ffffff, inset 0 0 0 7px rgba(0, 0, 0, 0.06);
+  display: flex; align-items: center; justify-content: center;
+}
+.fplate-food {
+  width: 92px; height: 92px; border-radius: 50%;
+  background: conic-gradient(
+    color-mix(in srgb, var(--accent) 85%, #000) 0 33%,
+    #e6b45a 33% 66%,
+    #d97a4e 66% 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+.fplate-badge {
+  position: absolute; right: -3px; bottom: -1px; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--accent); color: #08120c; display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 15px; border: 2px solid #0a0d0b;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+@keyframes plate-spin { to { transform: rotate(360deg); } }
+
+/* mealscan (Mila) — snap a meal: a real dish scanned into instant macros */
+.fart-mealscan { display: flex; align-items: center; justify-content: center; }
+.fmealscan { position: relative; width: 150px; height: 150px; }
+.fms-photo {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+.fms-beam {
+  position: absolute; left: -5px; right: -5px; top: 0; height: 3px; border-radius: 99px;
+  background: var(--accent); box-shadow: 0 0 18px var(--accent);
+}
+.fms-corner { position: absolute; width: 15px; height: 15px; border: 2.5px solid var(--accent); }
+.fms-corner.tl { top: -5px; left: -5px; border-right: 0; border-bottom: 0; border-top-left-radius: 6px; }
+.fms-corner.tr { top: -5px; right: -5px; border-left: 0; border-bottom: 0; border-top-right-radius: 6px; }
+.fms-corner.bl { bottom: -5px; left: -5px; border-right: 0; border-top: 0; border-bottom-left-radius: 6px; }
+.fms-corner.br { bottom: -5px; right: -5px; border-left: 0; border-top: 0; border-bottom-right-radius: 6px; }
+.fms-tag {
+  position: absolute; padding: 5px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 800;
+  white-space: nowrap; color: #08120c; opacity: 0;
+  background: color-mix(in srgb, var(--accent) 90%, #fff);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.fms-kcal { top: 20px; right: -20px; }
+.fms-pro { bottom: 20px; left: -24px; }
+@keyframes fms-tagpop {
+  0%, 22% { opacity: 0; transform: scale(0.6) translateY(4px); }
+  40%, 88% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: scale(0.6) translateY(4px); }
+}
 
 /* replies / chat bubbles */
 .fart-replies, .fart-chat { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 9px; padding: 18px 24px; }
@@ -215,26 +302,37 @@ a { color: inherit; text-decoration: none; }
 .ftyping i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); }
 @keyframes fblink { 0%, 100% { opacity: 0.25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
 
-/* track: lesson steps */
+/* track: building momentum — done steps become lifted, glowing checkmarks */
 .fart-track { display: flex; align-items: center; justify-content: center; }
 .ftrack { display: flex; align-items: center; gap: 0; }
 .fstep {
   width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   font-weight: 800; font-size: 15px; color: var(--text-dim);
   border: 2px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.04);
-  position: relative;
+  position: relative; transition: transform 0.3s ease;
 }
 .fstep + .fstep { margin-left: 34px; }
 .fstep + .fstep::before { content: ''; position: absolute; right: 100%; top: 50%; width: 30px; height: 2px; background: rgba(255, 255, 255, 0.16); }
-.fstep.done { background: color-mix(in srgb, var(--accent) 80%, #000); border-color: transparent; color: #fff; box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 30%, transparent); }
-.fstep.now { border-color: var(--accent); color: var(--text); }
+.fstep.done {
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 92%, #fff), color-mix(in srgb, var(--accent) 78%, #000));
+  border-color: transparent; color: transparent; font-size: 0;
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+/* checkmark on completed steps */
+.fstep.done::after {
+  content: ''; width: 11px; height: 6px;
+  border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff;
+  transform: rotate(-45deg) translate(0, -1px);
+}
+.fstep.now { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
 .fstep.done + .fstep::before { background: var(--accent); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent); }
 .fstep.now::before {
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
   background-size: 200% 100%;
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
 }
-@keyframes step-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 50% { box-shadow: 0 0 0 9px transparent; } }
+@keyframes step-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
 
 /* scan: document + sweeping beam */
 .fart-scan { display: flex; align-items: center; justify-content: center; }
@@ -290,14 +388,26 @@ a { color: inherit; text-decoration: none; }
   100% { opacity: 0; }
 }
 
-/* chips: floating tool pills */
-.fart-chips { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 0 22px; }
+/* chips: floating suggestion pills with depth — one highlighted as "recommended" */
+.fart-chips { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 11px; padding: 0 22px; }
 .fchip {
-  padding: 9px 15px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--text);
-  background: rgba(255, 255, 255, 0.06); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--text);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, rgba(255,255,255,0.05)), rgba(255,255,255,0.03));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.08);
   white-space: nowrap;
 }
-@keyframes chip-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+/* the recommended pick — solid accent, glowing */
+.fart-chips .fchip:nth-child(2) {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, #fff), var(--accent));
+  color: #08120c; border-color: transparent;
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--accent) 38%, transparent);
+}
+@keyframes chip-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chip-glow {
+  0%, 100% { box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 26%, transparent); }
+  50% { box-shadow: 0 8px 30px color-mix(in srgb, var(--accent) 60%, transparent); }
+}
 
 /* ring: progress arc */
 .fart-ring { display: flex; align-items: center; justify-content: center; }
@@ -323,7 +433,15 @@ a { color: inherit; text-decoration: none; }
 @keyframes orbit-spin { from { transform: rotate(0deg) translateX(65px); } to { transform: rotate(360deg) translateX(65px); } }
 
 @media (prefers-reduced-motion: no-preference) {
+  .fart::before { animation: fart-breathe 6s ease-in-out infinite; }
   .fbar { animation: feq 1.15s ease-in-out infinite; }
+  .fvm-wave i { animation: feq 1.1s ease-in-out infinite; }
+  .fvm-disc { animation: fvm-float 3.6s ease-in-out infinite; }
+  .fplate-food { animation: plate-spin 24s linear infinite; }
+  .fplate-badge { animation: step-pulse 2.4s ease-out infinite; }
+  .fms-beam { animation: beam-sweep 3.4s ease-in-out infinite; }
+  .fms-kcal { animation: fms-tagpop 3.4s ease-in-out infinite; }
+  .fms-pro { animation: fms-tagpop 3.4s ease-in-out infinite 0.5s; }
   .fpill { animation: pill-in 0.5s ease forwards; }
   .ftyping i { animation: fblink 1.2s ease-in-out infinite; }
   .ftyping i:nth-child(2) { animation-delay: 0.18s; }
@@ -331,6 +449,7 @@ a { color: inherit; text-decoration: none; }
   .fstep.now { animation: step-pulse 2s ease-out infinite; }
   .fbeam { animation: beam-sweep 3.2s ease-in-out infinite; }
   .fchip { animation: chip-bob 3.4s ease-in-out infinite; }
+  .fart-chips .fchip:nth-child(2) { animation: chip-bob 3.4s ease-in-out infinite, chip-glow 2.6s ease-in-out infinite; }
   .fring .arc { animation: arc-grow 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
   .ffix .fx-under { animation: fx-sweep 3.6s ease-in-out infinite; }
   .ffix .fx-check { animation: fx-pop 3.6s ease-in-out infinite; }

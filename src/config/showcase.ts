@@ -122,7 +122,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     heroSub:
       'Just talk to Mila. Tell her your day, snap your meal, get instant answers — calories, macros, and what to eat next. No logging, no counting, no guilt.',
     screenLine: 'How about some edamame with a sprinkle of salt?',
-    chips: ['Meal idea', 'Beat cravings', 'Smart snack'],
+    chips: ['🥗 Meal idea', '🍫 Beat cravings', '🥜 Smart snack'],
     laurels: ['Snap a meal — instant macros', 'No logging'],
     craftLine: 'One pizza isn’t a setback. It’s Tuesday.',
     quotes: [
@@ -131,7 +131,7 @@ export const SHOWCASE: Record<string, Showcase> = {
     ],
     screenImg: 'mila.jpg',
     screenPos: '50% 40%',
-    featureArts: ['wave', 'chips', 'track'],
+    featureArts: ['voicemeal', 'chips', 'mealscan'],
     paper: { title: 'EDAMAME 🫛', line: '120 kcal · 11g protein · zero guilt' },
     sticker: 'NO LOGGING',
   },
