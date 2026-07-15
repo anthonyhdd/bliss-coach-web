@@ -1,0 +1,570 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { APPS, withBase } from '../../../config/apps';
+
+const app = APPS.mila;
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+const pageTitle = 'Free Daily Protein & Portion Calculator';
+const pageDescription =
+  'How much protein do you need a day? Free calculator turns your body weight and goal into a protein target — plus simple hand-portion guidance. No signup.';
+const canonicalUrl = 'https://bliss-coach.com/mila/tools/protein-portion-helper/';
+
+const faqs = [
+  {
+    q: 'How much protein do I need per day?',
+    a: 'A common starting point is around 0.8 g of protein per kg of body weight for general health. People who are active, building muscle, or trying to hold on to muscle while losing fat often aim higher — roughly 1.2 to 2.2 g/kg depending on the goal. This calculator uses those widely-cited ranges to suggest a target, but everyone is different. It is general guidance, not a personalized plan.',
+  },
+  {
+    q: 'What is the hand-portion method?',
+    a: 'It is a simple, no-weighing way to size meals using your own hand. One palm-sized portion of a protein food (about the thickness and width of your palm) is roughly one serving, which lands somewhere around 20 to 30 g of protein for foods like chicken, fish or tofu. It travels with you, needs no scale, and scales naturally to your body size.',
+  },
+  {
+    q: 'Do these protein numbers apply to everyone?',
+    a: 'No. Protein needs shift with age, pregnancy, kidney conditions, training load and more, and the food estimates are approximate averages. Older adults, in particular, are often advised to aim a little higher to protect muscle. Treat the result as a friendly ballpark to build meals around, not a medical prescription — and check with a doctor or registered dietitian for advice tailored to you.',
+  },
+  {
+    q: 'Is the protein calculator free?',
+    a: 'Yes. It runs entirely in your browser, stores nothing on a server, and needs no account or email. Use it as often as you like. When you want to talk through your real meals, cravings and goals, that is what the Mila app is for.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Daily Protein & Portion Calculator',
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Web',
+    url: canonicalUrl,
+    description: pageDescription,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@type': 'Organization', name: 'Bliss Coach', url: 'https://bliss-coach.com/' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Mila', item: 'https://bliss-coach.com/mila/' },
+      { '@type': 'ListItem', position: 3, name: 'Protein & Portion Calculator', item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  appStoreId={app.appStoreId}
+  ogImage={`/icons/${app.slug}.jpg`}
+  bodyClass="article-page"
+  activeApp={app.slug}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl }}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+
+    <header class="article-header">
+      <div class="article-hero-tint" aria-hidden="true"></div>
+      <a class="app-chip" href={withBase('/mila/')}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="24" height="24" />
+        {app.name} · {app.category}
+      </a>
+      <span class="crumb"><a href={withBase('/mila/')}>Nutrition</a> · Free tool</span>
+      <h1>Daily Protein &amp; Portion Helper</h1>
+      <p class="meta">Enter your weight and goal to get a daily protein target — then turn it into simple, no-weighing hand portions and real food examples.</p>
+    </header>
+
+    <!-- Intro (also visible without JS) -->
+    <div class="prose tool-intro">
+      <p>
+        "How much protein do I actually need?" is one of the most-asked nutrition questions — and the honest
+        answer is <em>it depends on your body and your goal</em>. A widely-cited baseline for general health is
+        about <strong>0.8&nbsp;g of protein per kilogram of body weight</strong>. If you're active, building
+        muscle, or trying to keep muscle while losing fat, most guidance lands higher — roughly
+        <strong>1.2 to 2.2&nbsp;g/kg</strong>. Enter your details below and this helper turns that into a
+        target range, then into practical <strong>palm-sized portions</strong> you can eyeball at any meal.
+        Everything runs in your browser — nothing is uploaded, and this is general guidance, not medical advice.
+      </p>
+    </div>
+
+    <!-- The tool -->
+    <section class="tool" aria-label="Daily protein and portion calculator">
+      <form id="pp-form" class="pp-grid" novalidate>
+        <div class="pp-field pp-weight">
+          <label for="f-weight">Your body weight</label>
+          <p class="hint">Used to scale the target. An estimate is completely fine.</p>
+          <div class="weight-row">
+            <input id="f-weight" name="weight" type="number" inputmode="decimal" min="1" step="0.1"
+              placeholder="70" autocomplete="off" />
+            <div class="unit-toggle" role="group" aria-label="Weight unit">
+              <button type="button" class="unit-btn is-on" data-unit="kg" aria-pressed="true">kg</button>
+              <button type="button" class="unit-btn" data-unit="lb" aria-pressed="false">lb</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pp-field">
+          <label for="f-goal">Activity &amp; goal</label>
+          <p class="hint">Pick the one that best matches your life right now.</p>
+          <select id="f-goal" name="goal">
+            <option value="sedentary">Mostly sedentary — general health</option>
+            <option value="active" selected>Active / regular exercise</option>
+            <option value="build">Building muscle</option>
+            <option value="preserve">Losing fat, keeping muscle</option>
+          </select>
+        </div>
+
+        <div class="pp-field pp-age">
+          <label for="f-age">Age <span class="opt">(optional)</span></label>
+          <p class="hint">Adults 60+ are often advised to aim a little higher to protect muscle.</p>
+          <input id="f-age" name="age" type="number" inputmode="numeric" min="1" max="120" step="1"
+            placeholder="e.g. 34" autocomplete="off" />
+        </div>
+
+        <div class="tool-buttons">
+          <button type="submit" id="pp-calc" class="tbtn tbtn-brand">Calculate my target</button>
+          <button type="button" id="pp-reset" class="tbtn tbtn-ghost">Reset</button>
+        </div>
+        <p id="pp-error" class="pp-error" role="alert" hidden></p>
+      </form>
+
+      <!-- Output (populated by JS) -->
+      <div id="pp-output" class="pp-output" hidden>
+        <div class="target-card">
+          <span class="target-kicker">Suggested daily protein</span>
+          <div class="target-range"><span id="pp-range">—</span> <span class="target-unit">g / day</span></div>
+          <p id="pp-basis" class="target-basis"></p>
+        </div>
+
+        <div class="portion-block">
+          <h2>In hand portions</h2>
+          <p id="pp-portions" class="portion-lead"></p>
+          <div id="pp-hands" class="hand-row" aria-hidden="true"></div>
+          <p class="portion-note">One <strong>palm-sized</strong> serving of a protein food ≈ <strong>~20–30&nbsp;g</strong> of protein. Your palm scales with your body, so it's a handy built-in guide.</p>
+        </div>
+
+        <div class="foods-block">
+          <h2>What that looks like on a plate</h2>
+          <p class="foods-lead">A few everyday ways to hit your target. Protein amounts are approximate — brands, cuts and portions vary.</p>
+          <ul id="pp-foods" class="foods-list"></ul>
+        </div>
+
+        <p class="disclaimer">
+          This is <strong>general guidance, not a substitute for a professional</strong>. Protein needs change
+          with age, pregnancy, kidney conditions and training. For advice tailored to you, talk to a doctor or
+          registered dietitian.
+        </p>
+      </div>
+
+      <noscript>
+        <p class="noscript-note">
+          This calculator needs JavaScript to personalize your target. You can still use the rule of thumb:
+          multiply your weight in kilograms by about <strong>0.8&nbsp;g</strong> for general health, or
+          <strong>1.2–2.2&nbsp;g</strong> if you're active or building/keeping muscle. Then picture roughly one
+          <strong>palm-sized</strong> protein serving (~20–30&nbsp;g) per portion across your day. This is
+          general guidance, not medical advice.
+        </p>
+      </noscript>
+    </section>
+
+    <!-- SEO / teaching content -->
+    <div class="prose tool-explainer">
+      <h2>How much protein per day, really?</h2>
+      <p>
+        There's no single number that fits everyone, but the research clusters into ranges that are easy to work
+        with. Roughly <strong>0.8&nbsp;g/kg</strong> covers basic needs for a mostly sedentary adult. Regular
+        exercise nudges that toward <strong>1.2–1.6&nbsp;g/kg</strong>. If you're actively building muscle, or
+        eating in a calorie deficit and want to <em>keep</em> the muscle you have, the commonly cited sweet spot
+        is around <strong>1.6–2.2&nbsp;g/kg</strong>. Older adults are often encouraged to sit at the higher end
+        to counter age-related muscle loss. None of this needs to be perfect — getting in the right neighborhood,
+        most days, is what matters.
+      </p>
+
+      <h2>The hand-portion method</h2>
+      <p>
+        Weighing every meal is a fast way to burn out. The hand-portion method skips the scale: your own hand is a
+        rough, always-with-you measuring tool that scales to your size.
+      </p>
+      <ul>
+        <li><strong>Palm = one protein serving.</strong> A portion about the size and thickness of your palm is roughly one serving of chicken, fish, tofu or lean meat — in the ballpark of <strong>20–30&nbsp;g of protein</strong>.</li>
+        <li><strong>Cupped hand = one carb portion</strong> (rice, oats, pasta) — handy context, though this tool focuses on protein.</li>
+        <li><strong>Thumb = one fat portion</strong> (oils, nut butters, cheese).</li>
+      </ul>
+      <p>
+        To hit a protein target, most people land on <strong>3–5 palm-sized servings spread across the day</strong>.
+        Splitting protein fairly evenly between meals — rather than saving it all for dinner — tends to be easier
+        on the appetite and helpful for holding on to muscle.
+      </p>
+
+      <h2>Easy protein foods to build meals around</h2>
+      <p>
+        Some approachable, everyday options and their rough protein content per typical serving. Explore the full
+        breakdown on our food guides — for example
+        <a href={withBase('/mila/foods/chicken-breast/')}>chicken breast</a>,
+        <a href={withBase('/mila/foods/greek-yogurt/')}>Greek yogurt</a>,
+        <a href={withBase('/mila/foods/eggs/')}>eggs</a>,
+        <a href={withBase('/mila/foods/lentils/')}>lentils</a> and
+        <a href={withBase('/mila/foods/tofu/')}>tofu</a>.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+      {faqs.map((f) => (
+        <>
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </>
+      ))}
+    </div>
+
+    <!-- Secondary CTA -->
+    <aside class="cta-box">
+      <div class="inner">
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="Mila app icon" width="72" height="72" />
+        <div>
+          <h3>Turn a number into meals you'll actually eat</h3>
+          <p>A target is step one. Mila is your AI dietician — talk through your real meals, cravings and week, and get judgment-free ideas to hit your protein without the guilt trips. Free to try on iPhone.</p>
+        </div>
+        <a class="btn" href={app.appStoreUrl}>Get Mila free</a>
+      </div>
+    </aside>
+  </div>
+
+  <style>
+    /* Tool styling — inherits the light "article-page" theme + Mila brand vars */
+    .tool-intro { padding-bottom: 8px; }
+    .tool {
+      max-width: var(--prose-w);
+      margin: 0 auto;
+      padding: 8px 24px 8px;
+    }
+
+    .pp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 640px) { .pp-grid { grid-template-columns: 1fr; } }
+    .pp-weight { grid-column: 1 / -1; }
+
+    .pp-field {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 14px;
+      padding: 16px 16px 15px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .pp-field:focus-within {
+      border-color: color-mix(in srgb, var(--accent) 60%, rgba(0, 0, 0, 0.09));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+    .pp-field label {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 17px; color: #17171c; letter-spacing: -0.01em;
+    }
+    .pp-field label .opt { font-weight: 500; font-size: 13.5px; color: #8a8a94; }
+    .pp-field .hint { font-size: 13.5px; color: #6b6b76; margin: 8px 0 12px; line-height: 1.45; }
+
+    .pp-field input,
+    .pp-field select {
+      width: 100%;
+      font: inherit; font-size: 16px; line-height: 1.4; color: #17171c;
+      background: #fbfbfc;
+      border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px;
+      padding: 12px 12px;
+    }
+    .pp-field input:focus,
+    .pp-field select:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,0.1)); }
+    .pp-field input::placeholder { color: #a6a6b0; }
+
+    .weight-row { display: flex; gap: 10px; align-items: stretch; }
+    .weight-row input { flex: 1; min-width: 0; }
+    .unit-toggle {
+      display: inline-flex; flex: none;
+      background: #f1f1f5; border-radius: 10px; padding: 3px;
+    }
+    .unit-btn {
+      font: inherit; font-weight: 700; font-size: 14.5px; cursor: pointer;
+      border: 0; background: transparent; color: #5a5a64;
+      padding: 8px 15px; border-radius: 8px; transition: background 0.15s, color 0.15s;
+    }
+    .unit-btn.is-on {
+      background: #fff; color: #17171c;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .unit-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .tool-buttons {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .tbtn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 99px;
+      font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .tbtn-brand {
+      background: linear-gradient(92deg, var(--brand-1), var(--brand-2), var(--brand-3));
+      color: var(--on-gradient);
+      box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+    .tbtn-brand:hover { transform: translateY(-2px); box-shadow: 0 12px 34px color-mix(in srgb, var(--accent) 45%, transparent); }
+    .tbtn-ghost { background: #fff; border-color: rgba(0, 0, 0, 0.14); color: #33333c; }
+    .tbtn-ghost:hover { background: #f3f3f7; }
+    .tbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .pp-error {
+      grid-column: 1 / -1;
+      margin: 2px 0 0; font-size: 14.5px; font-weight: 600;
+      color: #b4460b;
+    }
+
+    .pp-output {
+      max-width: var(--prose-w);
+      margin: 24px auto 0;
+      padding: 0 24px;
+    }
+
+    .target-card {
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--brand-1) 12%, #fff),
+        color-mix(in srgb, var(--brand-3) 12%, #fff));
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+      border-radius: 16px;
+      padding: 22px 24px;
+      text-align: center;
+    }
+    .target-kicker {
+      display: block; font-size: 12.5px; font-weight: 800; letter-spacing: 0.09em;
+      text-transform: uppercase; color: color-mix(in srgb, var(--accent) 78%, #333);
+    }
+    .target-range {
+      font-size: clamp(34px, 8vw, 46px); font-weight: 800; letter-spacing: -0.02em;
+      color: #14361f; line-height: 1.1; margin: 6px 0 2px;
+    }
+    .target-unit { font-size: 0.42em; font-weight: 700; color: #4a5a50; letter-spacing: 0; }
+    .target-basis { font-size: 14px; color: #4a5a50; margin: 8px 0 0; }
+
+    .portion-block, .foods-block { margin-top: 26px; }
+    .portion-block h2, .foods-block h2 {
+      font-size: 20px; letter-spacing: -0.02em; color: #121216; margin: 0 0 8px;
+    }
+    .portion-lead, .foods-lead { font-size: 15.5px; line-height: 1.55; color: #40404a; margin: 0 0 14px; }
+    .portion-lead strong { color: #14361f; }
+
+    .hand-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .hand-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff; border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+      border-radius: 99px; padding: 8px 14px 8px 11px;
+      font-size: 14px; font-weight: 600; color: #2c4a38;
+    }
+    .hand-chip .palm { font-size: 17px; }
+    .portion-note {
+      font-size: 14px; line-height: 1.55; color: #55555f;
+      background: #f4f7f4; border-radius: 11px; padding: 12px 15px; margin: 0;
+    }
+    .portion-note strong { color: #14361f; }
+
+    .foods-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .foods-list li {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+      background: #fff; border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 3px solid var(--accent);
+      border-radius: 11px; padding: 12px 16px;
+    }
+    .foods-list .fd-name { font-size: 15.5px; color: #26262e; }
+    .foods-list .fd-name a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    .foods-list .fd-name a:hover { text-decoration: underline; }
+    .foods-list .fd-grams { flex: none; font-size: 14.5px; font-weight: 700; color: #14361f; white-space: nowrap; }
+
+    .disclaimer {
+      margin: 22px 0 0; font-size: 13.5px; line-height: 1.55; color: #6b6b76;
+      background: #f6f6f8; border-radius: 11px; padding: 13px 15px;
+    }
+    .disclaimer strong { color: #40404a; }
+
+    .noscript-note {
+      max-width: var(--prose-w); margin: 18px auto 0; padding: 0 24px;
+      font-size: 14.5px; color: #6b6b76;
+    }
+    .tool-explainer { padding-top: 40px; }
+    .article-header .crumb a { color: var(--accent); }
+  </style>
+
+  <script>
+    function initProteinHelper() {
+      const form = document.getElementById('pp-form') as HTMLFormElement | null;
+      if (!form) return;
+      // Guard against double-binding across ClientRouter navigations
+      if ((form as any).__ppBound) return;
+      (form as any).__ppBound = true;
+
+      const $ = (id: string) => document.getElementById(id);
+      const weightEl = $('f-weight') as HTMLInputElement;
+      const goalEl = $('f-goal') as HTMLSelectElement;
+      const ageEl = $('f-age') as HTMLInputElement;
+      const errorEl = $('pp-error') as HTMLElement;
+      const output = $('pp-output') as HTMLElement;
+      const rangeEl = $('pp-range') as HTMLElement;
+      const basisEl = $('pp-basis') as HTMLElement;
+      const portionsEl = $('pp-portions') as HTMLElement;
+      const handsEl = $('pp-hands') as HTMLElement;
+      const foodsEl = $('pp-foods') as HTMLElement;
+      const unitBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.unit-btn'));
+
+      let unit: 'kg' | 'lb' = 'kg';
+
+      // g/kg ranges per goal — widely-cited general-guidance figures
+      const GOALS: Record<string, { lo: number; hi: number; label: string }> = {
+        sedentary: { lo: 0.8, hi: 1.0, label: 'general health (mostly sedentary)' },
+        active: { lo: 1.2, hi: 1.6, label: 'active / regular exercise' },
+        build: { lo: 1.6, hi: 2.2, label: 'building muscle' },
+        preserve: { lo: 1.6, hi: 2.2, label: 'losing fat while keeping muscle' },
+      };
+
+      // A representative palm-sized serving ≈ 25 g protein (midpoint of ~20–30 g)
+      const PER_PALM = 25;
+
+      // Approximate protein per common serving, for the food examples
+      const FOODS = [
+        { name: 'Chicken breast', per: 'per 100 g cooked', g: 31, href: '/mila/foods/chicken-breast/' },
+        { name: 'Greek yogurt', per: 'per 170 g pot', g: 17, href: '/mila/foods/greek-yogurt/' },
+        { name: 'Eggs', per: 'per 2 large eggs', g: 12, href: '/mila/foods/eggs/' },
+        { name: 'Lentils', per: 'per 1 cup cooked', g: 18, href: '/mila/foods/lentils/' },
+        { name: 'Tofu (firm)', per: 'per 100 g', g: 12, href: '/mila/foods/tofu/' },
+      ];
+
+      unitBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const u = (btn.dataset.unit as 'kg' | 'lb') || 'kg';
+          if (u === unit) return;
+          unit = u;
+          unitBtns.forEach((b) => {
+            const on = b === btn;
+            b.classList.toggle('is-on', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+        });
+      });
+
+      function showError(msg: string) {
+        errorEl.textContent = msg;
+        errorEl.hidden = false;
+        output.hidden = true;
+      }
+
+      function esc(s: string) {
+        return s.replace(/[&<>"']/g, (c) =>
+          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
+      }
+
+      function calc(e?: Event) {
+        if (e) e.preventDefault();
+        errorEl.hidden = true;
+
+        const raw = parseFloat(weightEl.value);
+        if (!isFinite(raw) || raw <= 0) {
+          showError('Enter your body weight to get a target.');
+          weightEl.focus();
+          return;
+        }
+        // Sanity bounds (accepts kg or lb inputs)
+        const kg = unit === 'lb' ? raw * 0.453592 : raw;
+        if (kg < 20 || kg > 350) {
+          showError('That weight looks out of range — double-check the number and the kg / lb toggle.');
+          weightEl.focus();
+          return;
+        }
+
+        const goalKey = goalEl.value in GOALS ? goalEl.value : 'active';
+        let { lo, hi, label } = GOALS[goalKey];
+
+        // Optional age nudge: older adults often advised toward the higher end
+        const age = parseInt(ageEl.value, 10);
+        let ageNote = '';
+        if (isFinite(age) && age >= 60 && age <= 120) {
+          lo = Math.max(lo, 1.2);
+          ageNote = ' Nudged up slightly for age 60+ to help protect muscle.';
+        }
+
+        const gLo = Math.round(kg * lo);
+        const gHi = Math.round(kg * hi);
+
+        rangeEl.textContent = gLo === gHi ? String(gLo) : gLo + '–' + gHi;
+        basisEl.textContent =
+          'Based on ~' + lo + '–' + hi + ' g per kg for ' + label + '.' + ageNote +
+          ' This is a general range, not a personalized plan.';
+
+        // Hand portions from the midpoint of the range
+        const mid = Math.round((gLo + gHi) / 2);
+        const palmsLo = Math.max(1, Math.round(gLo / PER_PALM));
+        const palmsHi = Math.max(palmsLo, Math.round(gHi / PER_PALM));
+        const palmsTxt = palmsLo === palmsHi ? String(palmsLo) : palmsLo + '–' + palmsHi;
+        portionsEl.innerHTML =
+          'That works out to roughly <strong>' + palmsTxt + ' palm-sized protein servings</strong> across your day' +
+          ' (about ' + mid + ' g, at ~' + PER_PALM + ' g per palm). Spreading them across meals is easier than saving it all for dinner.';
+
+        // Visual palm chips (cap at 6 for layout)
+        handsEl.innerHTML = '';
+        const shown = Math.min(palmsHi, 6);
+        for (let i = 0; i < shown; i++) {
+          const chip = document.createElement('span');
+          chip.className = 'hand-chip';
+          chip.innerHTML = '<span class="palm">🖐️</span> palm';
+          handsEl.appendChild(chip);
+        }
+        if (palmsHi > 6) {
+          const chip = document.createElement('span');
+          chip.className = 'hand-chip';
+          chip.textContent = '+' + (palmsHi - 6) + ' more';
+          handsEl.appendChild(chip);
+        }
+
+        // Food examples
+        foodsEl.innerHTML = '';
+        for (const f of FOODS) {
+          const li = document.createElement('li');
+          li.innerHTML =
+            '<span class="fd-name"><a href="' + esc(f.href) + '">' + esc(f.name) + '</a> ' +
+            '<span style="color:#8a8a94">' + esc(f.per) + '</span></span>' +
+            '<span class="fd-grams">~' + f.g + ' g</span>';
+          foodsEl.appendChild(li);
+        }
+
+        output.hidden = false;
+        output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      form.addEventListener('submit', calc);
+
+      $('pp-reset')?.addEventListener('click', () => {
+        form.reset();
+        // restore default unit + goal state
+        unit = 'kg';
+        unitBtns.forEach((b) => {
+          const on = b.dataset.unit === 'kg';
+          b.classList.toggle('is-on', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        output.hidden = true;
+        errorEl.hidden = true;
+        weightEl.focus();
+      });
+    }
+
+    document.addEventListener('astro:page-load', initProteinHelper);
+  </script>
+</Base>
