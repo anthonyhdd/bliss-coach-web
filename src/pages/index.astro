@@ -137,7 +137,11 @@ const coaches = [
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         color: #fff;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
+        /* `clip`, not `hidden`: `hidden` turns body into a scroll container, which
+           silently breaks `position: sticky` on descendants (the coach chapters
+           stack on scroll). `clip` kills horizontal overflow without a scrollport.
+           Same trick already used on .story. */
+        overflow-x: clip;
       }
       .banner {
         display: block;
@@ -649,6 +653,11 @@ const coaches = [
         display: flex;
         flex-direction: column;
         gap: clamp(20px, 3vw, 32px);
+        /* Stacked-deck scroll: each chapter sticks one notch lower than the
+           previous, so earlier coaches stay on screen as a thin edge while the
+           next card slides over them. Tune the deck with these two knobs. */
+        --stack-top: clamp(56px, 7vh, 88px);
+        --stack-peek: 14px;
       }
       .coaches-kicker {
         text-align: center;
@@ -661,7 +670,11 @@ const coaches = [
       }
       .chapter {
         --c1: #fff; --c2: #fff;
-        position: relative;
+        /* sticky + per-card offset (--i is set inline from the map index) = the
+           cards pile up into a deck instead of scrolling away. Opaque #101014
+           background below is what makes each card hide the one under it. */
+        position: sticky;
+        top: calc(var(--stack-top) + var(--i, 0) * var(--stack-peek));
         display: flex;
         align-items: center;
         gap: clamp(20px, 4vw, 44px);
@@ -1132,8 +1145,8 @@ const coaches = [
       <!-- six coaches, six chapters -->
       <section class="coaches" id="coaches" aria-label="Meet the coaches">
         <div class="coaches-kicker rv">Meet the coaches</div>
-        {coaches.map((c) => (
-          <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2}`}>
+        {coaches.map((c, i) => (
+          <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
             {hasVideo(c.slug) ? (
               <span class="pwrap">
                 <video class="portrait v-stand" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
