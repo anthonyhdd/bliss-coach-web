@@ -378,22 +378,42 @@ const coaches = [
         text-align: center;
         overflow: hidden;
       }
-      /* KAMO easter egg — the hidden 3D figure peeking up in the footer; rises on hover */
+      /* KAMO easter egg — the hidden 3D figure peeking up in the footer; rises on hover, links to the app */
       .foot-kamo {
         position: absolute;
         left: clamp(18px, 8vw, 96px);
         bottom: -96px;
-        width: 74px; height: auto;
+        display: block;
+        width: 74px;
         opacity: 0.82;
-        pointer-events: none;
         z-index: 0;
         filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
         transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.4s ease;
       }
+      .foot-kamo img { display: block; width: 100%; height: auto; }
+      /* KAMO tagline — sits above the head, fades in with the peek */
+      .foot-kamo-tag {
+        position: absolute;
+        bottom: calc(100% + 16px);
+        left: 0;                        /* character hugs the left edge — never overflows */
+        font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+        padding: 7px 12px; border-radius: 999px;
+        background: #ffdc83; color: #17130a;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+        white-space: nowrap;
+        rotate: -4deg;
+        opacity: 0; transform: translateY(6px);
+        transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
+      }
+      .foot:hover .foot-kamo-tag { opacity: 1; transform: translateY(0); }
       .foot:hover .foot-kamo { transform: translateY(-48px); opacity: 1; }
       .foot-board, .foot-mark, .foot-tag, .foot-links, .foot-stickers { position: relative; z-index: 1; }
-      @media (max-width: 640px) { .foot-kamo { width: 56px; bottom: -74px; left: 14px; } }
-      @media (prefers-reduced-motion: reduce) { .foot-kamo { transition: none; } }
+      @media (max-width: 640px) {
+        .foot-kamo { width: 56px; bottom: -74px; left: 14px; }
+        /* collides with the wordmark at this width, and hover reveals don't fire on touch anyway */
+        .foot-kamo-tag { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) { .foot-kamo, .foot-kamo-tag { transition: none; } }
       .foot-grid {
         position: absolute; inset: 0; pointer-events: none;
         background-image:
@@ -1304,7 +1324,16 @@ const coaches = [
 
     <footer class="foot">
       <div class="foot-grid" aria-hidden="true"></div>
-      <img class="foot-kamo" src={withBase('/kamo-peek.png')} alt="" aria-hidden="true" width="74" height="180" loading="lazy" />
+      <a
+        class="foot-kamo"
+        href="https://apps.apple.com/app/id6789639784"
+        target="_blank"
+        rel="noopener"
+        aria-label="KAMO — Your turn. Your photo. Get it on the App Store"
+      >
+        <span class="foot-kamo-tag">Your turn. Your photo.</span>
+        <img src={withBase('/kamo-peek.png')} alt="" width="74" height="180" loading="lazy" />
+      </a>
 
       <div class="foot-stickers" aria-hidden="true">
         <span class="stk stk-1">PRACTICE OUT LOUD</span>

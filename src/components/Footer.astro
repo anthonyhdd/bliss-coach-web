@@ -35,8 +35,16 @@ const year = new Date().getFullYear();
         <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
       </nav>
     </div>
-    {/* KAMO easter egg: the 3D figure hiding in the footer — peeks up on hover */}
-    <img class="kamo-peek" src={withBase('/kamo-peek.png')} alt="" aria-hidden="true" width="66" height="160" loading="lazy" />
+    {/* KAMO easter egg: the 3D figure hiding in the footer — peeks up on hover, links to the app */}
+    <a
+      class="kamo-peek"
+      href="https://apps.apple.com/app/id6789639784"
+      target="_blank"
+      rel="noopener"
+      aria-label="KAMO: Hide & Seek Photo Game on the App Store"
+    >
+      <img src={withBase('/kamo-peek.png')} alt="" width="66" height="160" loading="lazy" />
+    </a>
   </footer>
 )}
 
@@ -47,13 +55,14 @@ const year = new Date().getFullYear();
     position: absolute;
     right: clamp(14px, 6vw, 72px);
     bottom: -82px;                  /* body sunk below the footer — only head/shoulders peek up */
-    width: 66px; height: auto;
+    display: block;
+    width: 66px;
     opacity: .8;
-    pointer-events: none;
     z-index: 0;
     filter: drop-shadow(0 6px 16px rgba(0,0,0,.18));
     transition: transform .5s cubic-bezier(.2,.9,.3,1), opacity .35s ease;
   }
+  .kamo-peek img { display: block; width: 100%; height: auto; }
   .site-footer:hover .kamo-peek { transform: translateY(-40px); opacity: 1; }  /* peekaboo */
   @media (max-width: 640px){ .kamo-peek { width: 52px; bottom: -66px; right: 12px; } }
   @media (prefers-reduced-motion: reduce){ .kamo-peek { transition: none; } }
