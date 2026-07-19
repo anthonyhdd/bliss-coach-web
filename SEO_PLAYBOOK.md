@@ -52,4 +52,5 @@ sitemap, `llms.txt` (AI-crawler content map, auto-regenerated from the collectio
   `app` ∈ {sofia, alex, charm, amelie, mila, astra}, publishDate, keywords[], draft.
 - GH Pages deploys can hang in queue: ONE run at a time, retry with
   `gh workflow run deploy.yml`, never dispatch while a push-run is deploying.
-- GSC manual indexing quota ≈ 10–12 URLs/day — spend it on new LPs and updated money pages.
+- GSC manual indexing quota ≈ **7 URLs/day** (measured 2026-07-19: the 8th request
+  returned "Quota dépassé"). Spend it on new LPs and updated money pages.
