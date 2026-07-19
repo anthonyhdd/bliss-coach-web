@@ -378,18 +378,19 @@ const coaches = [
         text-align: center;
         overflow: hidden;
       }
-      /* KAMO easter egg — the hidden 3D figure peeking up in the footer; rises on hover */
+      /* KAMO easter egg — the hidden 3D figure peeking up in the footer; rises on hover, links to the app */
       .foot-kamo {
         position: absolute;
         left: clamp(18px, 8vw, 96px);
         bottom: -96px;
-        width: 74px; height: auto;
+        display: block;
+        width: 74px;
         opacity: 0.82;
-        pointer-events: none;
         z-index: 0;
         filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
         transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.4s ease;
       }
+      .foot-kamo img { display: block; width: 100%; height: auto; }
       .foot:hover .foot-kamo { transform: translateY(-48px); opacity: 1; }
       .foot-board, .foot-mark, .foot-tag, .foot-links, .foot-stickers { position: relative; z-index: 1; }
       @media (max-width: 640px) { .foot-kamo { width: 56px; bottom: -74px; left: 14px; } }
@@ -1304,7 +1305,15 @@ const coaches = [
 
     <footer class="foot">
       <div class="foot-grid" aria-hidden="true"></div>
-      <img class="foot-kamo" src={withBase('/kamo-peek.png')} alt="" aria-hidden="true" width="74" height="180" loading="lazy" />
+      <a
+        class="foot-kamo"
+        href="https://apps.apple.com/app/id6789639784"
+        target="_blank"
+        rel="noopener"
+        aria-label="KAMO: Hide & Seek Photo Game on the App Store"
+      >
+        <img src={withBase('/kamo-peek.png')} alt="" width="74" height="180" loading="lazy" />
+      </a>
 
       <div class="foot-stickers" aria-hidden="true">
         <span class="stk stk-1">PRACTICE OUT LOUD</span>
