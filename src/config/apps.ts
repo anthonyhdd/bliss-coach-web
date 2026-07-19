@@ -203,6 +203,16 @@ export const APPS: Record<string, AppDef> = {
 
 export const APP_SLUGS = Object.keys(APPS);
 
+/** Endonyms for the locales we publish translated articles in. Used by the
+ *  language links that connect EN articles to their translated twins — those
+ *  pages are otherwise reachable only via sitemap + hreflang, which pass no
+ *  meaningful internal link weight. */
+export const LANG_NAMES: Record<string, string> = {
+  en: 'English',
+  fr: 'Français',
+  es: 'Español',
+};
+
 /** Prefix a root-relative path with the configured base (GH Pages preview vs prod). */
 export function withBase(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
