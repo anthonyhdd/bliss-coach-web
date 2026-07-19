@@ -52,9 +52,18 @@ const faq = extractFaq(post.body ?? '');
 const app = APPS[post.data.app];
 const { Content } = await render(post);
 
-const related = (await getCollection('blog', (p) => p.data.app === post.data.app && !p.data.draft && p.data.lang === 'en' && p.id !== post.id))
-  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
-  .slice(0, 3);
+// Deterministic sibling selection: alphabetical adjacency by slug, same ring
+// as the pSEO template. Every article is linked by exactly 3 siblings, so link
+// equity spreads across the whole pool. Sorting by recency instead (the old
+// behaviour) pointed every article at the same 3 newest posts, which left
+// roughly half the corpus with no inbound link from a sibling at all.
+const blogSiblings = (await getCollection('blog', (p) => p.data.app === post.data.app && !p.data.draft && p.data.lang === 'en'))
+  .map((p) => ({ post: p, slug: p.id.split('/')[1] }))
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+const blogSelfIdx = blogSiblings.findIndex((s) => s.post.id === post.id);
+const related = (blogSelfIdx === -1 ? [] : [...blogSiblings.slice(blogSelfIdx + 1), ...blogSiblings.slice(0, blogSelfIdx)])
+  .slice(0, 3)
+  .map((s) => s.post);
 
 // Cross-silo internal links: surface this app's pSEO hub + a few topical item
 // pages so the blog and pSEO content pools link into each other instead of
