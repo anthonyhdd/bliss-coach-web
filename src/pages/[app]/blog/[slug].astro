@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { APPS, withBase } from '../../../config/apps';
+import { APPS, LANG_NAMES, withBase } from '../../../config/apps';
 import { PSEO_SECTIONS } from '../../../config/pseo';
 
 export async function getStaticPaths() {
@@ -150,6 +150,23 @@ if (faq.length >= 2) {
       <span class="crumb">
         <a href={withBase(`/${app.slug}/blog/`)}>{app.blogTitle}</a>
       </span>
+      {translations.length > 0 && (
+        <p class="lang-alts">
+          Also available in{' '}
+          {translations.map((t, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true"> · </span>}
+              <a
+                href={withBase(`/${t.data.lang}/${app.slug}/blog/${t.id.split('/')[2]}/`)}
+                hreflang={t.data.lang}
+                lang={t.data.lang}
+              >
+                {LANG_NAMES[t.data.lang] ?? t.data.lang}
+              </a>
+            </>
+          ))}
+        </p>
+      )}
       <h1>{post.data.title}</h1>
       <p class="meta">
         {fmt(post.data.publishDate)} · by the {app.name} team
