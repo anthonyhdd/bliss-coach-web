@@ -1,521 +1,586 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
 <title>BlissCoach — Analytics</title>
 <style>
   :root{
-    --surface-1:#fcfcfb; --page:#f9f9f7;
-    --ink-1:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
-    --grid:#e1e0d9; --baseline:#c3c2b7; --ring:rgba(11,11,11,.10);
-    --delta-good:#006300; --delta-bad:#d03b3b;
-    --s-sofia:#2a78d6; --s-amelie:#1baf7a; --s-charm:#eda100;
-    --s-alex:#008300; --s-mila:#4a3aa7; --s-astra:#e34948;
-    --f1:#86b6ef; --f2:#5598e7; --f3:#2a78d6; --f4:#1c5cab; --f5:#104281;
+    --page:#08090c; --surface:#101218; --surface-2:#161922; --raise:#1c2030;
+    --ink-1:#f4f6fa; --ink-2:#a6adbd; --ink-3:#6b7385;
+    --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+    --good:#34d399; --bad:#f87171; --warn:#fbbf24; --accent:#6ea8fe;
+    --s-sofia:#f97362; --s-amelie:#a78bfa; --s-charm:#e0b64a;
+    --s-alex:#7dd3fc; --s-mila:#4ade80; --s-astra:#f0abfc;
+    --r:14px;
   }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --surface-1:#1a1a19; --page:#0d0d0d;
-      --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
-      --grid:#2c2c2a; --baseline:#383835; --ring:rgba(255,255,255,.10);
-      --delta-good:#0ca30c; --delta-bad:#e66767;
-      --s-sofia:#3987e5; --s-amelie:#199e70; --s-charm:#c98500;
-      --s-alex:#008300; --s-mila:#9085e9; --s-astra:#e66767;
-      --f1:#86b6ef; --f2:#5598e7; --f3:#3987e5; --f4:#256abf; --f5:#184f95;
-    }
-  }
-  *{box-sizing:border-box;margin:0}
-  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--page);color:var(--ink-1);line-height:1.45}
-  a{color:inherit}
-  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 64px}
-  header.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-  header.top h1{font-size:20px;font-weight:700}
-  header.top .sub{color:var(--ink-muted);font-size:13px}
-  header.top .spacer{flex:1}
-  button.ghost{background:none;border:1px solid var(--ring);border-radius:8px;color:var(--ink-2);font-size:12px;padding:4px 10px;cursor:pointer}
-  /* lock screen */
-  #lock{min-height:70vh;display:flex;align-items:center;justify-content:center}
-  #lock form{background:var(--surface-1);border:1px solid var(--ring);border-radius:14px;padding:32px;width:320px;display:flex;flex-direction:column;gap:12px}
-  #lock h1{font-size:17px}
-  #lock p{font-size:13px;color:var(--ink-2)}
-  #lock input{font-size:15px;padding:9px 12px;border:1px solid var(--baseline);border-radius:8px;background:var(--page);color:var(--ink-1)}
-  #lock button{font-size:14px;font-weight:600;padding:9px;border:none;border-radius:8px;background:var(--s-sofia);color:#fff;cursor:pointer}
-  #lockErr{color:var(--delta-bad);font-size:13px;display:none}
-  /* filters */
-  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:10px 12px;margin-bottom:16px}
-  .filters .lbl{font-size:12px;color:var(--ink-muted);margin-right:2px}
-  .chip{border:1px solid var(--ring);background:none;border-radius:999px;padding:4px 12px;font-size:13px;color:var(--ink-2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-  .chip .dot{width:9px;height:9px;border-radius:50%;background:var(--c,transparent);display:inline-block}
-  .chip[aria-pressed="true"]{background:var(--page);border-color:var(--baseline);color:var(--ink-1);font-weight:600}
-  .chip[aria-pressed="true"]::before{content:"✓";font-weight:700;font-size:12px}
-  .filters input[type=date]{font-size:13px;border:1px solid var(--ring);background:none;color:var(--ink-2);border-radius:8px;padding:3px 6px}
-  .vr{width:1px;align-self:stretch;background:var(--grid);margin:0 4px}
-  /* KPI tiles */
-  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
-  .tile{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:12px 14px}
-  .tile .k{font-size:12px;color:var(--ink-muted)}
-  .tile .v{font-size:26px;font-weight:700;margin:2px 0}
-  .tile .d{font-size:12px;color:var(--ink-muted)}
-  .tile .d.up{color:var(--delta-good)} .tile .d.down{color:var(--delta-bad)}
-  /* cards + charts */
-  .card{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:14px 16px;margin-bottom:16px;overflow-x:auto}
-  .card h2{font-size:14px;font-weight:700;margin-bottom:2px}
-  .card .note{font-size:12px;color:var(--ink-muted);margin-bottom:8px}
-  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
-  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:4px 0 2px}
-  .legend span{display:inline-flex;align-items:center;gap:5px}
-  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
-  svg text{font-family:inherit}
-  .tooltip{position:fixed;pointer-events:none;background:var(--surface-1);border:1px solid var(--ring);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.15);padding:8px 10px;font-size:12px;z-index:50;display:none;min-width:130px}
-  .tooltip b{font-size:11px;color:var(--ink-muted);font-weight:600;display:block;margin-bottom:3px}
-  .tooltip .row{display:flex;align-items:center;gap:6px;justify-content:space-between}
-  .tooltip .row .nm{display:inline-flex;align-items:center;gap:5px;color:var(--ink-2)}
-  .tooltip .row .vl{font-variant-numeric:tabular-nums;font-weight:600}
-  /* funnels */
-  .funnels{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-  .funnel h3{font-size:13px;display:flex;align-items:center;gap:6px;margin-bottom:6px}
-  .funnel h3 i{width:10px;height:10px;border-radius:50%}
-  .frow{display:grid;grid-template-columns:92px 1fr 88px;align-items:center;gap:8px;font-size:12px;margin:5px 0}
-  .frow .nm{color:var(--ink-2)}
-  .frow .bar{display:block;height:18px;border-radius:0 4px 4px 0;background:var(--fc);min-width:2px}
-  .frow .val{font-variant-numeric:tabular-nums;color:var(--ink-2)}
-  .frow .val b{color:var(--ink-1)}
-  /* table */
-  table{border-collapse:collapse;width:100%;font-size:13px}
-  th,td{padding:7px 10px;text-align:right;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--grid)}
-  th{color:var(--ink-muted);font-weight:600;font-size:12px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);color:var(--ink-1);line-height:1.5;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:26px 22px 80px}
+  .mono{font-variant-numeric:tabular-nums}
+
+  #lock{min-height:100vh;display:grid;place-items:center;padding:24px}
+  .lockcard{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--r);padding:26px}
+  .lockcard h1{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+  .lockcard p{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+  input[type=password]{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line-2);
+    background:var(--surface-2);color:var(--ink-1);font-size:14px;outline:none}
+  input[type=password]:focus{border-color:var(--accent)}
+  .btn{width:100%;margin-top:10px;padding:11px;border-radius:10px;border:0;cursor:pointer;
+    background:var(--accent);color:#08090c;font-weight:800;font-size:14px}
+  .btn:disabled{opacity:.6;cursor:default}
+  .err{display:none;margin-top:10px;color:var(--bad);font-size:13px}
+
+  header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+  h1.title{font-size:22px;font-weight:800;letter-spacing:-.03em}
+  .sub{color:var(--ink-3);font-size:12.5px;margin-top:3px}
+  .ghost{background:transparent;border:1px solid var(--line-2);color:var(--ink-2);
+    border-radius:9px;padding:7px 12px;font-size:12.5px;cursor:pointer}
+  .ghost:hover{color:var(--ink-1);border-color:var(--ink-3)}
+
+  .filters{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:12px 14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:18px}
+  .fgroup{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .flabel{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-right:2px}
+  .chip{background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);border-radius:999px;
+    padding:6px 12px;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .chip[aria-pressed=true]{background:var(--raise);color:var(--ink-1);border-color:var(--line-2)}
+  .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+  .chip[aria-pressed=false] .dot{opacity:.3}
+
+  .insights{display:grid;gap:10px;margin-bottom:22px}
+  .ins{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border-radius:12px;
+    background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--tone)}
+  .ins .ico{font-size:15px;line-height:1.35}
+  .ins .txt{font-size:13.5px;color:var(--ink-2)}
+  .ins .txt b{color:var(--ink-1);font-weight:750}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:24px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .tile .k{font-size:11.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em}
+  .tile .v{font-size:26px;font-weight:800;letter-spacing:-.03em;margin:6px 0 2px}
+  .tile .d{font-size:12px;color:var(--ink-3)}
+  .tile .d.up{color:var(--good)} .tile .d.down{color:var(--bad)}
+  .spark{display:block;margin-top:8px}
+
+  h2{font-size:14px;font-weight:750;margin:0 0 10px;display:flex;align-items:center;gap:9px}
+  h2 .hint{font-weight:400;font-size:12px;color:var(--ink-3)}
+  section{margin-bottom:26px}
+
+  .funnel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .frow{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:center;padding:7px 0}
+  .frow .nm{font-size:13px;color:var(--ink-2)}
+  .track{height:26px;background:var(--surface-2);border-radius:7px;overflow:hidden}
+  .bar{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,var(--accent),#8ec5ff)}
+  .frow .val{font-size:13px;text-align:right;white-space:nowrap}
+  .drop{font-size:11.5px;color:var(--ink-3)}
+  .drop.worst{color:var(--bad);font-weight:700}
+
+  .tblwrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+  th,td{padding:11px 13px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
   th:first-child,td:first-child{text-align:left}
-  td:first-child{font-weight:600}
-  td .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
-  td .pc{color:var(--ink-muted);font-size:11px}
-  tr.total td{border-top:2px solid var(--baseline);font-weight:700}
-  footer{color:var(--ink-muted);font-size:12px;margin-top:20px}
-  #app{display:none}
-  .empty{padding:40px;text-align:center;color:var(--ink-muted);font-size:14px}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:var(--surface-2)}
+  td.best{color:var(--good);font-weight:750}
+  td.worst{color:var(--bad);font-weight:750}
+  .appcell{display:flex;align-items:center;gap:9px}
+  .appcell i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+  .rank{color:var(--ink-3);font-size:11.5px;width:16px;display:inline-block}
+
+  .chartcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .ctrls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;align-items:center}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--ink-2)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:16px;height:2.5px;border-radius:2px;background:var(--c)}
+  #tip{position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;background:var(--raise);
+    border:1px solid var(--line-2);border-radius:10px;padding:9px 11px;font-size:12px;z-index:50;
+    box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  #tip .th{color:var(--ink-3);margin-bottom:5px;font-size:11px}
+  #tip .tr{display:flex;justify-content:space-between;gap:16px}
+  #tip .tr i{width:9px;height:9px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px}
+  .empty{color:var(--ink-3);font-size:13px;padding:18px;text-align:center}
+  .demo-banner{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);color:var(--warn);
+    padding:9px 13px;border-radius:10px;font-size:12.5px;margin-bottom:16px}
+  @media(max-width:640px){.frow{grid-template-columns:110px 1fr auto}.wrap{padding:18px 14px 60px}}
 </style>
 </head>
 <body>
 
 <div id="lock">
-  <form id="lockForm">
+  <form class="lockcard" id="lockForm">
     <h1>BlissCoach Analytics</h1>
     <p>Espace privé. Entrez le mot de passe pour charger les données.</p>
-    <input type="password" id="pw" placeholder="Mot de passe" autocomplete="current-password" autofocus>
-    <div id="lockErr">Mot de passe incorrect.</div>
-    <button type="submit">Entrer</button>
+    <input type="password" id="pw" placeholder="Mot de passe" autocomplete="current-password" />
+    <button class="btn" type="submit">Entrer</button>
+    <div class="err" id="lockErr"></div>
   </form>
 </div>
 
-<div class="wrap" id="app">
-  <header class="top">
-    <h1>Portfolio analytics</h1>
-    <span class="sub" id="updatedAt"></span>
-    <span class="spacer"></span>
+<div class="wrap" id="app" style="display:none">
+  <div id="demoBanner" class="demo-banner" style="display:none">
+    <b>Mode démo</b> — données fictives générées localement, uniquement pour prévisualiser la mise en page.
+  </div>
+
+  <header>
+    <div>
+      <h1 class="title">Portfolio analytics</h1>
+      <div class="sub" id="updatedAt"></div>
+    </div>
     <button class="ghost" id="logout">Verrouiller</button>
   </header>
 
-  <div class="filters" id="filters">
-    <span class="lbl">Période</span>
-    <button class="chip" data-days="7">7 j</button>
-    <button class="chip" data-days="14">14 j</button>
-    <button class="chip" data-days="30" aria-pressed="true">30 j</button>
-    <button class="chip" data-days="90">90 j</button>
-    <input type="date" id="d1"> <span class="lbl">→</span> <input type="date" id="d2">
-    <span class="vr"></span>
-    <span class="lbl">Apps</span>
-    <span id="variantChips"></span>
+  <div class="filters">
+    <div class="fgroup"><span class="flabel">Période</span><span id="rangeChips"></span></div>
+    <div class="fgroup"><span class="flabel">Apps</span><span id="variantChips"></span></div>
   </div>
 
-  <div class="tiles" id="tiles"></div>
+  <section>
+    <h2>Ce qu'il faut regarder <span class="hint">calculé sur la période choisie</span></h2>
+    <div class="insights" id="insights"></div>
+  </section>
 
-  <div class="card">
-    <h2>Funnel produit par app</h2>
-    <div class="note">Utilisateurs uniques sur la période · conversion en % de l’étape précédente (entre parenthèses : % du départ)</div>
-    <div class="funnels" id="funnels"></div>
-  </div>
+  <section>
+    <h2>Taux de conversion <span class="hint">vs période précédente de même durée</span></h2>
+    <div class="tiles" id="tiles"></div>
+  </section>
 
-  <div class="card">
-    <h2>Taux de conversion — tableau récapitulatif</h2>
-    <div class="note">Uniques sur la période sélectionnée. Achats Amplitude sous-comptés : RevenueCat = vérité revenu.</div>
-    <div style="overflow-x:auto"><table id="convTable"></table></div>
-  </div>
+  <section>
+    <h2>Funnel consolidé <span class="hint">apps sélectionnées · la plus grosse fuite est signalée</span></h2>
+    <div class="funnel" id="funnel"></div>
+  </section>
 
-  <div class="grid2" id="charts"></div>
+  <section>
+    <h2>Classement par app <span class="hint">trié par conversion bout-en-bout</span></h2>
+    <div class="tblwrap"><table id="board"></table></div>
+  </section>
 
-  <footer>
-    Données Amplitude (uniques/jour, propriété <code>app_variant</code>), chargées en direct via l’API Dashboard (cache serveur 30 min).
-    Le funnel est fenêtré par période : un utilisateur peut apparaître à une étape sans l’étape précédente (ex. user existant qui chatte).
-  </footer>
+  <section>
+    <h2>Évolution</h2>
+    <div class="chartcard">
+      <div class="ctrls" id="metricChips"></div>
+      <canvas id="chart" height="300"></canvas>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
 </div>
-
-<div class="tooltip" id="tip"></div>
+<div id="tip"></div>
 
 <script>
-(() => {
-'use strict';
+(function(){
+const $ = s => document.querySelector(s);
+const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+const DATA_URL = 'https://wbxuxcvxyzmbyshupycs.supabase.co/functions/v1/analytics-data';
+let DATA = null;
 
 const VMETA = {
-  sofia:  {label:'Sofia · ES',        color:'var(--s-sofia)'},
-  amelie: {label:'Amélie · FR',       color:'var(--s-amelie)'},
-  charm:  {label:'Charm · dating',    color:'var(--s-charm)'},
-  alex:   {label:'Alex · interview',  color:'var(--s-alex)'},
-  mila:   {label:'Mila · diet',       color:'var(--s-mila)'},
-  astra:  {label:'Astra · astro',     color:'var(--s-astra)'},
+  sofia:{label:'Sofia',color:'var(--s-sofia)'},  amelie:{label:'Amélie',color:'var(--s-amelie)'},
+  charm:{label:'Charm',color:'var(--s-charm)'},  alex:{label:'Alex',color:'var(--s-alex)'},
+  mila:{label:'Mila',color:'var(--s-mila)'},     astra:{label:'Astra',color:'var(--s-astra)'},
 };
 const STEPS = [
-  {ev:'onboarding_started',   label:'Onboarding démarré'},
-  {ev:'onboarding_completed', label:'Onboarding complété'},
-  {ev:'chat_session_started', label:'Premier chat'},
-  {ev:'paywall_viewed',       label:'Paywall vu'},
-  {ev:'trial_started',        label:'Trial démarré'},
-  {ev:'purchase_completed',   label:'Achat'},
+  {ev:'onboarding_started',    label:'Onboarding'},
+  {ev:'onboarding_completed',  label:'Onb. complété'},
+  {ev:'chat_session_started',  label:'Premier chat'},
+  {ev:'paywall_viewed',        label:'Paywall vu'},
+  {ev:'trial_started',         label:'Trial'},
+  {ev:'purchase_completed',    label:'Achat'},
 ];
-const CHART_DEFS = [
-  {ev:'onboarding_started',   title:'Onboardings démarrés / jour'},
-  {ev:'_onb_rate',            title:'Complétion onboarding — moyenne glissante 7 j (%)', pct:true},
-  {ev:'chat_session_started', title:'Premiers chats / jour'},
-  {ev:'paywall_viewed',       title:'Paywalls vus / jour'},
-  {ev:'trial_started',        title:'Trials démarrés / jour'},
-  {ev:'app_open',             title:'Utilisateurs actifs (app_open) / jour'},
+// the rates that actually move the business, in funnel order
+const RATES = [
+  {k:'Complétion onb.', a:'onboarding_completed', b:'onboarding_started'},
+  {k:'Onb. → chat',     a:'chat_session_started', b:'onboarding_completed'},
+  {k:'Chat → paywall',  a:'paywall_viewed',       b:'chat_session_started'},
+  {k:'Paywall → trial', a:'trial_started',        b:'paywall_viewed'},
+  {k:'Trial → achat',   a:'purchase_completed',   b:'trial_started'},
+  {k:'Bout-en-bout',    a:'purchase_completed',   b:'onboarding_started'},
 ];
+const state = {from:null,to:null,variants:new Set(Object.keys(VMETA)),metric:'purchase_completed',smooth:true};
 
-let DATA = null;
-const state = { from:null, to:null, variants:new Set(Object.keys(VMETA)) };
-const $ = (s) => document.querySelector(s);
-const el = (t, cls) => { const n = document.createElement(t); if (cls) n.className = cls; return n; };
-const fmtN = (n) => n.toLocaleString('fr-FR');
-const pct = (a,b) => b ? Math.round(a/b*1000)/10 : 0;
+const fmtN = n => (n==null?'—':Math.round(n).toLocaleString('fr-FR'));
+const rate = (a,b) => b>0 ? Math.round(a/b*1000)/10 : null;
+const fmtR = r => r==null?'—':r.toFixed(1).replace('.',',')+' %';
+const cssColor = v => getComputedStyle(document.documentElement)
+  .getPropertyValue(v.replace('var(','').replace(')','')).trim() || '#6ea8fe';
 
-/* ---------- live data (Supabase edge proxy -> Amplitude) ---------- */
-const DATA_URL = 'https://wbxuxcvxyzmbyshupycs.supabase.co/functions/v1/analytics-data';
-async function unlock(password){
-  const res = await fetch(DATA_URL, {
-    headers: {'x-analytics-password': password},
-    cache: 'no-store',
-  });
-  if (res.status === 401) throw new Error('badpw');
-  if (!res.ok) throw new Error('nodata');
-  DATA = await res.json();
-  if (!DATA || !DATA.dates || !DATA.dates.length) throw new Error('nodata');
-}
-
-/* ---------- data helpers ---------- */
+const daily = (ev,v) => (DATA.metrics[ev]||{})[v] || null;
 function idxRange(){
   const i1 = Math.max(0, DATA.dates.indexOf(state.from));
   let i2 = DATA.dates.indexOf(state.to);
-  if (i2 < 0) i2 = DATA.dates.length - 1;
-  return [i1, i2];
+  if (i2 < 0) i2 = DATA.dates.length-1;
+  return [i1,i2];
 }
-function sumRange(ev, variant, i1, i2){
-  const d = (DATA.metrics[ev] || {})[variant];
-  if (!d) return 0;
-  let s = 0; for (let i = i1; i <= i2; i++) s += d[i] || 0;
+function sumRange(ev,v,i1,i2){
+  const d = daily(ev,v); if(!d) return 0;
+  let s=0; for(let i=i1;i<=i2;i++) s += d[i]||0;
   return s;
 }
-function sumSel(ev, i1, i2){
-  let s = 0; for (const v of state.variants) s += sumRange(ev, v, i1, i2);
-  return s;
+const sumSel = (ev,i1,i2) => [...state.variants].reduce((s,v)=>s+sumRange(ev,v,i1,i2),0);
+function setRangeDays(n){
+  const L = DATA.dates.length;
+  state.to = DATA.dates[L-1];
+  state.from = DATA.dates[Math.max(0,L-n)];
 }
-function daily(ev, variant){ return (DATA.metrics[ev] || {})[variant] || null; }
 
-/* ---------- KPI tiles ---------- */
-function renderTiles(){
-  const [i1,i2] = idxRange();
-  const len = i2 - i1 + 1;
-  const p2 = i1 - 1, p1 = i1 - len;           // previous window of equal length
-  const hasPrev = p1 >= 0;
-  const defs = [
-    {k:'Onboardings',      f:(a,b)=>sumSel('onboarding_started',a,b)},
-    {k:'Complétion onb.',  f:(a,b)=>pct(sumSel('onboarding_completed',a,b), sumSel('onboarding_started',a,b)), pct:true},
-    {k:'Premiers chats',   f:(a,b)=>sumSel('chat_session_started',a,b)},
-    {k:'Paywalls vus',     f:(a,b)=>sumSel('paywall_viewed',a,b)},
-    {k:'Trials',           f:(a,b)=>sumSel('trial_started',a,b)},
-    {k:'Achats',           f:(a,b)=>sumSel('purchase_completed',a,b)},
-  ];
-  const root = $('#tiles'); root.innerHTML = '';
-  for (const d of defs){
-    const cur = d.f(i1,i2);
-    const tile = el('div','tile');
-    tile.innerHTML = `<div class="k">${d.k}</div><div class="v">${d.pct?cur+' %':fmtN(cur)}</div>`;
-    const dd = el('div','d');
-    if (hasPrev){
-      const prev = d.f(p1,p2);
-      const diff = d.pct ? Math.round((cur-prev)*10)/10 : cur - prev;
-      const up = diff > 0, flat = diff === 0;
-      dd.className = 'd ' + (flat?'':(up?'up':'down'));
-      dd.textContent = flat ? '= période préc.' :
-        `${up?'▲':'▼'} ${d.pct?Math.abs(diff)+' pt':fmtN(Math.abs(diff))} vs période préc.`;
-    } else dd.textContent = 'pas de période de comparaison';
-    tile.appendChild(dd);
-    root.appendChild(tile);
+/* ---------- insights: the layer the old dashboard never had ---------- */
+function buildInsights(){
+  const [i1,i2]=idxRange(), len=i2-i1+1, p2=i1-1, p1=i1-len, hasPrev=p1>=0;
+  const out=[];
+
+  // 1. biggest leak, expressed in users actually lost
+  let worst=null;
+  for(let i=1;i<STEPS.length;i++){
+    const from=sumSel(STEPS[i-1].ev,i1,i2), to=sumSel(STEPS[i].ev,i1,i2);
+    if(from<20) continue;                                   // too small to conclude
+    const lost=from-to;
+    if(!worst||lost>worst.lost) worst={lost,r:rate(to,from),from:STEPS[i-1].label,to:STEPS[i].label};
   }
-}
+  if(worst) out.push({tone:'var(--bad)',ico:'🩸',
+    html:`Plus grosse fuite : <b>${worst.from} → ${worst.to}</b>, seulement <b>${fmtR(worst.r)}</b> passent. `+
+         `<b>${fmtN(worst.lost)}</b> utilisateurs perdus sur la période.`});
 
-/* ---------- funnels ---------- */
-function renderFunnels(){
-  const [i1,i2] = idxRange();
-  const root = $('#funnels'); root.innerHTML = '';
-  const ramp = ['var(--f1)','var(--f2)','var(--f3)','var(--f4)','var(--f5)','var(--f5)'];
-  for (const v of Object.keys(VMETA)){
-    if (!state.variants.has(v)) continue;
-    const counts = STEPS.map(s => sumRange(s.ev, v, i1, i2));
-    const max = Math.max(...counts, 1);
-    const box = el('div','funnel');
-    box.innerHTML = `<h3><i style="background:${VMETA[v].color}"></i>${VMETA[v].label}</h3>`;
-    STEPS.forEach((s, i) => {
-      const row = el('div','frow');
-      const stepPct = i === 0 ? null : pct(counts[i], counts[i-1]);
-      const fromTop = i === 0 ? null : pct(counts[i], counts[0]);
-      row.innerHTML =
-        `<span class="nm">${s.label}</span>` +
-        `<span><span class="bar" style="--fc:${ramp[i]};width:${Math.max(counts[i]/max*100,1)}%"></span></span>` +
-        `<span class="val"><b>${fmtN(counts[i])}</b>${stepPct===null?'':` · ${stepPct}%`}${fromTop===null?'':` <span class="pc">(${fromTop}%)</span>`}</span>`;
-      box.appendChild(row);
-    });
-    root.appendChild(box);
-  }
-  if (!root.children.length) root.innerHTML = '<div class="empty">Sélectionne au moins une app.</div>';
-}
-
-/* ---------- conversion table ---------- */
-function renderTable(){
-  const [i1,i2] = idxRange();
-  const t = $('#convTable');
-  const head = ['App','Onb. démarrés','Onb. complétés','Premiers chats','Paywalls','Trials','Achats','Paywall→Trial','Départ→Trial'];
-  let html = '<thead><tr>' + head.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
-  const tot = [0,0,0,0,0,0];
-  for (const v of Object.keys(VMETA)){
-    if (!state.variants.has(v)) continue;
-    const c = STEPS.map(s => sumRange(s.ev, v, i1, i2));
-    c.forEach((x,i)=>tot[i]+=x);
-    html += `<tr><td><span class="dot" style="background:${VMETA[v].color}"></span>${VMETA[v].label}</td>` +
-      `<td>${fmtN(c[0])}</td>` +
-      `<td>${fmtN(c[1])} <span class="pc">${pct(c[1],c[0])}%</span></td>` +
-      `<td>${fmtN(c[2])} <span class="pc">${pct(c[2],c[0])}%</span></td>` +
-      `<td>${fmtN(c[3])} <span class="pc">${pct(c[3],c[0])}%</span></td>` +
-      `<td>${fmtN(c[4])}</td><td>${fmtN(c[5])}</td>` +
-      `<td>${pct(c[4],c[3])}%</td><td>${pct(c[4],c[0])}%</td></tr>`;
-  }
-  html += `<tr class="total"><td>TOTAL</td><td>${fmtN(tot[0])}</td>` +
-    `<td>${fmtN(tot[1])} <span class="pc">${pct(tot[1],tot[0])}%</span></td>` +
-    `<td>${fmtN(tot[2])} <span class="pc">${pct(tot[2],tot[0])}%</span></td>` +
-    `<td>${fmtN(tot[3])} <span class="pc">${pct(tot[3],tot[0])}%</span></td>` +
-    `<td>${fmtN(tot[4])}</td><td>${fmtN(tot[5])}</td>` +
-    `<td>${pct(tot[4],tot[3])}%</td><td>${pct(tot[4],tot[0])}%</td></tr></tbody>`;
-  t.innerHTML = html;
-}
-
-/* ---------- line charts (SVG, crosshair + tooltip) ---------- */
-function seriesFor(def, v, i1, i2){
-  if (def.ev === '_onb_rate'){
-    const a = daily('onboarding_completed', v), b = daily('onboarding_started', v);
-    if (!a || !b) return null;
-    // 7-day rolling ratio: readable trend instead of daily spaghetti
-    return DATA.dates.slice(i1,i2+1).map((_,j) => {
-      const i = i1 + j, lo = Math.max(0, i - 6);
-      let num = 0, den = 0;
-      for (let k = lo; k <= i; k++){ num += a[k] || 0; den += b[k] || 0; }
-      return den ? Math.round(num/den*100) : null;
-    });
-  }
-  const d = daily(def.ev, v);
-  return d ? d.slice(i1, i2+1) : null;
-}
-
-function renderCharts(){
-  const root = $('#charts'); root.innerHTML = '';
-  const [i1,i2] = idxRange();
-  const dates = DATA.dates.slice(i1, i2+1);
-  for (const def of CHART_DEFS){
-    const card = el('div','card');
-    card.innerHTML = `<h2>${def.title}</h2>`;
-    const legend = el('div','legend');
-    const series = [];
-    for (const v of Object.keys(VMETA)){
-      if (!state.variants.has(v)) continue;
-      const s = seriesFor(def, v, i1, i2);
-      if (!s) continue;
-      series.push({v, data:s});
-      legend.innerHTML += `<span><i style="background:${VMETA[v].color}"></i>${VMETA[v].label.split(' · ')[0]}</span>`;
+  // 2. best vs worst converting app, only where the base is meaningful
+  const perApp=[...state.variants].map(v=>{
+    const st=sumRange('onboarding_started',v,i1,i2);
+    return {v,st,e2e:rate(sumRange('purchase_completed',v,i1,i2),st)};
+  }).filter(x=>x.st>=30&&x.e2e!=null).sort((a,b)=>b.e2e-a.e2e);
+  if(perApp.length>=2){
+    const b=perApp[0], w=perApp[perApp.length-1];
+    if(b.e2e>0){
+      // a ratio against ~0 is meaningless — say "no sale" instead of inventing a multiple
+      const cmp = w.e2e>=0.3
+        ? `soit <b>${(b.e2e/w.e2e).toFixed(1).replace('.',',')}×</b> ${VMETA[w.v].label} (${fmtR(w.e2e)})`
+        : `quand <b>${VMETA[w.v].label}</b> ne convertit quasiment pas (${fmtR(w.e2e)})`;
+      if(w.e2e<0.3 || b.e2e>=w.e2e*1.5)
+        out.push({tone:'var(--good)',ico:'🏆',
+          html:`<b>${VMETA[b.v].label}</b> convertit le mieux : <b>${fmtR(b.e2e)}</b> bout-en-bout, ${cmp}.`});
     }
-    if (series.length > 1) card.appendChild(legend);
-    card.appendChild(lineChart(dates, series, def));
-    root.appendChild(card);
+  }
+
+  // 3. the rate that moved most vs the previous window
+  if(hasPrev){
+    const moves=RATES.map(r=>{
+      const cur=rate(sumSel(r.a,i1,i2),sumSel(r.b,i1,i2));
+      const prv=rate(sumSel(r.a,p1,p2),sumSel(r.b,p1,p2));
+      if(cur==null||prv==null||sumSel(r.b,i1,i2)<20) return null;
+      return {k:r.k,diff:Math.round((cur-prv)*10)/10,cur};
+    }).filter(Boolean).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+    const m=moves[0];
+    if(m&&Math.abs(m.diff)>=2)
+      out.push({tone:m.diff>0?'var(--good)':'var(--bad)',ico:m.diff>0?'📈':'📉',
+        html:`<b>${m.k}</b> ${m.diff>0?'progresse':'recule'} de `+
+             `<b>${Math.abs(m.diff).toString().replace('.',',')} pts</b> vs période précédente (à ${fmtR(m.cur)}).`});
+  }
+
+  // 4. an app that has essentially stopped
+  if(hasPrev) for(const v of state.variants){
+    const cur=sumRange('onboarding_started',v,i1,i2), prv=sumRange('onboarding_started',v,p1,p2);
+    if(prv>=50 && cur<prv*0.5){
+      out.push({tone:'var(--warn)',ico:'⚠️',
+        html:`<b>${VMETA[v].label}</b> : les onboardings ont chuté de `+
+             `<b>${Math.round((1-cur/prv)*100)} %</b> (${fmtN(prv)} → ${fmtN(cur)}). À vérifier.`});
+      break;
+    }
+  }
+  if(!out.length) out.push({tone:'var(--ink-3)',ico:'🙂',
+    html:'Rien d’anormal détecté — volumes trop faibles ou tout est stable.'});
+  return out.slice(0,4);
+}
+function renderInsights(){
+  const root=$('#insights'); root.innerHTML='';
+  for(const i of buildInsights()){
+    const n=el('div','ins'); n.style.setProperty('--tone',i.tone);
+    n.innerHTML=`<span class="ico">${i.ico}</span><span class="txt">${i.html}</span>`;
+    root.appendChild(n);
   }
 }
 
-function lineChart(dates, series, def){
-  const W = 520, H = 190, L = 34, R = 8, T = 10, B = 24;
-  const iw = W - L - R, ih = H - T - B;
-  const max = Math.max(1, ...series.flatMap(s => s.data.filter(x => x !== null)));
-  const yMax = def.pct ? 100 : Math.ceil(max * 1.15);
-  const x = (i) => L + (dates.length === 1 ? iw/2 : i/(dates.length-1)*iw);
-  const y = (v) => T + ih - (v/yMax)*ih;
-  const ns = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(ns,'svg');
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  svg.style.width = '100%';
+function sparkline(vals,color){
+  const w=150,h=30,p=2,c=el('canvas','spark');
+  c.width=w*2; c.height=h*2; c.style.width=w+'px'; c.style.height=h+'px';
+  const x=c.getContext('2d'); x.scale(2,2);
+  const ok=vals.filter(v=>v!=null);
+  if(ok.length<2) return c;
+  const mn=Math.min(...ok), mx=Math.max(...ok), sp=(mx-mn)||1;
+  const px=i=>p+i*(w-2*p)/(vals.length-1), py=v=>h-p-((v-mn)/sp)*(h-2*p);
+  x.beginPath();
+  vals.forEach((v,i)=>{ if(v==null)return;
+    (i&&vals[i-1]!=null)?x.lineTo(px(i),py(v)):x.moveTo(px(i),py(v)); });
+  x.strokeStyle=color; x.lineWidth=1.6; x.lineJoin='round'; x.stroke();
+  x.lineTo(px(vals.length-1),h); x.lineTo(px(0),h); x.closePath();
+  const g=x.createLinearGradient(0,0,0,h); g.addColorStop(0,color+'44'); g.addColorStop(1,color+'00');
+  x.fillStyle=g; x.fill();
+  return c;
+}
 
-  // grid: 3 hairlines + baseline, y labels
-  [0,.5,1].forEach(f=>{
-    const gy = y(yMax*f);
-    const ln = document.createElementNS(ns,'line');
-    ln.setAttribute('x1',L); ln.setAttribute('x2',W-R);
-    ln.setAttribute('y1',gy); ln.setAttribute('y2',gy);
-    ln.setAttribute('stroke', f===0 ? 'var(--baseline)':'var(--grid)');
-    ln.setAttribute('stroke-width','1');
-    svg.appendChild(ln);
-    const tx = document.createElementNS(ns,'text');
-    tx.setAttribute('x',L-5); tx.setAttribute('y',gy+3.5);
-    tx.setAttribute('text-anchor','end');
-    tx.setAttribute('font-size','9'); tx.setAttribute('fill','var(--ink-muted)');
-    tx.textContent = Math.round(yMax*f) + (def.pct?'%':'');
-    svg.appendChild(tx);
-  });
-  // x labels: first / mid / last
-  [0, Math.floor((dates.length-1)/2), dates.length-1].forEach(i=>{
-    if (i < 0) return;
-    const tx = document.createElementNS(ns,'text');
-    tx.setAttribute('x',x(i)); tx.setAttribute('y',H-8);
-    tx.setAttribute('text-anchor', i===0?'start':(i===dates.length-1?'end':'middle'));
-    tx.setAttribute('font-size','9'); tx.setAttribute('fill','var(--ink-muted)');
-    tx.textContent = dates[i]?.slice(5).replace('-','/');
-    svg.appendChild(tx);
-  });
-  // series
-  for (const s of series){
-    const pts = s.data.map((v,i)=> v===null?null:`${x(i)},${y(v)}`);
-    const path = document.createElementNS(ns,'polyline');
-    path.setAttribute('points', pts.filter(Boolean).join(' '));
-    path.setAttribute('fill','none');
-    path.setAttribute('stroke', VMETA[s.v].color);
-    path.setAttribute('stroke-width','2');
-    path.setAttribute('stroke-linejoin','round');
-    path.setAttribute('stroke-linecap','round');
-    svg.appendChild(path);
-  }
-  // crosshair + tooltip
-  const cross = document.createElementNS(ns,'line');
-  cross.setAttribute('y1',T); cross.setAttribute('y2',T+ih);
-  cross.setAttribute('stroke','var(--baseline)'); cross.setAttribute('stroke-dasharray','3 3');
-  cross.style.display = 'none';
-  svg.appendChild(cross);
-  const dots = series.map(s=>{
-    const c = document.createElementNS(ns,'circle');
-    c.setAttribute('r','4'); c.setAttribute('fill',VMETA[s.v].color);
-    c.setAttribute('stroke','var(--surface-1)'); c.setAttribute('stroke-width','2');
-    c.style.display = 'none'; svg.appendChild(c); return c;
-  });
-  const tip = $('#tip');
-  svg.addEventListener('pointermove', (e)=>{
-    const r = svg.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width * W;
-    const i = Math.round((px - L)/iw*(dates.length-1));
-    if (i < 0 || i > dates.length-1) return;
-    cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i));
-    cross.style.display = '';
-    let rows = '';
-    series.forEach((s,k)=>{
-      const v = s.data[i];
-      if (v === null || v === undefined){ dots[k].style.display='none'; return; }
-      dots[k].setAttribute('cx',x(i)); dots[k].setAttribute('cy',y(v));
-      dots[k].style.display='';
-      rows += `<div class="row"><span class="nm"><i style="width:8px;height:8px;border-radius:50%;background:${VMETA[s.v].color};display:inline-block"></i>${VMETA[s.v].label.split(' · ')[0]}</span><span class="vl">${v}${def.pct?'%':''}</span></div>`;
+function renderTiles(){
+  const [i1,i2]=idxRange(), len=i2-i1+1, p2=i1-1, p1=i1-len, hasPrev=p1>=0;
+  const root=$('#tiles'); root.innerHTML='';
+  for(const r of RATES){
+    const cur=rate(sumSel(r.a,i1,i2),sumSel(r.b,i1,i2));
+    const t=el('div','tile');
+    t.innerHTML=`<div class="k">${r.k}</div><div class="v mono">${fmtR(cur)}</div>`;
+    const d=el('div','d');
+    if(hasPrev){
+      const prv=rate(sumSel(r.a,p1,p2),sumSel(r.b,p1,p2));
+      if(cur==null||prv==null) d.textContent='—';
+      else{
+        const diff=Math.round((cur-prv)*10)/10;
+        d.className='d '+(diff===0?'':(diff>0?'up':'down'));
+        d.textContent = diff===0 ? '= période préc.'
+          : `${diff>0?'▲':'▼'} ${Math.abs(diff).toString().replace('.',',')} pts vs préc.`;
+      }
+    } else d.textContent='pas de comparaison';
+    t.appendChild(d);
+    // 7-day rolling rate: the trend, not the daily noise
+    const series=DATA.dates.slice(i1,i2+1).map((_,j)=>{
+      const i=i1+j, lo=Math.max(0,i-6); let n=0,dn=0;
+      for(const v of state.variants){
+        const A=daily(r.a,v), B=daily(r.b,v);
+        for(let k=lo;k<=i;k++){ n+=(A&&A[k])||0; dn+=(B&&B[k])||0; }
+      }
+      return dn? n/dn*100 : null;
     });
-    tip.innerHTML = `<b>${dates[i]}</b>${rows}`;
-    tip.style.display = 'block';
-    tip.style.left = Math.min(e.clientX + 14, innerWidth - 170) + 'px';
-    tip.style.top = (e.clientY + 14) + 'px';
-  });
-  svg.addEventListener('pointerleave', ()=>{
-    cross.style.display='none'; dots.forEach(d=>d.style.display='none');
-    tip.style.display='none';
-  });
-  return svg;
+    t.appendChild(sparkline(series,cssColor('var(--accent)')));
+    root.appendChild(t);
+  }
 }
 
-/* ---------- filters ---------- */
-function setRangeDays(days){
-  const last = DATA.dates[DATA.dates.length-1];
-  const i = Math.max(0, DATA.dates.length - days);
-  state.from = DATA.dates[i]; state.to = last;
-  $('#d1').value = state.from; $('#d2').value = state.to;
+function renderFunnel(){
+  const [i1,i2]=idxRange();
+  const counts=STEPS.map(s=>sumSel(s.ev,i1,i2));
+  const max=Math.max(...counts,1);
+  let worstI=-1,worstLost=-1;
+  for(let i=1;i<counts.length;i++){
+    const lost=counts[i-1]-counts[i];
+    if(counts[i-1]>=20 && lost>worstLost){ worstLost=lost; worstI=i; }
+  }
+  const root=$('#funnel'); root.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    const row=el('div','frow');
+    const stepR=i?rate(counts[i],counts[i-1]):null;
+    const top=i?rate(counts[i],counts[0]):null;
+    const isWorst=i===worstI;
+    row.innerHTML=
+      `<span class="nm">${s.label}</span>`+
+      `<span class="track"><span class="bar" style="width:${Math.max(counts[i]/max*100,1.5)}%"></span></span>`+
+      `<span class="val"><b class="mono">${fmtN(counts[i])}</b>`+
+        (stepR==null?'':` <span class="drop ${isWorst?'worst':''}">${fmtR(stepR)}${isWorst?' · fuite max':''}</span>`)+
+        (top==null?'':` <span class="drop">(${fmtR(top)} du top)</span>`)+
+      `</span>`;
+    root.appendChild(row);
+  });
 }
-function renderAll(){
-  renderTiles(); renderFunnels(); renderTable(); renderCharts();
+
+function renderBoard(){
+  const [i1,i2]=idxRange();
+  const rows=[...state.variants].map(v=>{
+    const c={}; STEPS.forEach(s=>c[s.ev]=sumRange(s.ev,v,i1,i2));
+    return {v,started:c.onboarding_started,buys:c.purchase_completed,
+      rates:RATES.map(r=>rate(c[r.a],c[r.b])),
+      e2e:rate(c.purchase_completed,c.onboarding_started)};
+  }).sort((a,b)=>(b.e2e??-1)-(a.e2e??-1));
+  const t=$('#board');
+  if(!rows.length){ t.innerHTML='<tbody><tr><td class="empty">Sélectionne au moins une app.</td></tr></tbody>'; return; }
+  t.innerHTML='<thead><tr><th>App</th><th>Onboardings</th>'+
+    RATES.map(r=>`<th>${r.k}</th>`).join('')+'<th>Achats</th></tr></thead>';
+  const colVals=RATES.map((_,ci)=>rows.map(r=>r.rates[ci]).filter(x=>x!=null));
+  const tb=el('tbody');
+  rows.forEach((r,ri)=>{
+    const tr=el('tr');
+    const cells=r.rates.map((val,ci)=>{
+      const vals=colVals[ci]; let cls='';
+      if(vals.length>=2&&val!=null){
+        if(val===Math.max(...vals)) cls='best';
+        else if(val===Math.min(...vals)) cls='worst';
+      }
+      return `<td class="mono ${cls}">${fmtR(val)}</td>`;
+    }).join('');
+    tr.innerHTML=
+      `<td><span class="appcell"><span class="rank">${ri+1}</span>`+
+      `<i style="--c:${VMETA[r.v].color}"></i>${VMETA[r.v].label}</span></td>`+
+      `<td class="mono">${fmtN(r.started)}</td>`+cells+`<td class="mono">${fmtN(r.buys)}</td>`;
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
 }
+
+const CHART_METRICS=[
+  {k:'purchase_completed',label:'Achats'},
+  {k:'trial_started',label:'Trials'},
+  {k:'paywall_viewed',label:'Paywalls'},
+  {k:'chat_session_started',label:'Chats'},
+  {k:'onboarding_started',label:'Onboardings'},
+  {k:'_e2e',label:'Conversion bout-en-bout',pct:true},
+];
+function chartSeries(v,i1,i2){
+  if(state.metric==='_e2e'){
+    const A=daily('purchase_completed',v), B=daily('onboarding_started',v);
+    if(!A||!B) return null;
+    return DATA.dates.slice(i1,i2+1).map((_,j)=>{
+      const i=i1+j, lo=Math.max(0,i-6); let n=0,d=0;
+      for(let k=lo;k<=i;k++){ n+=A[k]||0; d+=B[k]||0; }
+      return d? n/d*100 : null;
+    });
+  }
+  const d=daily(state.metric,v); if(!d) return null;
+  const raw=d.slice(i1,i2+1);
+  if(!state.smooth) return raw;
+  return raw.map((_,i)=>{ const lo=Math.max(0,i-6); let s=0,c=0;
+    for(let k=lo;k<=i;k++){ s+=raw[k]||0; c++; } return s/c; });
+}
+let CH={};
+function renderChart(){
+  const cv=$('#chart'), ctx=cv.getContext('2d');
+  const W=Math.max(cv.parentElement.clientWidth-32,320), H=300;
+  cv.width=W*2; cv.height=H*2; cv.style.width=W+'px'; cv.style.height=H+'px';
+  ctx.setTransform(2,0,0,2,0,0); ctx.clearRect(0,0,W,H);
+  const [i1,i2]=idxRange(); CH={i1,i2};
+  const vs=[...state.variants].map(v=>({v,s:chartSeries(v,i1,i2)})).filter(x=>x.s);
+  const all=vs.flatMap(x=>x.s).filter(v=>v!=null);
+  const pad={l:46,r:12,t:12,b:24};
+  if(!all.length){
+    ctx.fillStyle=cssColor('var(--ink-3)'); ctx.font='13px -apple-system';
+    ctx.fillText('Pas de données sur cette période.',pad.l,H/2); $('#legend').innerHTML=''; return;
+  }
+  const mx=Math.max(...all,1), n=vs[0].s.length;
+  const px=i=>pad.l+i*(W-pad.l-pad.r)/Math.max(n-1,1);
+  const py=v=>H-pad.b-(v/mx)*(H-pad.t-pad.b);
+  const isPct=CHART_METRICS.find(m=>m.k===state.metric)?.pct;
+  ctx.strokeStyle=cssColor('var(--line)'); ctx.fillStyle=cssColor('var(--ink-3)');
+  ctx.font='11px -apple-system'; ctx.lineWidth=1;
+  for(let g=0;g<=4;g++){
+    const val=mx*g/4, y=py(val);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+    ctx.fillText(isPct? val.toFixed(0)+'%' : fmtN(val), 4, y+3);
+  }
+  vs.forEach(({v,s})=>{
+    ctx.beginPath(); ctx.strokeStyle=cssColor(VMETA[v].color); ctx.lineWidth=2; ctx.lineJoin='round';
+    s.forEach((val,i)=>{ if(val==null)return;
+      (i&&s[i-1]!=null)?ctx.lineTo(px(i),py(val)):ctx.moveTo(px(i),py(val)); });
+    ctx.stroke();
+  });
+  Object.assign(CH,{px,vs,n,isPct});
+  $('#legend').innerHTML = vs.map(({v})=>
+    `<span><i style="--c:${VMETA[v].color}"></i>${VMETA[v].label}</span>`).join('')
+    + (state.smooth&&!isPct?'<span style="color:var(--ink-3)">— lissé sur 7 j</span>':'');
+}
+$('#chart').addEventListener('mousemove', e=>{
+  if(!CH.vs||!CH.vs.length) return;
+  const r=e.target.getBoundingClientRect(), x=e.clientX-r.left;
+  let bi=0,bd=1e9;
+  for(let i=0;i<CH.n;i++){ const d=Math.abs(CH.px(i)-x); if(d<bd){bd=d;bi=i;} }
+  const tip=$('#tip');
+  tip.innerHTML=`<div class="th">${DATA.dates[CH.i1+bi]}</div>`+CH.vs.map(({v,s})=>{
+    const val=s[bi];
+    return `<div class="tr"><span><i style="--c:${VMETA[v].color}"></i>${VMETA[v].label}</span>`+
+           `<b>${val==null?'—':(CH.isPct?val.toFixed(1).replace('.',',')+' %':fmtN(val))}</b></div>`;
+  }).join('');
+  tip.style.opacity=1;
+  tip.style.left=Math.min(e.clientX+14,innerWidth-190)+'px';
+  tip.style.top=(e.clientY-10)+'px';
+});
+$('#chart').addEventListener('mouseleave', ()=>{ $('#tip').style.opacity=0; });
+
 function initFilters(){
-  document.querySelectorAll('.chip[data-days]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      document.querySelectorAll('.chip[data-days]').forEach(x=>x.setAttribute('aria-pressed','false'));
-      b.setAttribute('aria-pressed','true');
-      setRangeDays(+b.dataset.days); renderAll();
-    });
+  const rc=$('#rangeChips');
+  [[7,'7 j'],[14,'14 j'],[30,'30 j'],[90,'90 j']].forEach(([d,lab])=>{
+    const b=el('button','chip'); b.textContent=lab;
+    b.setAttribute('aria-pressed', d===30?'true':'false');
+    b.onclick=()=>{ rc.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true'); setRangeDays(d); renderAll(); };
+    rc.appendChild(b);
   });
-  const vc = $('#variantChips');
-  for (const v of Object.keys(VMETA)){
-    const b = el('button','chip');
-    b.setAttribute('aria-pressed','true');
-    b.innerHTML = `<span class="dot" style="--c:${VMETA[v].color}"></span>${VMETA[v].label.split(' · ')[0]}`;
-    b.addEventListener('click', ()=>{
-      const on = b.getAttribute('aria-pressed') === 'true';
-      if (on && state.variants.size === 1) return;   // keep at least one
+  const known = DATA.metrics.onboarding_started || {};
+  state.variants = new Set([...state.variants].filter(v=>v in known));
+  if(!state.variants.size) state.variants = new Set(Object.keys(known).filter(v=>v in VMETA));
+  const vc=$('#variantChips');
+  for(const v of Object.keys(VMETA)){
+    if(!(v in known)) continue;                       // don't offer apps with no data
+    const b=el('button','chip');
+    b.setAttribute('aria-pressed', state.variants.has(v)?'true':'false');
+    b.innerHTML=`<span class="dot" style="--c:${VMETA[v].color}"></span>${VMETA[v].label}`;
+    b.onclick=()=>{ const on=b.getAttribute('aria-pressed')==='true';
+      if(on && state.variants.size===1) return;       // always keep one selected
       b.setAttribute('aria-pressed', on?'false':'true');
-      on ? state.variants.delete(v) : state.variants.add(v);
-      renderAll();
-    });
+      on? state.variants.delete(v) : state.variants.add(v);
+      renderAll(); };
     vc.appendChild(b);
   }
-  const onDate = ()=>{
-    const a = $('#d1').value, b = $('#d2').value;
-    if (!a || !b || a > b) return;
-    state.from = a; state.to = b;
-    document.querySelectorAll('.chip[data-days]').forEach(x=>x.setAttribute('aria-pressed','false'));
-    renderAll();
-  };
-  $('#d1').addEventListener('change', onDate);
-  $('#d2').addEventListener('change', onDate);
-  const [min, max] = [DATA.dates[0], DATA.dates[DATA.dates.length-1]];
-  ['#d1','#d2'].forEach(s=>{ $(s).min = min; $(s).max = max; });
+  const mc=$('#metricChips');
+  CHART_METRICS.forEach(m=>{
+    const b=el('button','chip'); b.textContent=m.label;
+    b.setAttribute('aria-pressed', m.k===state.metric?'true':'false');
+    b.onclick=()=>{ state.metric=m.k;
+      mc.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true'); renderChart(); };
+    mc.appendChild(b);
+  });
+  const sm=el('button','chip'); sm.textContent='Lissage 7 j';
+  sm.setAttribute('aria-pressed', state.smooth?'true':'false'); sm.style.marginLeft='auto';
+  sm.onclick=()=>{ state.smooth=!state.smooth;
+    sm.setAttribute('aria-pressed',state.smooth?'true':'false'); renderChart(); };
+  mc.appendChild(sm);
 }
+function renderAll(){ renderInsights(); renderTiles(); renderFunnel(); renderBoard(); renderChart(); }
+addEventListener('resize', ()=>{ if(DATA) renderChart(); });
 
-/* ---------- boot ---------- */
-async function boot(password){
-  await unlock(password);
-  sessionStorage.setItem('bc_pw', password);
-  $('#lock').style.display = 'none';
-  $('#app').style.display = 'block';
-  $('#updatedAt').textContent =
-    'Données du ' + new Date(DATA.generatedAt).toLocaleString('fr-FR', {dateStyle:'medium', timeStyle:'short'});
-  setRangeDays(30);
-  initFilters();
-  renderAll();
-}
-
-$('#lockForm').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const err = $('#lockErr');
-  const btn = $('#lockForm button');
-  err.style.display = 'none';
-  btn.disabled = true;
-  btn.textContent = 'Chargement des données…';
-  try { await boot($('#pw').value); }
-  catch (ex) {
-    err.textContent = ex.message === 'badpw'
-      ? 'Mot de passe incorrect.'
-      : 'Erreur de chargement des données — réessaie dans une minute.';
-    err.style.display = 'block';
+/* demo data — layout preview only, never shipped as real numbers */
+function demoData(){
+  const days=90, dates=[], d0=new Date(Date.now()-days*864e5);
+  for(let i=0;i<days;i++) dates.push(new Date(d0.getTime()+i*864e5).toISOString().slice(0,10));
+  const evs=STEPS.map(s=>s.ev), metrics={}; evs.forEach(e=>metrics[e]={});
+  const profile={sofia:[420,.62,.55,.7,.16,.42], amelie:[300,.58,.5,.66,.13,.39],
+    charm:[520,.55,.61,.78,.2,.47], alex:[260,.66,.58,.72,.18,.5],
+    mila:[180,.6,.52,.68,.12,.35], astra:[90,.5,.45,.6,.1,.3]};
+  for(const [v,p] of Object.entries(profile)){
+    const series=evs.map(()=>[]);
+    for(let i=0;i<days;i++){
+      const wave=1+.25*Math.sin(i/7)+(Math.random()-.5)*.2, grow=1+i/days*.5;
+      let n=Math.round(p[0]/6*wave*grow); series[0].push(n);
+      for(let s=1;s<evs.length;s++){ n=Math.round(n*p[s]*(0.9+Math.random()*0.2)); series[s].push(n); }
+    }
+    evs.forEach((e,si)=>metrics[e][v]=series[si]);
   }
-  btn.disabled = false;
-  btn.textContent = 'Entrer';
+  return {generatedAt:new Date().toISOString(), dates, metrics};
+}
+
+async function unlock(password){
+  const res=await fetch(DATA_URL,{headers:{'x-analytics-password':password},cache:'no-store'});
+  if(res.status===401) throw new Error('badpw');
+  if(!res.ok) throw new Error('nodata');
+  DATA=await res.json();
+  if(!DATA||!DATA.dates||!DATA.dates.length) throw new Error('nodata');
+}
+async function boot(password,demo){
+  if(demo){ DATA=demoData(); $('#demoBanner').style.display='block'; }
+  else { await unlock(password); sessionStorage.setItem('bc_pw',password); }
+  $('#lock').style.display='none'; $('#app').style.display='block';
+  $('#updatedAt').textContent='Données du '+new Date(DATA.generatedAt)
+    .toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'});
+  setRangeDays(30); initFilters(); renderAll();
+}
+$('#lockForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const err=$('#lockErr'), btn=$('#lockForm button');
+  err.style.display='none'; btn.disabled=true; btn.textContent='Chargement…';
+  try{ await boot($('#pw').value); }
+  catch(ex){
+    err.textContent = ex.message==='badpw' ? 'Mot de passe incorrect.'
+      : 'Erreur de chargement — réessaie dans une minute.';
+    err.style.display='block';
+  }
+  btn.disabled=false; btn.textContent='Entrer';
 });
-$('#logout').addEventListener('click', ()=>{
-  sessionStorage.removeItem('bc_pw'); location.reload();
-});
-const saved = sessionStorage.getItem('bc_pw');
-if (saved) boot(saved).catch(()=>sessionStorage.removeItem('bc_pw'));
+$('#logout').addEventListener('click', ()=>{ sessionStorage.removeItem('bc_pw'); location.reload(); });
+
+if(new URLSearchParams(location.search).has('demo')) boot(null,true);
+else { const s=sessionStorage.getItem('bc_pw'); if(s) boot(s).catch(()=>sessionStorage.removeItem('bc_pw')); }
 })();
 </script>
 </body>
