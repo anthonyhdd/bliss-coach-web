@@ -55,6 +55,14 @@ const MANIFEST =
         background: #000; display: block;
       }
       .hook { margin: 10px 2px; font-size: 15px; font-weight: 600; }
+      /* Mute clips are fine on YouTube (the feed plays muted) but TikTok is
+         sound-on and demotes them — and the Partager button lands a clip
+         straight into TikTok, so the warning has to be visible before the tap. */
+      .mute {
+        display: inline-block; margin: 0 2px 8px; padding: 3px 9px;
+        background: #4a2a12; border: 1px solid #7a4a1e; border-radius: 999px;
+        color: #f6c48a; font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+      }
       .row { display: flex; gap: 8px; }
       button {
         flex: 1; appearance: none; border: 1px solid #2e2e36; background: #1c1c22;
@@ -114,6 +122,7 @@ const MANIFEST =
                   <article>
                     <video controls playsinline preload="metadata" src="${esc(c.url)}#t=0.1"></video>
                     <p class="hook">${esc(c.hook || '(sans hook)')}</p>
+                    ${c.hasAudio === false ? '<span class="mute">🔇 muet — pas pour TikTok</span>' : ''}
                     <div class="row">
                       <button type="button" data-caption="${esc(caption)}">Copier la légende</button>
                       <button type="button" data-share="${esc(c.url)}">Partager</button>
