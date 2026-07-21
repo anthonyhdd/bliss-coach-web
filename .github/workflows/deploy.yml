@@ -22,11 +22,6 @@ jobs:
       - uses: withastro/action@v3
         with:
           node-version: 22
-        env:
-          # Route segment of the private video gallery. This repo is public, so
-          # the path must never be committed — without this secret the page is
-          # simply not built.
-          VIDEOS_SLUG: ${{ secrets.VIDEOS_SLUG }}
 
   deploy:
     needs: build

@@ -1,0 +1,224 @@
+---
+// Private video gallery for the founder's phone, at a clean public URL.
+//
+// The URL is deliberately guessable — the secrecy lives in the CODE, not the
+// path. The code is typed once, kept in localStorage, and is what builds the
+// manifest filename. It is NEVER injected at build time: this repo is public,
+// so a baked-in code would ship inside the JS and protect nothing.
+//
+// Consequence: with no code this page is inert and its source reveals nothing —
+// no manifest path, no clip URLs. The content-engine writes the manifest to
+// <code>.json and refuses to publish at a guessable name.
+const BUCKET =
+  'https://wbxuxcvxyzmbyshupycs.supabase.co/storage/v1/object/public/shorts';
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Studio</title>
+    <!-- is:global is REQUIRED: Astro scopes <style> via a data-astro-cid
+         attribute stamped on template elements, and the cards below are built
+         with innerHTML, so scoped rules would silently miss every one. -->
+    <style is:global>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: #0b0b0d; color: #f4f4f5;
+        font: 16px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        max-width: 520px; margin: 0 auto; padding: 18px 14px 56px;
+      }
+      h1 { font-size: 21px; letter-spacing: -0.01em; }
+      .sub { color: #8b8b93; font-size: 13px; margin-top: 4px; }
+      h2 {
+        font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+        color: #c9c9d1; margin: 30px 0 12px; padding-bottom: 7px;
+        border-bottom: 1px solid #232329;
+      }
+      .day { font-size: 12px; color: #6e6e78; margin: 16px 0 8px; letter-spacing: 0.04em; }
+      article {
+        background: #141418; border: 1px solid #232329; border-radius: 14px;
+        padding: 10px; margin-bottom: 14px;
+      }
+      video { width: 100%; aspect-ratio: 9/16; border-radius: 10px; background: #000; display: block; }
+      .hook { margin: 10px 2px; font-size: 15px; font-weight: 600; }
+      .row { display: flex; gap: 8px; }
+      button, input {
+        appearance: none; border: 1px solid #2e2e36; background: #1c1c22;
+        color: #f4f4f5; border-radius: 10px; padding: 12px 10px;
+        font-size: 15px; font-family: inherit;
+      }
+      .row button { flex: 1; font-size: 14px; font-weight: 600; cursor: pointer; }
+      .row button:active { background: #26262e; }
+      .row button.ok { background: #1d4b32; border-color: #2b6b47; }
+      .row button[disabled] { opacity: 0.55; }
+      form { margin-top: 26px; display: flex; gap: 8px; }
+      form input { flex: 1; }
+      form button { font-weight: 600; cursor: pointer; padding-inline: 18px; }
+      .err { color: #f28a8a; font-size: 14px; margin-top: 12px; min-height: 20px; }
+      .forget {
+        display: inline-block; margin-top: 28px; color: #6e6e78;
+        font-size: 12px; background: none; border: 0; padding: 0;
+        text-decoration: underline; cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Studio</h1>
+    <p class="sub" id="sub"></p>
+
+    <form id="gate" hidden>
+      <input
+        id="code" type="text" inputmode="latin" autocomplete="off"
+        autocapitalize="off" autocorrect="off" spellcheck="false"
+        placeholder="Code d'accès" aria-label="Code d'accès" />
+      <button type="submit">Ouvrir</button>
+    </form>
+    <p class="err" id="err"></p>
+
+    <div id="app"></div>
+    <button class="forget" id="forget" hidden>Oublier le code sur cet appareil</button>
+
+    <script is:inline define:vars={{ BUCKET }}>
+      const STORE = 'blissStudioCode';
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? '').replace(/[&<>"']/g, (c) =>
+          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+        );
+
+      function render(data) {
+        const clips = data.clips || [];
+        $('sub').textContent = clips.length
+          ? `${clips.length} clips · mis à jour ${data.generatedAt || ''}`
+          : 'Aucune vidéo pour le moment.';
+        $('forget').hidden = false;
+
+        // Grouped by app first — that is how clips get chosen for posting.
+        const byApp = new Map();
+        for (const c of clips) {
+          if (!byApp.has(c.channel))
+            byApp.set(c.channel, { label: c.channelLabel || c.channel, days: new Map() });
+          const days = byApp.get(c.channel).days;
+          if (!days.has(c.date)) days.set(c.date, []);
+          days.get(c.date).push(c);
+        }
+
+        let html = '';
+        for (const [, group] of byApp) {
+          html += `<h2>${esc(group.label)}</h2>`;
+          for (const [date, rows] of group.days) {
+            html += `<p class="day">${esc(date)}</p>`;
+            for (const c of rows) {
+              const caption = [c.hook, c.description, (c.hashtags || []).join(' ')]
+                .filter(Boolean).join('\n\n');
+              html += `
+                <article>
+                  <video controls playsinline preload="metadata" src="${esc(c.url)}#t=0.1"></video>
+                  <p class="hook">${esc(c.hook || '(sans hook)')}</p>
+                  <div class="row">
+                    <button type="button" data-caption="${esc(caption)}">Copier la légende</button>
+                    <button type="button" data-share="${esc(c.url)}">Partager</button>
+                  </div>
+                </article>`;
+            }
+          }
+        }
+        $('app').innerHTML = html;
+      }
+
+      // A wrong code is indistinguishable from "no such file": the bucket answers
+      // 400/404 for an object that does not exist, which is exactly what we want —
+      // nothing here confirms whether a given code is close to correct.
+      async function open(code, { fromStorage } = {}) {
+        $('err').textContent = '';
+        $('sub').textContent = 'Ouverture…';
+        try {
+          const r = await fetch(`${BUCKET}/${encodeURIComponent(code)}.json`, { cache: 'no-store' });
+          if (!r.ok) throw new Error('bad code');
+          const data = await r.json();
+          localStorage.setItem(STORE, code);
+          $('gate').hidden = true;
+          render(data);
+        } catch {
+          localStorage.removeItem(STORE);
+          $('sub').textContent = '';
+          $('gate').hidden = false;
+          $('err').textContent = fromStorage
+            ? 'Le code enregistré ne fonctionne plus.'
+            : 'Code invalide.';
+        }
+      }
+
+      const saved = localStorage.getItem(STORE);
+      if (saved) open(saved, { fromStorage: true });
+      else $('gate').hidden = false;
+
+      $('gate').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const v = $('code').value.trim();
+        if (v) open(v);
+      });
+
+      $('forget').addEventListener('click', () => {
+        localStorage.removeItem(STORE);
+        location.reload();
+      });
+
+      const flash = (b, txt) => {
+        const old = b.textContent;
+        b.textContent = txt;
+        b.classList.add('ok');
+        setTimeout(() => { b.textContent = old; b.classList.remove('ok'); }, 1500);
+      };
+
+      document.addEventListener('click', async (e) => {
+        const copy = e.target.closest('button[data-caption]');
+        if (copy) {
+          try {
+            await navigator.clipboard.writeText(copy.dataset.caption);
+            flash(copy, 'Copié ✓');
+          } catch { /* denied or insecure context: leave the label alone */ }
+          return;
+        }
+
+        const share = e.target.closest('button[data-share]');
+        if (!share) return;
+
+        // A cross-origin <a download> is ignored by browsers, so fetch the bytes
+        // and hand them to the native share sheet — on a phone that lands the clip
+        // straight in TikTok or Photos, which a download link cannot do.
+        const url = share.dataset.share;
+        const name = url.split('/').pop() || 'clip.mp4';
+        const label = share.textContent;
+        share.disabled = true;
+        share.textContent = 'Préparation…';
+        try {
+          const blob = await (await fetch(url)).blob();
+          const file = new File([blob], name, { type: 'video/mp4' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file] });
+            share.textContent = label;
+          } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            share.textContent = label;
+          }
+        } catch (err) {
+          // AbortError = the share sheet was dismissed; not a failure.
+          share.textContent = err && err.name === 'AbortError' ? label : 'Échec';
+          if (err && err.name !== 'AbortError') setTimeout(() => { share.textContent = label; }, 1800);
+        } finally {
+          share.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
