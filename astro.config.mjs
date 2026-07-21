@@ -103,6 +103,13 @@ export default defineConfig({
         else delete item.lastmod;
         return item;
       },
+      // Keep the private video gallery out of the sitemap. Its path comes from
+      // the VIDEOS_SLUG build secret and is deliberately unguessable — listing
+      // it here would hand it to every crawler. Deliberately NOT added to
+      // robots.txt either: that file is public, so a Disallow rule would
+      // publish the very path it is meant to hide.
+      filter: (page) =>
+        !process.env.VIDEOS_SLUG || !page.includes(`/${process.env.VIDEOS_SLUG}/`),
     }),
   ],
 });
