@@ -1,4 +1,19 @@
-/** Programmatic SEO sections — one dataset-driven vertical per app. */
+/** Programmatic SEO sections — one dataset-driven vertical per app.
+ *
+ * BEFORE ADDING ITEMS TO A VERTICAL, read rule 0 of SEO_PLAYBOOK.md ("winnability first").
+ *
+ * The `how-to-say` verticals (sofia 40 pages, amelie 20) are the cautionary case: their slugs are
+ * `thank-you`, `how-are-you`, `good-morning`, `cheers` — the most contested phrases in language
+ * learning, and ones Google answers itself with a translate widget. Measured 2026-07-22 they
+ * carried most of the site's 1,860 impressions at average position 65, for 1 click total. The
+ * template is fine; the phrase list was the mistake.
+ *
+ * `alex/interviews` is the shape that works: one item per COMPANY, i.e. a query with a situation
+ * attached and no SERP widget competing for the answer. New items in ANY vertical should carry a
+ * situation, a region, or a register — not a bare dictionary lookup.
+ *
+ * Existing pages stay: the playbook's "never delete or merge content before 90 days" applies.
+ */
 export interface PseoSection {
   /** URL segment under /{app}/ */
   base: string;
