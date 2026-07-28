@@ -13,6 +13,10 @@ export function getStaticPaths() {
 
 const { app: slug } = Astro.params;
 const name = NAMES[slug!];
+
+// KAMO is a camera toy, not one of the AI coaching apps: no AI output, no account, and
+// nothing you make is sent to us. See the matching branch in privacy.astro.
+const isKamo = slug === 'kamo';
 ---
 
 <Base title={`Terms of Use — ${name} | Bliss Coach`} description={`Terms of use for ${name}, a Bliss Coach app.`} bodyClass="article-page">
@@ -24,13 +28,21 @@ const name = NAMES[slug!];
     <div class="prose">
       <p>These terms govern your use of <strong>{name}</strong>, a Bliss Coach iOS application, and this website. By using the app you agree to them.</p>
       <h2>The service</h2>
-      <p>{name} provides AI-powered features whose responses and results are generated automatically and can be wrong: they are provided for informational, practice, and entertainment purposes only and are <strong>not</strong> professional, medical, nutritional, legal, financial, or psychological advice.</p>
+      {isKamo ? (
+        <p>{name} is a camera toy: you place a figure in your own scene, paint it to blend in, and share the result. It is provided for entertainment purposes only. Point it at your own surroundings and don't use it to photograph people who haven't agreed to it.</p>
+      ) : (
+        <p>{name} provides AI-powered features whose responses and results are generated automatically and can be wrong: they are provided for informational, practice, and entertainment purposes only and are <strong>not</strong> professional, medical, nutritional, legal, financial, or psychological advice.</p>
+      )}
       <h2>Subscriptions</h2>
       <p>Parts of the app may require a paid subscription, billed through your Apple ID. Prices, durations and any free-trial terms are shown in the app before purchase. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period, and can be managed or cancelled in your Apple ID settings. Purchases can be restored from Settings and the paywall.</p>
       <h2>Acceptable use</h2>
       <p>Don't misuse the app: no unlawful content, no attempts to extract or reverse-engineer the underlying models or services, no harassment of other people through content you produce with the app, and no use by children under the age indicated on the app's store listing.</p>
       <h2>Your content</h2>
-      <p>You keep ownership of what you submit. You grant us the limited license needed to process it to deliver the service (see the <a href={`/${slug}/privacy/`}>Privacy Policy</a>).</p>
+      {isKamo ? (
+        <p>Everything you make in {name} is yours and stays on your device — we never receive it, so we claim no license over it (see the <a href={`/${slug}/privacy/`}>Privacy Policy</a>).</p>
+      ) : (
+        <p>You keep ownership of what you submit. You grant us the limited license needed to process it to deliver the service (see the <a href={`/${slug}/privacy/`}>Privacy Policy</a>).</p>
+      )}
       <h2>Availability &amp; changes</h2>
       <p>We may update, change, or discontinue features. We provide the service "as is" without warranties; to the extent permitted by law, our liability is limited to the amount you paid us in the twelve months preceding a claim.</p>
       <h2>Contact</h2>
