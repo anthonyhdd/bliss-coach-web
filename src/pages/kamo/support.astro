@@ -1,0 +1,81 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Apple requires a support URL on every App Store listing, and KAMO had none — the other
+// six apps point at per-app Notion pages that live outside this repo. This is a plain,
+// versioned support page so the listing has somewhere real to send people.
+//
+// A static route rather than part of [app]/: the other apps already have their own support
+// destinations, and inventing pages for them here would silently compete with those.
+---
+
+<Base
+  title="KAMO Support | Bliss Coach"
+  description="Help with KAMO — the camouflage camera toy. Contact, common questions, and how to manage your subscription."
+  bodyClass="article-page"
+>
+  <article>
+    <header class="article-header">
+      <h1>KAMO Support</h1>
+      <p class="meta">Camouflage camera toy — iOS</p>
+    </header>
+    <div class="prose">
+      <p>
+        Something broken, confusing, or missing? Email
+        <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a> and you'll get a
+        reply from a person. Telling us your iPhone model and iOS version makes it much
+        faster to reproduce.
+      </p>
+
+      <h2>Common questions</h2>
+
+      <h3>The camera is black, or KAMO never asks for permission</h3>
+      <p>
+        KAMO needs camera access to work at all. Open iOS Settings &rsaquo; KAMO and turn
+        <strong>Camera</strong> on. If you denied it the first time, that switch is the only
+        way back — the app cannot ask twice.
+      </p>
+
+      <h3>Saving to my camera roll does nothing</h3>
+      <p>
+        Check iOS Settings &rsaquo; KAMO &rsaquo; Photos and allow adding photos. KAMO only
+        ever writes the image you just made; it never reads your library.
+      </p>
+
+      <h3>The torch button does nothing</h3>
+      <p>
+        The light needs a device with a rear flash, and it only lights while the camera view
+        is open. On models without one, the button doesn't appear.
+      </p>
+
+      <h3>I paid and KAMO+ isn't unlocked</h3>
+      <p>
+        Tap <strong>Restore</strong> on the paywall — purchases follow your Apple ID, so this
+        also covers a new phone or a reinstall. Make sure you're signed in with the same
+        Apple ID you bought with. If it still doesn't unlock, email us with the date of
+        purchase.
+      </p>
+
+      <h3>Managing or cancelling a subscription</h3>
+      <p>
+        Subscriptions are billed by Apple, not by us, so they're managed in iOS Settings
+        &rsaquo; your name &rsaquo; Subscriptions. Cancel at least 24 hours before the period
+        ends to avoid renewal. Refunds are handled by Apple at
+        <a href="https://reportaproblem.apple.com/" rel="nofollow">reportaproblem.apple.com</a>.
+        The Lifetime unlock is a one-time purchase and never renews.
+      </p>
+
+      <h3>What happens to my photos</h3>
+      <p>
+        They stay on your phone. KAMO paints the camera frame on-device and never uploads it
+        — the full detail is in the <a href="/kamo/privacy/">Privacy Policy</a>.
+      </p>
+
+      <h2>Legal</h2>
+      <p>
+        <a href="/kamo/privacy/">Privacy Policy</a> &middot;
+        <a href="/kamo/terms/">Terms of Use</a>
+      </p>
+    </div>
+  </article>
+</Base>
