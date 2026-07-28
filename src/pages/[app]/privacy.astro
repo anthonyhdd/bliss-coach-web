@@ -48,6 +48,10 @@ const isKamo = slug === 'kamo';
           <li><strong>Account information</strong>: the display name and sign-in identifier (e.g. Apple ID relay email) you provide when creating an account.</li>
           <li><strong>Content you share in the app</strong>: messages, voice audio processed for transcription, and — where the feature exists — images or photos you choose to upload. This content is used to generate the responses and results you ask for.</li>
           <li><strong>Usage and diagnostics</strong>: feature usage events, crash reports, and device information, used to fix bugs and improve the product.</li>
+          {/* The app asks for App Tracking Transparency at launch and reports to AppsFlyer,
+              TikTok and Meta. A policy that never says so is a policy that contradicts the
+              permission prompt the user has already seen. */}
+          <li><strong>Advertising and attribution</strong>: if you allow tracking when iOS asks, we and our attribution partners (AppsFlyer, TikTok, Meta) may use your device's advertising identifier to measure which ad led to your install and how the app is used afterwards. If you decline, attribution falls back to Apple's privacy-preserving measurement and no advertising identifier is used.</li>
           <li><strong>Subscription status</strong>: managed by Apple and our subscription infrastructure (RevenueCat). We never see or store your payment card details.</li>
         </ul>
       )}
@@ -61,13 +65,13 @@ const isKamo = slug === 'kamo';
       {isKamo ? (
         <p>We share data only with the service providers needed to run the app: analytics (Amplitude), crash reporting (Sentry), attribution and advertising measurement (AppsFlyer, TikTok, Meta), and subscription management (RevenueCat), under their respective data-processing terms. We do not sell your personal data.</p>
       ) : (
-        <p>We share data only with service providers needed to run the app (cloud hosting, AI inference, speech synthesis, analytics, subscription management) under their respective data-processing terms. We do not sell your personal data.</p>
+        <p>We share data only with service providers needed to run the app (cloud hosting, AI inference, speech synthesis, analytics, crash reporting, attribution and advertising measurement, subscription management) under their respective data-processing terms. We do not sell your personal data.</p>
       )}
       <h2>Retention &amp; deletion</h2>
       {isKamo ? (
         <p>Because there is no account, there is nothing to delete on our side: your photos and paintings live only on your device, and deleting the app removes them. You can turn off advertising tracking at any time in iOS Settings &rsaquo; Privacy &amp; Security &rsaquo; Tracking. To ask what diagnostic or attribution data is associated with your device, or to have it erased, contact us.</p>
       ) : (
-        <p>You can delete your account at any time from Settings inside the app, which removes your personal data from our systems. You can also contact us for deletion requests.</p>
+        <p>You can delete your account at any time from Settings inside the app, which removes your personal data from our systems. You can also contact us for deletion requests. You can withdraw advertising tracking at any time in iOS Settings &rsaquo; Privacy &amp; Security &rsaquo; Tracking.</p>
       )}
       <h2>Your rights</h2>
       <p>Depending on where you live (including under GDPR), you may have rights to access, correct, export, or erase your data. Contact us to exercise them.</p>
