@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bliss Coach — AI coaches you actually talk to</title>
+<meta name="description" content="Bliss Coach is a studio building AI companions you talk to out loud — a real coach for your Spanish, your dating life, your next interview, your nutrition and your stars. One conversation at a time." />
+<link rel="canonical" href="https://bliss-coach.com/alt" />
+<link rel="icon" type="image/jpeg" href="../icons/sofia.jpg" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Bliss Coach — AI coaches you actually talk to" />
+<meta property="og:description" content="A studio building AI companions you talk to out loud. One conversation at a time." />
+<meta property="og:url" content="https://bliss-coach.com/alt" />
+<meta property="og:image" content="https://bliss-coach.com/icons/sofia.jpg" />
+<meta property="og:site_name" content="Bliss Coach" />
+<style>
+:root{
+  --bg:#08080c; --bg-2:#0d0d13; --raised:#14141c; --border:rgba(255,255,255,.09);
+  --text:#f6f6f9; --dim:#9b9ba6; --max:1120px; --radius:20px;
+  --b1:#FF2D2D; --b2:#FF8C42; --b3:#FF4D9E; --accent:#FF6B35; --on:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--b1),var(--b3));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---- background field ---- */
+.field{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
+  radial-gradient(1200px 700px at 50% -10%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 60%),
+  var(--bg)}
+.field::before,.field::after{content:"";position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;transition:background .6s ease}
+.field::before{width:60vw;height:60vw;left:-15vw;top:-10vw;
+  background:radial-gradient(circle, color-mix(in srgb,var(--b1) 55%,transparent), transparent 65%);animation:drift1 26s ease-in-out infinite}
+.field::after{width:55vw;height:55vw;right:-15vw;top:5vw;
+  background:radial-gradient(circle, color-mix(in srgb,var(--b3) 50%,transparent), transparent 65%);animation:drift2 30s ease-in-out infinite}
+.stars{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),
+  radial-gradient(1px 1px at 40% 70%,#fff,transparent),radial-gradient(1.4px 1.4px at 85% 60%,#fff,transparent),
+  radial-gradient(1px 1px at 15% 80%,#fff,transparent),radial-gradient(1px 1px at 60% 85%,#fff,transparent),
+  radial-gradient(1.2px 1.2px at 90% 35%,#fff,transparent);background-repeat:no-repeat;animation:twinkle 6s ease-in-out infinite}
+@keyframes drift1{50%{transform:translate(6vw,4vw) scale(1.1)}}
+@keyframes drift2{50%{transform:translate(-5vw,6vw) scale(1.05)}}
+@keyframes twinkle{50%{opacity:.28}}
+
+/* ---- nav ---- */
+header{position:sticky;top:0;z-index:50;backdrop-filter:saturate(180%) blur(14px);
+  background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--border)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-weight:800;font-size:18px;letter-spacing:-.02em}
+.logo b{background:linear-gradient(90deg,var(--b1),var(--b3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.navlinks{display:flex;gap:6px;align-items:center}
+.navlinks a{font-size:14px;color:var(--dim);padding:8px 13px;border-radius:99px;transition:.15s}
+.navlinks a:hover{color:var(--text);background:rgba(255,255,255,.07)}
+.navcta{border:1px solid var(--border);color:var(--text)!important;font-weight:600}
+@media(max-width:720px){.navlinks a:not(.navcta){display:none}}
+
+/* ---- buttons ---- */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:99px;font-weight:650;font-size:16px;
+  transition:transform .16s,box-shadow .16s;cursor:pointer;border:none}
+.btn-brand{background:linear-gradient(92deg,var(--b1),var(--b2),var(--b3));color:var(--on);
+  box-shadow:0 10px 34px color-mix(in srgb,var(--accent) 40%,transparent)}
+.btn-brand:hover{transform:translateY(-2px);box-shadow:0 14px 44px color-mix(in srgb,var(--accent) 55%,transparent)}
+.btn-ghost{border:1px solid var(--border);color:var(--text);background:rgba(255,255,255,.04)}
+.btn-ghost:hover{background:rgba(255,255,255,.09)}
+
+/* ---- hero ---- */
+.hero{text-align:center;padding:96px 0 40px;position:relative}
+.hero h1{font-size:clamp(38px,7vw,74px);line-height:1.03;letter-spacing:-.035em;font-weight:850;max-width:14ch;margin:18px auto 22px}
+.hero h1 .g{background:linear-gradient(96deg,var(--b1),var(--b2),var(--b3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{color:var(--dim);font-size:clamp(17px,2.3vw,21px);max-width:620px;margin:0 auto 34px}
+.hero .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero .avatars{display:flex;justify-content:center;gap:-14px;margin:44px 0 0;padding-left:14px}
+.hero .avatars .av{width:56px;height:56px;border-radius:16px;margin-left:-14px;border:2px solid var(--bg);
+  box-shadow:0 8px 22px rgba(0,0,0,.5);animation:bob 5s ease-in-out infinite}
+.hero .avatars .av:nth-child(2){animation-delay:.4s}.hero .avatars .av:nth-child(3){animation-delay:.8s}
+.hero .avatars .av:nth-child(4){animation-delay:1.2s}.hero .avatars .av:nth-child(5){animation-delay:1.6s}
+.hero .avatars .av:nth-child(6){animation-delay:2s}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.hero .trust{margin-top:16px;color:var(--dim);font-size:13.5px;letter-spacing:.02em}
+
+/* ---- section base ---- */
+section{padding:64px 0}
+.shead{max-width:640px;margin:0 auto 40px;text-align:center}
+.shead h2{font-size:clamp(28px,4.4vw,42px);letter-spacing:-.025em;margin:12px 0 12px;font-weight:820}
+.shead p{color:var(--dim);font-size:17px}
+
+/* ---- manifesto ---- */
+.manifesto{text-align:center}
+.manifesto .big{font-size:clamp(24px,3.6vw,34px);line-height:1.34;letter-spacing:-.02em;max-width:900px;margin:0 auto;font-weight:600}
+.manifesto .big em{font-style:normal;background:linear-gradient(96deg,var(--b1),var(--b3));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+
+/* ---- experience showcase ---- */
+.xp{display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:center}
+@media(max-width:900px){.xp{grid-template-columns:1fr;gap:36px}}
+.xp .picker{display:flex;flex-direction:column;gap:10px}
+.coachbtn{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:16px;border:1px solid var(--border);
+  background:var(--raised);cursor:pointer;text-align:left;transition:.18s;width:100%;color:var(--text)}
+.coachbtn:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+.coachbtn.on{border-color:transparent;background:
+  linear-gradient(var(--raised),var(--raised)) padding-box,
+  linear-gradient(92deg,var(--b1),var(--b3)) border-box;border:1.5px solid transparent;
+  box-shadow:0 12px 34px color-mix(in srgb,var(--accent) 18%,transparent)}
+.coachbtn .ava{width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff}
+.coachbtn .cb-txt b{display:block;font-size:16px;letter-spacing:-.01em}
+.coachbtn .cb-txt span{font-size:13px;color:var(--dim)}
+.coachbtn .cb-live{margin-left:auto;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--accent) 70%,white);opacity:.85}
+
+/* phone */
+.phone-wrap{display:flex;justify-content:center;position:relative}
+.phone-glow{position:absolute;inset:-10% -20%;z-index:0;filter:blur(60px);opacity:.55;border-radius:50%;
+  background:radial-gradient(circle, color-mix(in srgb,var(--accent) 55%,transparent), transparent 62%);transition:background .5s}
+.phone{position:relative;z-index:1;width:300px;height:600px;border-radius:44px;padding:12px;
+  background:linear-gradient(160deg,#26262e,#0e0e14);box-shadow:0 40px 90px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.08)}
+.screen{position:relative;height:100%;border-radius:34px;overflow:hidden;background:#0b0b11;display:flex;flex-direction:column}
+.screen-top{padding:16px 16px 12px;display:flex;align-items:center;gap:11px;
+  background:linear-gradient(180deg, color-mix(in srgb,var(--accent) 22%,transparent), transparent)}
+.screen-top .ava{width:40px;height:40px;border-radius:12px;flex:none;display:grid;place-items:center;font-weight:800;color:#fff}
+.screen-top b{font-size:15px;display:block}
+.screen-top span{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#39d98a;box-shadow:0 0 8px #39d98a}
+.chat{flex:1;padding:8px 14px 12px;display:flex;flex-direction:column;gap:9px;overflow:hidden;justify-content:flex-end}
+.bubble{max-width:82%;padding:10px 13px;border-radius:16px;font-size:13.5px;line-height:1.45;opacity:0;transform:translateY(8px);
+  animation:pop .45s ease forwards}
+.bubble.ai{align-self:flex-start;background:#191922;border:1px solid var(--border);border-bottom-left-radius:5px}
+.bubble.you{align-self:flex-end;color:var(--on);border-bottom-right-radius:5px;
+  background:linear-gradient(92deg,var(--b1),var(--b3))}
+.bubble .tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;opacity:.75;font-weight:700;margin-bottom:3px}
+.wave{display:inline-flex;align-items:center;gap:2px;height:12px}
+.wave i{width:2.5px;background:currentColor;border-radius:2px;animation:wv 1s ease-in-out infinite}
+.wave i:nth-child(1){height:5px}.wave i:nth-child(2){height:10px;animation-delay:.1s}.wave i:nth-child(3){height:7px;animation-delay:.2s}
+.wave i:nth-child(4){height:12px;animation-delay:.3s}.wave i:nth-child(5){height:6px;animation-delay:.4s}
+@keyframes wv{50%{transform:scaleY(.4)}}
+@keyframes pop{to{opacity:1;transform:translateY(0)}}
+.screen-mic{padding:12px 16px 18px;display:flex;justify-content:center}
+.micbtn{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(92deg,var(--b1),var(--b3));box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 45%,transparent)}
+.micbtn svg{width:22px;height:22px;fill:#fff}
+
+/* ---- how it works ---- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:760px){.steps{grid-template-columns:1fr}}
+.step{background:var(--raised);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden}
+.step .n{font-size:13px;font-weight:800;color:color-mix(in srgb,var(--accent) 75%,white);letter-spacing:.08em}
+.step h3{font-size:20px;margin:12px 0 8px;letter-spacing:-.01em}
+.step p{color:var(--dim);font-size:15px}
+
+/* ---- apps grid ---- */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.card{--c1:var(--b1);--c2:var(--b3);position:relative;border-radius:var(--radius);background:var(--raised);
+  border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:.18s}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--c2) 45%,var(--border));
+  box-shadow:0 18px 50px color-mix(in srgb,var(--c1) 20%,transparent)}
+.card .cg{position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:radial-gradient(360px 180px at 90% -20%, color-mix(in srgb,var(--c1) 30%,transparent), transparent 70%)}
+.card .top{display:flex;align-items:center;gap:14px;position:relative}
+.card .ava{width:56px;height:56px;border-radius:14px;flex:none;display:grid;place-items:center;font-weight:800;font-size:22px;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.card .kick{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:color-mix(in srgb,var(--c2) 80%,white)}
+.card h3{font-size:21px;letter-spacing:-.02em}
+.card p{color:var(--dim);font-size:14.5px;position:relative;flex:1}
+.card .foot{display:flex;align-items:center;gap:14px;position:relative;font-size:14px;font-weight:650;margin-top:4px}
+.card .foot .get{color:color-mix(in srgb,var(--c2) 85%,white)}
+.card .foot .soon{color:var(--dim);border:1px solid var(--border);padding:3px 10px;border-radius:99px;font-size:12px}
+
+/* ---- vision band ---- */
+.vision{position:relative;border-radius:28px;overflow:hidden;padding:64px 40px;text-align:center;
+  background:linear-gradient(140deg,#101018,#0b0b11);border:1px solid var(--border)}
+.vision::before{content:"";position:absolute;inset:0;opacity:.5;background:
+  radial-gradient(600px 300px at 20% 0%, color-mix(in srgb,var(--b1) 22%,transparent),transparent 60%),
+  radial-gradient(600px 300px at 80% 100%, color-mix(in srgb,var(--b3) 22%,transparent),transparent 60%)}
+.vision > *{position:relative}
+.vision h2{font-size:clamp(26px,4vw,40px);letter-spacing:-.025em;max-width:16ch;margin:14px auto 16px;font-weight:820}
+.vision p{color:var(--dim);font-size:17px;max-width:600px;margin:0 auto 30px}
+
+/* ---- footer ---- */
+footer{border-top:1px solid var(--border);margin-top:72px;padding:36px 0}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:13.5px}
+footer a{color:var(--dim)}footer a:hover{color:var(--text)}
+footer .fl{display:flex;gap:20px;flex-wrap:wrap}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="field"></div>
+<div class="stars"></div>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="/">Bliss <b>Coach</b></a>
+    <nav class="navlinks">
+      <a href="#coaches">Coaches</a>
+      <a href="#how">How it works</a>
+      <a href="#apps">Apps</a>
+      <a class="navcta" href="#apps">Get an app</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="eyebrow">A studio of AI companions</div>
+    <h1>An AI coach for <span class="g">every part of your life</span>.</h1>
+    <p class="sub">Bliss Coach builds AI companions you actually talk to — out loud. Each one a real personality that listens, coaches, remembers, and grows with you. One conversation at a time.</p>
+    <div class="cta-row">
+      <a class="btn btn-brand" href="#coaches">Meet your coaches</a>
+      <a class="btn btn-ghost" href="#apps">Browse the apps</a>
+    </div>
+    <div class="avatars" id="heroAvatars"></div>
+    <div class="trust">5 apps live on the App Store · voice-first · private &amp; judgment-free</div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto wrap">
+    <p class="big">We don't build chatbots. We build <em>companions</em> — with a face, a voice, and a craft. The kind of coach you'd want in your corner, in your pocket, whenever you need them.</p>
+  </section>
+
+  <!-- EXPERIENCE SHOWCASE -->
+  <section id="coaches">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">The experience</div>
+        <h2>Pick a coach. Start talking.</h2>
+        <p>Every app is a real conversation — speak or type, get coached in the moment. Tap a coach to see it live.</p>
+      </div>
+      <div class="xp wrap" style="padding:0">
+        <div class="picker" id="picker"></div>
+        <div class="phone-wrap">
+          <div class="phone-glow"></div>
+          <div class="phone">
+            <div class="screen">
+              <div class="screen-top">
+                <div class="ava" id="pAva"></div>
+                <div>
+                  <b id="pName">Sofia</b>
+                  <span><span class="dot"></span> <span id="pStatus">online · speaking Spanish</span></span>
+                </div>
+              </div>
+              <div class="chat" id="chat"></div>
+              <div class="screen-mic"><div class="micbtn"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"/></svg></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">How it works</div>
+        <h2>Three steps. Zero pressure.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="n">01</div><h3>Meet your coach</h3><p>Choose the companion for what you're working on — language, dating, interviews, nutrition, or your stars. Each has its own personality and expertise.</p></div>
+        <div class="step"><div class="n">02</div><h3>Talk, out loud</h3><p>Have a real voice conversation. They listen, respond in the moment, and correct or coach you gently — no scripts, no judgment.</p></div>
+        <div class="step"><div class="n">03</div><h3>Grow every day</h3><p>They remember where you left off and meet you where you are. Small daily conversations that actually add up.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPS GRID -->
+  <section id="apps">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">The family</div>
+        <h2>One studio. Many voices.</h2>
+        <p>Each app stands on its own — same obsession with a companion that feels real.</p>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <!-- VISION -->
+  <section class="wrap">
+    <div class="vision">
+      <div class="eyebrow">Where we're going</div>
+      <h2>Building the coaches we wish we had.</h2>
+      <p>Everyone deserves a mentor who's always there, endlessly patient, and genuinely good at what they do. We're building that — one companion, one conversation at a time.</p>
+      <a class="btn btn-brand" href="#apps">Start a conversation</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Bliss Coach — AI coaching apps</span>
+    <nav class="fl">
+      <a href="/">Home</a>
+      <a href="https://blisscoach.app/privacy" rel="nofollow">Privacy</a>
+      <a href="https://blisscoach.app/terms" rel="nofollow">Terms</a>
+      <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+const APPS = [
+  { slug:'sofia', name:'Sofia', cat:'Learn Spanish', tag:'Speak real Spanish from day one — live conversations with a teacher from Mexico who corrects you as you go.',
+    g:['#FF2D2D','#FF8C42','#FF4D9E'], accent:'#FF6B35', icon:true, live:true, url:'https://apps.apple.com/app/id6761907539',
+    status:'online · speaking Spanish',
+    chat:[ {w:'ai',t:'¡Hola! Ready to practice? Tell me about your day.'},
+           {w:'you',v:1,t:'Eh… hoy yo comí una pizza.'},
+           {w:'ai',t:'¡Muy bien! Tiny fix: "hoy comí" — you can drop the "yo". Say it back?'},
+           {w:'you',v:1,t:'Hoy comí una pizza 🍕'} ] },
+  { slug:'amelie', name:'Amélie', cat:'Learn French', tag:'Casual, current French with a witty Parisian — the way people actually talk, charm included.',
+    g:['#6D28D9','#DB2777','#2563EB'], accent:'#7C3AED', icon:true, live:true, url:'https://apps.apple.com/app/id6761261214',
+    status:'en ligne · parle français',
+    chat:[ {w:'you',t:'Is "je suis plein" ok after eating?'},
+           {w:'ai',t:'Non 😅 that means tipsy! Say "j’ai bien mangé".'},
+           {w:'you',v:1,t:'Ah d’accord — j’ai bien mangé, merci !'},
+           {w:'ai',t:'Voilà. Spoken like a Parisian.'} ] },
+  { slug:'charm', name:'Charm', cat:'Dating Coach', tag:'Screenshot a conversation and get sharp, honest coaching — from the first opener to the awkward "what now".',
+    g:['#0A0A0A','#4A4A4A','#C9A14A'], accent:'#C9A14A', icon:true, live:true, url:'https://apps.apple.com/app/id6761726979',
+    status:'online · reading the subtext',
+    chat:[ {w:'you',img:1,t:'what do I even reply to this?'},
+           {w:'ai',t:'She’s teasing — match it, don’t explain. Try: "Bold of you to assume I text first 😏"'},
+           {w:'you',t:'sent it 😬'},
+           {w:'ai',t:'She replied in 2 min. That’s a green light.'} ] },
+  { slug:'alex', name:'Alex', cat:'Interview Prep', tag:'Run realistic mock interviews, sharpen your STAR stories, and walk in ready for the exact company and role.',
+    g:['#93C5FD','#C4B5FD','#F9A8D4'], accent:'#C084FC', icon:true, live:true, url:'https://apps.apple.com/app/id6761726840',
+    status:'online · mock interview',
+    chat:[ {w:'ai',t:'Tell me about a time you handled conflict at work.'},
+           {w:'you',v:1,t:'Two engineers disagreed on an approach, so I…'},
+           {w:'ai',t:'Good setup. Now tighten the Result — what changed because of you?'},
+           {w:'you',t:'We shipped 3 days early with zero rework.'},
+           {w:'ai',t:'That’s a hire-me answer. 💼'} ] },
+  { slug:'mila', name:'Mila', cat:'Nutrition Coach', tag:'Snap your meal and get instant, guilt-free guidance — build healthy habits that fit your real life.',
+    g:['#34D27A','#1FB877','#0FA15E'], accent:'#1FB877', icon:false, live:true, url:'https://apps.apple.com/app/id6779667418',
+    status:'online · your nutrition coach',
+    chat:[ {w:'you',img:1,t:'lunch — is this ok?'},
+           {w:'ai',t:'Nice balance — about 520 kcal, solid protein. Add a handful of greens and you’re set 🥗'},
+           {w:'you',t:'afternoon snack idea?'},
+           {w:'ai',t:'Greek yogurt + berries. Keeps you full till dinner.'} ] },
+  { slug:'astra', name:'Astra', cat:'AI Astrologer', tag:'Your personal AI astrologer — a real natal-chart reading, daily cosmic check-ins, and a voice that reads it aloud.',
+    g:['#E8C375','#C9A14A','#A57F2C'], accent:'#C9A14A', icon:false, live:false, url:'https://apps.apple.com/app/id6779667872',
+    status:'online · reading your chart',
+    chat:[ {w:'ai',t:'You’re a Scorpio Sun with a Pisces Moon — intense, and you feel everything first. ✦'},
+           {w:'you',t:'what about this week?'},
+           {w:'ai',t:'Something buried surfaces. Let it — that’s exactly where your growth is.'},
+           {w:'you',v:1,t:'Tell me more about my Moon…'} ] },
+];
+
+// Scope the active-coach color to the showcase only — the hero/nav keep the stable house gradient.
+const scope = document.querySelector('.xp');
+const setVars = (a) => {
+  const r = scope.style;
+  r.setProperty('--b1', a.g[0]); r.setProperty('--b2', a.g[1]); r.setProperty('--b3', a.g[2]); r.setProperty('--accent', a.accent);
+};
+const avaHtml = (a, cls) => a.icon
+  ? `<img class="${cls}" src="../icons/${a.slug}.jpg" alt="${a.name}" style="object-fit:cover">`
+  : `<div class="${cls}" style="background:linear-gradient(135deg,${a.g[0]},${a.g[2]})">${a.name[0]}</div>`;
+
+// hero avatars
+document.getElementById('heroAvatars').innerHTML = APPS.map(a => avaHtml(a,'av')).join('');
+
+// picker
+const picker = document.getElementById('picker');
+picker.innerHTML = APPS.map((a,i)=>`
+  <button class="coachbtn${i===0?' on':''}" data-i="${i}">
+    ${avaHtml(a,'ava')}
+    <span class="cb-txt"><b>${a.name}</b><span>${a.cat}</span></span>
+    <span class="cb-live">${a.live?'Live':'Soon'}</span>
+  </button>`).join('');
+
+// apps grid
+document.getElementById('grid').innerHTML = APPS.map(a=>`
+  <article class="card" style="--c1:${a.g[0]};--c2:${a.g[2]}">
+    <div class="cg"></div>
+    <div class="top">
+      ${avaHtml(a,'ava')}
+      <div><div class="kick">${a.cat}</div><h3>${a.name}</h3></div>
+    </div>
+    <p>${a.tag}</p>
+    <div class="foot">
+      ${a.live
+        ? `<a class="get" href="${a.url}">Download ↗</a>`
+        : `<span class="soon">Coming soon</span>`}
+    </div>
+  </article>`).join('');
+
+// phone renderer
+const chat = document.getElementById('chat');
+function render(i){
+  const a = APPS[i];
+  setVars(a);
+  document.getElementById('pName').textContent = a.name;
+  document.getElementById('pStatus').textContent = a.status;
+  const ava = document.getElementById('pAva');
+  if(a.icon){ ava.outerHTML = `<img id="pAva" class="ava" src="../icons/${a.slug}.jpg" alt="" style="object-fit:cover">`; }
+  else { ava.outerHTML = `<div id="pAva" class="ava" style="background:linear-gradient(135deg,${a.g[0]},${a.g[2]})">${a.name[0]}</div>`; }
+  chat.innerHTML = '';
+  a.chat.forEach((m,k)=>{
+    const b = document.createElement('div');
+    b.className = 'bubble ' + m.w;
+    b.style.animationDelay = (k*0.5)+'s';
+    let inner = '';
+    if(m.img) inner += `<span class="tag">📷 screenshot</span>`;
+    if(m.v)   inner += `<span class="tag"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> voice</span>`;
+    inner += m.t;
+    b.innerHTML = inner;
+    chat.appendChild(b);
+  });
+  document.querySelectorAll('.coachbtn').forEach(x=>x.classList.toggle('on', +x.dataset.i===i));
+}
+picker.addEventListener('click', e=>{ const btn = e.target.closest('.coachbtn'); if(btn) render(+btn.dataset.i); });
+render(0);
+
+// auto-advance the showcase until the user interacts
+let auto = 1, stop = false;
+picker.addEventListener('click', ()=> stop = true);
+const timer = setInterval(()=>{ if(stop){clearInterval(timer);return;} render(auto % APPS.length); auto++; }, 5200);
+</script>
+</body>
+</html>
