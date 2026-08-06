@@ -18,7 +18,11 @@ const name = NAMES[slug!];
 
 // KAMO is not one of the AI coaching apps and the shared copy below described data
 // practices it does not have: there is no account, no sign-in, no voice transcription and
-// no AI provider in the loop — the camera frame is painted on-device and never leaves it.
+// no AI provider in the loop.
+// UPDATED 6 Aug 2026: "the camera frame never leaves the device" stopped being true when
+// challenge links shipped. Sending a challenge uploads the finished image so the recipient
+// can play it in a browser. This page said the opposite in three places; a privacy policy
+// that contradicts what the binary does is worse than no policy, and App Review reads it.
 // It DOES do something the shared copy omits entirely: advertising attribution (IDFA via
 // ATT, AppsFlyer / TikTok / Meta). The app ships NSPrivacyTracking = true, so a policy
 // silent on tracking contradicts its own privacy manifest — the kind of mismatch App
@@ -30,7 +34,7 @@ const isKamo = slug === 'kamo';
   <article>
     <header class="article-header">
       <h1>Privacy Policy — {name}</h1>
-      <p class="meta">Last updated July 24, 2026</p>
+      <p class="meta">Last updated August 6, 2026</p>
     </header>
     <div class="prose">
       <p>This policy describes how Bliss Coach ("we") handles your information in <strong>{name}</strong> and on this website. It applies to the {name} iOS application.</p>
@@ -38,7 +42,8 @@ const isKamo = slug === 'kamo';
       {isKamo ? (
         <ul>
           <li><strong>No account, no sign-in.</strong> {name} has no registration and no login. We do not ask for your name, email, or any other identifier, and we hold no user profile for you.</li>
-          <li><strong>Camera and photos: processed on your device.</strong> The camera frame you paint on, and the images you produce, stay on your phone. We do not upload, store, or receive them. They leave your device only if you choose to share or save them yourself, and then they go wherever you send them, not to us.</li>
+          <li><strong>Camera and photos: processed on your device.</strong> The camera frame you paint on, and the painting itself, stay on your phone. We never receive your camera feed or your photo library.</li>
+          <li><strong>Challenges you send: the finished image leaves your device.</strong> A challenge is a link that lets someone else try to find the figure you hid, in their browser, without installing anything — which means the finished image has to be hosted. When, and only when, you open the share sheet to send a hide, we upload that image along with the figure's position (needed to tell a correct guess from a wrong one), your round time and your coverage. Finishing a round, painting, or saving to your photo library uploads nothing. The image is stored by our hosting provider, Supabase, in the United States, and is <strong>reachable by anyone who has the link</strong>: the link carries a random 16-character identifier and is neither listed nor indexed, but it is not password-protected, so treat sending a challenge the way you would treat sending the photo itself. Challenges and their images are deleted automatically 30 days after they are created. Every challenge page carries a Report link, and a reported challenge is taken down once several people have flagged it; you can also write to us with the link to have one removed sooner.</li>
           <li><strong>Usage and diagnostics</strong>: feature usage events, crash reports, and device information, used to fix bugs and improve the app.</li>
           <li><strong>Advertising and attribution</strong>: if you allow tracking when iOS asks, we and our attribution partners (AppsFlyer, TikTok, Meta) may use your device's advertising identifier to measure which ad or shared link led to your install, and how the app is used afterwards. If you decline, attribution falls back to Apple's privacy-preserving measurement and no advertising identifier is used.</li>
           <li><strong>Subscription status</strong>: managed by Apple and our subscription infrastructure (RevenueCat). We never see or store your payment card details.</li>
@@ -57,19 +62,19 @@ const isKamo = slug === 'kamo';
       )}
       <h2>How we use it</h2>
       {isKamo ? (
-        <p>To run the app, fix crashes, understand which features people actually use, measure the effect of our advertising, and manage subscriptions. There is no AI model in {name} and no server-side processing of your images.</p>
+        <p>To run the app, fix crashes, understand which features people actually use, measure the effect of our advertising, and manage subscriptions. There is no AI model in {name}. The only server-side handling of an image is storing and serving a challenge you chose to send, so the person you sent it to can play it.</p>
       ) : (
         <p>To provide and improve the {name} experience, personalize sessions, maintain your progress and history, provide support, and measure aggregate product performance. AI responses are generated by third-party AI providers acting as processors; your content is not used by us to train foundation models.</p>
       )}
       <h2>Sharing</h2>
       {isKamo ? (
-        <p>We share data only with the service providers needed to run the app: analytics (Amplitude), crash reporting (Sentry), attribution and advertising measurement (AppsFlyer, TikTok, Meta), and subscription management (RevenueCat), under their respective data-processing terms. We do not sell your personal data.</p>
+        <p>We share data only with the service providers needed to run the app: analytics (Amplitude), crash reporting (Sentry), attribution and advertising measurement (AppsFlyer, TikTok, Meta), subscription management (RevenueCat), and hosting for challenges (Supabase), under their respective data-processing terms. Of these, only Supabase ever holds an image, and only for a challenge you chose to send. We do not sell your personal data.</p>
       ) : (
         <p>We share data only with service providers needed to run the app (cloud hosting, AI inference, speech synthesis, analytics, crash reporting, attribution and advertising measurement, subscription management) under their respective data-processing terms. We do not sell your personal data.</p>
       )}
       <h2>Retention &amp; deletion</h2>
       {isKamo ? (
-        <p>Because there is no account, there is nothing to delete on our side: your photos and paintings live only on your device, and deleting the app removes them. You can turn off advertising tracking at any time in iOS Settings &rsaquo; Privacy &amp; Security &rsaquo; Tracking. To ask what diagnostic or attribution data is associated with your device, or to have it erased, contact us.</p>
+        <p>There is no account, so there is no profile to delete. Photos you do not send as a challenge live only on your device, and deleting the app removes them. A challenge you did send is deleted automatically — image included — 30 days after it was created, and we will delete one sooner on request: send us the link. You can turn off advertising tracking at any time in iOS Settings &rsaquo; Privacy &amp; Security &rsaquo; Tracking. To ask what diagnostic or attribution data is associated with your device, or to have it erased, contact us.</p>
       ) : (
         <p>You can delete your account at any time from Settings inside the app, which removes your personal data from our systems. You can also contact us for deletion requests. You can withdraw advertising tracking at any time in iOS Settings &rsaquo; Privacy &amp; Security &rsaquo; Tracking.</p>
       )}
