@@ -35,13 +35,16 @@ const year = new Date().getFullYear();
         <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
       </nav>
     </div>
-    {/* KAMO easter egg: the 3D figure hiding in the footer — peeks up on hover, links to the app */}
+    {/* KAMO easter egg: the 3D figure hiding in the footer — peeks up on hover, links to the app.
+        Points at playkamo.com (which carries its own App Store CTA) rather than straight at the
+        store: the landing page has no inbound links of its own, and this footer is on every
+        non-app-scoped page, so it is what gives that domain any authority at all. */}
     <a
       class="kamo-peek"
-      href="https://apps.apple.com/app/id6789639784"
+      href="https://playkamo.com/"
       target="_blank"
       rel="noopener"
-      aria-label="KAMO: Hide & Seek Photo Game on the App Store"
+      aria-label="KAMO: Hide & Seek Photo Game"
     >
       <img src={withBase('/kamo-peek.png')} alt="" width="66" height="160" loading="lazy" />
     </a>
