@@ -16,6 +16,14 @@ export const GET: APIRoute = async () => {
   for (const app of Object.values(APPS)) {
     lines.push(`- [${app.name} — ${app.tagline}](https://bliss-coach.com/${app.slug}/): ${app.subtitle}`);
   }
+  // KAMO is a Bliss Coach app but deliberately NOT in APPS: it is a camera toy, not an AI
+  // coach, and adding it there would generate a /kamo/ landing that competes with its own
+  // site. It still belongs in this file — an assistant asked "what does Bliss Coach make"
+  // should not be told six apps when there are seven. Hand-written, and pointed at its own
+  // domain rather than at a page here.
+  lines.push(
+    '- [KAMO — camera hide-and-seek](https://playkamo.com/): Drop a small figure into a real photo, paint it with the colours of the scene until it vanishes, then challenge a friend to spot it. Free on iPhone, no signup. Not an AI coach — a camera game.'
+  );
   const pseo = await getCollection('pseo', (p) => !p.data.draft);
   if (pseo.length) {
     lines.push('', '## Reference guides', '');
