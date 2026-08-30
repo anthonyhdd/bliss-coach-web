@@ -199,6 +199,68 @@ export const APPS: Record<string, AppDef> = {
     blogDescription:
       'Natal charts, signs, houses and transits explained simply — astrology guides from the Astra team.',
   },
+  emily: {
+    slug: 'emily',
+    name: 'Emily',
+    category: 'Learn English',
+    tagline: 'Speak English without the fear of getting it wrong',
+    subtitle:
+      'Emily is your AI English tutor. Real voice conversations, gentle corrections as you go, and the practice you never get from a textbook — from your very first sentence.',
+    appStoreId: '',
+    appStoreUrl: '',
+    gradient: ['#1D4ED8', '#0EA5E9', '#38BDF8'],
+    accent: '#2563EB',
+    onGradient: '#ffffff',
+    comingSoon: true,
+    features: [
+      {
+        title: 'Talk, don’t tap',
+        body: 'Have real spoken conversations with Emily — she listens, answers, and corrects you the way a patient teacher would.',
+      },
+      {
+        title: 'Fix your accent as you speak',
+        body: 'Pronunciation feedback on the words you actually said, in the moment, instead of a score at the end of a lesson.',
+      },
+      {
+        title: 'Practice for the real thing',
+        body: 'Interviews, small talk, travel, IELTS and TOEFL speaking — rehearse the conversations you are actually nervous about.',
+      },
+    ],
+    blogTitle: 'Learn English — Guides & Tips',
+    blogDescription:
+      'Practical guides to speaking English with confidence: pronunciation, everyday phrases, grammar made simple, and exam speaking tips from the Emily team.',
+  },
+  meilin: {
+    slug: 'meilin',
+    name: 'Meilin',
+    category: 'Learn Chinese',
+    tagline: 'Learn Mandarin by speaking it from day one',
+    subtitle:
+      'Meilin is your AI Chinese tutor. Practise tones out loud, get corrected instantly, and build real Mandarin conversations — with pinyin whenever you need it.',
+    appStoreId: '',
+    appStoreUrl: '',
+    gradient: ['#B91C1C', '#DC2626', '#F59E0B'],
+    accent: '#DC2626',
+    onGradient: '#ffffff',
+    comingSoon: true,
+    features: [
+      {
+        title: 'Tones you can hear yourself get right',
+        body: 'The hardest part of Mandarin, practised out loud with instant feedback — not guessed at from a chart.',
+      },
+      {
+        title: 'Pinyin when you want it',
+        body: 'Read along in pinyin or characters, switch any time. Meilin meets you at whatever level you actually read at.',
+      },
+      {
+        title: 'From HSK 1 to real conversations',
+        body: 'Vocabulary and grammar that follow the HSK path, practised the way you will really use them — by talking.',
+      },
+    ],
+    blogTitle: 'Learn Chinese — Guides & Tips',
+    blogDescription:
+      'Practical guides to learning Mandarin faster: tones, pinyin, characters, HSK vocabulary and speaking practice from the Meilin team.',
+  },
 };
 
 export const APP_SLUGS = Object.keys(APPS);

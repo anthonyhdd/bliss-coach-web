@@ -155,4 +155,42 @@ export const SHOWCASE: Record<string, Showcase> = {
     paper: { title: 'THE MOON', line: 'New moon in Pisces — big feelings ahead.' },
     sticker: 'MERCURY-PROOF',
   },
+  emily: {
+    heroTitle: 'Speak English',
+    heroEm: 'without freezing up.',
+    heroSub:
+      'Real conversations with Emily, your AI English tutor. She listens, corrects you as you speak, and never sighs — so the words come out before you have time to overthink them.',
+    screenLine: 'So what did you get up to this weekend?',
+    replies: ['Nothing much, honestly', 'I finally went hiking!'],
+    craftLine: 'You already know the words. This is where you start saying them.',
+    quotes: [
+      { name: 'Corrected as you speak', text: 'Pronunciation and grammar fixed on the sentence you just said, not scored at the end.' },
+      { name: 'Rehearse the hard ones', text: 'Interviews, small talk, IELTS and TOEFL speaking — practised before they count.' },
+    ],
+    screenImg: 'emily.jpg',
+    screenPos: '50% 30%',
+    chatUser: 'How do I say this more naturally?',
+    featureArts: ['wave', 'fix', 'interview'],
+    paper: { title: 'BOARDING PASS', line: 'Seat 14A · “Could I get a window seat?”' },
+    sticker: 'NO DRILLS',
+  },
+  meilin: {
+    heroTitle: 'Mandarin,',
+    heroEm: 'out loud from day one.',
+    heroSub:
+      'Meilin is your AI Chinese tutor. Practise tones until they land, read along in pinyin or characters, and build real conversations instead of memorising lists.',
+    screenLine: '你今天想聊什么？',
+    replies: ['聊聊我的工作吧', '我想学点日常用语'],
+    craftLine: 'Tones are not a chart. They are something you say.',
+    quotes: [
+      { name: 'Tones, corrected live', text: 'Say it, hear what changed, say it again — the part textbooks cannot teach.' },
+      { name: 'Pinyin when you need it', text: 'Switch between pinyin and characters at any moment, at whatever level you actually read.' },
+    ],
+    screenImg: 'meilin.jpg',
+    screenPos: '50% 30%',
+    chatUser: 'Was my third tone right?',
+    featureArts: ['wave', 'replies', 'track'],
+    paper: { title: '茶 · TEA HOUSE', line: '一杯乌龙茶，谢谢。' },
+    sticker: 'HSK 1–4',
+  },
 };
