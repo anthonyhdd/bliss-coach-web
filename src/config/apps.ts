@@ -237,12 +237,12 @@ export const APPS: Record<string, AppDef> = {
     tagline: 'Learn Mandarin by speaking it from day one',
     subtitle:
       'Meilin is your AI Chinese tutor. Practise tones out loud, get corrected instantly, and build real Mandarin conversations — with pinyin whenever you need it.',
-    appStoreId: '',
-    appStoreUrl: '',
+    appStoreId: '6806812871',
+    appStoreUrl: 'https://apps.apple.com/app/id6806812871',
     gradient: ['#B91C1C', '#DC2626', '#F59E0B'],
     accent: '#DC2626',
     onGradient: '#ffffff',
-    comingSoon: true,
+    comingSoon: false,
     features: [
       {
         title: 'Tones you can hear yourself get right',
