@@ -12,6 +12,11 @@ export interface Showcase {
   screenLine: string;
   /** tappable replies under the line (language apps) */
   replies?: string[];
+  /** tappable replies for a tutor whose script the reader cannot sound out (Meilin).
+   *  The app prints all three lines on the chip — characters, pinyin, then the gloss — because a
+   *  learner who cannot read 我很好 cannot say it; dropping the pinyin would show a chip nobody
+   *  could tap. Takes precedence over `replies` wherever both could render. */
+  replyLines?: { zh: string; pinyin: string; gloss: string }[];
   /** tool chips under the line (utility apps) */
   chips?: string[];
   /** headline stat (omit numbers we can't substantiate) */
@@ -174,23 +179,31 @@ export const SHOWCASE: Record<string, Showcase> = {
     paper: { title: 'BOARDING PASS', line: 'Seat 14A · “Could I get a window seat?”' },
     sticker: 'NO DRILLS',
   },
+  // Every line below is lifted from the real app (marketing/meilin/screens in the app repo):
+  // Meilin speaks the LEARNER's language and quotes the Mandarin — she never holds the
+  // conversation in Chinese — and every Mandarin fragment carries its pinyin. An earlier version
+  // of this entry put a pure-Chinese line in the phone with pure-Chinese replies, which is the
+  // one thing the product deliberately does not do.
   meilin: {
-    heroTitle: 'Mandarin,',
-    heroEm: 'out loud from day one.',
+    heroTitle: 'Speak Chinese',
+    heroEm: 'from day one.',
     heroSub:
-      'Meilin is your AI Chinese tutor. Practise tones until they land, read along in pinyin or characters, and build real conversations instead of memorising lists.',
-    screenLine: '你今天想聊什么？',
-    replies: ['聊聊我的工作吧', '我想学点日常用语'],
-    craftLine: 'Tones are not a chart. They are something you say.',
+      'Meilin explains in your language and hands you the Mandarin — characters, pinyin, and a tone tip on the word you just used. All you have to do is say it out loud.',
+    screenLine: 'In Chinese, “How are you?” is: 你好吗？(nǐ hǎo ma)',
+    replyLines: [
+      { zh: '我很好，谢谢！', pinyin: 'wǒ hěn hǎo, xièxiè!', gloss: 'I am good, thank you!' },
+      { zh: '我也想问你，您好吗？', pinyin: 'wǒ yě xiǎng wèn nǐ, nín hǎo ma?', gloss: 'I also want to ask you, how are you?' },
+    ],
+    craftLine: 'You don’t have to read Chinese to start speaking it.',
     quotes: [
-      { name: 'Tones, corrected live', text: 'Say it, hear what changed, say it again — the part textbooks cannot teach.' },
-      { name: 'Pinyin when you need it', text: 'Switch between pinyin and characters at any moment, at whatever level you actually read.' },
+      { name: 'Tone tips, not lectures', text: 'She names the tone on a word you just used — sì drops, shí rises — inside her reply, then keeps the conversation going.' },
+      { name: 'Never stuck for words', text: 'Every phrase arrives as characters, pinyin and what it means. She gives you the sentence; you just say it.' },
     ],
     screenImg: 'meilin.jpg',
-    screenPos: '50% 30%',
-    chatUser: 'Was my third tone right?',
-    featureArts: ['wave', 'replies', 'track'],
-    paper: { title: '茶 · TEA HOUSE', line: '一杯乌龙茶，谢谢。' },
-    sticker: 'HSK 1–4',
+    screenPos: '50% 26%',
+    chatUser: '我很好，谢谢！',
+    featureArts: ['tones', 'replies', 'scaffold'],
+    paper: { title: '茶 · TEA HOUSE', line: '一杯茶，谢谢。(yì bēi chá)' },
+    sticker: 'PINYIN ON EVERY LINE',
   },
 };

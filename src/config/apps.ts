@@ -236,25 +236,30 @@ export const APPS: Record<string, AppDef> = {
     category: 'Learn Chinese',
     tagline: 'Learn Mandarin by speaking it from day one',
     subtitle:
-      'Meilin is your AI Chinese tutor. Practise tones out loud, get corrected instantly, and build real Mandarin conversations — with pinyin whenever you need it.',
+      'Meilin is your AI Mandarin tutor. She explains in your language and hands you the phrase in Chinese — characters, pinyin and a tone tip on the word you just used — so you can say it out loud from your first conversation.',
     appStoreId: '6806812871',
     appStoreUrl: 'https://apps.apple.com/app/id6806812871',
     gradient: ['#B91C1C', '#DC2626', '#F59E0B'],
     accent: '#DC2626',
     onGradient: '#ffffff',
     comingSoon: false,
+    /* The three features below mirror what the app actually does — see the App Store
+       description and the real chat screens in the app repo. Two earlier claims were removed
+       because the product does not make them: there is no pinyin/characters toggle (pinyin is
+       printed under every Mandarin fragment, always), and Meilin never hears you, so she cannot
+       score your pronunciation — she coaches tones on the words you typed or said. */
     features: [
       {
-        title: 'Tones you can hear yourself get right',
-        body: 'The hardest part of Mandarin, practised out loud with instant feedback — not guessed at from a chart.',
+        title: 'Tone tips on your own words',
+        body: 'She picks a word you just used and names the tone that trips people up — sì is a sharp drop, shí rises — inside her reply, never as a grammar lecture.',
       },
       {
-        title: 'Pinyin when you want it',
-        body: 'Read along in pinyin or characters, switch any time. Meilin meets you at whatever level you actually read at.',
+        title: 'Pinyin under every line',
+        body: 'Characters and pinyin together, every phrase, every level. You never have to read a character before you can start saying it.',
       },
       {
-        title: 'From HSK 1 to real conversations',
-        body: 'Vocabulary and grammar that follow the HSK path, practised the way you will really use them — by talking.',
+        title: 'Explained in your language',
+        body: 'Meilin talks with you in your language and delivers the Mandarin — so a beginner is never lost, and never nods along to something they did not understand.',
       },
     ],
     blogTitle: 'Learn Chinese — Guides & Tips',

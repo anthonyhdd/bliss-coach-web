@@ -3,7 +3,7 @@
 SEO content platform for the Bliss Coach app portfolio, replacing the old Framer landing page at https://bliss-coach.com.
 
 - **Stack**: Astro (static) + vanilla CSS, deployed to GitHub Pages via Actions. Free.
-- **Structure**: `/` studio home · `/{sofia,alex,charm,amelie}/` app landing pages · `/<app>/blog/<slug>/` SEO articles.
+- **Structure**: `/` studio home · `/{sofia,amelie,meilin,alex,charm,mila,astra,emily}/` app landing pages · `/<app>/blog/<slug>/` SEO articles.
 
 ## Adding articles (the whole point)
 
@@ -13,7 +13,7 @@ Drop a markdown file in `src/content/blog/<app>/<slug>.md`:
 ---
 title: "Max 70 chars, keyword-first"          # becomes H1 + <title>
 description: "Max 165 chars meta description"
-app: alex            # sofia | alex | charm | amelie
+app: alex            # sofia | amelie | meilin | alex | charm | mila | astra | emily
 publishDate: 2026-07-02
 keywords: ["primary keyword", "secondary"]
 ---
