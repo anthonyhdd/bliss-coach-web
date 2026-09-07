@@ -302,6 +302,47 @@ a { color: inherit; text-decoration: none; }
 .ftyping i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); }
 @keyframes fblink { 0%, 100% { opacity: 0.25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
 
+/* tri-line pill (Meilin): the app never shows a Chinese chip without its pinyin */
+.fpill-cn { text-align: left; line-height: 1.2; padding: 8px 13px; }
+.fpill-cn b { display: block; font-size: 15px; }
+.fpill-cn i { display: block; font-style: normal; font-size: 11.5px; opacity: 0.72; }
+
+/* tones (Meilin) — the app's default correction: one word you used, and the tone that decides it */
+.fart-tones { display: flex; align-items: center; justify-content: center; }
+.ftones { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.ft-pair { display: flex; align-items: center; gap: 14px; }
+.ft-card {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 10px 14px 8px; border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.ft-card b { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+.ft-card i { font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--text-dim); }
+.ft-card svg { width: 52px; height: 22px; fill: none; stroke: var(--accent); stroke-width: 3.2; stroke-linecap: round; }
+.ft-card svg path { stroke-dasharray: 40; }
+@keyframes tone-draw { 0% { stroke-dashoffset: 40; } 40%, 100% { stroke-dashoffset: 0; } }
+.ft-card u { text-decoration: none; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-dim); text-transform: uppercase; }
+.ft-tip { font-size: 12.5px; font-weight: 600; color: var(--text-dim); }
+
+/* scaffold (Meilin) — her signature move: explain in the learner's language, deliver in Mandarin */
+.fart-scaffold { display: flex; align-items: center; justify-content: center; }
+.fscaffold { display: flex; flex-direction: column; gap: 11px; width: 100%; padding: 0 24px; align-items: flex-start; }
+.fsc-bub {
+  background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 15px 15px 15px 4px; padding: 9px 14px;
+  font-size: 13px; font-weight: 600; color: var(--text-dim); max-width: 100%;
+}
+.fsc-bub b { font-size: 15.5px; font-weight: 700; color: var(--text); }
+.fsc-bub i { font-style: normal; font-weight: 700; color: color-mix(in srgb, var(--brand-3) 78%, #fff); }
+.fsc-say {
+  align-self: center; text-align: center; line-height: 1.2;
+  padding: 8px 18px; border-radius: 13px;
+  background: color-mix(in srgb, var(--accent) 26%, rgba(10, 10, 14, 0.55));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.fsc-say b { display: block; font-size: 17px; font-weight: 700; color: #fff; }
+.fsc-say i { display: block; font-style: normal; font-size: 11.5px; font-weight: 600; color: color-mix(in srgb, var(--brand-3) 70%, #fff); }
+
 /* track: building momentum — done steps become lifted, glowing checkmarks */
 .fart-track { display: flex; align-items: center; justify-content: center; }
 .ftrack { display: flex; align-items: center; gap: 0; }
@@ -496,9 +537,12 @@ a { color: inherit; text-decoration: none; }
 
   .fart-glyphs .fcol { animation: ffall linear infinite; }
   .fmoon { animation: orbit-spin 9s linear infinite; }
+  .ft-card svg path { animation: tone-draw 4s ease-in-out infinite; }
+  .ft-card:nth-child(2) svg path { animation-delay: 0.5s; }
+  .fsc-say { animation: pill-in 0.6s ease 0.5s both; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fpill { opacity: 1; transform: none; }
+  .fpill, .fsc-say { opacity: 1; transform: none; }
 }
 
 /* ---------- article cards ---------- */
@@ -611,6 +655,10 @@ a { color: inherit; text-decoration: none; }
   background: color-mix(in srgb, var(--accent) 85%, #fff); color: #131108;
   white-space: nowrap;
 }
+/* Meilin scaffolds in the learner's language before quoting the Mandarin, so her on-screen line
+   is three lines where every other coach's is one. The paper prop's default top-left slot would
+   then eat the start of all three — it drops below the line instead. */
+.app-meilin .hprop-paper { top: 168px; }
 @media (prefers-reduced-motion: no-preference) {
   .hprop-paper { animation: hprop-drift 8s ease-in-out infinite; }
   .hprop-sticker { animation: hprop-drift 7s ease-in-out infinite -3.5s; }
@@ -622,6 +670,7 @@ a { color: inherit; text-decoration: none; }
 }
 @media (max-width: 860px) {
   .hprop-paper { left: -8px; top: -26px; transform: scale(0.85); transform-origin: top left; }
+  .app-meilin .hprop-paper { top: 152px; }
   .hprop-sticker { right: -6px; bottom: 24px; }
 }
 
@@ -694,6 +743,18 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   color: #fff; font-weight: 700; font-size: 13.5px;
+}
+/* tri-line reply chip (Meilin) — characters, pinyin, gloss, exactly as the app prints them.
+   The pinyin is the accent colour because it is the line the learner actually reads aloud. */
+.phone .reply-cn { display: block; padding: 8px 12px 9px; line-height: 1.25; }
+.phone .reply-cn b { display: block; font-size: 17px; font-weight: 700; letter-spacing: 0.01em; }
+.phone .reply-cn i {
+  display: block; margin-top: 2px; font-style: normal; font-size: 12.5px; font-weight: 600;
+  color: color-mix(in srgb, var(--brand-3) 70%, #fff);
+}
+.phone .reply-cn em {
+  display: block; margin-top: 1px; font-style: normal; font-size: 11.5px; font-weight: 500;
+  color: rgba(255, 255, 255, 0.62);
 }
 .phone .tool-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .phone .tool-chip {

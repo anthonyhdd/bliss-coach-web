@@ -38,6 +38,7 @@ const jsonLd = {
 const avatars = [
   { slug: 'amelie', src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 12%' },
   { slug: 'sofia', src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 16%' },
+  { slug: 'meilin', src: 'meilin.jpg', href: '/meilin/', alt: 'Meilin — AI Chinese teacher', pos: '50% 20%' },
   { slug: 'alex', src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 10%' },
   { slug: 'charm', src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 14%' },
   { slug: 'mila', src: 'mila.jpg', href: '/mila/', alt: 'Mila — AI dietician', pos: '50% 50%' },
@@ -62,7 +63,7 @@ const manifesto = [
   'Get better, every day.',
 ];
 
-// Six chapters — one per coach, with a real line from each app.
+// One chapter per coach, with a real line from each app.
 const coaches = [
   {
     slug: 'sofia', name: 'Sofia', craft: 'teaches Spanish', img: 'sofia.png', pos: '50% 16%',
@@ -75,6 +76,12 @@ const coaches = [
     line: 'Ça vous dit un ciné ce soir ?', reply: 'Oui, on va voir quoi ?',
     blurb: 'Real Parisian French, corrected as you go. Finally fit in anywhere.',
     c1: '#6D28D9', c2: '#DB2777',
+  },
+  {
+    slug: 'meilin', name: 'Meilin', craft: 'teaches Chinese', img: 'meilin.jpg', pos: '50% 20%',
+    line: 'In Chinese, “How are you?” is: 你好吗？(nǐ hǎo ma)', reply: '我很好，谢谢！',
+    blurb: 'She explains in your language and hands you the Mandarin — characters, pinyin, tone tips.',
+    c1: '#B91C1C', c2: '#F59E0B',
   },
   {
     slug: 'alex', name: 'Alex', craft: 'lands your next job', img: 'alex.png', pos: '50% 10%',
@@ -1162,7 +1169,7 @@ const coaches = [
         ))}
       </section>
 
-      <!-- six coaches, six chapters -->
+      <!-- one chapter per coach -->
       <section class="coaches" id="coaches" aria-label="Meet the coaches">
         <div class="coaches-kicker rv">Meet the coaches</div>
         {coaches.map((c, i) => (
@@ -1236,6 +1243,7 @@ const coaches = [
               <div class="tiles">
                 <img class="tile" src={withBase('/icons/sofia.jpg')} alt="" width="56" height="56" loading="lazy" />
                 <img class="tile" src={withBase('/icons/amelie.jpg')} alt="" width="56" height="56" loading="lazy" />
+                <img class="tile" src={withBase('/icons/meilin.jpg')} alt="" width="56" height="56" loading="lazy" />
                 <img class="tile" src={withBase('/icons/alex.jpg')} alt="" width="56" height="56" loading="lazy" />
                 <img class="tile" src={withBase('/icons/charm.jpg')} alt="" width="56" height="56" loading="lazy" />
                 <img class="tile" src={withBase('/icons/mila.jpg')} alt="" width="56" height="56" loading="lazy" />
@@ -1338,10 +1346,10 @@ const coaches = [
       <div class="foot-stickers" aria-hidden="true">
         <span class="stk stk-1">PRACTICE OUT LOUD</span>
         <span class="stk stk-2">COACHES, NOT CHATBOTS</span>
-        <span class="stk stk-3">SIX COACHES · ONE POCKET</span>
+        <span class="stk stk-3">SEVEN COACHES · ONE POCKET</span>
       </div>
       <div class="foot-board" role="navigation" aria-label="Our apps">
-        {['sofia', 'amelie', 'alex', 'charm', 'mila', 'astra'].map((sl) => (
+        {['sofia', 'amelie', 'meilin', 'alex', 'charm', 'mila', 'astra'].map((sl) => (
           <a href={withBase(`/${sl}/`)}><img src={withBase(`/icons/${sl}.jpg`)} alt={sl} width="54" height="54" loading="lazy" /></a>
         ))}
       </div>
