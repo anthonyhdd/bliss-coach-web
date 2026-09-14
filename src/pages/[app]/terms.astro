@@ -6,9 +6,12 @@ const NAMES: Record<string, string> = Object.fromEntries(
   Object.values(APPS).map((a) => [a.slug, a.name]),
 );
 NAMES.kamo = 'KAMO';
+// Bliss (one app, four AI language tutors) is not launched yet: no landing, no APPS entry,
+// but its paywall links here and App Review opens these URLs before the first release.
+NAMES.bliss = 'Bliss';
 
 export function getStaticPaths() {
-  return [...Object.keys(APPS), 'kamo'].map((app) => ({ params: { app } }));
+  return [...Object.keys(APPS), 'kamo', 'bliss'].map((app) => ({ params: { app } }));
 }
 
 const { app: slug } = Astro.params;
@@ -17,6 +20,7 @@ const name = NAMES[slug!];
 // KAMO is a camera toy, not one of the AI coaching apps: no AI output, no account, and
 // nothing you make is sent to us. See the matching branch in privacy.astro.
 const isKamo = slug === 'kamo';
+const isBliss = slug === 'bliss';
 ---
 
 <Base title={`Terms of Use — ${name} | Bliss Coach`} description={`Terms of use for ${name}, a Bliss Coach app.`} bodyClass="article-page">
@@ -27,6 +31,9 @@ const isKamo = slug === 'kamo';
     </header>
     <div class="prose">
       <p>These terms govern your use of <strong>{name}</strong>, a Bliss Coach iOS application, and this website. By using the app you agree to them.</p>
+      {isBliss && (
+        <p>{name} – AI language tutors lets you learn Spanish, French, English or Mandarin through voice conversations with the AI tutor you choose.</p>
+      )}
       <h2>The service</h2>
       {isKamo ? (
         <p>{name} is a camera toy: you place a figure in your own scene, paint it to blend in, and share the result. It is provided for entertainment purposes only. Point it at your own surroundings and don't use it to photograph people who haven't agreed to it.</p>

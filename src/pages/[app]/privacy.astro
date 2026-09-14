@@ -8,9 +8,12 @@ const NAMES: Record<string, string> = Object.fromEntries(
   Object.values(APPS).map((a) => [a.slug, a.name]),
 );
 NAMES.kamo = 'KAMO';
+// Bliss (one app, four AI language tutors) is not launched yet: no landing, no APPS entry,
+// but its paywall links here and App Review opens these URLs before the first release.
+NAMES.bliss = 'Bliss';
 
 export function getStaticPaths() {
-  return [...Object.keys(APPS), 'kamo'].map((app) => ({ params: { app } }));
+  return [...Object.keys(APPS), 'kamo', 'bliss'].map((app) => ({ params: { app } }));
 }
 
 const { app: slug } = Astro.params;
@@ -37,6 +40,7 @@ const name = NAMES[slug!];
 // which is not just courtesy, it is the guideline 1.2 answer for an app that shows strangers'
 // photos to strangers.
 const isKamo = slug === 'kamo';
+const isBliss = slug === 'bliss';
 ---
 
 <Base title={`Privacy Policy — ${name} | Bliss Coach`} description={`How ${name} (a Bliss Coach app) collects, uses, and protects your data.`} bodyClass="article-page">
@@ -47,6 +51,9 @@ const isKamo = slug === 'kamo';
     </header>
     <div class="prose">
       <p>This policy describes how Bliss Coach ("we") handles your information in <strong>{name}</strong> and on this website. It applies to the {name} iOS application.</p>
+      {isBliss && (
+        <p>{name} – AI language tutors is an app where you learn Spanish, French, English or Mandarin by talking with the AI tutor you choose.</p>
+      )}
       <h2>What we collect</h2>
       {isKamo ? (
         <ul>
@@ -62,7 +69,7 @@ const isKamo = slug === 'kamo';
       ) : (
         <ul>
           <li><strong>Account information</strong>: the display name and sign-in identifier (e.g. Apple ID relay email) you provide when creating an account.</li>
-          <li><strong>Content you share in the app</strong>: messages, voice audio processed for transcription, and — where the feature exists — images or photos you choose to upload. This content is used to generate the responses and results you ask for.</li>
+          <li><strong>Content you share in the app</strong>: messages, voice audio processed for transcription{isBliss && ' and for pronunciation feedback on the phrases you practice'}, and — where the feature exists — images or photos you choose to upload. This content is used to generate the responses and results you ask for.</li>
           <li><strong>Usage and diagnostics</strong>: feature usage events, crash reports, and device information, used to fix bugs and improve the product.</li>
           {/* The app asks for App Tracking Transparency at launch and reports to AppsFlyer,
               TikTok and Meta. A policy that never says so is a policy that contradicts the
