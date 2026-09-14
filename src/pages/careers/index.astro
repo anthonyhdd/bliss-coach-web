@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import { withBase } from '../../config/apps';
+
+// Careers hub. One entry per open role; the role pages live next to this file.
+const ROLES = [
+  {
+    slug: 'organic-content-intern',
+    title: 'Organic Content Intern — TikTok & Instagram',
+    type: 'Internship · 6 months',
+    location: 'Paris · Hybrid / Remote-friendly',
+    start: 'Start ASAP',
+    blurb:
+      'Own organic short-form video across 5+ AI coaching apps. Ideate, shoot, edit, post, read the numbers, do it again — at volume.',
+  },
+];
+
+const title = 'Careers | Bliss Coach';
+const description =
+  'Join Bliss Coach, the Paris studio building AI coaching apps (Sofia, Amélie, Meilin, Alex, Charm, Mila, Astra). Open roles and internships.';
+---
+
+<Base title={title} description={description} bodyClass="article-page">
+  <article>
+    <header class="article-header">
+      <h1>Careers at Bliss Coach</h1>
+      <p class="meta">
+        We build AI coaches that live in your pocket — language tutors, an interview coach, a dating coach, a
+        dietician, an astrologer — and launch them internationally from Paris. Small team, ships fast.
+      </p>
+    </header>
+
+    <div class="prose">
+      <h2>Open roles</h2>
+      <ul class="roles">
+        {ROLES.map((r) => (
+          <li class="role">
+            <a href={withBase(`/careers/${r.slug}/`)}>
+              <h3>{r.title}</h3>
+              <p class="role-meta">{r.type} · {r.location} · {r.start}</p>
+              <p>{r.blurb}</p>
+              <span class="role-more">View offer →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Nothing that fits?</h2>
+      <p>
+        If you make things — videos, apps, growth systems — and want to work on products people talk to out loud every
+        day, write to <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a> with 2–3 links to what
+        you've made.
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .roles { list-style: none; padding: 0; margin: 0 0 36px; display: grid; gap: 16px; }
+  .role a {
+    display: block; text-decoration: none; font-weight: 400; color: inherit;
+    background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: var(--radius);
+    padding: 22px 24px; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .role a:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
+  .role h3 { margin: 0 0 6px; }
+  .role .role-meta { font-size: 14px; color: #6b6b76; margin-bottom: 10px; }
+  .role p { margin-bottom: 10px; }
+  .role .role-more { color: var(--accent); font-weight: 600; }
+</style>
