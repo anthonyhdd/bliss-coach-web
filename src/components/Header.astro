@@ -28,6 +28,10 @@ const { activeApp, solo } = Astro.props;
     <div class="container inner">
       <a class="logo" href={withBase('/')}>Bliss <span>Coach</span></a>
       <nav class="nav" aria-label="Apps">
+        {/* Bliss (all language tutors in one app) is not an APPS entry — it has its own page. */}
+        <a class="nav-bliss" href={withBase('/bliss/')} aria-current={activeApp === 'bliss' ? 'true' : undefined}>
+          Bliss<span class="nav-dot" aria-hidden="true"></span>
+        </a>
         {Object.values(APPS).map((app) => (
           <a href={withBase(`/${app.slug}/`)} aria-current={activeApp === app.slug ? 'true' : undefined}>
             {app.name}
