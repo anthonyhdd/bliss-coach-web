@@ -1,13 +1,16 @@
 ---
-title: "How to Confirm a Date Over Text Without Killing the Vibe"
-description: "Day-before and day-of confirmation texts that lock the plan without sounding like a calendar app. Copy-ready scripts, timing rules, and reading her reply."
+title: "How to Confirm a Date Over Text: 12 Examples That Aren't Needy"
+description: "What to text to confirm a date: 12 copy-paste confirmation texts for the day before and day of, when to send them, and what to do if she doesn't reply."
 app: charm
 subject: "Confirming a date"
 publishDate: 2026-07-09
-keywords: ["how to confirm a date over text", "confirmation text before a date", "should I confirm the date", "day before date text", "confirm plans without being needy"]
+updatedDate: 2026-09-15
+keywords: ["how to confirm a date over text", "confirming a date text", "date confirmation text examples", "confirmation text before a date", "should I confirm the date", "day before date text", "confirm plans without being needy"]
 ---
 
 Short answer: confirm the day before, once, and make it sound like anticipation instead of administration. "Still on for tomorrow — I found the place, it has a fireplace and questionable jukebox choices. 7 work?" locks the plan *and* keeps the flirt alive. A bare "are we still on?" does only half the job.
+
+The formula: **time + place + one line that sounds like you're looking forward to it.** Twelve ready-to-send versions below, sorted by tone.
 
 ## What's actually going on
 
@@ -29,7 +32,7 @@ There's a second scenario this page covers: the day-of check-in. Different anima
 
 ## Copy-ready texts
 
-One confirmation the day before. One optional light touch day-of. That's the full budget.
+Twelve confirmation texts, sorted by tone. Pick one for the day before, and one optional light touch for the day of. That's the full budget.
 
 ### Playful
 
@@ -54,6 +57,18 @@ One confirmation the day before. One optional light touch day-of. That's the ful
 > Found the spot, it's exactly as good as promised. See you at 7 tomorrow.
 
 > [day-of] Today's the day. See you at 7 — first round's on me.
+
+### If the plan was still vague
+
+Sometimes there's nothing to confirm yet, just a "let's do something this weekend." Don't confirm a vibe. Turn it into a real plan first:
+
+> We said "this weekend," so let's make it real. Saturday, 2pm, coffee at the place with the good pastries?
+
+> Still want to do drinks this week? Thursday at 7 works for me. You pick the spot or I will, and I have strong opinions.
+
+> Are we doing Friday for real? I'm thinking 7:30. Say yes and I'll book it.
+
+Once she says yes to a specific time, the normal day-before confirmation applies.
 
 The pattern across every one: a stated detail (time or place), zero doubt about whether it's happening, and one beat of personality. If you're still a few days out from the date and wondering what to send *between* now and the confirmation, that's a different message — covered in [what to text before the first date](/charm/what-to-text/before-first-date/).
 
@@ -87,6 +102,12 @@ Not necessarily — confirmations are low-urgency texts and often sit unanswered
 
 **What if I made the plan a week in advance?**
 Add one midweek touchpoint — something light and unrelated to logistics — so the thread doesn't flatline, then run the normal day-before confirmation. A week of total silence followed by "still on?" makes even a solid plan feel shaky.
+
+**What do you text to confirm a date?**
+State the time and place, then add one line of personality: "Looking forward to tomorrow. 7 at Marlow's still good?" Confirm the details, not whether the date exists, and keep it to one screen.
+
+**How do I confirm a date if we never set a time?**
+You can't confirm a vague plan, so make it specific first: propose a day, a time, and a place in one message ("Saturday, 2pm, coffee?"). Once she agrees, send the usual confirmation the day before.
 
 **Should I confirm by call instead of text?**
 Text. A call to confirm puts her on the spot for something a one-line message handles. Save the phone for when hearing your voice would feel like warmth rather than a checkpoint.
