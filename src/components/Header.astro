@@ -26,7 +26,7 @@ const { activeApp, solo } = Astro.props;
 ) : (
   <header class="site-header">
     <div class="container inner">
-      <a class="logo" href={withBase('/')}>Bliss <span>Coach</span></a>
+      <a class="logo" href={withBase('/')}><img class="logo-bloom" src={withBase('/brand/bliss-coach-mark.png')} alt="" width="22" height="22" loading="eager" />Bliss <span>Coach</span></a>
       <nav class="nav" aria-label="Apps">
         {/* Bliss (all language tutors in one app) is not an APPS entry — it has its own page. */}
         <a class="nav-bliss" href={withBase('/bliss/')} aria-current={activeApp === 'bliss' ? 'true' : undefined}>
