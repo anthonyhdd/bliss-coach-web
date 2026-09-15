@@ -17,39 +17,39 @@ import { withBase } from '../config/apps';
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;600&display=swap" />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
-      html, body { background: #0a0a0a; height: 100%; }
+      html, body { background: #f6f8fb; height: 100%; }
       body {
         font-family: 'Inter', -apple-system, sans-serif;
-        color: #fff; -webkit-font-smoothing: antialiased;
+        color: #0e1a3a; -webkit-font-smoothing: antialiased;
         display: flex; align-items: center; justify-content: center;
         text-align: center; padding: 24px;
         background:
-          radial-gradient(40% 34% at 50% 30%, rgba(118, 98, 188, 0.3), transparent 75%),
-          #0a0a0a;
+          radial-gradient(40% 34% at 50% 30%, rgba(160, 150, 255, 0.22), transparent 75%),
+          #f6f8fb;
       }
       .code {
         font-size: clamp(90px, 20vw, 160px);
         font-weight: 700; letter-spacing: -0.04em; line-height: 1;
-        background: linear-gradient(0deg, #fbdbff, #fff 60%);
+        background: linear-gradient(0deg, #9b5cff, #ff6a4d 70%);
         -webkit-background-clip: text; background-clip: text; color: transparent;
       }
       .line {
         font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
         font-size: clamp(20px, 3.4vw, 30px);
-        background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
+        background: linear-gradient(92deg, #ff6a4d, #ff4f8b, #9b5cff);
         -webkit-background-clip: text; background-clip: text; color: transparent;
         margin: 14px 0 10px;
       }
-      p { color: rgba(255, 255, 255, 0.6); font-size: 15px; margin-bottom: 30px; }
+      p { color: rgba(14, 26, 58, 0.62); font-size: 15px; margin-bottom: 30px; }
       .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
       a.btn {
         display: inline-block; padding: 12px 24px; border-radius: 999px;
-        font-size: 14px; font-weight: 600; text-decoration: none; color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 14px; font-weight: 600; text-decoration: none; color: #0e1a3a;
+        border: 1px solid rgba(14, 26, 58, 0.18);
         transition: background 0.15s, transform 0.15s;
       }
-      a.btn:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-1px); }
-      a.btn.gold { border-color: rgba(232, 195, 117, 0.6); color: #E8C375; }
+      a.btn:hover { background: rgba(14, 26, 58, 0.05); transform: translateY(-1px); }
+      a.btn.gold { border-color: rgba(180, 130, 40, 0.5); color: #9a6b12; }
     </style>
   </head>
   <body>

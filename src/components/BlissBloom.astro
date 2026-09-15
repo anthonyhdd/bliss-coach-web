@@ -92,8 +92,9 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
     border-radius: 50%;
     background: radial-gradient(circle, var(--c) 0%, color-mix(in srgb, var(--c) 45%, transparent) 38%, transparent 70%);
     filter: blur(calc(var(--size) * 0.12));
-    mix-blend-mode: screen;
-    opacity: 0.55;
+    /* normal, not screen: the site is light since 2026-09-16 and a screen blend
+       disappears on white */
+    opacity: 0.5;
     transform: rotate(var(--start)) translateX(var(--r)) rotate(calc(-1 * var(--start)));
   }
   .o1 { --c: var(--R); --start: 0deg;   --r: 18%; --t: 9s;  --p: 5s; }
