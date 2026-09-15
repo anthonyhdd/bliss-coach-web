@@ -1,0 +1,195 @@
+---
+// Animated Bliss Coach bloom (the validated "Éclosion" icon, pure Google colours).
+//
+// Each petal is an HTML ellipse that clips the SAME conic gradient, laid out in flower
+// coordinates: the petal's `.paint` child counter-rotates and counter-offsets itself, so the
+// gradient never moves relative to the flower — only the petal shapes do. That keeps the colours
+// exactly those of the static icon (red / yellow / green / blue, no violet):
+//   - the blue -> red hard cut sits in the gap after the top petal;
+//   - the petal right after the cut (index 1) is painted LAST, with a gradient whose red extends
+//     back over the cut, so the colour change follows that petal's curved edge (same trick as
+//     scripts/brand/bloom1.py).
+// Motion: petals breathe in a wave (size, via registered custom properties), the flower turns very
+// slowly, the heart pulses; colours move in the aura (a rotating blurred copy of the palette) and in
+// a soft light that sweeps along the petals. prefers-reduced-motion = a still icon.
+
+interface Props {
+  class?: string;
+  /** rendered size in px */
+  size?: number;
+  label?: string;
+}
+const { class: className, size = 64, label = 'Bliss Coach logo' } = Astro.props;
+
+// petal 1 last: it is the one drawn on top of the colour cut
+const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
+---
+
+<div class:list={['bloom', className]} style={`--size:${size}px`} role="img" aria-label={label}>
+  <div class="aura" aria-hidden="true"></div>
+  <div class="spin" aria-hidden="true">
+    {ORDER.map((k) => (
+      <div class="arm" style={`--rot:${k * 45}deg;--i:${k}`}>
+        <div class:list={['petal', { top: k === 1 }]}>
+          <div class="paint"></div>
+          <div class="sheen"></div>
+        </div>
+      </div>
+    ))}
+    <div class="heart"></div>
+  </div>
+</div>
+
+<style is:global>
+  @property --pw { syntax: '<number>'; inherits: true; initial-value: 18; }
+  @property --ph { syntax: '<number>'; inherits: true; initial-value: 34; }
+  @property --sw { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+</style>
+
+<style>
+  .bloom {
+    --R: #FF4641;
+    --Y: #FFD400;
+    --G: #00A95C;
+    --B: #3186FF;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    isolation: isolate;
+  }
+
+  /* colours in motion: the palette itself, blurred, orbiting behind the flower */
+  .aura {
+    position: absolute;
+    inset: -22%;
+    z-index: -1;
+    border-radius: 50%;
+    background: conic-gradient(from 22.5deg, var(--R), var(--Y), var(--G), var(--B), var(--R));
+    filter: blur(calc(var(--size) * 0.2));
+    opacity: 0.42;
+  }
+
+  .spin { position: absolute; inset: 0; }
+
+  .arm {
+    position: absolute;
+    inset: 0;
+    transform: rotate(calc(var(--rot) + var(--sw)));
+  }
+
+  /* petal = ellipse whose base sits on the flower centre; 18×34 units of a 100-unit flower */
+  .petal {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    width: calc(var(--size) * var(--pw) / 100);
+    height: calc(var(--size) * var(--ph) / 100);
+    transform: translateX(-50%);
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  /* the gradient, in FLOWER coordinates: undo the petal offset and the arm rotation */
+  .paint {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    left: calc(var(--size) * (var(--pw) / 2 - 50) / 100);
+    top: calc(var(--size) * (var(--ph) - 50) / 100);
+    transform: rotate(calc(-1 * (var(--rot) + var(--sw))));
+    /* hold each colour, then blend; nothing after blue -> hard cut back to red (22.5deg = the gap) */
+    background: conic-gradient(
+      from 22.5deg,
+      var(--R) 0deg 36deg,
+      color-mix(in srgb, var(--R) 84%, var(--Y)) 54deg,
+      color-mix(in srgb, var(--R) 50%, var(--Y)) 72deg,
+      color-mix(in srgb, var(--R) 16%, var(--Y)) 90deg,
+      var(--Y) 108deg 136.8deg,
+      color-mix(in srgb, var(--Y) 84%, var(--G)) 154.8deg,
+      color-mix(in srgb, var(--Y) 50%, var(--G)) 172.8deg,
+      color-mix(in srgb, var(--Y) 16%, var(--G)) 190.8deg,
+      var(--G) 208.8deg 237.6deg,
+      color-mix(in srgb, var(--G) 84%, var(--B)) 255.6deg,
+      color-mix(in srgb, var(--G) 50%, var(--B)) 273.6deg,
+      color-mix(in srgb, var(--G) 16%, var(--B)) 291.6deg,
+      var(--B) 309.6deg 360deg
+    );
+  }
+
+  /* the petal drawn over the cut: same gradient, but red reaches back 45deg across the cut */
+  .petal.top .paint {
+    background: conic-gradient(
+      from -22.5deg,
+      var(--R) 0deg 81deg,
+      color-mix(in srgb, var(--R) 84%, var(--Y)) 99deg,
+      color-mix(in srgb, var(--R) 50%, var(--Y)) 117deg,
+      color-mix(in srgb, var(--R) 16%, var(--Y)) 135deg,
+      var(--Y) 153deg 181.8deg,
+      color-mix(in srgb, var(--Y) 84%, var(--G)) 199.8deg,
+      color-mix(in srgb, var(--Y) 50%, var(--G)) 217.8deg,
+      color-mix(in srgb, var(--Y) 16%, var(--G)) 235.8deg,
+      var(--G) 253.8deg 282.6deg,
+      color-mix(in srgb, var(--G) 84%, var(--B)) 300.6deg,
+      color-mix(in srgb, var(--G) 50%, var(--B)) 318.6deg,
+      color-mix(in srgb, var(--G) 16%, var(--B)) 336.6deg,
+      var(--B) 354.6deg 360deg
+    );
+  }
+
+  /* a soft light that travels from the heart to the tip */
+  .sheen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+    background-size: 100% 300%;
+    background-position: 0 100%;
+    mix-blend-mode: soft-light;
+    opacity: 0;
+  }
+
+  .heart {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--size) * 0.15);
+    height: calc(var(--size) * 0.15);
+    margin: calc(var(--size) * -0.075) 0 0 calc(var(--size) * -0.075);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 calc(var(--size) * 0.08) rgba(255, 255, 255, 0.45);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .spin { animation: bloom-spin 90s linear infinite; }
+    .aura { animation: bloom-aura 18s linear infinite; }
+    .arm { animation: bloom-sway 9s ease-in-out infinite; animation-delay: calc(var(--i) * -1.125s); }
+    .petal { animation: bloom-breathe 7s ease-in-out infinite; animation-delay: calc(var(--i) * -0.875s); }
+    .sheen { animation: bloom-sheen 6s ease-in-out infinite; animation-delay: calc(var(--i) * 0.3s); }
+    .heart { animation: bloom-heart 7s ease-in-out infinite; }
+  }
+
+  @keyframes bloom-spin { to { transform: rotate(360deg); } }
+  @keyframes bloom-aura {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(-180deg) scale(1.12); }
+    100% { transform: rotate(-360deg) scale(1); }
+  }
+  @keyframes bloom-breathe {
+    0%, 100% { --pw: 18; --ph: 34; }
+    50% { --pw: 20; --ph: 38.5; }
+  }
+  @keyframes bloom-sway {
+    0%, 100% { --sw: -2deg; }
+    50% { --sw: 2deg; }
+  }
+  @keyframes bloom-sheen {
+    0% { background-position: 0 100%; opacity: 0; }
+    15% { opacity: 1; }
+    45% { background-position: 0 0%; opacity: 0; }
+    100% { background-position: 0 0%; opacity: 0; }
+  }
+  @keyframes bloom-heart {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+</style>

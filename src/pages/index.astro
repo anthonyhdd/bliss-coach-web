@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
 import { withBase, avatarFor } from '../config/apps';
 import Analytics from '../components/Analytics.astro';
+import BlissBloom from '../components/BlissBloom.astro';
 
 // Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
 // card upgrades from portrait to a muted looping video at the next build.
@@ -207,7 +208,8 @@ const coaches = [
       }
       /* mobilefirst-style entrance: hero sharpens out of a blur */
       @media (prefers-reduced-motion: no-preference) {
-        .logo-mark, h1, .sub, .cta-wrap {
+        /* :global — the logo is the BlissBloom component, outside this page's style scope */
+        :global(.logo-mark), h1, .sub, .cta-wrap {
           animation: hero-in 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
         }
         .sub { animation-delay: 0.12s; }
@@ -219,10 +221,8 @@ const coaches = [
       }
       /* parallax layers driven by the pointer */
       #stars, .nebula { will-change: transform; }
-      .logo-mark {
-        width: 52px; height: 52px; margin: 69px auto 26px;
-        filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.16));
-      }
+      /* the animated bloom (BlissBloom) carries its own coloured aura — no drop-shadow here */
+      :global(.logo-mark) { margin: 63px auto 20px; }
       h1 {
         text-align: center;
         font-weight: 500;
@@ -469,7 +469,7 @@ const coaches = [
       .foot-links a:hover { color: #fff; }
       @media (max-width: 640px) {
         .content { padding: 0 20px; }
-        .logo-mark { margin-top: 56px; }
+        :global(.logo-mark) { margin-top: 56px; }
         /* scale the headline with the viewport so it always fits the screen
            instead of being clipped at the 38px floor */
         h1 { font-size: clamp(24px, 7.6vw, 40px); }
@@ -1103,7 +1103,7 @@ const coaches = [
       <div class="fade-t" aria-hidden="true"></div>
 
       <div class="content">
-        <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss Coach logo" width="52" height="52" />
+        <BlissBloom class="logo-mark" size={64} />
         <h1>
           <span class="t-desktop">Your coach, for<br /><span class="serif">every corner of life.</span></span>
           <span class="t-mobile">Your coach, for<br /><span class="serif">every corner</span><br /><span class="serif">of life.</span></span>
