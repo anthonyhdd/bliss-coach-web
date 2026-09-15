@@ -153,30 +153,11 @@ const coaches = [
            Same trick already used on .story. */
         overflow-x: clip;
       }
-      .banner {
-        display: block;
-        background: #101014;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        text-decoration: none;
-        text-align: center;
-        padding: 9px 16px;
-      }
-      .banner-inner {
-        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-        font-size: 12.5px;
-        color: rgba(255, 255, 255, 0.8);
-        letter-spacing: 0.02em;
-      }
-      .banner-inner i { color: #7ee787; font-style: normal; margin-right: 6px; }
-      .banner-inner mark { background: #ffdc83; color: #0a0a0a; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
-      .banner-inner b { color: #ffdc83; }
-      .banner:hover .banner-inner { color: #fff; }
-      @media (max-width: 640px) { .banner-inner { font-size: 11px; } }
       .card {
         position: relative;
         width: 100%;
         margin: 0 auto;
-        height: max(800px, calc(100vh - 53px));
+        height: max(800px, 100vh);
         overflow: hidden;
         box-shadow:
           rgba(217, 119, 87, 0.7) 0px 0px 15px 0px inset,
@@ -1092,9 +1073,6 @@ const coaches = [
     </style>
   </head>
   <body>
-    <a class="banner" href={withBase('/bliss/')}>
-      <span class="banner-inner"><i>&gt;</i> Bliss — every language tutor in one app — <mark>coming soon</mark> <b>✦</b></span>
-    </a>
     <div class="card">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="nebula" aria-hidden="true"></div>
