@@ -107,8 +107,7 @@ export default defineConfig({
       // and guessable on purpose — the secrecy lives in the access code — but it
       // is a founder tool, not a page for visitors or crawlers. Deliberately NOT
       // in robots.txt either: a Disallow line advertises the path.
-      // /light/ is a founder design preview of the home (noindex too).
-      filter: (page) => !page.includes('/studio/') && !page.includes('/light/'),
+      filter: (page) => !page.includes('/studio/'),
     }),
   ],
 });
