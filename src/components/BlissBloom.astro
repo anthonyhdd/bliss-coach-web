@@ -26,7 +26,13 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
 ---
 
 <div class:list={['bloom', className]} style={`--size:${size}px`} role="img" aria-label={label}>
-  <div class="aura" aria-hidden="true"></div>
+  <div class="aura" aria-hidden="true">
+    <span class="orb o1"></span>
+    <span class="orb o2"></span>
+    <span class="orb o3"></span>
+    <span class="orb o4"></span>
+    <span class="ring"></span>
+  </div>
   <div class="spin" aria-hidden="true">
     {ORDER.map((k) => (
       <div class="arm" style={`--rot:${k * 45}deg;--i:${k}`}>
@@ -58,15 +64,49 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
     isolation: isolate;
   }
 
-  /* colours in motion: the palette itself, blurred, orbiting behind the flower */
+  /* colours in motion: four blurred lights (one per palette colour) orbiting the flower on their
+     own paths and speeds, blending where they cross — a living mesh gradient — plus a thin ring
+     of light whose two coloured arcs chase each other around the petals */
   .aura {
     position: absolute;
-    inset: -22%;
+    inset: -70%;
     z-index: -1;
+    pointer-events: none;
+  }
+  .orb {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60%;
+    height: 60%;
+    margin: -30% 0 0 -30%;
     border-radius: 50%;
-    background: conic-gradient(from 22.5deg, var(--R), var(--Y), var(--G), var(--B), var(--R));
-    filter: blur(calc(var(--size) * 0.2));
-    opacity: 0.42;
+    background: radial-gradient(circle, var(--c) 0%, color-mix(in srgb, var(--c) 45%, transparent) 38%, transparent 70%);
+    filter: blur(calc(var(--size) * 0.12));
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    transform: rotate(var(--start)) translateX(var(--r)) rotate(calc(-1 * var(--start)));
+  }
+  .o1 { --c: var(--R); --start: 0deg;   --r: 18%; --t: 9s;  --p: 5s; }
+  .o2 { --c: var(--Y); --start: 90deg;  --r: 22%; --t: 12s; --p: 6.5s; }
+  .o3 { --c: var(--G); --start: 180deg; --r: 16%; --t: 15s; --p: 5.5s; }
+  .o4 { --c: var(--B); --start: 270deg; --r: 20%; --t: 11s; --p: 7s; }
+  .ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--size) * 1.2);
+    height: calc(var(--size) * 1.2);
+    margin: calc(var(--size) * -0.6) 0 0 calc(var(--size) * -0.6);
+    border-radius: 50%;
+    background: conic-gradient(
+      transparent 0deg, var(--R) 45deg, var(--Y) 115deg, transparent 160deg,
+      transparent 180deg, var(--G) 225deg, var(--B) 295deg, transparent 340deg
+    );
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 1.5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 1.5px));
+    filter: blur(1px) drop-shadow(0 0 calc(var(--size) * 0.08) rgba(255, 255, 255, 0.35));
+    opacity: 0.85;
   }
 
   .spin { position: absolute; inset: 0; }
@@ -161,7 +201,9 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
 
   @media (prefers-reduced-motion: no-preference) {
     .spin { animation: bloom-spin 90s linear infinite; }
-    .aura { animation: bloom-aura 18s linear infinite; }
+    .orb { animation: bloom-orbit var(--t) linear infinite, bloom-orb-pulse var(--p) ease-in-out infinite; }
+    .o2, .o4 { animation-direction: reverse, normal; }
+    .ring { animation: bloom-ring 7s linear infinite, bloom-ring-pulse 7s ease-in-out infinite; }
     .arm { animation: bloom-sway 9s ease-in-out infinite; animation-delay: calc(var(--i) * -1.125s); }
     .petal { animation: bloom-breathe 7s ease-in-out infinite; animation-delay: calc(var(--i) * -0.875s); }
     .sheen { animation: bloom-sheen 6s ease-in-out infinite; animation-delay: calc(var(--i) * 0.3s); }
@@ -169,10 +211,18 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
   }
 
   @keyframes bloom-spin { to { transform: rotate(360deg); } }
-  @keyframes bloom-aura {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(-180deg) scale(1.12); }
-    100% { transform: rotate(-360deg) scale(1); }
+  @keyframes bloom-orbit {
+    from { transform: rotate(var(--start)) translateX(var(--r)) rotate(calc(-1 * var(--start))); }
+    to { transform: rotate(calc(var(--start) + 360deg)) translateX(var(--r)) rotate(calc(-1 * var(--start) - 360deg)); }
+  }
+  @keyframes bloom-orb-pulse {
+    0%, 100% { scale: 0.85; opacity: 0.42; }
+    50% { scale: 1.18; opacity: 0.72; }
+  }
+  @keyframes bloom-ring { to { rotate: 360deg; } }
+  @keyframes bloom-ring-pulse {
+    0%, 100% { scale: 1; opacity: 0.6; }
+    50% { scale: 1.06; opacity: 0.95; }
   }
   @keyframes bloom-breathe {
     0%, 100% { --pw: 18; --ph: 34; }
