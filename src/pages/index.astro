@@ -1232,9 +1232,171 @@ const coaches = [
       .foot-tag { color: rgba(14, 26, 58, 0.62); }
       .foot-links, .foot-links a { color: rgba(14, 26, 58, 0.55); }
       .foot-links a:hover { color: #0e1a3a; }
+
+      /* ============ PRAKTIKA-STYLE LAYOUT (2026-09-16) ============
+         Floating pill header, saturated hero block with big rounded bottom corners and a phone,
+         a coach carousel instead of the stacked deck, centered section heads. */
+      .pillbar { position: fixed; top: 12px; left: 12px; right: 12px; z-index: 90; pointer-events: none; }
+      .pillbar-in {
+        pointer-events: auto;
+        max-width: 1120px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        padding: 8px 8px 8px 18px; border-radius: 999px;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: saturate(180%) blur(16px);
+        -webkit-backdrop-filter: saturate(180%) blur(16px);
+        border: 1px solid rgba(14, 26, 58, 0.08);
+        box-shadow: 0 10px 30px rgba(20, 40, 110, 0.1);
+      }
+      .pb-logo { display: inline-flex; align-items: center; gap: 9px; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; color: #0e1a3a; text-decoration: none; }
+      .pb-logo span { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+      .pb-nav { display: flex; gap: 4px; }
+      .pb-nav a { font-size: 14px; font-weight: 600; color: rgba(14, 26, 58, 0.66); padding: 8px 12px; border-radius: 999px; text-decoration: none; transition: background 0.15s, color 0.15s; }
+      .pb-nav a:hover { background: rgba(14, 26, 58, 0.05); color: #0e1a3a; }
+      .pb-cta {
+        font-size: 14px; font-weight: 700; color: #fff; text-decoration: none;
+        padding: 11px 20px; border-radius: 999px;
+        background: linear-gradient(92deg, #ff6a4d, #ff4f7b);
+        box-shadow: 0 8px 20px rgba(255, 90, 80, 0.32);
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+      .pb-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(255, 90, 80, 0.42); }
+      @media (max-width: 860px) { .pb-nav { display: none; } .pillbar-in { padding: 7px 7px 7px 14px; } .pb-cta { padding: 10px 16px; font-size: 13px; } }
+
+      /* hero block */
+      .card {
+        height: auto; min-height: min(880px, 100vh);
+        padding: clamp(104px, 13vh, 140px) 0 clamp(26px, 4vh, 48px);
+        border-radius: 0 0 clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px);
+        background: linear-gradient(158deg, #4b45d6 0%, #6a5bff 36%, #8f7bff 64%, #b9a4ff 100%);
+      }
+      .nebula {
+        background:
+          radial-gradient(46% 40% at 20% 16%, rgba(255, 255, 255, 0.22), transparent 70%),
+          radial-gradient(40% 34% at 84% 10%, rgba(255, 214, 186, 0.18), transparent 70%);
+      }
+      .nebula::before, .nebula::after { opacity: 0.3; }
+      .hero-grid {
+        position: relative; z-index: 1;
+        display: flex; align-items: center; gap: clamp(24px, 5vw, 72px);
+        max-width: 1120px; margin: 0 auto; padding: 0 24px; width: 100%;
+      }
+      .content { flex: 1 1 auto; align-items: flex-start; text-align: left; padding: 0; }
+      :global(.logo-mark) { margin: 0 0 18px; }
+      h1 { text-align: left; color: #0b1b3f; color: #fff; font-size: clamp(36px, 4.6vw, 62px); }
+      h1 .serif { background: linear-gradient(92deg, #ffd9c2, #ffc0dc 55%, #e6dcff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .sub { text-align: left; color: rgba(255, 255, 255, 0.82); margin-top: 18px; }
+      .hl { background: linear-gradient(92deg, #ffd9a8, #ffc0dc); -webkit-background-clip: text; background-clip: text; }
+      .cta-wrap { margin-top: 30px; }
+      .cta-wrap::before { background: radial-gradient(closest-side, rgba(255, 255, 255, 0.5), transparent); opacity: 0.5; }
+      .cta { background: #ffffff; color: #241a4d; box-shadow: 0 14px 30px rgba(20, 10, 60, 0.24); }
+      .cta:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(20, 10, 60, 0.3); }
+
+      /* the product, in a phone */
+      .hero-phone { flex: 0 0 auto; }
+      .hp-frame {
+        width: min(300px, 76vw); border-radius: 44px; padding: 9px;
+        background: #15141c; border: 1px solid rgba(255, 255, 255, 0.22);
+        box-shadow: 0 40px 80px rgba(20, 10, 60, 0.4);
+      }
+      .hp-screen { position: relative; aspect-ratio: 9 / 19.2; border-radius: 36px; overflow: hidden; background: #000; }
+      .hp-screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .hp-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 82px; height: 23px; border-radius: 999px; background: #000; }
+      .hp-bub {
+        position: absolute; left: 14px; right: 34px; top: 62px;
+        padding: 10px 13px; border-radius: 16px 16px 16px 5px;
+        background: rgba(255, 255, 255, 0.94); color: #0e1a3a;
+        font-size: 13.5px; font-weight: 650; line-height: 1.3;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+      }
+      .hp-reply {
+        top: auto; bottom: 86px; left: 54px; right: 14px;
+        border-radius: 16px 16px 5px 16px;
+        background: linear-gradient(92deg, #ff6a4d, #ff4f7b); color: #fff;
+      }
+      @media (max-width: 900px) {
+        .hero-grid { flex-direction: column; text-align: center; }
+        .content { align-items: center; text-align: center; }
+        h1, .sub { text-align: center; }
+        :global(.logo-mark) { margin-left: auto; margin-right: auto; }
+        .hp-frame { width: min(258px, 68vw); }
+      }
+      @media (max-width: 640px) { .card { min-height: 0; padding-top: 106px; } .hp-frame { width: min(228px, 62vw); } }
+
+      /* the coach dock sits under the block, on white */
+      .horizon { margin: 0; min-height: 0; padding: 24px 0 4px; flex: none; }
+      .avatars { position: static; transform: none; justify-content: center; }
+      .avatars img { box-shadow: 0 0 0 2px #ffffff, 0 8px 22px rgba(30, 60, 130, 0.2); }
+
+      /* centered section heads */
+      .sec-head { text-align: center; max-width: 760px; margin: 0 auto clamp(26px, 4vw, 44px); }
+      .sec-kicker { display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(14, 26, 58, 0.45); margin-bottom: 12px; }
+      .sec-head h2 { font-size: clamp(28px, 4.4vw, 46px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; }
+      .sec-head h2 em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+
+      /* coach carousel */
+      .coaches { max-width: none; display: block; padding: 8vh 0 10vh; }
+      .crsl { position: relative; }
+      .crsl-track {
+        display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
+        padding: 6px max(24px, calc(50% - 540px)) 26px;
+        scrollbar-width: none; -ms-overflow-style: none;
+      }
+      .crsl-track::-webkit-scrollbar { display: none; }
+      .ccard {
+        position: static; top: auto;
+        flex: 0 0 min(400px, 84vw); scroll-snap-align: center;
+        flex-direction: column; align-items: stretch; gap: 0; padding: 0;
+        border-radius: 28px; overflow: hidden;
+        background: #ffffff; border: 1px solid rgba(14, 26, 58, 0.08);
+        box-shadow: 0 14px 40px rgba(30, 50, 110, 0.1);
+      }
+      .ccard .pwrap, .ccard .portrait { width: 100%; height: 270px; border-radius: 0; box-shadow: none; }
+      .ccard .txt { padding: 18px 20px 22px; }
+      .ccard .go {
+        display: inline-block; margin-top: 14px; padding: 10px 18px; border-radius: 999px;
+        background: color-mix(in srgb, var(--c2) 14%, #ffffff);
+        color: color-mix(in srgb, var(--c2) 78%, #0e1a3a);
+        font-weight: 700; font-size: 14px;
+      }
+      .ccard:hover .go { background: color-mix(in srgb, var(--c2) 24%, #ffffff); }
+      .crsl-arrow {
+        position: absolute; top: 38%; z-index: 3; width: 44px; height: 44px; border-radius: 50%;
+        border: 1px solid rgba(14, 26, 58, 0.1); background: rgba(255, 255, 255, 0.96); color: #0e1a3a;
+        box-shadow: 0 8px 22px rgba(30, 50, 110, 0.14); cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: opacity 0.2s, transform 0.15s;
+      }
+      .crsl-arrow svg { width: 20px; height: 20px; }
+      .crsl-arrow.prev { left: 12px; }
+      .crsl-arrow.next { right: 12px; }
+      .crsl-arrow:hover { transform: scale(1.06); }
+      .crsl-arrow[disabled] { opacity: 0.3; cursor: default; }
+      @media (max-width: 700px) {
+        .crsl-arrow { display: none; }
+        .crsl-track { padding-left: 20px; padding-right: 20px; }
+      }
+
+      /* praktika-ish rounding elsewhere */
+      .bcell { border-radius: 26px; }
+      .review { border-radius: 20px; }
     </style>
   </head>
   <body>
+    <header class="pillbar">
+      <div class="pillbar-in">
+        <a class="pb-logo" href={withBase('/')}>
+          <BlissBloom size={26} compact decorative />
+          Bliss <span>Coach</span>
+        </a>
+        <nav class="pb-nav" aria-label="Sections">
+          <a href="#coaches">Coaches</a>
+          <a href="#pillars">Why they work</a>
+          <a href="#reviews">Reviews</a>
+        </nav>
+        <a class="pb-cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
+      </div>
+    </header>
     <div class="card">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="nebula" aria-hidden="true"></div>
@@ -1242,22 +1404,33 @@ const coaches = [
       <div class="fade-r" aria-hidden="true"></div>
       <div class="fade-t" aria-hidden="true"></div>
 
-      <div class="content">
-        <BlissBloom class="logo-mark" size={64} />
-        <h1>
-          <span class="t-desktop">Your coach, for<br /><span class="serif">every corner of life.</span></span>
-          <span class="t-mobile">Your coach, for<br /><span class="serif">every corner</span><br /><span class="serif">of life.</span></span>
-        </h1>
-        <p class="sub">Not another app to tap through.<br /> A coach that knows you. <mark class="hl">Ten minutes a day.</mark></p>
-        <div class="cta-wrap">
-          <span class="cta-beam" aria-hidden="true"></span>
-          <a class="cta" href="#coaches">Meet your coaches</a>
+      <div class="hero-grid">
+        <div class="content">
+          <BlissBloom class="logo-mark" size={56} />
+          <h1>
+            <span class="t-desktop">Your coach, for<br /><span class="serif">every corner of life.</span></span>
+            <span class="t-mobile">Your coach, for<br /><span class="serif">every corner</span><br /><span class="serif">of life.</span></span>
+          </h1>
+          <p class="sub">Not another app to tap through.<br /> A coach that knows you. <mark class="hl">Ten minutes a day.</mark></p>
+          <div class="cta-wrap">
+            <span class="cta-beam" aria-hidden="true"></span>
+            <a class="cta" href="#coaches">Meet your coaches</a>
+          </div>
+        </div>
+
+        <div class="hero-phone" aria-hidden="true">
+          <div class="hp-frame">
+            <div class="hp-screen">
+              <video src={withBase('/home/video/sofia.mp4')} poster={withBase('/home/sofia.png')} muted loop playsinline autoplay preload="metadata" width="280" height="580"></video>
+              <span class="hp-island"></span>
+              <span class="hp-bub">¿Vamos al cine después?</span>
+              <span class="hp-bub hp-reply">¡Buena idea, vamos!</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="horizon">
-        <div class="disc" aria-hidden="true"></div>
-        <div class="flare" aria-hidden="true"></div>
         <nav class="avatars" aria-label="Our apps">
           {avatars.map((a) => (
             <a href={withBase(a.href)} title={a.alt} class="dock-chip">
@@ -1313,9 +1486,17 @@ const coaches = [
 
       <!-- one chapter per coach -->
       <section class="coaches" id="coaches" aria-label="Meet the coaches">
-        <div class="coaches-kicker rv">Meet the coaches</div>
+        <div class="sec-head rv">
+          <span class="sec-kicker">Meet the coaches</span>
+          <h2>A specialist for <em>every corner of life</em></h2>
+        </div>
+        <div class="crsl">
+          <button class="crsl-arrow prev" type="button" aria-label="Previous coach">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="crsl-track">
         {coaches.map((c, i) => (
-          <a class="chapter rv" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
+          <a class="chapter ccard" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
             {hasVideo(c.slug) ? (
               <span class="pwrap">
                 <video class="portrait v-stand" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
@@ -1331,16 +1512,21 @@ const coaches = [
               {c.reply && <><br /><span class="bubble-reply">{c.reply}</span></>}
               <h3><img class="app-ic" src={withBase(`/icons/${c.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" transition:name={`appicon-${c.slug}`} /> {c.name} <span class="craft">{c.craft}</span></h3>
               <p class="blurb">{c.blurb}</p>
-              <span class="go">Meet {c.name} →</span>
+              <span class="go">Meet {c.name}</span>
             </div>
           </a>
         ))}
+          </div>
+          <button class="crsl-arrow next" type="button" aria-label="Next coach">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </section>
 
       <!-- the pillars: what makes every coach great -->
-      <section class="pillars" aria-label="The pillars of every coach">
-        <div class="pillars-head rv">
-          <div class="kicker">Why they work</div>
+      <section class="pillars" id="pillars" aria-label="The pillars of every coach">
+        <div class="pillars-head sec-head rv">
+          <span class="sec-kicker">Why they work</span>
           <h2>The pillars of <em>every coach</em></h2>
         </div>
         <div class="bento">
@@ -1438,7 +1624,7 @@ const coaches = [
       </section>
 
       <!-- what people say — real store reviews, drifting by -->
-      <section class="reviews" aria-label="Reviews">
+      <section class="reviews" id="reviews" aria-label="Reviews">
         <div class="rev-head rv">
           <span class="rev-stk rev-stk-1">REAL REVIEWS</span>
           <span class="rev-stk rev-stk-2">FROM THE APP STORE</span>
@@ -1721,31 +1907,31 @@ const coaches = [
         }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
         document.querySelectorAll('.rv').forEach((el) => io.observe(el));
 
-        // backdrop dresses in each coach's colors as their chapter passes
+        // the manifesto keeps its own tint; the per-coach tint died with the stacked deck
         const story = document.getElementById('story')!;
         const phases = new IntersectionObserver((entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
             story.classList.toggle('phase-manifesto', e.target.id === 'manifesto');
-            if (e.target.id !== 'manifesto') story.style.removeProperty('--world');
           }
         }, { threshold: 0.25 });
         phases.observe(manifesto);
-        const worlds = new IntersectionObserver((entries) => {
-          for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            const c1 = (e.target as HTMLElement).style.getPropertyValue('--c1');
-            if (c1) story.style.setProperty('--world', `color-mix(in srgb, ${c1} 9%, #f6f8ff)`);
-          }
-        }, { threshold: 0.6 });
-        document.querySelectorAll('.chapter').forEach((c) => worlds.observe(c));
-        // back to black past the chapters
-        const resetW = new IntersectionObserver((es) => {
-          for (const e of es) if (e.isIntersecting) story.style.removeProperty('--world');
-        }, { threshold: 0.2 });
-        resetW.observe(document.querySelector('.pillars')!);
       } else {
         document.querySelectorAll('#manifesto .w').forEach((w) => w.classList.add('on'));
+      }
+      // coach carousel: arrows scroll one card at a time and grey out at the ends
+      const track = document.querySelector<HTMLElement>('.crsl-track');
+      if (track) {
+        const step = () => (track.querySelector<HTMLElement>('.ccard')?.offsetWidth ?? 380) + 18;
+        const sync = () => {
+          const max = track.scrollWidth - track.clientWidth - 2;
+          document.querySelector('.crsl-arrow.prev')?.toggleAttribute('disabled', track.scrollLeft <= 2);
+          document.querySelector('.crsl-arrow.next')?.toggleAttribute('disabled', track.scrollLeft >= max);
+        };
+        document.querySelector('.crsl-arrow.prev')?.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+        document.querySelector('.crsl-arrow.next')?.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+        track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+        sync();
       }
       }
       document.addEventListener('astro:page-load', initHome);
