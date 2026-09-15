@@ -31,7 +31,7 @@ const jsonLd = {
   name: 'Bliss Coach',
   url: 'https://bliss-coach.com/',
   description,
-  logo: 'https://bliss-coach.com/home/logo.png',
+  logo: 'https://bliss-coach.com/brand/bliss-coach-icon-512.png',
   sameAs: ['https://apps.apple.com/us/developer/bliss-coach/id1628409883'],
 };
 
@@ -120,7 +120,9 @@ const coaches = [
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href="https://bliss-coach.com/" />
-    <link rel="icon" type="image/png" href={withBase('/home/logo.png')} />
+    <link rel="icon" type="image/png" sizes="32x32" href={withBase('/favicon-32.png')} />
+    <link rel="icon" type="image/png" sizes="192x192" href={withBase('/favicon-192.png')} />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -219,7 +221,7 @@ const coaches = [
       #stars, .nebula { will-change: transform; }
       .logo-mark {
         width: 52px; height: 52px; margin: 69px auto 26px;
-        filter: brightness(1.25) drop-shadow(0 0 14px rgba(200, 170, 255, 0.28));
+        filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.16));
       }
       h1 {
         text-align: center;
