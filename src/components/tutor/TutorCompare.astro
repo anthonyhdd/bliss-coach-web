@@ -1,0 +1,32 @@
+---
+// "Private tutor vs the app" — the price anchor, without a hard price claim (prices vary by
+// country and rot on a static page).
+import '../../styles/tutor.css';
+
+interface Props {
+  name: string;
+  rows: [string, string, string][];
+}
+const { name, rows } = Astro.props;
+---
+
+<div class="tcmp-wrap">
+  <table class="tcmp">
+    <thead>
+      <tr>
+        <th scope="col"><span class="sr-only">Compared on</span></th>
+        <th scope="col" class="them">Private tutor</th>
+        <th scope="col" class="us">{name}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(([label, them, us]) => (
+        <tr>
+          <th scope="row">{label}</th>
+          <td class="them">{them}</td>
+          <td class="us">{us}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

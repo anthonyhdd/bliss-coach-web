@@ -1,0 +1,34 @@
+---
+// "You said / Better / Why" — a correction as the tutor gives it in the chat.
+import '../../styles/tutor.css';
+import { withBase } from '../../config/apps';
+import type { Correction } from '../../config/tutorPitch';
+
+interface Props {
+  correction: Correction;
+  /** optional header: tutor avatar + name + language */
+  tutor?: { slug: string; name: string; language: string };
+}
+const { correction: c, tutor } = Astro.props;
+---
+
+<div class="fixcard">
+  {tutor && (
+    <div class="fixcard-head">
+      <img src={withBase(`/icons/${tutor.slug}.jpg`)} alt="" width="28" height="28" loading="lazy" />
+      <span><b>{tutor.name}</b> · {tutor.language}</span>
+    </div>
+  )}
+  <div class="fixrow said">
+    <small>You said</small>
+    <p>{c.said}{c.saidPhonetic && <span class="ph">{c.saidPhonetic}</span>}</p>
+  </div>
+  <div class="fixrow better">
+    <small>Better</small>
+    <p>{c.better}{c.betterPhonetic && <span class="ph">{c.betterPhonetic}</span>}</p>
+  </div>
+  <div class="fixrow why">
+    <small>{c.whyLangLabel ?? 'Why'}</small>
+    <p>{c.why}</p>
+  </div>
+</div>
