@@ -24,6 +24,11 @@ export const GET: APIRoute = async () => {
   lines.push(
     '- [KAMO — camera hide-and-seek](https://playkamo.com/): Drop a small figure into a real photo, paint it with the colours of the scene until it vanishes, then challenge a friend to spot it. Free on iPhone, no signup. Not an AI coach — a camera game.'
   );
+  // Bliss (all four language tutors in one app) is pre-launch and not an APPS entry — see
+  // src/pages/bliss/index.astro.
+  lines.push(
+    '- [Bliss — learn a language with the AI tutor you pick](https://bliss-coach.com/bliss/): Sofia (Spanish), Amélie (French), Emily (English) and Meilin (Mandarin) in one app. Talk out loud, get corrected as you go, switch tutors any time. Coming soon to the App Store.'
+  );
   const pseo = await getCollection('pseo', (p) => !p.data.draft);
   if (pseo.length) {
     lines.push('', '## Reference guides', '');

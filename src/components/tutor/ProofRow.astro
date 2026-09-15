@@ -1,0 +1,42 @@
+---
+// Proof right under the headline, laurel-framed. Product facts only — see src/config/tutorPitch.ts
+// for why this row never carries a rating count.
+import '../../styles/tutor.css';
+
+interface Props {
+  items: { value: string; label: string }[];
+}
+const { items } = Astro.props;
+const leaf = 'M11 31C4.5 26 2 17 5.5 3';
+---
+
+<ul class="tproof">
+  {items.map((it) => (
+    <li class="tproof-item">
+      <svg class="tlaurel" viewBox="0 0 14 34" aria-hidden="true">
+        <path d={leaf} fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+        <g fill="currentColor">
+          <ellipse cx="3.6" cy="9" rx="1.5" ry="3.2" transform="rotate(-24 3.6 9)" />
+          <ellipse cx="3.4" cy="16" rx="1.5" ry="3.2" transform="rotate(-40 3.4 16)" />
+          <ellipse cx="5" cy="23" rx="1.5" ry="3.2" transform="rotate(-58 5 23)" />
+          <ellipse cx="8" cy="11.5" rx="1.3" ry="2.8" transform="rotate(30 8 11.5)" />
+          <ellipse cx="8.6" cy="19" rx="1.3" ry="2.8" transform="rotate(18 8.6 19)" />
+        </g>
+      </svg>
+      <span class="tproof-txt">
+        <b>{it.value}</b>
+        <i>{it.label}</i>
+      </span>
+      <svg class="tlaurel is-right" viewBox="0 0 14 34" aria-hidden="true">
+        <path d={leaf} fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+        <g fill="currentColor">
+          <ellipse cx="3.6" cy="9" rx="1.5" ry="3.2" transform="rotate(-24 3.6 9)" />
+          <ellipse cx="3.4" cy="16" rx="1.5" ry="3.2" transform="rotate(-40 3.4 16)" />
+          <ellipse cx="5" cy="23" rx="1.5" ry="3.2" transform="rotate(-58 5 23)" />
+          <ellipse cx="8" cy="11.5" rx="1.3" ry="2.8" transform="rotate(30 8 11.5)" />
+          <ellipse cx="8.6" cy="19" rx="1.3" ry="2.8" transform="rotate(18 8.6 19)" />
+        </g>
+      </svg>
+    </li>
+  ))}
+</ul>

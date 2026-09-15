@@ -1,0 +1,345 @@
+---
+// /bliss/ — the all-tutors language app (Sofia, Amélie, Emily, Meilin in one app), pre-launch.
+// Deliberately NOT an APPS entry: it has no App Store link yet, no blog, no pSEO, and an APPS entry
+// would generate those routes plus a header nav item. Page skeleton = the category leader's
+// (praktika.ai): proof under the headline → tutor roster → features → a correction → private tutor
+// vs app → FAQ. Proof is product facts, never a rating count — see src/config/tutorPitch.ts.
+import Base from '../../layouts/Base.astro';
+import ProofRow from '../../components/tutor/ProofRow.astro';
+import CorrectionCard from '../../components/tutor/CorrectionCard.astro';
+import TutorCompare from '../../components/tutor/TutorCompare.astro';
+import FaqList from '../../components/tutor/FaqList.astro';
+import { APPS, withBase } from '../../config/apps';
+import { SHOWCASE } from '../../config/showcase';
+import { TUTOR_PITCH, LANGUAGE_TUTOR_SLUGS, compareRows } from '../../config/tutorPitch';
+import '../../styles/tutor.css';
+
+const tutors = LANGUAGE_TUTOR_SLUGS.map((slug) => ({
+  slug,
+  app: APPS[slug],
+  show: SHOWCASE[slug],
+  pitch: TUTOR_PITCH[slug],
+}));
+
+const brandStyle = '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#FF7A59;--on-gradient:#ffffff';
+
+const features = [
+  {
+    icon: 'lang',
+    title: 'Learn in your own language',
+    body: 'Your tutor explains in the language you already speak and hands you the phrase in the one you’re learning. Total beginners are never lost.',
+  },
+  {
+    icon: 'mic',
+    title: 'Speak out loud',
+    body: 'Real voice conversations in real time — the practice a textbook can’t give you. Type instead whenever you’d rather.',
+  },
+  {
+    icon: 'check',
+    title: 'Corrected as you go',
+    body: 'Mistakes are fixed on the sentence you just said, with the reason in one line. Then the conversation keeps going.',
+  },
+  {
+    icon: 'swap',
+    title: 'Switch tutors in a tap',
+    body: 'Change tutor or language whenever you want. No restart — the new tutor is there instantly.',
+  },
+  {
+    icon: 'target',
+    title: 'Starts where you are',
+    body: 'Tell your tutor your level and your goal on day one. Complete beginner or rusty intermediate, the first conversation fits.',
+  },
+  {
+    icon: 'wave',
+    title: 'Say it the right way',
+    body: 'Sounding-out tips for Spanish and French, pinyin and tone tips for Mandarin — on the words you actually use.',
+  },
+];
+
+const faq = [
+  {
+    q: 'What is Bliss?',
+    a: 'Bliss is a language learning app with four AI tutors: Sofia for Spanish, Amélie for French, Emily for English and Meilin for Mandarin Chinese. You pick a language, pick your tutor, and learn by talking.',
+  },
+  {
+    q: 'When will Bliss be available?',
+    a: 'Bliss is coming soon to the App Store, for iPhone. Sofia, Amélie and Meilin are already available today as their own apps.',
+  },
+  {
+    q: 'Can I change tutor or language later?',
+    a: 'Yes, whenever you want. The new tutor appears instantly — there is nothing to restart or reinstall.',
+  },
+  {
+    q: 'Will my tutor speak my language?',
+    a: 'Yes. Your tutor explains in the language you already speak and gives you the phrase to say in the language you’re learning, so you are never stuck.',
+  },
+  {
+    q: 'Is Bliss free?',
+    a: 'Bliss will be free to download, with your first tutor included. Bliss Pro unlocks every tutor and every language in one subscription; plans and prices are shown in the app before you pay anything.',
+  },
+  {
+    q: 'How is Bliss different from the Sofia or Amélie apps?',
+    a: 'Each of those apps is one tutor and one language. Bliss puts every tutor in one app, so you can learn several languages — or simply try a different teacher — with a single subscription.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Bliss',
+    operatingSystem: 'iOS',
+    applicationCategory: 'EducationApplication',
+    description:
+      'Language learning app with four AI tutors — Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time.',
+    url: 'https://bliss-coach.com/bliss/',
+    author: { '@type': 'Organization', name: 'Bliss Coach' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+
+const liveApps = tutors.filter((t) => !t.app.comingSoon);
+---
+
+<Base
+  title="Bliss — Learn a language with the AI tutor you pick"
+  description="Four native AI tutors in one app: Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time. Coming soon."
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+>
+  <div class="app-bliss" style={brandStyle}>
+    <div class="brand-strip" aria-hidden="true"></div>
+    <div class="app-banner"><span><i>&gt;</i> Bliss is in the lab — <mark>coming soon</mark> to the App Store <b>✦</b></span></div>
+
+    <!-- hero: promise + proof + the switcher inside a phone -->
+    <section class="app-hero2 bliss-hero">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="container inner2">
+        <div class="pitch">
+          <div class="avatar-stack hero-stack" aria-hidden="true">
+            {tutors.map((t) => <img src={withBase(`/icons/${t.slug}.jpg`)} alt="" width="44" height="44" loading="eager" />)}
+          </div>
+          <div class="kicker">Language learning</div>
+          <h1>Learn a language <em class="serif-em">with the tutor you pick.</em></h1>
+          <p class="sub">
+            Four native AI tutors — Spanish, French, English and Mandarin — in one app. Talk out loud, get
+            corrected as you go, and switch tutors whenever you want.
+          </p>
+          <ProofRow
+            items={[
+              { value: '4', label: 'native AI tutors' },
+              { value: 'Live', label: 'tutor switching' },
+              { value: '1', label: 'plan, every language' },
+            ]}
+          />
+          <div class="hero-cta hero-cta-row">
+            <span class="coming-soon">Coming soon to the App Store</span>
+            <a class="btn btn-ghost" href="#tutors">Meet the tutors</a>
+          </div>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="hprop hprop-fix" aria-hidden="true">
+            <div class="fx-stack">
+              {tutors.map((t, i) => (
+                <div class={i === 0 ? 'on' : ''} data-t={i}>
+                  <span class="fx-said">{t.pitch.correction.said}</span>
+                  <span class="fx-label">Better</span>
+                  <span class="fx-better">{t.pitch.correction.better}</span>
+                  {t.pitch.correction.betterPhonetic && <span class="fx-ph">{t.pitch.correction.betterPhonetic}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+          <span class="hprop hprop-sticker" aria-hidden="true">PICK YOUR TUTOR</span>
+          <div class="phone">
+            <div class="screen">
+              {tutors.map((t, i) => (
+                <img
+                  class={`tut${i === 0 ? ' on' : ''}`}
+                  data-t={i}
+                  src={withBase(`/home/${t.show.screenImg}`)}
+                  alt={i === 0 ? `${t.app.name}, AI ${t.pitch.language} tutor` : ''}
+                  style={`object-position:${t.show.screenPos}`}
+                  width="290"
+                  height="620"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              ))}
+              <div class="screen-shade" aria-hidden="true"></div>
+              <div class="island" aria-hidden="true"></div>
+              {tutors.map((t, i) => (
+                <p class={`say tut${i === 0 ? ' on' : ''}`} data-t={i} aria-hidden={i === 0 ? undefined : 'true'}>
+                  {t.pitch.hello.line}
+                </p>
+              ))}
+              <div class="screen-foot">
+                <span class="tswitch-label">Your tutor</span>
+                <div class="tswitch">
+                  {tutors.map((t, i) => (
+                    <button type="button" class={i === 0 ? 'on' : ''} data-t={i} aria-label={`Show ${t.app.name}, ${t.pitch.language}`}>
+                      <img src={withBase(`/icons/${t.slug}.jpg`)} alt="" width="38" height="38" loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+                <span class="mic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- roster -->
+    <section class="section container" id="tutors">
+      <span class="skicker">Meet your tutors</span>
+      <h2>Native speakers. Endless patience.</h2>
+      <p class="lead">Each tutor teaches her own language, explains in yours, and remembers where you left off.</p>
+      <div class="troster">
+        {tutors.map((t) => (
+          <a class="tcard" href={withBase(`/${t.slug}/`)} style={`--c:${t.app.accent}`}>
+            <div class="tcard-media">
+              <img src={withBase(`/home/${t.show.screenImg}`)} alt={`${t.app.name}, AI ${t.pitch.language} tutor`} style={`object-position:${t.show.screenPos}`} width="320" height="400" loading="lazy" />
+              <span class="tcard-badge">Native</span>
+              <p class="tcard-hello">
+                {t.pitch.hello.line}
+                {t.pitch.hello.phonetic && <i>{t.pitch.hello.phonetic}</i>}
+                {t.pitch.hello.gloss && <em>{t.pitch.hello.gloss}</em>}
+              </p>
+            </div>
+            <div class="tcard-body">
+              <span class="lang">{t.pitch.language}</span>
+              <h3>{t.app.name}</h3>
+              <p>{t.pitch.blurb}</p>
+              <span class="tcard-cta">Study with {t.app.name} →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p class="troster-note"><b>Your first tutor comes with the free download.</b> Bliss Pro unlocks all of them.</p>
+    </section>
+
+    <!-- features -->
+    <section class="section container">
+      <span class="skicker">Private-tutor quality, app convenience</span>
+      <h2>Everything a good tutor does. Any time you want.</h2>
+      <p class="lead">Speaking is how languages stick. Bliss gives you a patient partner to do a lot more of it.</p>
+      <div class="features">
+        {features.map((f) => (
+          <div class="feature">
+            <span class="ficon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                {f.icon === 'lang' && <><path d="M3 5h11v8H8l-5 3.5z" /><path d="M14 9h7v8.5L17 15h-3" /></>}
+                {f.icon === 'mic' && <><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z" /><path d="M6 11a6 6 0 0 0 12 0M12 17v4" /></>}
+                {f.icon === 'check' && <><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.7 2.7L16.5 9" /></>}
+                {f.icon === 'swap' && <><path d="M4 8h14l-3.5-3.5" /><path d="M20 16H6l3.5 3.5" /></>}
+                {f.icon === 'target' && <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r="0.8" fill="currentColor" /></>}
+                {f.icon === 'wave' && <path d="M3 12h1.5M7 8.5v7M11 5v14M15 8v8M19 10.5v3" />}
+              </svg>
+            </span>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- corrections, one per language -->
+    <section class="section container">
+      <span class="skicker">Learn from your mistakes</span>
+      <h2>Every mistake becomes the lesson.</h2>
+      <p class="lead">A real slip in each language, and the fix your tutor gives you — right in the conversation.</p>
+      <div class="fixcards">
+        {tutors.map((t) => (
+          <CorrectionCard correction={t.pitch.correction} tutor={{ slug: t.slug, name: t.app.name, language: t.pitch.language }} />
+        ))}
+      </div>
+    </section>
+
+    <!-- private tutor vs app -->
+    <section class="section container">
+      <span class="skicker">Why an AI tutor</span>
+      <h2>Private-tutor practice, without the private-tutor bill.</h2>
+      <p class="lead">A human tutor is still great. But most learners don’t need more lessons — they need a lot more speaking time.</p>
+      <TutorCompare
+        name="Bliss"
+        rows={compareRows([['Trying a different teacher', 'Find, book and pay someone new', 'One tap — she’s there instantly']])}
+      />
+    </section>
+
+    <!-- FAQ -->
+    <section class="section container">
+      <span class="skicker">FAQ</span>
+      <h2>Questions, answered.</h2>
+      <FaqList items={faq} />
+    </section>
+
+    <!-- final invitation -->
+    <section class="cta-band">
+      <div class="container inner-cta">
+        <div class="avatar-stack" aria-hidden="true">
+          {tutors.map((t) => <img src={withBase(`/icons/${t.slug}.jpg`)} alt="" width="44" height="44" loading="lazy" />)}
+        </div>
+        <div class="txt">
+          <h2>Bliss is coming soon.</h2>
+          <p>Can’t wait? {liveApps.map((t) => t.app.name).join(', ').replace(/, ([^,]*)$/, ' and $1')} already have their own apps.</p>
+          <div class="other-apps">
+            {tutors.map((t) => (
+              <a href={withBase(`/${t.slug}/`)}>
+                <img src={withBase(`/icons/${t.slug}.jpg`)} alt="" width="26" height="26" loading="lazy" />
+                {t.app.name} <em>{t.app.comingSoon ? 'soon' : t.pitch.language}</em>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Cycles the hero phone through the four tutors — the page's one live demo of "switch tutors".
+    // Tapping an avatar picks it and stops the auto-cycle. Re-runs after ClientRouter navigations.
+    let timer: number | undefined;
+    function initBlissHero() {
+      window.clearInterval(timer);
+      const hero = document.querySelector('.bliss-hero');
+      if (!hero) return;
+      const buttons = Array.from(hero.querySelectorAll<HTMLButtonElement>('.tswitch button'));
+      const count = buttons.length;
+      let current = 0;
+      const show = (i: number) => {
+        current = i;
+        hero.querySelectorAll<HTMLElement>('[data-t]').forEach((el) => {
+          const on = Number(el.dataset.t) === i;
+          el.classList.toggle('on', on);
+          if (el.classList.contains('say')) el.setAttribute('aria-hidden', on ? 'false' : 'true');
+        });
+      };
+      buttons.forEach((b) =>
+        b.addEventListener('click', () => {
+          window.clearInterval(timer);
+          show(Number(b.dataset.t));
+        }),
+      );
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      timer = window.setInterval(() => show((current + 1) % count), 3600);
+    }
+    document.addEventListener('astro:page-load', initBlissHero);
+    document.addEventListener('astro:before-swap', () => window.clearInterval(timer));
+  </script>
+</Base>
+
+<style>
+  .hero-stack { margin-bottom: 18px; }
+  .hero-stack img { width: 52px; height: 52px; border-color: var(--bg); }
+  @media (max-width: 860px) { .hero-stack { justify-content: center; } }
+  .cta-band .avatar-stack img { border-color: var(--bg); }
+</style>

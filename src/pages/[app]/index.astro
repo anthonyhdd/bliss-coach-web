@@ -7,6 +7,11 @@ import CelestialCrest from '../../components/CelestialCrest.astro';
 import { APPS, withBase, avatarFor } from '../../config/apps';
 import { SHOWCASE } from '../../config/showcase';
 import { PSEO_SECTIONS } from '../../config/pseo';
+import ProofRow from '../../components/tutor/ProofRow.astro';
+import CorrectionCard from '../../components/tutor/CorrectionCard.astro';
+import TutorCompare from '../../components/tutor/TutorCompare.astro';
+import FaqList from '../../components/tutor/FaqList.astro';
+import { TUTOR_PITCH, LANGUAGE_TUTOR_SLUGS, tutorFaq, compareRows } from '../../config/tutorPitch';
 
 export function getStaticPaths() {
   return Object.keys(APPS).map((app) => ({ params: { app } }));
@@ -26,18 +31,32 @@ const pseoCount = (await getCollection('pseo', (p) => p.data.app === slug && !p.
 
 const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: app.name,
-  operatingSystem: 'iOS',
-  applicationCategory: 'EducationApplication',
-  description: app.subtitle,
-  url: `https://bliss-coach.com/${app.slug}/`,
-  installUrl: app.appStoreUrl,
-  author: { '@type': 'Organization', name: 'Bliss Coach' },
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Free download with in-app subscription' },
-};
+// Language tutors get the conversion sections modelled on the category leader's landing
+// (proof row, in-product correction, private tutor vs app, FAQ) — see src/config/tutorPitch.ts.
+const pitch = TUTOR_PITCH[slug!];
+const faq = pitch ? tutorFaq(app, pitch) : [];
+
+const jsonLd: object[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: app.name,
+    operatingSystem: 'iOS',
+    applicationCategory: 'EducationApplication',
+    description: app.subtitle,
+    url: `https://bliss-coach.com/${app.slug}/`,
+    installUrl: app.appStoreUrl,
+    author: { '@type': 'Organization', name: 'Bliss Coach' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Free download with in-app subscription' },
+  },
+];
+if (faq.length) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  });
+}
 ---
 
 <Base
@@ -65,6 +84,7 @@ const jsonLd = {
           <div class="kicker">{app.category}</div>
           <h1>{show.heroTitle} <em class="serif-em">{show.heroEm}</em></h1>
           <p class="sub">{show.heroSub}</p>
+          {pitch && <ProofRow items={pitch.proof} />}
           <div class="hero-cta">
             {app.comingSoon ? (
               <span class="coming-soon">Coming soon to the App Store</span>
@@ -87,6 +107,16 @@ const jsonLd = {
         </div>
 
         <div class="phone-wrap">
+          {/* language tutors float a real correction on the phone (the product's core moment);
+              the other coaches keep their paper prop */}
+          {pitch ? (
+            <div class="hprop hprop-fix" aria-hidden="true">
+              <span class="fx-said">{pitch.correction.said}</span>
+              <span class="fx-label">Better</span>
+              <span class="fx-better">{pitch.correction.better}</span>
+              {pitch.correction.betterPhonetic && <span class="fx-ph">{pitch.correction.betterPhonetic}</span>}
+            </div>
+          ) : (
           <div class="hprop hprop-paper" aria-hidden="true">
             {app.slug === 'sofia' && (
               <svg class="paper-art" viewBox="0 0 120 26">
@@ -161,6 +191,7 @@ const jsonLd = {
             <b>{show.paper.title}</b>
             <span>{show.paper.line}</span>
           </div>
+          )}
           <span class="hprop hprop-sticker" aria-hidden="true">{show.sticker}</span>
           <div class="phone" role="img" aria-label={`${app.name} app — “${show.screenLine}”`}>
             <div class="screen">
@@ -344,6 +375,24 @@ const jsonLd = {
       </div>
     </section>
 
+    {pitch && (
+      <section class="section container">
+        <div class="tfix-grid">
+          <div>
+            <span class="skicker">Learn from your mistakes</span>
+            <h2>Every mistake becomes the lesson.</h2>
+            <p class="lead">{app.name} fixes the sentence you just said — what to change, and why in one line — then keeps the conversation going.</p>
+            <ul class="tfix-points">
+              <li><span><b>Corrected in context</b>, not scored at the end of a lesson</span></li>
+              <li><span><b>The why, in your language</b> — never a grammar lecture</span></li>
+              <li><span><b>No red pen, no sighing</b> — you just keep talking</span></li>
+            </ul>
+          </div>
+          <CorrectionCard correction={pitch.correction} tutor={{ slug: app.slug, name: app.name, language: pitch.language }} />
+        </div>
+      </section>
+    )}
+
     {show.quotes && show.quotes.length > 0 && (
       <section class="section container quotes">
         <div class="quote-grid" data-count={show.quotes.length}>
@@ -358,6 +407,36 @@ const jsonLd = {
           ))}
         </div>
       </section>
+    )}
+
+    {pitch && (
+      <>
+        <section class="section container">
+          <span class="skicker">Why an AI tutor</span>
+          <h2>Private-tutor practice, without the private-tutor bill.</h2>
+          <p class="lead">A human tutor is still great. But most learners don’t need more lessons — they need a lot more speaking time.</p>
+          <TutorCompare name={app.name} rows={compareRows()} />
+        </section>
+
+        <section class="section container">
+          <span class="skicker">FAQ</span>
+          <h2>Questions about {app.name}</h2>
+          <FaqList items={faq} />
+        </section>
+
+        <section class="section container">
+          <a class="bliss-xsell" href={withBase('/bliss/')}>
+            <div class="avatar-stack" aria-hidden="true">
+              {LANGUAGE_TUTOR_SLUGS.map((s) => <img src={withBase(`/icons/${s}.jpg`)} alt="" width="44" height="44" loading="lazy" />)}
+            </div>
+            <div class="txt">
+              <h3>Learning more than one language?</h3>
+              <p>Bliss puts Sofia, Amélie, Emily and Meilin in one app — pick your tutor, switch any time, one subscription for every language. Coming soon.</p>
+            </div>
+            <span class="read">Meet Bliss →</span>
+          </a>
+        </section>
+      </>
     )}
 
     {pseoCount > 0 && (
