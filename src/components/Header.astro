@@ -1,5 +1,6 @@
 ---
 import { APPS, withBase } from '../config/apps';
+import BlissBloom from './BlissBloom.astro';
 
 interface Props {
   activeApp?: string;
@@ -26,7 +27,7 @@ const { activeApp, solo } = Astro.props;
 ) : (
   <header class="site-header">
     <div class="container inner">
-      <a class="logo" href={withBase('/')}><img class="logo-bloom" src={withBase('/brand/bliss-coach-mark.png')} alt="" width="22" height="22" loading="eager" />Bliss <span>Coach</span></a>
+      <a class="logo" href={withBase('/')}><BlissBloom class="logo-bloom" size={22} compact decorative />Bliss <span>Coach</span></a>
       <nav class="nav" aria-label="Apps">
         {Object.values(APPS).map((app) => (
           <a href={withBase(`/${app.slug}/`)} aria-current={activeApp === app.slug ? 'true' : undefined}>
