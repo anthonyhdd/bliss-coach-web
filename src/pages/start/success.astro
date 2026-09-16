@@ -1,0 +1,209 @@
+---
+// /start/success/ — where a web buyer becomes an app user.
+//
+// At this point the purchase is DONE and it already sits on the right RevenueCat customer: checkout
+// was made against the Supabase user id created by `signInAnonymously()` on the paywall, and the app
+// reads exactly that id (`revenueCatService.configure(user.id)`). Nothing here can orphan it.
+//
+// What is missing is a way for the buyer to sign in AGAIN — in the app, on their phone. That is all
+// this page does: `updateUser({ email, password })` attaches credentials to the anonymous account
+// WITHOUT changing `user.id`. Same id, same RevenueCat customer, same entitlement.
+//
+// ⚠️ If "Confirm email" is ON in Supabase → Authentication, attaching an email sends a confirmation
+// link and the buyer cannot sign in until they click it. That is one more step between paying and
+// speaking Spanish. Decide it deliberately; the copy below assumes it may happen and says so.
+import Base from '../../layouts/Base.astro';
+import { FUNNELS, DEFAULT_FUNNEL } from '../../config/funnel';
+import { APPS } from '../../config/apps';
+import '../../styles/funnel.css';
+
+const funnel = FUNNELS[DEFAULT_FUNNEL];
+const app = APPS[funnel.app];
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+---
+
+<Base
+  title="You're in — create your account"
+  description="Set your password and download Sofia."
+  bare
+  noindex
+  brandStyle={brandStyle}
+  bodyClass="funnel-body"
+>
+  <div class="fnl" data-success data-app-store-url={app.appStoreUrl}>
+    <section class="fnl-screen is-active" data-screen="claim">
+      <div class="fnl-inner">
+        <div class="fnl-tick" aria-hidden="true">✓</div>
+        <h1 data-welcome>You're in!</h1>
+        <p class="fnl-sub">
+          One last step: set a password. It is how you sign in on your phone — your subscription is
+          already attached to this account.
+        </p>
+
+        <form class="fnl-form" data-claim-form novalidate>
+          <label class="fnl-field">
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" required inputmode="email" />
+          </label>
+          <label class="fnl-field">
+            <span>Password</span>
+            <input type="password" name="password" autocomplete="new-password" required minlength="8" />
+            <small>At least 8 characters.</small>
+          </label>
+          <p class="fnl-error" data-claim-error hidden></p>
+          <button class="fnl-cta" type="submit">Create my account</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Done -------------------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="download">
+      <div class="fnl-inner fnl-center">
+        <div class="fnl-tick" aria-hidden="true">✓</div>
+        <h1>Account created</h1>
+        <p class="fnl-sub" data-download-sub>
+          Download Sofia and sign in with the email and password you just set. Your subscription will
+          already be there — nothing to restore.
+        </p>
+        <a class="fnl-cta" href={app.appStoreUrl} data-store-link>Download Sofia</a>
+        <p class="fnl-fineprint">
+          Trouble signing in? Email <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- No session -------------------------------------------------------- -->
+    <!--
+      Reached when the buyer lands here in a different browser from the one they paid in, or with
+      site data cleared. The purchase is NOT lost — it is on the account created at checkout — but we
+      cannot attach credentials without that session, so this hands them to a human instead of
+      pretending.
+    -->
+    <section class="fnl-screen" data-screen="nosession">
+      <div class="fnl-inner fnl-center">
+        <h1>Almost there</h1>
+        <p class="fnl-sub">
+          Your payment went through, but this browser is not the one you paid in, so we cannot finish
+          setting up your sign-in here.
+        </p>
+        <p class="fnl-sub">
+          Email <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a> from the address you
+          paid with and we will set it up for you the same day.
+        </p>
+        <a class="fnl-cta" href={app.appStoreUrl}>Download Sofia</a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../config/funnel';
+
+  function track(event: string, params: Record<string, unknown> = {}): void {
+    const gtag = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+    if (typeof gtag === 'function') gtag('event', event, params);
+  }
+
+  function initSuccess(): void {
+    const root = document.querySelector<HTMLElement>('[data-success]');
+    if (!root || root.dataset.initialised === '1') return;
+    root.dataset.initialised = '1';
+
+    const screens = new Map<string, HTMLElement>();
+    root.querySelectorAll<HTMLElement>('[data-screen]').forEach((el) => {
+      screens.set(el.dataset.screen as string, el);
+    });
+    function show(id: string): void {
+      screens.forEach((el) => el.classList.remove('is-active'));
+      screens.get(id)?.classList.add('is-active');
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    }
+
+    // The purchase is the conversion — report it here, not at the redirect to checkout, so the
+    // number in GA4 is money rather than intent.
+    const params = new URLSearchParams(window.location.search);
+    track('funnel_purchase', { package: params.get('package') ?? 'unknown' });
+
+    const name = params.get('name');
+    if (name) {
+      const welcome = root.querySelector<HTMLElement>('[data-welcome]');
+      if (welcome) welcome.textContent = `You're in, ${name}!`;
+    }
+
+    async function supabase() {
+      const { createClient } = await import('@supabase/supabase-js');
+      return createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // No session means we cannot attach credentials to the account that owns the purchase.
+    void (async () => {
+      try {
+        const client = await supabase();
+        const { data } = await client.auth.getUser();
+        if (!data.user) {
+          show('nosession');
+          track('funnel_claim_no_session');
+        }
+      } catch {
+        /* leave the form up — the submit below reports the real error */
+      }
+    })();
+
+    const errorEl = root.querySelector<HTMLElement>('[data-claim-error]');
+    function showError(message: string): void {
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    }
+
+    root.querySelector<HTMLFormElement>('[data-claim-form]')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget as HTMLFormElement;
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+      if (!email || password.length < 8) {
+        showError('Enter your email and a password of at least 8 characters.');
+        return;
+      }
+      if (errorEl) errorEl.hidden = true;
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'One moment…';
+      }
+
+      try {
+        const client = await supabase();
+        // Same user.id before and after — that is the whole design. The RevenueCat customer created
+        // at checkout keeps its entitlement and simply gains a way to sign in.
+        const { data, error } = await client.auth.updateUser({ email, password });
+        if (error || !data.user) {
+          showError(error?.message ?? 'Could not save your account. Please try again.');
+          return;
+        }
+
+        // With "Confirm email" ON, Supabase holds the new address until the link is clicked. The
+        // purchase is safe either way, but the buyer needs to know before they try the app.
+        const confirmed = Boolean(data.user.email_confirmed_at) || data.user.email === email;
+        const sub = root.querySelector<HTMLElement>('[data-download-sub]');
+        if (sub && !confirmed) {
+          sub.textContent =
+            'Check your inbox and confirm your email, then download Sofia and sign in. Your subscription is already attached to your account.';
+        }
+        track('funnel_account_claimed', { email_confirmed: confirmed });
+        show('download');
+      } catch {
+        showError('Something went wrong. Please try again.');
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = 'Create my account';
+        }
+      }
+    });
+  }
+
+  initSuccess();
+  document.addEventListener('astro:page-load', initSuccess);
+</script>
