@@ -11,3 +11,9 @@
 // (e.g. in the GitHub Actions deploy workflow) without editing this file.
 export const GA_MEASUREMENT_ID: string =
   import.meta.env.PUBLIC_GA_ID ?? 'G-P6FHL7KTC4';
+
+// App Store Connect "provider token" (App Analytics → Campaigns → Generate a campaign link, the
+// `pt=` value). With it, every store link carries `ct=web-<placement>` and App Store Connect
+// attributes the resulting page views, downloads and proceeds to the site, per placement.
+// Not secret. Empty = plain store links (clicks are still counted in GA4, installs are not).
+export const APP_STORE_PROVIDER_TOKEN: string = import.meta.env.PUBLIC_ASC_PT ?? '';

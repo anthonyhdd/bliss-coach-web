@@ -2,16 +2,28 @@
 // Renders the Google Analytics 4 (gtag.js) tag — but only when a valid
 // Measurement ID is configured, so builds without an ID ship zero tracking.
 import { GA_MEASUREMENT_ID } from '../config/analytics';
+import { STORE_ID_TO_SLUG } from '../config/apps';
 
 const id = GA_MEASUREMENT_ID.trim();
 const enabled = /^G-[A-Z0-9]+$/.test(id);
+
+// Outbound intent, the number the site exists for: `app_store_click` for any link to the App Store
+// (app = which coach, placement = which block sent it), `coach_click` for a home coach card that
+// opens the coach's landing page. Placement comes from the nearest data-placement, else the page
+// type (blog / pseo / landing). Registered once, survives ClientRouter navigations.
+const clickTracker = `if(!window.__storeTrack){window.__storeTrack=1;var IDS=${JSON.stringify(STORE_ID_TO_SLUG)};
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('a[href]'):null;if(!a)return;
+var h=a.href||'',store=h.indexOf('apps.apple.com')>-1,coach=a.getAttribute('data-coach');if(!store&&!coach)return;
+var m=h.match(/[/]id([0-9]{6,})/),pe=a.closest('[data-placement]'),p=location.pathname,
+pl=pe?pe.getAttribute('data-placement'):(p.indexOf('/blog/')>-1?'blog':(p.split('/').filter(Boolean).length>1?'pseo':'landing'));
+gtag('event',store?'app_store_click':'coach_click',{app:coach||(m&&IDS[m[1]])||'all_apps',placement:pl,page_path:p,transport_type:'beacon'});},true);}`;
 ---
 {enabled && (
   <>
     <script async src={`https://www.googletagmanager.com/gtag/js?id=${id}`}></script>
     <script
       is:inline
-      set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');
+      set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');${clickTracker}
 document.addEventListener('astro:page-load',function(){if(window.__ga4Loaded){gtag('event','page_view',{page_location:location.href,page_title:document.title});}window.__ga4Loaded=true;});`}
     />
   </>

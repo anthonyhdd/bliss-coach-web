@@ -20,7 +20,7 @@ const { activeApp, solo } = Astro.props;
       {solo.comingSoon ? (
         <span class="header-cta is-soon">Coming soon</span>
       ) : (
-        <a class="header-cta" href={solo.appStoreUrl}>Download</a>
+        <a class="header-cta" href={solo.appStoreUrl} data-placement={`${solo.slug}-header`}>Download</a>
       )}
     </div>
   </header>
