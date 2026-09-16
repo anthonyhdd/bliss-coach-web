@@ -1,0 +1,77 @@
+---
+// The one site header (founder 2026-09-16: "la navbar top devrait être la même entre la home et les
+// landing pages"): floating white pill, Bliss Coach wordmark, section links, one coral CTA.
+// Home: fixed over the hero. Every other page: sticky in the flow, so nothing needs offsetting.
+import BlissBloom from './BlissBloom.astro';
+import { withBase } from '../config/apps';
+
+interface Props {
+  cta: { href: string; label: string; placement: string };
+  /** 'fixed' on the home (floats over the hero), 'sticky' elsewhere */
+  mode?: 'fixed' | 'sticky';
+  /** section links point at the home: '#coaches' on the home, '/#coaches' elsewhere */
+  onHome?: boolean;
+  /** coming-soon apps: a quiet pill instead of a store link */
+  soon?: boolean;
+}
+const { cta, mode = 'sticky', onHome = false, soon = false } = Astro.props;
+const sec = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
+---
+
+<header class:list={['pillbar', mode]}>
+  <div class="pillbar-in">
+    <a class="pb-logo" href={withBase('/')}>
+      <BlissBloom size={26} compact decorative />
+      <span class="wm">Bliss<i>Coach</i></span>
+    </a>
+    <nav class="pb-nav" aria-label="Sections">
+      <a href={sec('coaches')}>Coaches</a>
+      <a href={sec('pillars')}>Why they work</a>
+      <a href={sec('reviews')}>Reviews</a>
+    </nav>
+    {soon ? (
+      <span class="pb-cta is-soon">{cta.label}</span>
+    ) : (
+      <a class="pb-cta" href={cta.href} data-placement={cta.placement}>{cta.label}</a>
+    )}
+  </div>
+</header>
+
+<style>
+  .pillbar { z-index: 90; pointer-events: none; }
+  .pillbar.fixed { position: fixed; top: 12px; left: 12px; right: 12px; }
+  .pillbar.sticky { position: sticky; top: 12px; padding: 12px 12px 0; margin-bottom: 4px; }
+  .pillbar-in {
+    pointer-events: auto;
+    max-width: 1120px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 8px 8px 8px 18px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border: 1px solid rgba(14, 26, 58, 0.08);
+    box-shadow: 0 10px 30px rgba(20, 40, 110, 0.1);
+  }
+  .pb-logo { display: inline-flex; align-items: center; gap: 9px; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; color: #0e1a3a; text-decoration: none; line-height: 1; }
+  /* wordmark: one font, one weight — "Bliss" and "Coach" identical (founder 2026-09-16) */
+  .wm { display: inline-flex; align-items: baseline; gap: 0.24em; }
+  .wm i { font: inherit; }
+  .pb-nav { display: flex; gap: 4px; }
+  .pb-nav a { font-size: 14px; font-weight: 600; color: rgba(14, 26, 58, 0.66); padding: 8px 12px; border-radius: 999px; text-decoration: none; transition: background 0.15s, color 0.15s; }
+  .pb-nav a:hover { background: rgba(14, 26, 58, 0.05); color: #0e1a3a; }
+  .pb-cta {
+    font-size: 14px; font-weight: 700; color: #fff; text-decoration: none; white-space: nowrap;
+    padding: 11px 20px; border-radius: 999px;
+    background: linear-gradient(92deg, #ff6a4d, #ff4f7b);
+    box-shadow: 0 8px 20px rgba(255, 90, 80, 0.32);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .pb-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(255, 90, 80, 0.42); }
+  .pb-cta.is-soon { background: #eef0f6; color: #5a6480; box-shadow: none; }
+  .pb-cta.is-soon:hover { transform: none; }
+  @media (max-width: 860px) {
+    .pb-nav { display: none; }
+    .pillbar-in { padding: 7px 7px 7px 14px; }
+    .pb-cta { padding: 10px 16px; font-size: 13px; }
+  }
+</style>
