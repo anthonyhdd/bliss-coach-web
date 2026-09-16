@@ -1,3 +1,4 @@
+import { APP_STORE_PROVIDER_TOKEN } from './analytics';
 export interface AppDef {
   slug: string;
   name: string;
@@ -281,6 +282,18 @@ export const LANG_NAMES: Record<string, string> = {
 };
 
 /** Prefix a root-relative path with the configured base (GH Pages preview vs prod). */
+/** App Store URL tagged with an App Analytics campaign (`ct`) when a provider token is set. */
+export function storeLink(url: string, placement: string): string {
+  if (!url || !APP_STORE_PROVIDER_TOKEN) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}pt=${APP_STORE_PROVIDER_TOKEN}&ct=${encodeURIComponent(`web-${placement}`.slice(0, 40))}&mt=8`;
+}
+
+/** App Store id -> app slug, for naming store clicks in analytics. */
+export const STORE_ID_TO_SLUG: Record<string, string> = Object.fromEntries(
+  Object.values(APPS).filter((a) => a.appStoreId).map((a) => [a.appStoreId, a.slug]),
+);
+
 export function withBase(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return `${base}${path}`;

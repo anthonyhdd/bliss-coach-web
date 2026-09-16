@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import AppStoreButton from '../../components/AppStoreButton.astro';
 import CelestialCrest from '../../components/CelestialCrest.astro';
-import { APPS, withBase, avatarFor } from '../../config/apps';
+import { APPS, withBase, avatarFor, storeLink } from '../../config/apps';
 import { SHOWCASE } from '../../config/showcase';
 import { PSEO_SECTIONS } from '../../config/pseo';
 import ProofRow from '../../components/tutor/ProofRow.astro';
@@ -90,7 +90,7 @@ if (faq.length) {
               <span class="coming-soon">Coming soon to the App Store</span>
             ) : (
               <>
-                <AppStoreButton href={app.appStoreUrl} />
+                <AppStoreButton href={app.appStoreUrl} placement={`${app.slug}-hero`} />
                 {/* same friction-reducers as the app's own welcome screen */}
                 <p class="cta-note">Free to download · No credit card to start</p>
               </>
@@ -533,7 +533,7 @@ if (faq.length) {
     )}
 
     {!app.comingSoon && (
-      <a class="sticky-cta" href={app.appStoreUrl} aria-label={`Download ${app.name} on the App Store`}>
+      <a class="sticky-cta" href={storeLink(app.appStoreUrl, `${app.slug}-sticky`)} data-placement={`${app.slug}-sticky`} aria-label={`Download ${app.name} on the App Store`}>
         <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" />
         <span class="sc-txt"><b>Get {app.name}</b> — free on the App Store</span>
         <span class="sc-btn">Download</span>
@@ -551,7 +551,7 @@ if (faq.length) {
         {app.comingSoon ? (
           <span class="coming-soon">Coming soon to the App Store</span>
         ) : (
-          <AppStoreButton href={app.appStoreUrl} />
+          <AppStoreButton href={app.appStoreUrl} placement={`${app.slug}-footer`} />
         )}
       </div>
     </section>

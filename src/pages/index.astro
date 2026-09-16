@@ -1,7 +1,14 @@
 ---
 import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
-import { withBase, avatarFor } from '../config/apps';
+import { withBase, avatarFor, APPS, storeLink } from '../config/apps';
+
+const DEV_PAGE = 'https://apps.apple.com/us/developer/bliss-coach/id1628409883';
+// live App Store link for a coach, or '' while the app is not on sale (Emily, Astra)
+const liveStore = (slug: string, placement: string) => {
+  const a = APPS[slug];
+  return a && a.appStoreUrl && !a.comingSoon ? storeLink(a.appStoreUrl, placement) : '';
+};
 import Analytics from '../components/Analytics.astro';
 import BlissBloom from '../components/BlissBloom.astro';
 
@@ -1329,6 +1336,18 @@ const coaches = [
         padding: 84px 0 24px;
       }
       .coaches.pinned .crsl-track { scroll-snap-type: none; overflow-x: hidden; }
+      /* the store, one tap under the coaches */
+      .store-row { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+      .store-badge {
+        display: inline-flex; align-items: center; gap: 9px; height: 48px; padding: 0 18px 0 14px;
+        border-radius: 12px; background: #0b0b0f; color: #fff; text-decoration: none;
+        box-shadow: 0 10px 24px rgba(14, 26, 58, 0.18); transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .store-badge:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(14, 26, 58, 0.24); }
+      .store-badge svg { width: 22px; height: 26px; }
+      .store-badge .sb-txt { display: flex; flex-direction: column; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
+      .store-badge small { font-size: 10.5px; font-weight: 500; letter-spacing: 0.01em; }
+      .store-note { font-size: 14px; font-weight: 500; color: #5a6480; }
       .crsl { position: relative; }
       .crsl-track {
         display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
@@ -1436,7 +1455,7 @@ const coaches = [
           <a href="#pillars">Why they work</a>
           <a href="#reviews">Reviews</a>
         </nav>
-        <a class="pb-cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
+        <a class="pb-cta" href={storeLink(DEV_PAGE, 'home-header')} data-placement="home-header">Get the apps</a>
       </div>
     </header>
     <div class="card">
@@ -1465,7 +1484,7 @@ const coaches = [
       <div class="horizon">
         <nav class="avatars" aria-label="Our apps">
           {avatars.map((a) => (
-            <a href={withBase(a.href)} title={a.alt} class="dock-chip">
+            <a href={withBase(a.href)} title={a.alt} class="dock-chip" data-coach={a.slug} data-store={liveStore(a.slug, 'home-dock') || undefined} data-placement="home-dock">
               <img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="54" height="66" loading="eager" />
               {hasVideo(a.slug) && (
                 <video class="dock-vid" src={withBase(`/home/video/${a.slug}.mp4`)} muted loop playsinline preload="none" aria-hidden="true" width="54" height="66"></video>
@@ -1529,7 +1548,7 @@ const coaches = [
           </button>
           <div class="crsl-track">
         {coaches.map((c, i) => (
-          <a class="chapter ccard" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
+          <a class="chapter ccard" href={withBase(`/${c.slug}/`)} data-coach={c.slug} data-store={liveStore(c.slug, 'home-carousel') || undefined} data-placement="home-carousel" style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
             <span class="cc-media">
               {hasVideo(c.slug) ? (
                 /* one standing loop per card — no idle-video swap on hover here (founder 2026-09-16) */
@@ -1550,6 +1569,13 @@ const coaches = [
           <button class="crsl-arrow next" type="button" aria-label="Next coach">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
+        </div>
+        <div class="store-row">
+          <a class="store-badge" href={storeLink(DEV_PAGE, 'home-badge')} data-placement="home-badge" aria-label="Download on the App Store">
+            <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <span class="sb-txt"><small>Download on the</small>App Store</span>
+          </a>
+          <span class="store-note">Free to start · iPhone &amp; iPad</span>
         </div>
         </div>
       </section>
@@ -1684,7 +1710,7 @@ const coaches = [
         <p class="rv">Every session is voice-first and personal — built to help you improve, one conversation at a time.</p>
         <div class="cta-wrap rv" style="display:inline-block">
           <span class="cta-beam" aria-hidden="true"></span>
-          <a class="cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
+          <a class="cta" href={storeLink(DEV_PAGE, 'home-final')} data-placement="home-final">Get the apps</a>
         </div>
       </section>
     </div>
@@ -1709,13 +1735,13 @@ const coaches = [
       </div>
       <div class="foot-board" role="navigation" aria-label="Our apps">
         {['sofia', 'amelie', 'meilin', 'alex', 'charm', 'mila', 'astra'].map((sl) => (
-          <a href={withBase(`/${sl}/`)}><img src={withBase(`/icons/${sl}.jpg`)} alt={sl} width="54" height="54" loading="lazy" /></a>
+          <a href={withBase(`/${sl}/`)} data-coach={sl} data-placement="home-footer-icons"><img src={withBase(`/icons/${sl}.jpg`)} alt={sl} width="54" height="54" loading="lazy" /></a>
         ))}
       </div>
       <div class="foot-mark">Bliss <em>Coach</em></div>
       <p class="foot-tag">Get better, every day.</p>
       <nav class="foot-links" aria-label="Legal">
-        <a href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">App Store</a>
+        <a href={storeLink(DEV_PAGE, 'home-footer')} data-placement="home-footer">App Store</a>
         <a href="/privacy/">Privacy</a>
         <a href="/terms/">Terms</a>
         <a href="/careers/">Careers</a>
@@ -1953,6 +1979,13 @@ const coaches = [
       // coach carousel. Scroll-driven when motion is allowed: the section is pinned and the
       // page's vertical scroll walks the row to the left (founder: "elles devraient aller à
       // gauche à mesure du scroll"). Reduced motion keeps a plain swipeable, snapping row.
+      // on an iPhone/iPad the landing page is a detour: coach cards and dock chips open the
+      // coach's App Store page directly (desktop keeps the landing, and the HTML keeps the
+      // internal links for search engines)
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS) {
+        document.querySelectorAll<HTMLAnchorElement>('a[data-store]').forEach((a) => { a.href = a.dataset.store!; });
+      }
       const track = document.querySelector<HTMLElement>('.crsl-track');
       const coachSec = document.getElementById('coaches');
       if (track && coachSec) {
