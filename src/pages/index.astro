@@ -1120,6 +1120,43 @@ const coaches = [
          a coach carousel instead of the stacked deck, centered section heads. */
       /* the pill header lives in components/PillBar.astro (shared with every page) */
 
+      /* ============ HOME POLISH (2026-09-16: "la home pourrait être mieux") ============ */
+      /* bigger faces under the hero: the coaches ARE the product */
+      .avatars a { margin-right: -6px; }
+      .avatars img { width: 68px; height: 84px; border-radius: 20px; }
+      /* less empty scroll around the manifesto */
+      .manifesto { padding: 12vh 24px 10vh; }
+      /* craft: the eight coaches as a tidy 4x2 wall */
+      .art-craft .tiles { grid-template-columns: repeat(4, 56px); gap: 10px; }
+      .art-craft .tile { width: 56px; height: 68px; object-fit: cover; border-radius: 16px; border: 2px solid #fff; }
+      .art-craft .tile:nth-child(5) { transform: none; box-shadow: 0 10px 22px rgba(30, 50, 110, 0.2); }
+      @media (prefers-reduced-motion: no-preference) {
+        .art-craft .tile:nth-child(5) { animation: tile-drift 5s ease-in-out infinite 0.6s; }
+        .art-craft .tile:nth-child(7) { animation-delay: 1.3s; }
+        .art-craft .tile:nth-child(8) { animation-delay: 0.2s; }
+      }
+      /* rigor: a plan card */
+      .art-rigor { display: flex; align-items: center; justify-content: center; }
+      .art-rigor .fcol { display: none; }
+      .plan { width: min(320px, 86%); background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: 0 16px 40px rgba(30, 50, 110, 0.14); border: 1px solid rgba(14, 26, 58, 0.06); }
+      .plan-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 12px; color: #5a6480; font-weight: 600; }
+      .plan-head b { font-size: 11px; color: #a06a12; background: #fff4dc; padding: 3px 8px; border-radius: 999px; }
+      .plan-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13.5px; font-weight: 600; color: #0e1a3a; border-top: 1px solid rgba(14, 26, 58, 0.06); }
+      .plan-row i { flex: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(14, 26, 58, 0.2); }
+      .plan-row.done span { color: #8a93ab; text-decoration: line-through; }
+      .plan-row.done i { background: #22c55e; border-color: #22c55e; }
+      .plan-row.now i { border-color: #c9a14a; box-shadow: 0 0 0 4px rgba(201, 161, 74, 0.18); }
+      /* reviews: readable */
+      .review { width: 360px; padding: 22px 24px 20px; }
+      .review blockquote { font-size: 17px; line-height: 1.5; color: #0e1a3a; font-weight: 500; }
+      .review figcaption { font-size: 13.5px; }
+      .reviews .rev-title { font-size: clamp(30px, 4.4vw, 48px); }
+      @media (max-width: 640px) {
+        .avatars img { width: 44px; height: 56px; border-radius: 14px; }
+        .review { width: 290px; }
+        .review blockquote { font-size: 15.5px; }
+      }
+
       /* ============ FINAL CALL + FOOTER (founder 2026-09-16: "c moche cette partie") ============ */
       .final { padding: clamp(40px, 8vw, 96px) 16px clamp(48px, 7vw, 80px); }
       .final-card {
@@ -1490,13 +1527,9 @@ const coaches = [
           <div class="bcell b5 rv">
             <div class="art art-craft" aria-hidden="true">
               <div class="tiles">
-                <img class="tile" src={withBase('/icons/sofia.jpg')} alt="" width="56" height="56" loading="lazy" />
-                <img class="tile" src={withBase('/icons/amelie.jpg')} alt="" width="56" height="56" loading="lazy" />
-                <img class="tile" src={withBase('/icons/meilin.jpg')} alt="" width="56" height="56" loading="lazy" />
-                <img class="tile" src={withBase('/icons/alex.jpg')} alt="" width="56" height="56" loading="lazy" />
-                <img class="tile" src={withBase('/icons/charm.jpg')} alt="" width="56" height="56" loading="lazy" />
-                <img class="tile" src={withBase('/icons/mila.jpg')} alt="" width="56" height="56" loading="lazy" />
-                <img class="tile" src={withBase('/icons/astra.jpg')} alt="" width="56" height="56" loading="lazy" />
+                {avatars.map((a) => (
+                  <img class="tile" src={withBase(`/home/${a.src}`)} alt="" style={`object-position:${a.pos}`} width="56" height="68" loading="lazy" />
+                ))}
               </div>
             </div>
             <div class="btxt">
@@ -1507,15 +1540,16 @@ const coaches = [
 
           <div class="bcell b7 rv">
             <div class="art art-rigor" aria-hidden="true">
-              <div class="fcol" style="animation-duration:14s"><span>♄</span><span>3</span><span>☽</span><span>7</span><span>♀</span><span>1</span><span>☉</span><span>9</span><span>♄</span><span>3</span><span>☽</span><span>7</span></div>
-              <div class="fcol" style="animation-duration:22s"><span>2</span><span>♆</span><span>8</span><span>☿</span><span>5</span><span>♃</span><span>0</span><span>♂</span><span>2</span><span>♆</span><span>8</span><span>☿</span></div>
-              <div class="fcol" style="animation-duration:11s"><span>☉</span><span>6</span><span>♓</span><span>4</span><span>♌</span><span>8</span><span>☽</span><span>2</span><span>☉</span><span>6</span><span>♓</span><span>4</span></div>
-              <div class="fcol" style="animation-duration:18s"><span>1</span><span>♀</span><span>9</span><span>♎</span><span>3</span><span>☿</span><span>7</span><span>♑</span><span>1</span><span>♀</span><span>9</span><span>♎</span></div>
-              <div class="fcol" style="animation-duration:26s"><span>♃</span><span>5</span><span>☽</span><span>0</span><span>♒</span><span>6</span><span>♄</span><span>4</span><span>♃</span><span>5</span><span>☽</span><span>0</span></div>
+              <div class="plan">
+                <div class="plan-head"><span>Today · 10 min</span><b>Built for you</b></div>
+                <div class="plan-row done"><i></i><span>Warm-up: Tuesday's 3 mistakes</span></div>
+                <div class="plan-row now"><i></i><span>Role-play: ordering at a café</span></div>
+                <div class="plan-row"><i></i><span>New: the past tense you keep dodging</span></div>
+              </div>
             </div>
             <div class="btxt">
               <h3>Rigor</h3>
-              <p>Computed, not recycled. Plans, corrections and horoscopes are built from <em>your data, fresh every day.</em></p>
+              <p>Computed, not recycled. Every plan and correction is built from <em>your own sessions, fresh every day.</em></p>
             </div>
           </div>
 
