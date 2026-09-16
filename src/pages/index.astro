@@ -1332,7 +1332,9 @@ const coaches = [
       .crsl { position: relative; }
       .crsl-track {
         display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
-        padding: 6px max(24px, calc(50% - 540px)) 26px;
+        /* half a card of padding each side: the row starts on the first coach CENTRED and ends on
+           the last one centred, instead of hugging the right edge (founder 2026-09-16) */
+        padding: 6px calc(50% - min(200px, 42vw)) 26px;
         scrollbar-width: none; -ms-overflow-style: none;
       }
       .crsl-track::-webkit-scrollbar { display: none; }
@@ -1415,7 +1417,6 @@ const coaches = [
       .crsl-arrow[disabled] { opacity: 0.3; cursor: default; }
       @media (max-width: 700px) {
         .crsl-arrow { display: none; }
-        .crsl-track { padding-left: 20px; padding-right: 20px; }
       }
 
       /* praktika-ish rounding elsewhere */
