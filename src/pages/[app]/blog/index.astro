@@ -33,6 +33,8 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   title={`${app.blogTitle} | ${app.name}`}
   description={app.blogDescription}
   appStoreId={app.appStoreId}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon }}
+  siteFooter
   ogImage={`/icons/${app.slug}.jpg`}
   activeApp={app.slug}
 >

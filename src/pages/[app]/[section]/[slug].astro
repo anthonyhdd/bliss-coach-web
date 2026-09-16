@@ -120,6 +120,8 @@ if (faq.length >= 2) {
   title={entry.data.title}
   description={entry.data.description}
   appStoreId={app.appStoreId}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon }}
+  siteFooter
   ogImage={`/icons/${app.slug}.jpg`}
   bodyClass="article-page"
   activeApp={app.slug}

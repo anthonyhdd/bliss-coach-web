@@ -19,6 +19,7 @@ const PSEO_BASE = {
   mila: 'foods',
   amelie: 'how-to-say',
   astra: 'signs',
+  meilin: 'how-to-say',
 };
 
 // Minimal frontmatter reader (dates + routing fields only) so the sitemap can

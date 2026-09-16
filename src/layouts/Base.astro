@@ -17,6 +17,8 @@ interface Props {
   activeApp?: string;
   jsonLd?: object | object[];
   soloHeader?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean };
+  /** articles/SEO pages: app CTA in the header but the site-wide footer (keeps its cross-links, incl. KAMO) */
+  siteFooter?: boolean;
   /** per-app brand CSS vars, applied at body level so header/footer inherit */
   brandStyle?: string;
   /** html lang attribute (default en) */
@@ -25,7 +27,7 @@ interface Props {
   alternates?: { hreflang: string; href: string }[];
 }
 
-const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd, soloHeader, brandStyle, lang = 'en', alternates = [] } = Astro.props;
+const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd, soloHeader, siteFooter = false, brandStyle, lang = 'en', alternates = [] } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL, '/').replace('//', '/'), Astro.site);
 const ogImageUrl = ogImage
@@ -74,7 +76,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <main>
         <slot />
       </main>
-      <Footer solo={soloHeader ? { name: soloHeader.name, slug: soloHeader.slug } : undefined} />
+      <Footer solo={soloHeader && !siteFooter ? { name: soloHeader.name, slug: soloHeader.slug } : undefined} />
     </div>
     <script>
       // Progressive scroll-reveal: elements start visible for no-JS / reduced
