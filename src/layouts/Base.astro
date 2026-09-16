@@ -25,9 +25,13 @@ interface Props {
   lang?: string;
   /** hreflang alternates, rendered as <link rel="alternate"> */
   alternates?: { hreflang: string; href: string }[];
+  /** paid-funnel pages: no header, no footer, no way out but forward or back */
+  bare?: boolean;
+  /** keep out of the index (funnel pages would rank as thin duplicates of the landing) */
+  noindex?: boolean;
 }
 
-const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd, soloHeader, siteFooter = false, brandStyle, lang = 'en', alternates = [] } = Astro.props;
+const { title, description, appStoreId, ogImage, bodyClass = '', activeApp, jsonLd, soloHeader, siteFooter = false, brandStyle, lang = 'en', alternates = [], bare = false, noindex = false } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL, '/').replace('//', '/'), Astro.site);
 const ogImageUrl = ogImage
@@ -47,6 +51,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
     <link rel="canonical" href={canonical.href} />
     {alternates.map((a) => (
       <link rel="alternate" hreflang={a.hreflang} href={a.href} />
@@ -72,11 +77,11 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   </head>
   <body class={bodyClass} style={brandStyle}>
     <div class="page">
-      <Header activeApp={activeApp} solo={soloHeader} />
+      {!bare && <Header activeApp={activeApp} solo={soloHeader} />}
       <main>
         <slot />
       </main>
-      <Footer solo={soloHeader && !siteFooter ? { name: soloHeader.name, slug: soloHeader.slug } : undefined} />
+      {!bare && <Footer solo={soloHeader && !siteFooter ? { name: soloHeader.name, slug: soloHeader.slug } : undefined} />}
     </div>
     <script>
       // Progressive scroll-reveal: elements start visible for no-JS / reduced

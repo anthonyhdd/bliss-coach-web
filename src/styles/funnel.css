@@ -1,0 +1,340 @@
+/* /start/ — paid-funnel styles.
+ *
+ * Mobile-first and deliberately narrow: essentially all paid social traffic is on a phone, and the
+ * funnel is one column at every width. Tokens come from global.css; the per-app brand vars are set
+ * inline on <body> by the page.
+ */
+
+.funnel-body .page { min-height: 100dvh; }
+
+.fnl {
+  --fnl-w: 460px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- top bar ---------- */
+.fnl-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg);
+}
+
+.fnl-back {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.fnl-back[hidden] { display: none; }
+
+.fnl-progress {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(14, 26, 58, 0.08);
+  overflow: hidden;
+}
+
+.fnl-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- screens ---------- */
+.fnl-screen { display: none; flex: 1; }
+.fnl-screen.is-active { display: flex; }
+
+.fnl-inner {
+  width: 100%;
+  max-width: var(--fnl-w);
+  margin: 0 auto;
+  padding: 8px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  animation: fnl-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fnl-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fnl-inner { animation: none; }
+  .fnl-progress-fill { transition: none; }
+}
+
+.fnl h1 {
+  font-size: clamp(28px, 7vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.fnl h2 {
+  font-size: clamp(22px, 5.5vw, 28px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin-bottom: 8px;
+}
+
+.fnl-sub {
+  color: var(--text-dim);
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.fnl-fineprint {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.fnl-legal {
+  color: var(--text-dim);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 20px;
+}
+.fnl-legal a { text-decoration: underline; }
+
+/* ---------- intro ---------- */
+.fnl-intro {
+  justify-content: center;
+  min-height: calc(100dvh - 120px);
+  text-align: center;
+}
+
+/* ---------- options ---------- */
+.fnl-options { display: flex; flex-direction: column; gap: 10px; }
+
+.fnl-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  text-align: left;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 140ms, transform 140ms, box-shadow 140ms;
+}
+
+.fnl-option:hover { border-color: var(--accent); }
+.fnl-option.is-picked {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  transform: scale(0.985);
+}
+
+.fnl-glyph { font-size: 24px; line-height: 1; flex: none; }
+.fnl-option-text { display: flex; flex-direction: column; gap: 2px; }
+.fnl-option-label { font-weight: 600; }
+.fnl-option-hint { color: var(--text-dim); font-size: 13.5px; line-height: 1.35; }
+
+/* ---------- CTA ---------- */
+.fnl-cta {
+  width: 100%;
+  padding: 17px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  color: var(--on-gradient);
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.fnl-cta:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---------- building ---------- */
+.fnl-building {
+  justify-content: center;
+  min-height: calc(100dvh - 120px);
+  text-align: center;
+  align-items: center;
+}
+
+.fnl-spinner {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 22px;
+  border-radius: 50%;
+  border: 3px solid rgba(14, 26, 58, 0.1);
+  border-top-color: var(--accent);
+  animation: fnl-spin 780ms linear infinite;
+}
+
+@keyframes fnl-spin { to { transform: rotate(360deg); } }
+
+.fnl-build-list { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+
+.fnl-build-list li {
+  color: var(--text-dim);
+  font-size: 15px;
+  opacity: 0.45;
+  transition: opacity 240ms, color 240ms;
+}
+
+.fnl-build-list li.is-done { opacity: 1; color: var(--text); }
+.fnl-build-list li.is-done::before { content: '✓ '; color: var(--accent); font-weight: 700; }
+
+/* ---------- plan ---------- */
+.fnl-included {
+  list-style: none;
+  margin: 4px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.fnl-included li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.fnl-included li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.fnl-plans { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+.fnl-plan {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: 'name price' 'equiv cadence';
+  gap: 2px 12px;
+  align-items: center;
+  padding: 16px 18px;
+  text-align: left;
+  background: var(--bg-raised);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 140ms, box-shadow 140ms;
+}
+
+.fnl-plan.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.fnl-plan-badge {
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  color: var(--on-gradient);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.fnl-plan-name { grid-area: name; font-weight: 700; font-size: 16px; }
+.fnl-plan-price { grid-area: price; font-weight: 700; font-size: 20px; }
+.fnl-plan-cadence { grid-area: cadence; color: var(--text-dim); font-size: 13px; text-align: right; }
+.fnl-plan-equiv { grid-area: equiv; color: var(--text-dim); font-size: 13px; }
+
+.fnl-warn {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff4e5;
+  border: 1px solid #ffd9a0;
+  color: #7a4a00;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.fnl-warn code { font-size: 12px; background: rgba(0, 0, 0, 0.06); padding: 1px 4px; border-radius: 4px; }
+
+/* ---------- auth ---------- */
+.fnl-oauth {
+  width: 100%;
+  padding: 16px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fnl-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+.fnl-or::before, .fnl-or::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.fnl-form { display: flex; flex-direction: column; gap: 14px; }
+
+.fnl-field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
+
+.fnl-field input {
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-raised);
+  color: var(--text);
+  font-size: 16px; /* 16px minimum, or iOS Safari zooms on focus and the layout jumps */
+  font-family: inherit;
+}
+
+.fnl-field input:focus { outline: none; border-color: var(--accent); }
+.fnl-field small { color: var(--text-dim); font-weight: 400; font-size: 12.5px; }
+
+.fnl-error {
+  color: #b42318;
+  font-size: 14px;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  border-radius: 10px;
+  padding: 10px 12px;
+}

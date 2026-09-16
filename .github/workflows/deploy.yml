@@ -22,6 +22,14 @@ jobs:
       - uses: withastro/action@v3
         with:
           node-version: 22
+        env:
+          # Public, client-side values for the /start/ funnel — none of these is a secret, they all
+          # ship in the bundle. They live in repo secrets only so they are set in one place.
+          # Any of them missing = the paywall renders visibly disabled instead of sending a buyer
+          # to a dead checkout. See isCheckoutConfigured() in src/config/funnel.ts.
+          PUBLIC_RC_WEB_BILLING_URL: ${{ secrets.PUBLIC_RC_WEB_BILLING_URL }}
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
 
   deploy:
     needs: build
