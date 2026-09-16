@@ -108,7 +108,10 @@ export default defineConfig({
       // and guessable on purpose — the secrecy lives in the access code — but it
       // is a founder tool, not a page for visitors or crawlers. Deliberately NOT
       // in robots.txt either: a Disallow line advertises the path.
-      filter: (page) => !page.includes('/studio/'),
+      // /studio/ is the founder's private gallery; /start/ is the paid-traffic funnel, which is
+      // noindex on purpose (it would rank as a thin duplicate of the app landing and split its
+      // organic signal). Listing either in the sitemap contradicts that.
+      filter: (page) => !page.includes('/studio/') && !page.includes('/start/'),
     }),
   ],
 });

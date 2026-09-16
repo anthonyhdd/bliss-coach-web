@@ -1,0 +1,503 @@
+---
+// /start/ — the paid-traffic funnel. Quiz → plan → paywall → checkout, all before the App Store.
+//
+// This page is the ad landing. It is `bare` (no header, no footer) and `noindex` on purpose: there
+// is no way out but forward or back, and it must never compete with /sofia/ in search — it would
+// rank as a thin duplicate and split the organic signal the landing already earns.
+//
+// Every step is rendered into the HTML at build time and switched client-side. There are no page
+// loads between questions: a static site can do the whole quiz in one document, and each avoided
+// navigation is conversion that does not leak. The URL hash still changes per step so the browser
+// back button works and GA4 sees the progression.
+//
+// Why the funnel is config-driven (src/config/funnel.ts) rather than written inline: Bliss gets this
+// same page by adding one entry to FUNNELS once it ships. The machine is the page, not the app.
+import Base from '../../layouts/Base.astro';
+import { FUNNELS, DEFAULT_FUNNEL, isCheckoutConfigured } from '../../config/funnel';
+import { APPS } from '../../config/apps';
+import '../../styles/funnel.css';
+
+const funnel = FUNNELS[DEFAULT_FUNNEL];
+const app = APPS[funnel.app];
+const checkoutReady = isCheckoutConfigured();
+
+const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+
+// The quiz questions, then the three screens that close the sale.
+const totalSteps = funnel.steps.length + 2; // + plan + auth ("building" is a transition, not a step)
+---
+
+<Base
+  title={`${funnel.headline} — Bliss Coach`}
+  description={funnel.sub}
+  bare
+  noindex
+  brandStyle={brandStyle}
+  bodyClass="funnel-body"
+>
+  <div
+    class="fnl"
+    data-funnel={funnel.id}
+    data-app={funnel.app}
+    data-app-store-url={app.appStoreUrl}
+    data-trial-days={String(funnel.trialDays)}
+    data-total-steps={String(totalSteps)}
+    data-checkout-ready={checkoutReady ? '1' : '0'}
+  >
+    <header class="fnl-bar">
+      <button class="fnl-back" type="button" aria-label="Go back" hidden>&larr;</button>
+      <div class="fnl-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="fnl-progress-fill"></span>
+      </div>
+    </header>
+
+    <!-- Intro ------------------------------------------------------------ -->
+    <section class="fnl-screen is-active" data-screen="intro">
+      <div class="fnl-inner fnl-intro">
+        <h1>{funnel.headline}</h1>
+        <p class="fnl-sub">{funnel.sub}</p>
+        <button class="fnl-cta" type="button" data-action="start">Build my plan</button>
+        <p class="fnl-fineprint">Takes about 30 seconds.</p>
+      </div>
+    </section>
+
+    <!-- Quiz -------------------------------------------------------------- -->
+    {funnel.steps.map((step, i) => (
+      <section class="fnl-screen" data-screen={step.id} data-quiz-index={String(i)}>
+        <div class="fnl-inner">
+          <h2>{step.question}</h2>
+          {step.sub && <p class="fnl-sub">{step.sub}</p>}
+          <div class="fnl-options">
+            {step.options.map((opt) => (
+              <button class="fnl-option" type="button" data-step={step.id} data-value={opt.id}>
+                {opt.glyph && <span class="fnl-glyph" aria-hidden="true">{opt.glyph}</span>}
+                <span class="fnl-option-text">
+                  <span class="fnl-option-label">{opt.label}</span>
+                  {opt.hint && <span class="fnl-option-hint">{opt.hint}</span>}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <!-- Building ---------------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="building">
+      <div class="fnl-inner fnl-building">
+        <div class="fnl-spinner" aria-hidden="true"></div>
+        <h2>Building your plan</h2>
+        <ul class="fnl-build-list">
+          <li data-build-line>Matching your level</li>
+          <li data-build-line>Choosing your first conversation</li>
+          <li data-build-line>Setting your daily rhythm</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Plan + paywall ---------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="plan">
+      <div class="fnl-inner">
+        <h2>Your plan is ready</h2>
+        <p class="fnl-sub" data-plan-recap></p>
+
+        <ul class="fnl-included">
+          {funnel.included.map((line) => (
+            <li>{line}</li>
+          ))}
+        </ul>
+
+        <div class="fnl-plans">
+          {funnel.plans.map((plan) => (
+            <button
+              class:list={['fnl-plan', plan.highlight && 'is-highlight']}
+              type="button"
+              data-package={plan.packageId}
+              data-price={plan.price}
+            >
+              {plan.badge && <span class="fnl-plan-badge">{plan.badge}</span>}
+              <span class="fnl-plan-name">{plan.name}</span>
+              <span class="fnl-plan-price">{plan.price}</span>
+              <span class="fnl-plan-cadence">{plan.cadence}</span>
+              {plan.equivalent && <span class="fnl-plan-equiv">{plan.equivalent}</span>}
+            </button>
+          ))}
+        </div>
+
+        <button class="fnl-cta" type="button" data-action="checkout" disabled>
+          {funnel.trialDays > 0 ? `Start my ${funnel.trialDays}-day free trial` : 'Get started'}
+        </button>
+
+        <p class="fnl-fineprint" data-terms>
+          {funnel.trialDays > 0
+            ? `Free for ${funnel.trialDays} days, then the plan you picked. Cancel any time before it ends and you pay nothing.`
+            : 'Cancel any time.'}
+        </p>
+
+        {!checkoutReady && (
+          <p class="fnl-warn">
+            Checkout is not configured yet. Set <code>PUBLIC_RC_WEB_BILLING_URL</code>,
+            <code>PUBLIC_SUPABASE_URL</code> and <code>PUBLIC_SUPABASE_ANON_KEY</code> in the deploy
+            workflow before sending traffic here.
+          </p>
+        )}
+
+        <p class="fnl-legal">
+          <a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Auth -------------------------------------------------------------- -->
+    <!--
+      The hard rule of this funnel: the buyer signs in BEFORE paying. The app's RevenueCat App User
+      ID is the Supabase user id, so a purchase made against any other id is a purchase the app can
+      never see. Apple first (one tap, and it is the app's primary sign-in), email + password second
+      — deliberately NO magic link, which sends the buyer to their inbox and loses them.
+    -->
+    <section class="fnl-screen" data-screen="auth">
+      <div class="fnl-inner">
+        <h2>Create your account</h2>
+        <p class="fnl-sub">
+          This is how your subscription follows you into the app. Use the same account when you sign in
+          there.
+        </p>
+
+        <button class="fnl-oauth" type="button" data-action="apple">
+          <span aria-hidden="true"></span> Continue with Apple
+        </button>
+
+        <div class="fnl-or"><span>or</span></div>
+
+        <form class="fnl-form" data-auth-form novalidate>
+          <label class="fnl-field">
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" required inputmode="email" />
+          </label>
+          <label class="fnl-field">
+            <span>Password</span>
+            <input type="password" name="password" autocomplete="new-password" required minlength="8" />
+            <small>At least 8 characters.</small>
+          </label>
+          <p class="fnl-error" data-auth-error hidden></p>
+          <button class="fnl-cta" type="submit">Continue to checkout</button>
+        </form>
+
+        <p class="fnl-legal">
+          By continuing you agree to our <a href="/terms/">Terms</a> and
+          <a href="/privacy/">Privacy Policy</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import {
+    FUNNELS,
+    DEFAULT_FUNNEL,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    checkoutUrl,
+  } from '../../config/funnel';
+
+  type Answers = Record<string, string>;
+
+  const STORAGE_KEY = 'bliss_funnel_v1';
+
+  /**
+   * Ad attribution, captured from the landing URL and carried all the way to checkout.
+   *
+   * This is the reason the web funnel exists at all: on the App Store path these installs land in
+   * AppsFlyer's `restricted` bucket with no campaign attached, because the user never resolved ATT.
+   * On the web the click ids are simply in the URL and stay ours.
+   */
+  const ATTRIBUTION_KEYS = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_content',
+    'utm_term',
+    'fbclid',
+    'ttclid',
+    'gclid',
+  ];
+
+  function track(event: string, params: Record<string, unknown> = {}): void {
+    const gtag = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+    if (typeof gtag === 'function') gtag('event', event, params);
+  }
+
+  function initFunnel(): void {
+    const root = document.querySelector<HTMLElement>('.fnl');
+    if (!root) return;
+    if (root.dataset.initialised === '1') return;
+    root.dataset.initialised = '1';
+
+    const funnel = FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL];
+    const quizIds = funnel.steps.map((s) => s.id);
+    const order = ['intro', ...quizIds, 'building', 'plan', 'auth'];
+    const totalSteps = Number(root.dataset.totalSteps || '1');
+    const checkoutReady = root.dataset.checkoutReady === '1';
+
+    const screens = new Map<string, HTMLElement>();
+    root.querySelectorAll<HTMLElement>('[data-screen]').forEach((el) => {
+      screens.set(el.dataset.screen as string, el);
+    });
+
+    const backBtn = root.querySelector<HTMLButtonElement>('.fnl-back');
+    const fill = root.querySelector<HTMLElement>('.fnl-progress-fill');
+    const progress = root.querySelector<HTMLElement>('.fnl-progress');
+
+    let answers: Answers = {};
+    let chosenPackage = '';
+    let current = 'intro';
+
+    // Attribution is read once, on arrival, and kept for the session. A buyer who reloads mid-funnel
+    // would otherwise arrive on a clean URL and lose the campaign that paid for them.
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    let attribution: Record<string, string> = stored ? (JSON.parse(stored).attribution ?? {}) : {};
+    const url = new URL(window.location.href);
+    for (const key of ATTRIBUTION_KEYS) {
+      const value = url.searchParams.get(key);
+      if (value) attribution[key] = value;
+    }
+
+    function persist(): void {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ answers, attribution, chosenPackage }));
+      } catch {
+        /* private mode — the funnel still works, it just forgets on reload */
+      }
+    }
+
+    function show(id: string, opts: { push?: boolean } = {}): void {
+      const next = screens.get(id);
+      if (!next) return;
+      screens.forEach((el) => el.classList.remove('is-active'));
+      next.classList.add('is-active');
+      current = id;
+
+      const idx = order.indexOf(id);
+      const done = Math.max(0, idx - 1); // intro does not count toward progress
+      const pct = Math.round((done / totalSteps) * 100);
+      if (fill) fill.style.width = `${pct}%`;
+      if (progress) progress.setAttribute('aria-valuenow', String(pct));
+      if (backBtn) backBtn.hidden = idx <= 1;
+
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      if (opts.push !== false) history.pushState({ screen: id }, '', `#${id}`);
+
+      track('funnel_step_view', { funnel: funnel.id, step: id, step_index: idx });
+    }
+
+    function advance(): void {
+      const idx = order.indexOf(current);
+      const next = order[idx + 1];
+      if (next) show(next);
+    }
+
+    // ── Quiz ────────────────────────────────────────────────────────────────
+    root.querySelectorAll<HTMLButtonElement>('.fnl-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const step = btn.dataset.step as string;
+        const value = btn.dataset.value as string;
+        answers[step] = value;
+        persist();
+        track('funnel_answer', { funnel: funnel.id, step, value });
+
+        // Selected state is visible for a beat before moving on — an instant jump reads as a glitch
+        // and people tap twice.
+        btn.classList.add('is-picked');
+        window.setTimeout(() => {
+          btn.classList.remove('is-picked');
+          if (step === quizIds[quizIds.length - 1]) runBuilding();
+          else advance();
+        }, 180);
+      });
+    });
+
+    root.querySelector<HTMLButtonElement>('[data-action="start"]')?.addEventListener('click', () => {
+      track('funnel_started', { funnel: funnel.id, ...attribution });
+      advance();
+    });
+
+    backBtn?.addEventListener('click', () => history.back());
+
+    window.addEventListener('popstate', () => {
+      const id = window.location.hash.replace('#', '') || 'intro';
+      if (screens.has(id)) show(id, { push: false });
+    });
+
+    // ── Building ────────────────────────────────────────────────────────────
+    // A short, honest pause. The plan really is assembled from the answers below; the delay exists so
+    // the reveal reads as a result rather than as the next page of a form.
+    function runBuilding(): void {
+      show('building');
+      const lines = root.querySelectorAll<HTMLElement>('[data-build-line]');
+      lines.forEach((li, i) => {
+        li.classList.remove('is-done');
+        window.setTimeout(() => li.classList.add('is-done'), 500 + i * 550);
+      });
+      window.setTimeout(showPlan, 500 + lines.length * 550 + 350);
+    }
+
+    // ── Plan ────────────────────────────────────────────────────────────────
+    function recap(): string {
+      const labelOf = (stepId: string): string => {
+        const step = funnel.steps.find((s) => s.id === stepId);
+        const opt = step?.options.find((o) => o.id === answers[stepId]);
+        return opt ? opt.label.toLowerCase() : '';
+      };
+      const level = labelOf('level');
+      const minutes = answers.time ? `${answers.time} minutes a day` : 'a few minutes a day';
+      const goal = labelOf('goal');
+      const parts = [level && `Starting from "${level}"`, minutes, goal && `aimed at ${goal}`].filter(
+        Boolean,
+      );
+      return `${parts.join(' · ')}.`;
+    }
+
+    function showPlan(): void {
+      const el = root.querySelector<HTMLElement>('[data-plan-recap]');
+      if (el) el.textContent = recap();
+      show('plan');
+      track('funnel_plan_view', { funnel: funnel.id, ...answers });
+
+      // Pre-select the highlighted plan. An unselected paywall asks the visitor to make two decisions
+      // (which plan, and whether to buy) when only the second one matters.
+      const preferred =
+        root.querySelector<HTMLButtonElement>('.fnl-plan.is-highlight') ??
+        root.querySelector<HTMLButtonElement>('.fnl-plan');
+      if (preferred) selectPlan(preferred);
+    }
+
+    function selectPlan(btn: HTMLButtonElement): void {
+      root.querySelectorAll('.fnl-plan').forEach((p) => p.classList.remove('is-selected'));
+      btn.classList.add('is-selected');
+      chosenPackage = btn.dataset.package ?? '';
+      persist();
+      const cta = root.querySelector<HTMLButtonElement>('[data-action="checkout"]');
+      if (cta) cta.disabled = !checkoutReady || chosenPackage === '';
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.fnl-plan').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        selectPlan(btn);
+        track('funnel_plan_selected', { funnel: funnel.id, package: btn.dataset.package });
+      });
+    });
+
+    root.querySelector<HTMLButtonElement>('[data-action="checkout"]')?.addEventListener('click', () => {
+      track('funnel_checkout_started', { funnel: funnel.id, package: chosenPackage });
+      show('auth');
+    });
+
+    // ── Auth → checkout ─────────────────────────────────────────────────────
+    // Supabase is loaded only here, on demand. It is ~40 KB that the quiz never needs, and page
+    // weight on an ad landing is conversion.
+    async function supabase() {
+      const { createClient } = await import('@supabase/supabase-js');
+      return createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    function goToCheckout(userId: string, email?: string): void {
+      track('funnel_signed_in', { funnel: funnel.id, package: chosenPackage });
+      const href = checkoutUrl({
+        packageId: chosenPackage,
+        supabaseUserId: userId,
+        email,
+        funnel: funnel.id,
+        attribution,
+      });
+      track('funnel_checkout_redirect', { funnel: funnel.id, package: chosenPackage });
+      window.location.href = href;
+    }
+
+    const errorEl = root.querySelector<HTMLElement>('[data-auth-error]');
+    function showError(message: string): void {
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    }
+
+    root.querySelector<HTMLButtonElement>('[data-action="apple"]')?.addEventListener('click', async () => {
+      try {
+        const client = await supabase();
+        // Back to this page, on the auth screen, so the session is picked up below and checkout
+        // resumes where the buyer left off.
+        const { error } = await client.auth.signInWithOAuth({
+          provider: 'apple',
+          options: { redirectTo: `${window.location.origin}${window.location.pathname}#auth` },
+        });
+        if (error) showError(error.message);
+      } catch (err) {
+        showError('Could not reach sign-in. Please try email instead.');
+      }
+    });
+
+    root.querySelector<HTMLFormElement>('[data-auth-form]')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget as HTMLFormElement;
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+      if (!email || password.length < 8) {
+        showError('Enter your email and a password of at least 8 characters.');
+        return;
+      }
+      if (errorEl) errorEl.hidden = true;
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'One moment…';
+      }
+      try {
+        const client = await supabase();
+        // Sign up, and fall back to signing in: a returning buyer who already has an account must not
+        // hit a dead end on the last screen of a paid funnel.
+        let { data, error } = await client.auth.signUp({ email, password });
+        if (error || !data.user) {
+          ({ data, error } = await client.auth.signInWithPassword({ email, password }));
+        }
+        if (error || !data.user) {
+          showError(error?.message ?? 'Could not create your account. Please try again.');
+          return;
+        }
+        goToCheckout(data.user.id, email);
+      } catch (err) {
+        showError('Something went wrong. Please try again.');
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = 'Continue to checkout';
+        }
+      }
+    });
+
+    // Returning from the Apple redirect: a session is already present, so resume checkout.
+    (async () => {
+      if (!window.location.hash.includes('auth') || !SUPABASE_URL) return;
+      const restored = sessionStorage.getItem(STORAGE_KEY);
+      if (restored) {
+        const parsed = JSON.parse(restored);
+        answers = parsed.answers ?? {};
+        chosenPackage = parsed.chosenPackage ?? '';
+        attribution = parsed.attribution ?? attribution;
+      }
+      try {
+        const client = await supabase();
+        const { data } = await client.auth.getUser();
+        if (data.user && chosenPackage) goToCheckout(data.user.id, data.user.email ?? undefined);
+      } catch {
+        /* no session — the buyer simply sees the auth screen */
+      }
+    })();
+
+    // Deep link support (refresh, or back into the middle of the funnel).
+    const initial = window.location.hash.replace('#', '');
+    show(screens.has(initial) ? initial : 'intro', { push: false });
+  }
+
+  initFunnel();
+  document.addEventListener('astro:page-load', initFunnel);
+</script>
