@@ -166,8 +166,12 @@ a { color: inherit; text-decoration: none; }
 .app-card .links a:hover { text-decoration: underline; }
 
 /* ---------- sections ---------- */
-.section { padding: 72px 0; }
-@media (max-width: 640px) { .section { padding: 40px 0; } }
+/* padding-block, never the `padding` shorthand: `.section` is declared after `.container` and a
+   shorthand here zeroed the container's 24px side padding on every `section.section.container`.
+   On desktop the 1080px max-width hid it; on a phone every heading, card and table ran flush to
+   the screen edges (founder, 2026-09-16). */
+.section { padding-block: 72px; }
+@media (max-width: 640px) { .section { padding-block: 40px; } }
 .section h2 { font-size: clamp(26px, 4vw, 36px); letter-spacing: -0.02em; margin-bottom: 12px; }
 .section .lead { color: var(--text-dim); max-width: 640px; margin-bottom: 40px; }
 
@@ -934,6 +938,25 @@ a { color: inherit; text-decoration: none; }
 .prose table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 15.5px; }
 .prose th, .prose td { border: 1px solid #e4e4ea; padding: 10px 12px; text-align: left; }
 .prose th { background: #f1f1f5; font-weight: 700; }
+/* articles ship 2-to-6-column comparison tables: on a phone they scroll inside the article
+   instead of dragging the whole page sideways (squeezing 6 columns into 320px is unreadable) */
+@media (max-width: 760px) {
+  .prose table {
+    display: block; width: max-content; max-width: 100%; overflow-x: auto; font-size: 14.5px;
+    /* edge shadow, visible only while there is more table to the side (background-attachment
+       local vs scroll) — without it a 5-column table looks simply cut off */
+    background-image:
+      linear-gradient(to right, #fbfbfc, rgba(251, 251, 252, 0)),
+      linear-gradient(to left, #fbfbfc, rgba(251, 251, 252, 0)),
+      radial-gradient(farthest-side at 0 50%, rgba(14, 26, 58, 0.17), rgba(14, 26, 58, 0)),
+      radial-gradient(farthest-side at 100% 50%, rgba(14, 26, 58, 0.17), rgba(14, 26, 58, 0));
+    background-position: 0 0, 100% 0, 0 0, 100% 0;
+    background-size: 28px 100%, 28px 100%, 12px 100%, 12px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+  }
+  .prose th, .prose td { padding: 8px 10px; }
+}
 .prose code { background: #ececf1; border-radius: 5px; padding: 2px 6px; font-size: 0.9em; }
 .prose hr { border: none; border-top: 1px solid #e4e4ea; margin: 36px 0; }
 

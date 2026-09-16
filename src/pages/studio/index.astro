@@ -62,7 +62,9 @@ const BUCKET =
       .row button.ok { background: #1d4b32; border-color: #2b6b47; }
       .row button[disabled] { opacity: 0.55; }
       form { margin-top: 26px; display: flex; gap: 8px; }
-      form input { flex: 1; }
+      /* min-width:0 — without it the input keeps its intrinsic ~20ch width and pushes the
+         submit button off a 320px screen */
+      form input { flex: 1; min-width: 0; }
       form button { font-weight: 600; cursor: pointer; padding-inline: 18px; }
       .err { color: #f28a8a; font-size: 14px; margin-top: 12px; min-height: 20px; }
       .forget {

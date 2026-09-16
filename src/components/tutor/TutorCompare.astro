@@ -1,6 +1,9 @@
 ---
 // "Private tutor vs the app" — the price anchor, without a hard price claim (prices vary by
 // country and rot on a static page).
+// Below 640px the table stacks into one card per row and the column names move into each cell via
+// `data-col` — a 520px-wide table on a 390px phone cut the app's column (the whole point of the
+// comparison) off-screen behind a scroll nobody could see.
 import '../../styles/tutor.css';
 
 interface Props {
@@ -23,8 +26,8 @@ const { name, rows } = Astro.props;
       {rows.map(([label, them, us]) => (
         <tr>
           <th scope="row">{label}</th>
-          <td class="them">{them}</td>
-          <td class="us">{us}</td>
+          <td class="them" data-col="Private tutor">{them}</td>
+          <td class="us" data-col={name}>{us}</td>
         </tr>
       ))}
     </tbody>
