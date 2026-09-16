@@ -1,9 +1,9 @@
 ---
 import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
-import { withBase, avatarFor } from '../config/apps';
-import Analytics from '../components/Analytics.astro';
-import BlissBloom from '../components/BlissBloom.astro';
+import { withBase, avatarFor } from '../../config/apps';
+import Analytics from '../../components/Analytics.astro';
+import BlissBloom from '../../components/BlissBloom.astro';
 
 // Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
 // card upgrades from portrait to a muted looping video at the next build.
@@ -24,6 +24,8 @@ const hasIdle = (slug: string) => fs.existsSync(`public/home/video/${slug}-idle.
 // The starfield + violet nebula are canvas-driven on Framer → replicated with a
 // tiny canvas script (stars) + CSS radial (nebula).
 
+// /orbit/ — design ALTERNATIVE of the home (founder 2026-09-16): the coach dock becomes a half
+// solar system rising from the bottom of the hero. noindex + excluded from the sitemap.
 const title = 'Bliss Coach';
 const description =
   'Bliss Coach is a mobile app studio building AI-powered coaching apps that help people grow — one conversation at a time.';
@@ -127,6 +129,7 @@ const coaches = [
     <ClientRouter />
     <Analytics />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href="https://bliss-coach.com/" />
@@ -1421,6 +1424,62 @@ const coaches = [
       /* praktika-ish rounding elsewhere */
       .bcell { border-radius: 26px; }
       .review { border-radius: 20px; }
+
+      /* ============ ORBIT ALTERNATIVE ============
+         Two dashed orbits centred on the bottom edge of the hero block; the lower half of each
+         circle is clipped, so coaches rise over the horizon, travel the arc and set again.
+         Each face counter-rotates so the portraits stay upright. */
+      .card { padding-bottom: 0; }
+      .orbit {
+        position: relative; z-index: 1;
+        width: min(1000px, 100%); height: 390px; margin: 28px auto 0;
+        overflow: hidden;
+      }
+      .orb-ring {
+        position: absolute; left: 50%; top: 100%;
+        width: calc(var(--R) * 2); height: calc(var(--R) * 2);
+        margin: calc(var(--R) * -1) 0 0 calc(var(--R) * -1);
+        border-radius: 50%;
+        border: 1.5px dashed rgba(255, 255, 255, 0.3);
+      }
+      .r1 { --R: 200px; --T: 48s; }
+      .r2 { --R: 330px; --T: 72s; }
+      .planet {
+        position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+        transform: rotate(var(--a)) translateY(calc(var(--R) * -1));
+      }
+      .face {
+        position: absolute; left: -32px; top: -40px; width: 64px; height: 80px; display: block;
+        border-radius: 18px; overflow: hidden; border: 2px solid #fff;
+        box-shadow: 0 12px 28px rgba(20, 10, 60, 0.32);
+        transform: rotate(calc(-1 * var(--a)));
+        transition: box-shadow 0.2s;
+      }
+      .face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .planet:hover .face { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6), 0 16px 34px rgba(20, 10, 60, 0.4); }
+      .sun {
+        position: absolute; left: 50%; top: 100%; transform: translate(-50%, -50%);
+        filter: drop-shadow(0 0 34px rgba(255, 255, 255, 0.55));
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .orb-ring { animation: orb-spin var(--T) linear infinite; }
+        .r2 { animation-direction: reverse; }
+        .face { animation: orb-counter var(--T) linear infinite; }
+        .r2 .face { animation-direction: reverse; }
+        .orbit:hover .orb-ring, .orbit:hover .face { animation-play-state: paused; }
+      }
+      @keyframes orb-spin { to { transform: rotate(360deg); } }
+      @keyframes orb-counter {
+        from { transform: rotate(calc(-1 * var(--a))); }
+        to { transform: rotate(calc(-1 * var(--a) - 360deg)); }
+      }
+      @media (max-width: 640px) {
+        .orbit { height: 246px; margin-top: 22px; }
+        .r1 { --R: 124px; }
+        .r2 { --R: 200px; }
+        .face { left: -24px; top: -30px; width: 48px; height: 60px; border-radius: 14px; }
+        .sun { transform: translate(-50%, -50%) scale(0.75); }
+      }
     </style>
   </head>
   <body>
@@ -1447,7 +1506,6 @@ const coaches = [
 
       <div class="hero-grid">
         <div class="content">
-          <BlissBloom class="logo-mark" size={56} mono />
           <h1>
             <span class="t-desktop">Your personal coach,<br /><span class="serif">one conversation away.</span></span>
             <span class="t-mobile">Your personal coach,<br /><span class="serif">one conversation</span><br /><span class="serif">away.</span></span>
@@ -1461,18 +1519,23 @@ const coaches = [
 
       </div>
 
-      <div class="horizon">
-        <nav class="avatars" aria-label="Our apps">
-          {avatars.map((a) => (
-            <a href={withBase(a.href)} title={a.alt} class="dock-chip">
-              <img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="54" height="66" loading="eager" />
-              {hasVideo(a.slug) && (
-                <video class="dock-vid" src={withBase(`/home/video/${a.slug}.mp4`)} muted loop playsinline preload="none" aria-hidden="true" width="54" height="66"></video>
-              )}
+      <nav class="orbit" aria-label="Our coaches">
+        <div class="orb-ring r1">
+          {avatars.slice(0, 4).map((a, i) => (
+            <a class="planet" href={withBase(a.href)} title={a.alt} style={`--a:${i * 90 + 20}deg`}>
+              <span class="face"><img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="64" height="80" loading="eager" /></span>
             </a>
           ))}
-        </nav>
-      </div>
+        </div>
+        <div class="orb-ring r2">
+          {avatars.slice(4).map((a, i) => (
+            <a class="planet" href={withBase(a.href)} title={a.alt} style={`--a:${i * 90 + 65}deg`}>
+              <span class="face"><img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="64" height="80" loading="eager" /></span>
+            </a>
+          ))}
+        </div>
+        <div class="sun" aria-hidden="true"><BlissBloom size={120} mono decorative /></div>
+      </nav>
     </div>
 
     <div class="story" id="story">
