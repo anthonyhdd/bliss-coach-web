@@ -1,41 +1,21 @@
 ---
-import { APPS, withBase } from '../config/apps';
-import BlissBloom from './BlissBloom.astro';
+// Every non-home page uses the same pill header as the home (founder 2026-09-16). App landings,
+// articles and SEO pages keep their conversion: the CTA downloads THIS app.
+import { storeLink } from '../config/apps';
+import PillBar from './PillBar.astro';
 
 interface Props {
   activeApp?: string;
-  /** app-scoped landing header: only this app's identity + its store CTA */
+  /** app-scoped page: the CTA is this app's store link */
   solo?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean };
 }
-const { activeApp, solo } = Astro.props;
+const { solo } = Astro.props;
+const DEV_PAGE = 'https://apps.apple.com/us/developer/bliss-coach/id1628409883';
+const cta = solo
+  ? solo.comingSoon
+    ? { href: '', label: 'Coming soon', placement: `${solo.slug}-header` }
+    : { href: storeLink(solo.appStoreUrl, `${solo.slug}-header`), label: `Get ${solo.name}`, placement: `${solo.slug}-header` }
+  : { href: storeLink(DEV_PAGE, 'site-header'), label: 'Get the apps', placement: 'site-header' };
 ---
 
-{solo ? (
-  <header class="site-header site-header--solo">
-    <div class="container inner">
-      <a class="solo-brand" href={withBase(`/${solo.slug}/`)}>
-        <img src={withBase(`/icons/${solo.slug}.jpg`)} alt="" width="30" height="30" loading="eager" />
-        <span>{solo.name}</span>
-      </a>
-      {solo.comingSoon ? (
-        <span class="header-cta is-soon">Coming soon</span>
-      ) : (
-        <a class="header-cta" href={solo.appStoreUrl} data-placement={`${solo.slug}-header`}>Download</a>
-      )}
-    </div>
-  </header>
-) : (
-  <header class="site-header">
-    <div class="container inner">
-      <a class="logo" href={withBase('/')}><BlissBloom class="logo-bloom" size={22} compact decorative />Bliss <span>Coach</span></a>
-      <nav class="nav" aria-label="Apps">
-        {Object.values(APPS).map((app) => (
-          <a href={withBase(`/${app.slug}/`)} aria-current={activeApp === app.slug ? 'true' : undefined}>
-            {app.name}
-          </a>
-        ))}
-      </nav>
-      <a class="header-cta" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883">Get the apps</a>
-    </div>
-  </header>
-)}
+<PillBar cta={cta} soon={!!solo?.comingSoon} />

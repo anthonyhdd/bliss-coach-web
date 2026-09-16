@@ -10,6 +10,7 @@ const liveStore = (slug: string, placement: string) => {
   return a && a.appStoreUrl && !a.comingSoon ? storeLink(a.appStoreUrl, placement) : '';
 };
 import Analytics from '../components/Analytics.astro';
+import PillBar from '../components/PillBar.astro';
 import BlissBloom from '../components/BlissBloom.astro';
 
 // Coach videos are opt-in: drop public/home/video/{slug}.mp4 and the chapter
@@ -376,94 +377,6 @@ const coaches = [
         pointer-events: none;
       }
       .dock-chip:hover .dock-vid { opacity: 1; transform: translateY(-4px); }
-      /* --- footer: the last thing you see should still be fun --- */
-      .foot {
-        position: relative;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 64px 24px 34px;
-        text-align: center;
-        overflow: hidden;
-      }
-      /* KAMO easter egg — the hidden 3D figure peeking up in the footer; rises on hover, links to the app */
-      .foot-kamo {
-        position: absolute;
-        left: clamp(18px, 8vw, 96px);
-        bottom: -96px;
-        display: block;
-        width: 74px;
-        opacity: 0.82;
-        z-index: 0;
-        filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
-        transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.4s ease;
-      }
-      .foot-kamo img { display: block; width: 100%; height: auto; }
-      /* KAMO tagline — sits above the head, fades in with the peek */
-      .foot-kamo-tag {
-        position: absolute;
-        bottom: calc(100% + 16px);
-        left: 0;                        /* character hugs the left edge — never overflows */
-        font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
-        padding: 7px 12px; border-radius: 999px;
-        background: #ffdc83; color: #17130a;
-        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
-        white-space: nowrap;
-        rotate: -4deg;
-        opacity: 0; transform: translateY(6px);
-        transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
-      }
-      .foot:hover .foot-kamo-tag { opacity: 1; transform: translateY(0); }
-      .foot:hover .foot-kamo { transform: translateY(-48px); opacity: 1; }
-      .foot-board, .foot-mark, .foot-tag, .foot-links, .foot-stickers { position: relative; z-index: 1; }
-      @media (max-width: 640px) {
-        .foot-kamo { width: 56px; bottom: -74px; left: 14px; }
-        /* collides with the wordmark at this width, and hover reveals don't fire on touch anyway */
-        .foot-kamo-tag { display: none; }
-      }
-      @media (prefers-reduced-motion: reduce) { .foot-kamo, .foot-kamo-tag { transition: none; } }
-      .foot-grid {
-        position: absolute; inset: 0; pointer-events: none;
-        background-image:
-          linear-gradient(rgba(255, 220, 131, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 220, 131, 0.05) 1px, transparent 1px);
-        background-size: 44px 44px;
-        mask-image: radial-gradient(70% 90% at 50% 100%, #000, transparent 80%);
-        -webkit-mask-image: radial-gradient(70% 90% at 50% 100%, #000, transparent 80%);
-      }
-      .foot-stickers { position: relative; height: 0; }
-      .stk {
-        position: absolute;
-        font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-        padding: 8px 14px; border-radius: 999px;
-        background: #f7f4ec; color: #17130a;
-        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
-        white-space: nowrap;
-      }
-      .stk-1 { left: calc(50% - 420px); top: 8px; rotate: -8deg; background: #ffdc83; }
-      .stk-2 { right: calc(50% - 470px); top: 2px; rotate: 5deg; }
-      .stk-3 { right: calc(50% - 400px); top: 74px; rotate: -4deg; background: #ffc1f7; }
-      @media (max-width: 900px) {
-        .stk { position: static; display: inline-block; margin: 0 6px 10px; rotate: none; }
-        .stk-1 { rotate: -3deg; } .stk-2 { rotate: 2deg; } .stk-3 { rotate: -2deg; }
-        .foot-stickers { height: auto; margin-bottom: 18px; }
-      }
-      .foot-board { position: relative; display: flex; gap: 10px; justify-content: center; margin-bottom: 26px; }
-      .foot-board img {
-        width: 54px; height: 54px; border-radius: 13px; display: block;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-        transition: transform 0.18s;
-      }
-      .foot-board a:hover img { transform: translateY(-5px) scale(1.06); }
-      .foot-mark { position: relative; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
-      .foot-mark em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
-      .foot-tag {
-        position: relative;
-        font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
-        color: rgba(255, 255, 255, 0.68); font-size: clamp(20px, 3vw, 27px);
-        margin: 10px 0 28px;
-      }
-      .foot-links { position: relative; display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: rgba(255, 255, 255, 0.45); }
-      .foot-links a { color: rgba(255, 255, 255, 0.55); text-decoration: none; }
-      .foot-links a:hover { color: #fff; }
       @media (max-width: 640px) {
         .content { padding: 0 20px; }
         :global(.logo-mark) { margin-top: 56px; }
@@ -1055,37 +968,6 @@ const coaches = [
       .review figcaption { font-size: 12.5px; color: #8b8574; font-weight: 600; }
 
       /* --- proof band --- */
-      .proof {
-        text-align: center;
-        padding: 5vh 24px 11vh;
-        max-width: 760px;
-        margin: 0 auto;
-      }
-      .proof .laurel {
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 18px;
-      }
-      .proof h2 {
-        font-size: clamp(26px, 4vw, 44px);
-        font-weight: 500;
-        letter-spacing: -0.03em;
-        line-height: 1.15;
-        margin-bottom: 14px;
-      }
-      .proof h2 em {
-        font-family: 'Instrument Serif', Georgia, serif;
-        font-weight: 400;
-        background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        padding-right: 0.06em;
-      }
-      .proof p { color: rgba(255, 255, 255, 0.6); font-size: 16px; margin-bottom: 34px; }
 
       /* ================= LIGHT THEME (Replika-inspired preview) =================
          Airy sky hero with drifting clouds, a white horizon instead of the dark planet,
@@ -1191,7 +1073,7 @@ const coaches = [
       .prop-postit { box-shadow: 0 16px 36px rgba(30, 50, 110, 0.16); }
 
       /* coach chapters: white cards */
-      .coaches-kicker, .pillars-head .kicker, .proof .laurel { color: rgba(14, 26, 58, 0.5); }
+      .coaches-kicker, .pillars-head .kicker { color: rgba(14, 26, 58, 0.5); }
       .chapter {
         border: 1px solid rgba(14, 26, 58, 0.08);
         background:
@@ -1230,56 +1112,51 @@ const coaches = [
       .review { border-color: rgba(14, 26, 58, 0.08); box-shadow: 0 10px 30px rgba(30, 50, 110, 0.08); }
 
       /* proof */
-      .proof h2 em { background: linear-gradient(92deg, #ff6a4d, #ff4f8b, #9b5cff); -webkit-background-clip: text; background-clip: text; }
-      .proof p { color: rgba(14, 26, 58, 0.64); }
 
       /* footer */
-      .foot { border-top: 1px solid rgba(14, 26, 58, 0.08); }
-      .foot-grid {
-        background-image:
-          linear-gradient(rgba(90, 120, 220, 0.07) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(90, 120, 220, 0.07) 1px, transparent 1px);
-      }
-      .stk { box-shadow: 0 10px 24px rgba(30, 50, 110, 0.14); }
-      .foot-board img { box-shadow: 0 8px 20px rgba(30, 50, 110, 0.18); }
-      .foot-kamo { filter: drop-shadow(0 8px 18px rgba(30, 50, 110, 0.25)); }
-      .foot-tag { color: rgba(14, 26, 58, 0.62); }
-      .foot-links, .foot-links a { color: rgba(14, 26, 58, 0.55); }
-      .foot-links a:hover { color: #0e1a3a; }
 
       /* ============ PRAKTIKA-STYLE LAYOUT (2026-09-16) ============
          Floating pill header, saturated hero block with big rounded bottom corners and a phone,
          a coach carousel instead of the stacked deck, centered section heads. */
-      .pillbar { position: fixed; top: 12px; left: 12px; right: 12px; z-index: 90; pointer-events: none; }
-      .pillbar-in {
-        pointer-events: auto;
-        max-width: 1120px; margin: 0 auto;
-        display: flex; align-items: center; justify-content: space-between; gap: 16px;
-        padding: 8px 8px 8px 18px; border-radius: 999px;
-        background: rgba(255, 255, 255, 0.86);
-        backdrop-filter: saturate(180%) blur(16px);
-        -webkit-backdrop-filter: saturate(180%) blur(16px);
-        border: 1px solid rgba(14, 26, 58, 0.08);
-        box-shadow: 0 10px 30px rgba(20, 40, 110, 0.1);
+      /* the pill header lives in components/PillBar.astro (shared with every page) */
+
+      /* ============ FINAL CALL + FOOTER (founder 2026-09-16: "c moche cette partie") ============ */
+      .final { padding: clamp(40px, 8vw, 96px) 16px clamp(48px, 7vw, 80px); }
+      .final-card {
+        max-width: 1120px; margin: 0 auto; text-align: center; color: #fff;
+        padding: clamp(48px, 7vw, 80px) 24px;
+        border-radius: clamp(28px, 4vw, 44px);
+        background:
+          radial-gradient(46% 60% at 18% 0%, rgba(255, 255, 255, 0.2), transparent 70%),
+          linear-gradient(158deg, #4b45d6 0%, #6a5bff 36%, #8f7bff 64%, #b9a4ff 100%);
+        box-shadow: 0 30px 70px rgba(75, 69, 214, 0.28);
       }
-      /* line-height 1 on the row, and the serif italic nudged onto the same baseline as "Bliss" */
-      .pb-logo { display: inline-flex; align-items: center; gap: 9px; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; color: #0e1a3a; text-decoration: none; line-height: 1; }
-      /* wordmark: ONE font — Bliss's (founder 2026-09-16). "Coach" is the same Inter, same size,
-         and the same weight as Bliss, on the same baseline */
-      .wm { display: inline-flex; align-items: baseline; gap: 0.24em; }
-      .wm i { font: inherit; }
-      .pb-nav { display: flex; gap: 4px; }
-      .pb-nav a { font-size: 14px; font-weight: 600; color: rgba(14, 26, 58, 0.66); padding: 8px 12px; border-radius: 999px; text-decoration: none; transition: background 0.15s, color 0.15s; }
-      .pb-nav a:hover { background: rgba(14, 26, 58, 0.05); color: #0e1a3a; }
-      .pb-cta {
-        font-size: 14px; font-weight: 700; color: #fff; text-decoration: none;
-        padding: 11px 20px; border-radius: 999px;
-        background: linear-gradient(92deg, #ff6a4d, #ff4f7b);
-        box-shadow: 0 8px 20px rgba(255, 90, 80, 0.32);
-        transition: transform 0.15s, box-shadow 0.15s;
+      .final-faces { display: flex; justify-content: center; margin-bottom: 28px; }
+      .final-faces img {
+        width: 52px; height: 64px; object-fit: cover; border-radius: 16px;
+        border: 2px solid #fff; margin: 0 -5px; box-shadow: 0 10px 24px rgba(20, 10, 60, 0.28);
       }
-      .pb-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(255, 90, 80, 0.42); }
-      @media (max-width: 860px) { .pb-nav { display: none; } .pillbar-in { padding: 7px 7px 7px 14px; } .pb-cta { padding: 10px 16px; font-size: 13px; } }
+      .final h2 { margin: 0; font-size: clamp(36px, 5.4vw, 60px); line-height: 1.04; letter-spacing: -0.04em; font-weight: 700; }
+      .final h2 em {
+        font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; letter-spacing: -0.01em; padding-right: 0.06em;
+        background: linear-gradient(92deg, #ffd9c2, #ffc0dc 55%, #e6dcff);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .final p { margin: 16px auto 30px; max-width: 460px; font-size: 17px; color: rgba(255, 255, 255, 0.82); }
+      .store-badge.light { background: #fff; color: #0b0b0f; height: 54px; box-shadow: 0 14px 30px rgba(20, 10, 60, 0.28); }
+      @media (max-width: 480px) { .final-faces img { width: 38px; height: 48px; border-radius: 12px; margin: 0 -4px; } }
+
+      .sfoot { border-top: 1px solid rgba(14, 26, 58, 0.08); padding: 56px 16px 28px; color: #0e1a3a; }
+      .sf-in { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; }
+      .sf-logo { display: inline-flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; color: #0e1a3a; text-decoration: none; }
+      .sf-brand p { margin: 12px 0 0; font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 22px; color: #5a6480; }
+      .sf-col { display: flex; flex-direction: column; gap: 10px; }
+      .sf-col h3 { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(14, 26, 58, 0.45); }
+      .sf-col a { font-size: 15px; font-weight: 600; color: #0e1a3a; text-decoration: none; }
+      .sf-col a span { font-weight: 400; color: #5a6480; }
+      .sf-col a:hover { color: #5b4ff0; }
+      .sf-bottom { max-width: 1120px; margin: 44px auto 0; padding-top: 20px; border-top: 1px solid rgba(14, 26, 58, 0.08); font-size: 13px; color: #5a6480; }
+      @media (max-width: 760px) { .sf-in { grid-template-columns: 1fr 1fr; } .sf-brand { grid-column: 1 / -1; } .sf-col a span { display: block; font-size: 13px; } }
 
       /* hero block */
       .card {
@@ -1444,20 +1321,7 @@ const coaches = [
     </style>
   </head>
   <body>
-    <header class="pillbar">
-      <div class="pillbar-in">
-        <a class="pb-logo" href={withBase('/')}>
-          <BlissBloom size={26} compact decorative />
-          <span class="wm">Bliss<i>Coach</i></span>
-        </a>
-        <nav class="pb-nav" aria-label="Sections">
-          <a href="#coaches">Coaches</a>
-          <a href="#pillars">Why they work</a>
-          <a href="#reviews">Reviews</a>
-        </nav>
-        <a class="pb-cta" href={storeLink(DEV_PAGE, 'home-header')} data-placement="home-header">Get the apps</a>
-      </div>
-    </header>
+    <PillBar mode="fixed" onHome cta={{ href: storeLink(DEV_PAGE, 'home-header'), label: 'Get the apps', placement: 'home-header' }} />
     <div class="card">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="nebula" aria-hidden="true"></div>
@@ -1575,7 +1439,7 @@ const coaches = [
             <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
             <span class="sb-txt"><small>Download on the</small>App Store</span>
           </a>
-          <span class="store-note">Free to start · iPhone &amp; iPad</span>
+          <span class="store-note">Free to download. Start talking today.</span>
         </div>
         </div>
       </section>
@@ -1703,50 +1567,49 @@ const coaches = [
         </div>
       </section>
 
-      <!-- proof -->
-      <section class="proof" aria-label="Get the apps">
-        <div class="laurel rv">Live on the App Store</div>
-        <h2 class="rv">Pick your coach. <em>Start growing.</em></h2>
-        <p class="rv">Every session is voice-first and personal — built to help you improve, one conversation at a time.</p>
-        <div class="cta-wrap rv" style="display:inline-block">
-          <span class="cta-beam" aria-hidden="true"></span>
-          <a class="cta" href={storeLink(DEV_PAGE, 'home-final')} data-placement="home-final">Get the apps</a>
+      <!-- final call: bookends the violet hero -->
+      <section class="final" aria-label="Get the apps">
+        <div class="final-card rv">
+          <div class="final-faces" aria-hidden="true">
+            {avatars.map((a) => (
+              <img src={withBase(`/home/${a.src}`)} alt="" style={`object-position:${a.pos}`} width="52" height="64" loading="lazy" />
+            ))}
+          </div>
+          <h2>Pick your coach.<br /><em>Start today.</em></h2>
+          <p>Voice-first, personal, and ready whenever you are.</p>
+          <a class="store-badge light" href={storeLink(DEV_PAGE, 'home-final')} data-placement="home-final" aria-label="Download on the App Store">
+            <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <span class="sb-txt"><small>Download on the</small>App Store</span>
+          </a>
         </div>
       </section>
     </div>
 
-    <footer class="foot">
-      <div class="foot-grid" aria-hidden="true"></div>
-      <a
-        class="foot-kamo"
-        href="https://playkamo.com/"
-        target="_blank"
-        rel="noopener"
-        aria-label="KAMO — Your turn. Your photo."
-      >
-        <span class="foot-kamo-tag">Your turn. Your photo.</span>
-        <img src={withBase('/kamo-peek.png')} alt="" width="74" height="180" loading="lazy" />
-      </a>
-
-      <div class="foot-stickers" aria-hidden="true">
-        <span class="stk stk-1">PRACTICE OUT LOUD</span>
-        <span class="stk stk-2">COACHES, NOT CHATBOTS</span>
-        <span class="stk stk-3">SEVEN COACHES · ONE POCKET</span>
+    <footer class="sfoot">
+      <div class="sf-in">
+        <div class="sf-brand">
+          <a class="sf-logo" href={withBase('/')}>
+            <BlissBloom size={28} compact decorative />
+            <span>Bliss Coach</span>
+          </a>
+          <p>Get better, every day.</p>
+        </div>
+        <nav class="sf-col" aria-label="Coaches">
+          <h3>Coaches</h3>
+          {coaches.map((c) => (
+            <a href={withBase(`/${c.slug}/`)} data-coach={c.slug} data-placement="home-footer">{c.name} <span>{c.craft}</span></a>
+          ))}
+        </nav>
+        <nav class="sf-col" aria-label="Company">
+          <h3>Bliss Coach</h3>
+          <a href={storeLink(DEV_PAGE, 'home-footer')} data-placement="home-footer">App Store</a>
+          <a href={withBase('/careers/')}>Careers</a>
+          <a href="https://playkamo.com/" target="_blank" rel="noopener">KAMO</a>
+          <a href={withBase('/privacy/')}>Privacy</a>
+          <a href={withBase('/terms/')}>Terms</a>
+        </nav>
       </div>
-      <div class="foot-board" role="navigation" aria-label="Our apps">
-        {['sofia', 'amelie', 'meilin', 'alex', 'charm', 'mila', 'astra'].map((sl) => (
-          <a href={withBase(`/${sl}/`)} data-coach={sl} data-placement="home-footer-icons"><img src={withBase(`/icons/${sl}.jpg`)} alt={sl} width="54" height="54" loading="lazy" /></a>
-        ))}
-      </div>
-      <div class="foot-mark">Bliss <em>Coach</em></div>
-      <p class="foot-tag">Get better, every day.</p>
-      <nav class="foot-links" aria-label="Legal">
-        <a href={storeLink(DEV_PAGE, 'home-footer')} data-placement="home-footer">App Store</a>
-        <a href="/privacy/">Privacy</a>
-        <a href="/terms/">Terms</a>
-        <a href="/careers/">Careers</a>
-        <span>© Bliss Coach</span>
-      </nav>
+      <div class="sf-bottom">© 2026 Bliss Coach</div>
     </footer>
 
     <script>
