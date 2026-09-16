@@ -1304,7 +1304,9 @@ const coaches = [
 
       /* the coach dock sits under the block, on white */
       .horizon { margin: 0; min-height: 0; padding: 24px 0 4px; flex: none; }
-      .avatars { position: static; transform: none; justify-content: center; }
+      .avatars { position: static; transform: none; justify-content: center; flex-wrap: wrap; row-gap: 8px; }
+      /* eight coaches no longer fit a 375px row at full size */
+      @media (max-width: 640px) { .avatars img { width: 40px; height: 50px; border-radius: 12px; } }
       .avatars img { box-shadow: 0 0 0 2px #ffffff, 0 8px 22px rgba(30, 60, 130, 0.2); }
 
       /* centered section heads */
@@ -1346,15 +1348,34 @@ const coaches = [
       }
       @media (prefers-reduced-motion: reduce) { .ccard { transform: none; opacity: 1; } }
       /* the avatars are framed head-and-shoulders: bias the crop upwards so no chin or crown is cut */
-      .ccard .pwrap, .ccard .portrait { width: 100%; height: 300px; border-radius: 0; box-shadow: none; object-position: 50% 14%; }
-      .ccard .txt { padding: 18px 20px 22px; }
-      .ccard .go {
-        display: inline-block; margin-top: 14px; padding: 10px 18px; border-radius: 999px;
-        background: color-mix(in srgb, var(--c2) 14%, #ffffff);
-        color: color-mix(in srgb, var(--c2) 78%, #0e1a3a);
-        font-weight: 700; font-size: 14px;
+      /* the whole card IS the coach: portrait edge to edge, name and button over a scrim */
+      .ccard { aspect-ratio: 3 / 4; background: #0f1430; border: 0; }
+      .cc-media { position: absolute; inset: 0; display: block; }
+      .ccard .portrait {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; border-radius: 0; box-shadow: none;
       }
-      .ccard:hover .go { background: color-mix(in srgb, var(--c2) 24%, #ffffff); }
+      .cc-scrim {
+        position: absolute; inset: 0; pointer-events: none;
+        background: linear-gradient(transparent 34%, rgba(8, 12, 38, 0.55) 62%, rgba(8, 12, 38, 0.88) 100%);
+      }
+      .cc-text {
+        position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+        display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+        padding: 22px 22px 24px; color: #fff;
+      }
+      .cc-name { font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+      .cc-craft {
+        font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
+        font-size: clamp(15px, 1.7vw, 18px); color: rgba(255, 255, 255, 0.86);
+      }
+      .cc-cta {
+        margin-top: 14px; padding: 11px 20px; border-radius: 999px;
+        background: #ffffff; color: #141a3a; font-size: 14px; font-weight: 700;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+        transition: background 0.15s, transform 0.15s;
+      }
+      .ccard:hover .cc-cta { background: #f2f5ff; transform: translateY(-1px); }
       .crsl-arrow {
         position: absolute; top: 38%; z-index: 3; width: 44px; height: 44px; border-radius: 50%;
         border: 1px solid rgba(14, 26, 58, 0.1); background: rgba(255, 255, 255, 0.96); color: #0e1a3a;
@@ -1482,21 +1503,20 @@ const coaches = [
           <div class="crsl-track">
         {coaches.map((c, i) => (
           <a class="chapter ccard" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
-            {hasVideo(c.slug) ? (
-              <span class="pwrap">
-                {/* one standing loop per card — no idle-video swap on hover here (founder 2026-09-16) */}
-                <video class="portrait v-stand" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
-              </span>
-            ) : (
-              <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
-            )}
-            <div class="txt">
-              <span class="bubble">{c.line}</span>
-              {c.reply && <><br /><span class="bubble-reply">{c.reply}</span></>}
-              <h3><img class="app-ic" src={withBase(`/icons/${c.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" transition:name={`appicon-${c.slug}`} /> {c.name} <span class="craft">{c.craft}</span></h3>
-              <p class="blurb">{c.blurb}</p>
-              <span class="go">Meet {c.name}</span>
-            </div>
+            <span class="cc-media">
+              {hasVideo(c.slug) ? (
+                /* one standing loop per card — no idle-video swap on hover here (founder 2026-09-16) */
+                <video class="portrait v-stand" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} style={`object-position:${c.pos}`} aria-label={`${c.name}`} width="400" height="520"></video>
+              ) : (
+                <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name}`} style={`object-position:${c.pos}`} width="400" height="520" loading="lazy" />
+              )}
+              <span class="cc-scrim" aria-hidden="true"></span>
+            </span>
+            <span class="cc-text">
+              <span class="cc-name">{c.name}</span>
+              <span class="cc-craft">{c.craft}</span>
+              <span class="cc-cta">Talk to {c.name}</span>
+            </span>
           </a>
         ))}
           </div>
