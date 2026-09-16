@@ -101,6 +101,32 @@
 .tcmp tbody tr:last-child td.us { border-radius: 0 0 14px 14px; }
 .tcmp tbody tr:last-child > * { border-bottom: none; }
 
+/* phones: one card per row, column names inline — see TutorCompare.astro */
+@media (max-width: 640px) {
+  .tcmp-wrap { overflow-x: visible; }
+  .tcmp { min-width: 0; font-size: 15px; }
+  .tcmp, .tcmp tbody, .tcmp tbody tr, .tcmp tbody th, .tcmp tbody td { display: block; width: auto; }
+  .tcmp thead { display: none; }
+  .tcmp tbody tr {
+    margin-bottom: 12px; border: 1px solid var(--border); border-radius: 14px;
+    background: var(--bg-raised); overflow: hidden;
+  }
+  .tcmp tbody tr:last-child { margin-bottom: 0; }
+  .tcmp tbody th[scope='row'] {
+    width: auto; padding: 13px 15px 4px; border-bottom: none;
+    font-size: 16px; font-weight: 700;
+  }
+  .tcmp tbody td { padding: 7px 15px 12px; border-bottom: none; }
+  .tcmp tbody td::before {
+    content: attr(data-col); display: block; margin-bottom: 1px;
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .tcmp tbody td.us::before { color: color-mix(in srgb, var(--accent) 78%, #0e1a3a); }
+  .tcmp tbody td.us,
+  .tcmp tbody tr:last-child td.us { border-radius: 0; }
+}
+
 /* FAQ */
 .tfaq { max-width: 780px; border-top: 1px solid var(--border); }
 .tfaq details { border-bottom: 1px solid var(--border); padding: 18px 0; }
