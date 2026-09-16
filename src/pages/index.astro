@@ -42,10 +42,11 @@ const avatars = [
   { slug: 'amelie', src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 12%' },
   { slug: 'sofia', src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 16%' },
   { slug: 'meilin', src: 'meilin.jpg', href: '/meilin/', alt: 'Meilin — AI Chinese teacher', pos: '50% 20%' },
+  { slug: 'emily', src: 'emily.jpg', href: '/emily/', alt: 'Emily — AI English teacher', pos: '50% 22%' },
   { slug: 'alex', src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 10%' },
   { slug: 'charm', src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 14%' },
   { slug: 'mila', src: 'mila.jpg', href: '/mila/', alt: 'Mila — AI dietician', pos: '50% 50%' },
-  { slug: 'astra', src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 50%' },
+  { slug: 'astra', src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 26%' },
 ];
 
 // Real store reviews (from the apps' App Store pages).
@@ -87,6 +88,12 @@ const coaches = [
     c1: '#B91C1C', c2: '#F59E0B',
   },
   {
+    slug: 'emily', name: 'Emily', craft: 'teaches English', img: 'emily.jpg', pos: '50% 22%',
+    line: 'So what did you get up to this weekend?', reply: 'I finally went hiking!',
+    blurb: 'Speak English without freezing up — corrected as you speak, never a sigh.',
+    c1: '#1D4ED8', c2: '#38BDF8',
+  },
+  {
     slug: 'alex', name: 'Alex', craft: 'lands your next job', img: 'alex.png', pos: '50% 10%',
     line: "Let's talk about your experience.", reply: null,
     blurb: 'Mock interviews built around the real job posting. Walk in prepared.',
@@ -105,7 +112,7 @@ const coaches = [
     c1: '#16A34A', c2: '#14B8A6',
   },
   {
-    slug: 'astra', name: 'Astra', craft: 'reads your sky', img: 'astra.jpg', pos: '50% 50%',
+    slug: 'astra', name: 'Astra', craft: 'reads your sky', img: 'astra.jpg', pos: '50% 26%',
     line: 'Sun in Leo, moon in Pisces — no wonder today felt big.', reply: null,
     blurb: 'Your natal chart, decoded in plain language. Daily guidance from your own sky.',
     c1: '#6366F1', c2: '#C9A14A',
@@ -1248,8 +1255,9 @@ const coaches = [
         border: 1px solid rgba(14, 26, 58, 0.08);
         box-shadow: 0 10px 30px rgba(20, 40, 110, 0.1);
       }
-      .pb-logo { display: inline-flex; align-items: center; gap: 9px; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; color: #0e1a3a; text-decoration: none; }
-      .pb-logo span { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+      /* line-height 1 on the row, and the serif italic nudged onto the same baseline as "Bliss" */
+      .pb-logo { display: inline-flex; align-items: center; gap: 9px; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; color: #0e1a3a; text-decoration: none; line-height: 1; }
+      .pb-logo span { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; font-size: 1.06em; line-height: 1; position: relative; top: 0.5px; }
       .pb-nav { display: flex; gap: 4px; }
       .pb-nav a { font-size: 14px; font-weight: 600; color: rgba(14, 26, 58, 0.66); padding: 8px 12px; border-radius: 999px; text-decoration: none; transition: background 0.15s, color 0.15s; }
       .pb-nav a:hover { background: rgba(14, 26, 58, 0.05); color: #0e1a3a; }
@@ -1314,15 +1322,31 @@ const coaches = [
         scrollbar-width: none; -ms-overflow-style: none;
       }
       .crsl-track::-webkit-scrollbar { display: none; }
+      /* praktika's carousel: the centred card is full size, its neighbours shrink back and fade.
+         --d is 0 for the card under the middle of the track, 1 for one a card-width away (set on
+         scroll by the script below), so the whole row reacts as you drag. */
       .ccard {
+        --d: 0;
         position: static; top: auto;
         flex: 0 0 min(400px, 84vw); scroll-snap-align: center;
         flex-direction: column; align-items: stretch; gap: 0; padding: 0;
         border-radius: 28px; overflow: hidden;
         background: #ffffff; border: 1px solid rgba(14, 26, 58, 0.08);
-        box-shadow: 0 14px 40px rgba(30, 50, 110, 0.1);
+        box-shadow: 0 14px 40px rgba(30, 50, 110, calc(0.12 - 0.06 * var(--d)));
+        transform: scale(calc(1 - 0.07 * var(--d)));
+        opacity: calc(1 - 0.3 * var(--d));
+        transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.35s ease, box-shadow 0.3s ease;
+        will-change: transform;
       }
-      .ccard .pwrap, .ccard .portrait { width: 100%; height: 270px; border-radius: 0; box-shadow: none; }
+      .ccard:hover {
+        transform: scale(1.03) translateY(-6px);
+        opacity: 1;
+        box-shadow: 0 30px 66px rgba(30, 50, 110, 0.2);
+        z-index: 2;
+      }
+      @media (prefers-reduced-motion: reduce) { .ccard { transform: none; opacity: 1; } }
+      /* the avatars are framed head-and-shoulders: bias the crop upwards so no chin or crown is cut */
+      .ccard .pwrap, .ccard .portrait { width: 100%; height: 300px; border-radius: 0; box-shadow: none; object-position: 50% 14%; }
       .ccard .txt { padding: 18px 20px 22px; }
       .ccard .go {
         display: inline-block; margin-top: 14px; padding: 10px 18px; border-radius: 999px;
@@ -1460,10 +1484,8 @@ const coaches = [
           <a class="chapter ccard" href={withBase(`/${c.slug}/`)} style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
             {hasVideo(c.slug) ? (
               <span class="pwrap">
+                {/* one standing loop per card — no idle-video swap on hover here (founder 2026-09-16) */}
                 <video class="portrait v-stand" src={withBase(`/home/video/${c.slug}.mp4`)} muted loop playsinline autoplay preload="metadata" poster={withBase(`/home/${c.img}`)} aria-label={`${c.name} standing`} width="148" height="180"></video>
-                {hasIdle(c.slug) && (
-                  <video class="portrait v-idle" src={withBase(`/home/video/${c.slug}-idle.mp4`)} muted loop playsinline preload="metadata" aria-hidden="true" width="148" height="180"></video>
-                )}
               </span>
             ) : (
               <img class="portrait" src={withBase(`/home/${c.img}`)} alt={`${c.name} portrait`} style={`object-position:${c.pos}`} width="148" height="180" loading="lazy" />
@@ -1891,8 +1913,20 @@ const coaches = [
         };
         document.querySelector('.crsl-arrow.prev')?.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
         document.querySelector('.crsl-arrow.next')?.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
-        track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+        // distance from the middle of the track drives --d on every card: the one in the middle
+        // stays full size, its neighbours shrink and fade (praktika's carousel)
+        const cards = Array.from(track.querySelectorAll<HTMLElement>('.ccard'));
+        const focus = () => {
+          const mid = track.scrollLeft + track.clientWidth / 2;
+          for (const c of cards) {
+            const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid) / (c.offsetWidth * 1.05);
+            c.style.setProperty('--d', String(Math.min(d, 1).toFixed(3)));
+          }
+        };
+        track.addEventListener('scroll', () => requestAnimationFrame(() => { sync(); focus(); }), { passive: true });
+        window.addEventListener('resize', focus, L);
         sync();
+        focus();
       }
       }
       document.addEventListener('astro:page-load', initHome);
