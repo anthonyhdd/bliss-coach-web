@@ -1317,6 +1317,15 @@ const coaches = [
 
       /* coach carousel */
       .coaches { max-width: none; display: block; padding: 8vh 0 10vh; }
+      /* scroll-driven: the section is made tall by the script, the stage sticks to the viewport
+         and the page's vertical scroll walks the row to the left */
+      .coaches.pinned { padding: 0; }
+      .coaches.pinned .coaches-pin {
+        position: sticky; top: 0; min-height: 100vh;
+        display: flex; flex-direction: column; justify-content: center;
+        padding: 84px 0 24px;
+      }
+      .coaches.pinned .crsl-track { scroll-snap-type: none; overflow-x: hidden; }
       .crsl { position: relative; }
       .crsl-track {
         display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
@@ -1365,9 +1374,14 @@ const coaches = [
         padding: 22px 22px 24px; color: #fff;
       }
       .cc-name { font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+      /* the craft is the hook: bigger, and painted in the coach's own colours (lifted toward
+         white so the gradient stays readable on the dark scrim) */
       .cc-craft {
         font-family: 'Instrument Serif', Georgia, serif; font-style: italic;
-        font-size: clamp(15px, 1.7vw, 18px); color: rgba(255, 255, 255, 0.86);
+        font-size: clamp(21px, 2.3vw, 26px); line-height: 1.15;
+        background: linear-gradient(92deg, color-mix(in srgb, var(--c1) 62%, #fff), color-mix(in srgb, var(--c2) 62%, #fff));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        padding-right: 0.08em;
       }
       .cc-cta {
         margin-top: 14px; padding: 11px 20px; border-radius: 999px;
@@ -1492,6 +1506,7 @@ const coaches = [
 
       <!-- one chapter per coach -->
       <section class="coaches" id="coaches" aria-label="Meet the coaches">
+        <div class="coaches-pin">
         <div class="sec-head rv">
           <span class="sec-kicker">Meet the coaches</span>
           <h2>A specialist for <em>every corner of life</em></h2>
@@ -1523,6 +1538,7 @@ const coaches = [
           <button class="crsl-arrow next" type="button" aria-label="Next coach">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
+        </div>
         </div>
       </section>
 
@@ -1922,20 +1938,22 @@ const coaches = [
       } else {
         document.querySelectorAll('#manifesto .w').forEach((w) => w.classList.add('on'));
       }
-      // coach carousel: arrows scroll one card at a time and grey out at the ends
+      // coach carousel. Scroll-driven when motion is allowed: the section is pinned and the
+      // page's vertical scroll walks the row to the left (founder: "elles devraient aller à
+      // gauche à mesure du scroll"). Reduced motion keeps a plain swipeable, snapping row.
       const track = document.querySelector<HTMLElement>('.crsl-track');
-      if (track) {
-        const step = () => (track.querySelector<HTMLElement>('.ccard')?.offsetWidth ?? 380) + 18;
+      const coachSec = document.getElementById('coaches');
+      if (track && coachSec) {
+        const cards = Array.from(track.querySelectorAll<HTMLElement>('.ccard'));
+        const step = () => (cards[0]?.offsetWidth ?? 380) + 18;
+        const maxX = () => Math.max(track.scrollWidth - track.clientWidth, 0);
+        const pinned = !reduceMotion;
         const sync = () => {
-          const max = track.scrollWidth - track.clientWidth - 2;
           document.querySelector('.crsl-arrow.prev')?.toggleAttribute('disabled', track.scrollLeft <= 2);
-          document.querySelector('.crsl-arrow.next')?.toggleAttribute('disabled', track.scrollLeft >= max);
+          document.querySelector('.crsl-arrow.next')?.toggleAttribute('disabled', track.scrollLeft >= maxX() - 2);
         };
-        document.querySelector('.crsl-arrow.prev')?.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
-        document.querySelector('.crsl-arrow.next')?.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
         // distance from the middle of the track drives --d on every card: the one in the middle
         // stays full size, its neighbours shrink and fade (praktika's carousel)
-        const cards = Array.from(track.querySelectorAll<HTMLElement>('.ccard'));
         const focus = () => {
           const mid = track.scrollLeft + track.clientWidth / 2;
           for (const c of cards) {
@@ -1943,8 +1961,31 @@ const coaches = [
             c.style.setProperty('--d', String(Math.min(d, 1).toFixed(3)));
           }
         };
-        track.addEventListener('scroll', () => requestAnimationFrame(() => { sync(); focus(); }), { passive: true });
-        window.addEventListener('resize', focus, L);
+        track.addEventListener('scroll', () => requestAnimationFrame(() => { sync(); focus(); }), { passive: true, signal: ac.signal });
+
+        // page pixels needed per pixel of horizontal travel
+        const RATE = 1.15;
+        const layout = () => {
+          if (!pinned) return;
+          coachSec.classList.add('pinned');
+          coachSec.style.height = `${Math.round(window.innerHeight + maxX() * RATE)}px`;
+        };
+        const drive = () => {
+          if (!pinned) return;
+          const span = coachSec.offsetHeight - window.innerHeight;
+          const p = span > 0 ? Math.min(Math.max(-coachSec.getBoundingClientRect().top / span, 0), 1) : 0;
+          track.scrollLeft = p * maxX();
+        };
+        const move = (dir: number) => {
+          if (pinned) window.scrollBy({ top: dir * step() * RATE, behavior: 'smooth' });
+          else track.scrollBy({ left: dir * step(), behavior: 'smooth' });
+        };
+        document.querySelector('.crsl-arrow.prev')?.addEventListener('click', () => move(-1), { signal: ac.signal });
+        document.querySelector('.crsl-arrow.next')?.addEventListener('click', () => move(1), { signal: ac.signal });
+        window.addEventListener('scroll', () => requestAnimationFrame(drive), { passive: true, signal: ac.signal });
+        window.addEventListener('resize', () => { layout(); drive(); focus(); }, L);
+        layout();
+        drive();
         sync();
         focus();
       }
