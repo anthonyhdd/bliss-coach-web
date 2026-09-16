@@ -1121,9 +1121,6 @@ const coaches = [
       /* the pill header lives in components/PillBar.astro (shared with every page) */
 
       /* ============ HOME POLISH (2026-09-16: "la home pourrait être mieux") ============ */
-      /* bigger faces under the hero: the coaches ARE the product */
-      .avatars a { margin-right: -6px; }
-      .avatars img { width: 68px; height: 84px; border-radius: 20px; }
       /* less empty scroll around the manifesto */
       .manifesto { padding: 12vh 24px 10vh; }
       /* craft: the eight coaches as a tidy 4x2 wall */
@@ -1152,7 +1149,6 @@ const coaches = [
       .review figcaption { font-size: 13.5px; }
       .reviews .rev-title { font-size: clamp(30px, 4.4vw, 48px); }
       @media (max-width: 640px) {
-        .avatars img { width: 44px; height: 56px; border-radius: 14px; }
         .review { width: 290px; }
         .review blockquote { font-size: 15.5px; }
       }
@@ -1251,7 +1247,7 @@ const coaches = [
       }
       .coaches.pinned .crsl-track { scroll-snap-type: none; overflow-x: hidden; }
       /* the store, one tap under the coaches */
-      .store-row { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+      .store-row { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: -30px; position: relative; }
       .store-badge {
         display: inline-flex; align-items: center; gap: 9px; height: 48px; padding: 0 18px 0 14px;
         border-radius: 12px; background: #0b0b0f; color: #fff; text-decoration: none;
@@ -1267,7 +1263,7 @@ const coaches = [
         display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
         /* half a card of padding each side: the row starts on the first coach CENTRED and ends on
            the last one centred, instead of hugging the right edge (founder 2026-09-16) */
-        padding: 6px calc(50% - min(200px, 42vw)) 26px;
+        padding: 6px calc(50% - min(200px, 42vw)) 64px;
         scrollbar-width: none; -ms-overflow-style: none;
       }
       .crsl-track::-webkit-scrollbar { display: none; }
