@@ -562,6 +562,23 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
       errorEl.hidden = false;
     }
 
+    /**
+     * The app stores a level as one of 'Beginner' | 'Elementary' | 'Intermediate' | 'Advanced'
+     * (`spanish_level` in `onboardingAnswers`, read by `parseTutorOnboardingProfile`). The funnel
+     * never asks for it directly, so derive it from the two signals it does collect: how many of the
+     * 28 words were ticked, and whether they have ever learnt a language before.
+     *
+     * "Never" caps at Beginner whatever the word count — recognising written words is not speaking,
+     * and starting a true beginner too high is the one mistake that makes the first call go badly.
+     */
+    function deriveLevel(): string {
+      if (answers.last_time === 'never') return 'Beginner';
+      if (words.length <= 4) return 'Beginner';
+      if (words.length <= 12) return 'Elementary';
+      if (words.length <= 22) return 'Intermediate';
+      return 'Advanced';
+    }
+
     async function beginCheckout(cta: HTMLButtonElement): Promise<void> {
       const original = cta.textContent;
       cta.disabled = true;
@@ -580,6 +597,35 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
           const { data, error } = await client.auth.signInAnonymously();
           if (error || !data.user) throw error ?? new Error('no user');
           userId = data.user.id;
+        }
+
+        // Hand the answers to the app before leaving for checkout.
+        //
+        // Without this the buyer answers the same questions twice — level, name, goal — in the
+        // thirty seconds right after paying, which is exactly where the product should feel most
+        // certain of itself. Written against the same user id the purchase is made against, so the
+        // app finds it with no join and no email matching.
+        //
+        // Best-effort on purpose: a failed write must never block a payment. The buyer simply gets
+        // the normal onboarding, which is what happens today anyway.
+        try {
+          await client.from('web_funnel_profiles').upsert(
+            {
+              user_id: userId,
+              funnel: funnel.id,
+              variant: root.dataset.app ?? funnel.id,
+              name: name || null,
+              answers,
+              words_known: words,
+              derived_level: deriveLevel(),
+              native_language: (navigator.language || '').split('-')[0] || null,
+              attribution,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'user_id' },
+          );
+        } catch {
+          /* the purchase matters more than the hand-off */
         }
 
         const returnTo = new URL('/start/success/', window.location.origin);
