@@ -103,7 +103,8 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
   .o4 { --c: var(--B); --start: 270deg; --r: 20%; --t: 11s; --p: 7s; }
   /* compact (header, ~22px): at that size the full halo would spill over the brand text and the
      bar, and a blur proportional to the size turns the lights into hard dots — tighter, softer */
-  .bloom.compact .aura { inset: -45%; opacity: 0.7; }
+  /* no halo at logo size: at 22-26px it reads as a smudge behind the flower, not as light */
+  .bloom.compact .aura { display: none; }
   .bloom.compact .orb { filter: blur(calc(var(--size) * 0.3)); }
   .bloom.compact .heart { box-shadow: none; }
 
