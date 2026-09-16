@@ -564,22 +564,12 @@ if (faq.length) {
     if (!document.querySelector('.app-hero2')) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // the page dresses in the app's color as the signature strip passes (home pattern)
-    const stripEl = document.querySelector('.craft-strip');
-    if (stripEl) {
-      document.body.style.transition = 'background-color 1.2s ease';
-      const worlds = new IntersectionObserver((es) => {
-        for (const e of es) {
-          if (e.isIntersecting) {
-            const b1 = getComputedStyle(document.body).getPropertyValue('--brand-1').trim();
-            if (b1) document.body.style.backgroundColor = `color-mix(in srgb, ${b1} 7%, #0b0b0f)`;
-          } else {
-            document.body.style.removeProperty('background-color');
-          }
-        }
-      }, { threshold: 0.4 });
-      worlds.observe(stripEl);
-    }
+    // NO body-darkening here. A previous version dyed <body> near-black (#0b0b0f) while the
+    // signature strip was 40% visible: on a phone a 176px strip blacked out ~800px of scroll —
+    // the phone mockup above it and the feature bento below — and every one of those elements is
+    // designed for the light background. The page flashed to black and back, cards washed out,
+    // headings went dark-on-dark (founder: "chelou l'effet noir", 2026-09-16). The strip keeps its
+    // own signature moment: the serif line still lights up word by word via `.lit` below.
 
     // sticky mobile CTA appears once the hero CTA scrolls out of view
     const heroCta = document.querySelector('.hero-cta');
