@@ -22,15 +22,18 @@ interface Props {
   compact?: boolean;
   /** next to visible "Bliss Coach" text: hide from screen readers instead of announcing it twice */
   decorative?: boolean;
+  /** on a solid coloured ground the mark is WHITE (founder 2026-09-16): white petals, the heart
+      punched through to the background, a soft white glow instead of the colour orbs */
+  mono?: boolean;
 }
-const { class: className, size = 64, label = 'Bliss Coach logo', compact = false, decorative = false } = Astro.props;
+const { class: className, size = 64, label = 'Bliss Coach logo', compact = false, decorative = false, mono = false } = Astro.props;
 
 // petal 1 last: it is the one drawn on top of the colour cut
 const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
 ---
 
 <div
-  class:list={['bloom', className, { compact }]}
+  class:list={['bloom', className, { compact, mono }]}
   style={`--size:${size}px`}
   role={decorative ? undefined : 'img'}
   aria-label={decorative ? undefined : label}
@@ -101,6 +104,19 @@ const ORDER = [0, 2, 3, 4, 5, 6, 7, 1];
   .o2 { --c: var(--Y); --start: 90deg;  --r: 22%; --t: 12s; --p: 6.5s; }
   .o3 { --c: var(--G); --start: 180deg; --r: 16%; --t: 15s; --p: 5.5s; }
   .o4 { --c: var(--B); --start: 270deg; --r: 20%; --t: 11s; --p: 7s; }
+  /* mono: the white mark for coloured grounds. The heart is a hole (mask on the rotating stage,
+     radial so rotation doesn't matter), not a white disc that would vanish into white petals. */
+  .bloom.mono .paint,
+  .bloom.mono .petal.top .paint { background: #ffffff; }
+  .bloom.mono .sheen,
+  .bloom.mono .heart { display: none; }
+  .bloom.mono .spin {
+    -webkit-mask: radial-gradient(circle at 50% 50%, transparent calc(var(--size) * 0.07), #000 calc(var(--size) * 0.075));
+    mask: radial-gradient(circle at 50% 50%, transparent calc(var(--size) * 0.07), #000 calc(var(--size) * 0.075));
+  }
+  .bloom.mono .orb { --c: #ffffff; }
+  .bloom.mono .aura { opacity: 0.32; }
+
   /* compact (header, ~22px): at that size the full halo would spill over the brand text and the
      bar, and a blur proportional to the size turns the lights into hard dots — tighter, softer */
   /* no halo at logo size: at 22-26px it reads as a smudge behind the flower, not as light */
