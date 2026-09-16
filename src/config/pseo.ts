@@ -59,6 +59,15 @@ export const PSEO_SECTIONS: Record<string, PseoSection> = {
       'Phrase-by-phrase guides: the natural translation, variations, pronunciation, and real example conversations.',
     itemLabel: 'phrase guide',
   },
+  // Meilin (2026-09-16): situation-first from day one (rule 0) — "ordering food", "bargaining",
+  // "taking a taxi", never a bare "how to say hello in Chinese".
+  meilin: {
+    base: 'how-to-say',
+    hubTitle: 'Mandarin for real situations',
+    hubIntro:
+      'The Mandarin you need in the moment — ordering, bargaining, taxis, toasts, holidays — with characters, pinyin and the tone that trips people up.',
+    itemLabel: 'phrase guide',
+  },
   astra: {
     base: 'signs',
     hubTitle: 'Zodiac signs explained',
