@@ -56,40 +56,72 @@ const brandStyle =
 
     <!-- Intro: the principle, shown ---------------------------------------- -->
     <!--
-      Not argued in three sentences — SHOWN. A teacher card, a caption being typed in the language
-      she teaches, then a "your turn" card whose words colour in one by one. The row rotates through
-      the teachers every ten seconds. This is the app's own intro screen (v2, founder 2026-09-17:
-      « ça doit être court, méga stylé »).
+      The app's own intro screen, in its own order: the STAGE first (her card, her question written
+      as she says it, then the "your turn" card), the title under it, the promise, the row of
+      teachers, and only then the button. Not argued in three sentences — shown.
     -->
     <section class="fnl-screen is-active" data-screen="intro">
-      <div class="fnl-inner fnl-center">
-        <h1 class="bl-title" data-title={COPY.introTitle}></h1>
-        <p class="fnl-sub">{COPY.introPromise}</p>
+      <div class="bl-brand">
+        <img src="/brand/bliss-coach-mark.png" alt="" width="26" height="26" />
+        <span>Bliss</span>
+      </div>
 
-        <div class="bl-demo" data-demo>
-          <div class="bl-demo-card" data-demo-card>
-            <img class="bl-demo-photo" data-demo-photo src="" alt="" width="132" height="168" />
-            <span class="bl-demo-live"><i></i>{COPY.demoLive}</span>
-            <span class="bl-demo-name" data-demo-name></span>
+      <div class="fnl-inner fnl-center">
+        <div class="bl-stage" data-demo>
+          <!-- Her card: the same card as the "pick your tutor" step, in small. -->
+          <div class="bl-card bl-card-compact" data-demo-card>
+            <img class="bl-card-photo" data-demo-photo src="" alt="" width="180" height="240" />
+            <span class="bl-card-scrim"></span>
+            <span class="bl-pill bl-pill-live" data-demo-live><i></i>{COPY.demoLive}</span>
+            <span class="bl-card-text">
+              <b data-demo-name></b>
+              <span class="bl-card-traits" data-demo-traits></span>
+            </span>
           </div>
-          <div class="bl-demo-talk">
-            <p class="bl-bubble" data-demo-line></p>
+
+          <!-- Her question, written as she says it: glass, popped out of the card. -->
+          <div class="bl-bubble" data-demo-bubble>
+            <span class="bl-bubble-head">
+              <i class="bl-bubble-dot"></i>
+              <b data-demo-bubble-name></b>
+            </span>
+            <p class="bl-bubble-text" data-demo-line></p>
+            <span class="bl-dots" data-demo-dots><i></i><i></i><i></i></span>
             <p class="bl-roman" data-demo-line-roman hidden></p>
-            <div class="bl-reply" data-demo-reply hidden>
-              <span class="bl-reply-tag">{COPY.demoYourTurn}</span>
-              <p class="bl-reply-words" data-demo-reply-words></p>
+          </div>
+
+          <!-- The learner's turn: the answer takes her colour, word by word. -->
+          <div class="bl-turn-frame" data-demo-reply hidden>
+            <div class="bl-turn">
+              <span class="bl-turn-head">
+                <i class="bl-mic" data-demo-mic><s></s><s></s><s></s></i>
+                <b>{COPY.demoYourTurn}</b>
+              </span>
+              <p class="bl-turn-words" data-demo-reply-words></p>
               <p class="bl-roman" data-demo-reply-roman hidden></p>
             </div>
           </div>
         </div>
 
+        <h1 class="bl-title bl-title-intro" data-title={COPY.introTitle}></h1>
+        <p class="bl-promise">{COPY.introPromise}</p>
+
+        <!-- The row of teachers: the one the scene is showing sits in the middle. -->
+        <div class="bl-strip" data-strip></div>
+      </div>
+
+      <div class="bl-bottom">
         <button class="fnl-cta" type="button" data-action="start">{COPY.continue}</button>
+        <p class="bl-legal">
+          By continuing you agree to our <a href="/terms/">Terms</a> and <a href="/privacy/">Privacy&nbsp;Policy</a>.
+        </p>
       </div>
     </section>
 
     <!-- Language ----------------------------------------------------------- -->
     <section class="fnl-screen" data-screen="language">
       <div class="fnl-inner">
+        <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-title={COPY.languageTitle}></h1>
         <div class="bl-langs" data-langs></div>
       </div>
@@ -98,6 +130,7 @@ const brandStyle =
     <!-- Tutor -------------------------------------------------------------- -->
     <section class="fnl-screen" data-screen="tutor">
       <div class="fnl-inner">
+        <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-title={COPY.tutorTitle}></h1>
         <p class="fnl-sub">{COPY.tutorSubtitle}</p>
         <div class="bl-tutors" data-tutors></div>
@@ -112,23 +145,28 @@ const brandStyle =
     -->
     <section class="fnl-screen" data-screen="vocabulary">
       <div class="fnl-inner">
+        <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-vocab-title></h1>
         <p class="fnl-sub" data-vocab-tier></p>
         <div class="bl-words" data-words></div>
-        <button class="fnl-cta" type="button" data-action="words-done">{COPY.continue}</button>
-        <!-- Ticking nothing is an answer, and saying so out loud is what makes it one. -->
-        <button class="bl-none" type="button" data-action="words-none">{COPY.vocabularyNone}</button>
+        <!-- Ticking nothing is an answer: the button says so rather than hiding a second link
+             under it (the app's own rule — `ticked.length > 0 ? continue : vocabulary.none`). -->
+        <button class="fnl-cta" type="button" data-action="words-done">{COPY.vocabularyNone}</button>
       </div>
     </section>
 
     <!-- Goal + optional deadline -------------------------------------------- -->
     <section class="fnl-screen" data-screen="goal">
       <div class="fnl-inner">
+        <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-title={COPY.goalTitle}></h1>
         <div class="bl-goals" data-goals></div>
 
         <div class="bl-deadline" data-deadline hidden>
-          <p class="bl-deadline-q">{COPY.goalDeadline} <em>{COPY.optional}</em></p>
+          <div class="bl-deadline-head">
+            <b>{COPY.goalDeadline}</b>
+            <em>{COPY.optional}</em>
+          </div>
           <div class="bl-chips" data-events></div>
           <label class="bl-date" data-date-field hidden>
             <span>When is it?</span>
@@ -142,6 +180,7 @@ const brandStyle =
     <!-- Name ---------------------------------------------------------------- -->
     <section class="fnl-screen" data-screen="name">
       <div class="fnl-inner">
+        <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-name-title></h1>
         <input class="bl-input" type="text" data-name-input placeholder={COPY.namePlaceholder} autocomplete="given-name" maxlength="50" />
         <button class="fnl-cta" type="button" data-action="name-done">{COPY.continue}</button>
@@ -160,7 +199,8 @@ const brandStyle =
 
     <!-- Plan ready ----------------------------------------------------------- -->
     <section class="fnl-screen" data-screen="ready">
-      <div class="fnl-inner fnl-center">
+      <div class="fnl-inner">
+        <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-ready-title></h1>
         <p class="fnl-sub" data-ready-sub></p>
 
@@ -494,14 +534,21 @@ const brandStyle =
 
     // ── Intro demo ──────────────────────────────────────────────────────────
     const demo = {
+      stage: root.querySelector<HTMLElement>('[data-demo]'),
       photo: root.querySelector<HTMLImageElement>('[data-demo-photo]'),
       name: root.querySelector<HTMLElement>('[data-demo-name]'),
+      traits: root.querySelector<HTMLElement>('[data-demo-traits]'),
       card: root.querySelector<HTMLElement>('[data-demo-card]'),
+      bubble: root.querySelector<HTMLElement>('[data-demo-bubble]'),
+      bubbleName: root.querySelector<HTMLElement>('[data-demo-bubble-name]'),
+      dots: root.querySelector<HTMLElement>('[data-demo-dots]'),
       line: root.querySelector<HTMLElement>('[data-demo-line]'),
       lineRoman: root.querySelector<HTMLElement>('[data-demo-line-roman]'),
       reply: root.querySelector<HTMLElement>('[data-demo-reply]'),
+      mic: root.querySelector<HTMLElement>('[data-demo-mic]'),
       replyWords: root.querySelector<HTMLElement>('[data-demo-reply-words]'),
       replyRoman: root.querySelector<HTMLElement>('[data-demo-reply-roman]'),
+      strip: root.querySelector<HTMLElement>('[data-strip]'),
     };
     let demoTimers: number[] = [];
 
@@ -527,27 +574,59 @@ const brandStyle =
       const lesson = INTRO_LESSONS[code];
       if (!lesson) return;
 
+      // Her card and her colour. The stage carries `--tutor` so the bubble's dot, the gradient frame
+      // and the words all take the colour of whoever is on screen — the card is not the only thing
+      // that changes teacher.
+      if (demo.stage) {
+        demo.stage.style.setProperty('--tutor-1', who.gradient[0]);
+        demo.stage.style.setProperty('--tutor-2', who.gradient[1]);
+        demo.stage.style.setProperty('--tutor-3', who.gradient[2]);
+        demo.stage.style.setProperty('--tutor-accent', who.accent);
+      }
       if (demo.photo) {
         demo.photo.src = `/home/${who.photo}`;
         demo.photo.alt = `${who.name}, AI ${LANGUAGE_BY_CODE[code]?.name ?? ''} tutor`;
       }
       if (demo.name) demo.name.textContent = who.name;
-      if (demo.card) demo.card.style.setProperty('--tutor', who.gradient[1]);
+      if (demo.bubbleName) demo.bubbleName.textContent = who.name;
+      if (demo.traits) {
+        // Two traits in compact, as in the app: the face must stay clear.
+        demo.traits.textContent = '';
+        who.traits.slice(0, 2).forEach((trait) => {
+          const pill = document.createElement('span');
+          pill.className = 'bl-pill';
+          pill.textContent = trait;
+          demo.traits?.appendChild(pill);
+        });
+      }
+      centreStrip(who.persona);
+
       demo.line.textContent = '';
+      if (demo.dots) demo.dots.hidden = false;
+      if (demo.bubble) {
+        demo.bubble.classList.remove('is-out');
+        demo.bubble.classList.add('is-in');
+      }
       if (demo.lineRoman) {
         demo.lineRoman.textContent = lesson.lineRomanization ?? '';
-        demo.lineRoman.hidden = !lesson.lineRomanization;
+        demo.lineRoman.hidden = true;
       }
       if (demo.reply) demo.reply.hidden = true;
+      if (demo.mic) demo.mic.classList.remove('is-done');
       if (demo.replyWords) demo.replyWords.textContent = '';
 
       const chars = Array.from(lesson.line);
       const timings = introSceneTimings(chars.length, lesson.replyWords.length);
 
+      // Three typing dots before the first letter, then the sentence is written at 45 ms a character.
       chars.forEach((_, i) => {
         demoTimers.push(
           window.setTimeout(() => {
+            if (demo.dots) demo.dots.hidden = true;
             if (demo.line) demo.line.textContent = chars.slice(0, i + 1).join('');
+            if (i + 1 === chars.length && demo.lineRoman && lesson.lineRomanization) {
+              demo.lineRoman.hidden = false;
+            }
           }, timings.charAt(i + 1)),
         );
       });
@@ -556,6 +635,7 @@ const brandStyle =
         window.setTimeout(() => {
           if (!demo.reply || !demo.replyWords) return;
           demo.reply.hidden = false;
+          demo.reply.classList.add('is-in');
           demo.replyWords.textContent = '';
           lesson.replyWords.forEach((word, w) => {
             const span = document.createElement('span');
@@ -563,7 +643,11 @@ const brandStyle =
             span.textContent = (w > 0 ? lesson.wordJoiner : '') + word;
             demo.replyWords?.appendChild(span);
             demoTimers.push(
-              window.setTimeout(() => span.classList.add('is-said'), timings.wordAt(w) - timings.replyAt),
+              window.setTimeout(() => {
+                span.classList.add('is-said');
+                // The mic badge is speaking while words are landing, and becomes a check at the end.
+                if (w === lesson.replyWords.length - 1 && demo.mic) demo.mic.classList.add('is-done');
+              }, timings.wordAt(w) - timings.replyAt),
             );
           });
           if (demo.replyRoman) {
@@ -573,7 +657,60 @@ const brandStyle =
         }, timings.replyAt),
       );
 
-      demoTimers.push(window.setTimeout(() => playScene(sceneIndex + 1), timings.endAt));
+      // The scene rests, then the bubbles fade and the next teacher takes over.
+      demoTimers.push(
+        window.setTimeout(() => {
+          demo.bubble?.classList.add('is-out');
+          demo.reply?.classList.add('is-out');
+        }, timings.fadeAt),
+      );
+      demoTimers.push(
+        window.setTimeout(() => {
+          demo.reply?.classList.remove('is-in', 'is-out');
+          playScene(sceneIndex + 1);
+        }, timings.endAt),
+      );
+    }
+
+    /**
+     * The row of teachers under the intro (the app's `GuidedAvatarStrip` in carousel mode): every
+     * face once, the one the scene is showing in the middle. Founder, 2026-09-17: the bottom of the
+     * intro was empty space, and this is what fills it — with the thing being sold.
+     */
+    function buildStrip(): void {
+      if (!demo.strip) return;
+      demo.strip.textContent = '';
+      // One inner rail that slides: moving each card would fight the row's own layout.
+      const rail = document.createElement('span');
+      rail.className = 'bl-strip-inner';
+      demo.strip.appendChild(rail);
+      // The row twice: the app's carousel always has faces on BOTH sides of the centre, and a row
+      // that starts on its first card leaves the left half of the screen empty.
+      const row = demoRow();
+      [...row, ...row].forEach((t) => {
+        const item = document.createElement('span');
+        item.className = 'bl-strip-card';
+        item.dataset.persona = t.persona;
+        item.style.setProperty('--tutor', t.gradient[1]);
+        item.innerHTML = `<img src="/home/${t.photo}" alt="" width="54" height="66" loading="lazy" /><i></i>`;
+        rail.appendChild(item);
+      });
+    }
+
+    function centreStrip(persona: string): void {
+      if (!demo.strip) return;
+      const cards = Array.from(demo.strip.querySelectorAll<HTMLElement>('.bl-strip-card'));
+      // Prefer the copy in the second half, so there is always something to the left.
+      const half = Math.floor(cards.length / 2);
+      const inSecond = cards.findIndex((c, k) => k >= half && c.dataset.persona === persona);
+      const i = inSecond >= 0 ? inSecond : cards.findIndex((c) => c.dataset.persona === persona);
+      cards.forEach((c, k) => c.classList.toggle('is-centre', k === i));
+      if (i < 0) return;
+      // Slide the rail so the current face sits in the middle of the row.
+      const card = cards[i];
+      const rail = demo.strip.querySelector<HTMLElement>('.bl-strip-inner');
+      const offset = card.offsetLeft + card.offsetWidth / 2 - demo.strip.clientWidth / 2;
+      rail?.style.setProperty('--shift', `${-offset}px`);
     }
 
     // ── Language ────────────────────────────────────────────────────────────
@@ -582,11 +719,19 @@ const brandStyle =
       TAUGHT_LANGUAGES.forEach((lang) => {
         const btn = document.createElement('button');
         btn.type = 'button';
+        // The app's `LanguageTileGrid`: the tile IS the colour, with the language's own name above
+        // its English one and a white code badge. Not a white card with a coloured square.
         btn.className = 'bl-lang';
         const recommended = recommendedTutor(lang.code);
-        btn.style.setProperty('--tutor', recommended.gradient[1]);
+        btn.style.setProperty('--tutor-1', recommended.gradient[0]);
+        btn.style.setProperty('--tutor-2', recommended.gradient[1]);
+        btn.style.setProperty('--tutor-3', recommended.gradient[2]);
         btn.style.setProperty('--hue', `${hueStep(recommended.persona, lang.code)}deg`);
-        btn.innerHTML = `<span class="bl-lang-badge">${lang.badge}</span><span class="bl-lang-name"></span>`;
+        btn.innerHTML =
+          '<span class="bl-lang-top"><i class="bl-lang-native"></i><b class="bl-lang-badge"></b></span>' +
+          '<span class="bl-lang-name"></span>';
+        (btn.querySelector('.bl-lang-native') as HTMLElement).textContent = lang.native;
+        (btn.querySelector('.bl-lang-badge') as HTMLElement).textContent = lang.badge;
         (btn.querySelector('.bl-lang-name') as HTMLElement).textContent = lang.name;
         btn.addEventListener('click', () => {
           language = lang.code;
@@ -630,24 +775,39 @@ const brandStyle =
       tutorsForLanguage(language).forEach((t, i) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'bl-tutor';
+        // The site's own coach card (`.ccard` on the home page) — which is exactly what the app's
+        // `TutorPickCard` was built from: portrait edge to edge, a scrim, her name, the serif line
+        // in her colours, and her character in glass pills.
+        btn.className = 'bl-card bl-tutor';
         btn.dataset.persona = t.persona;
-        btn.style.setProperty('--tutor', t.gradient[1]);
+        btn.style.setProperty('--tutor-1', t.gradient[0]);
+        btn.style.setProperty('--tutor-2', t.gradient[1]);
+        btn.style.setProperty('--tutor-3', t.gradient[2]);
+        btn.style.setProperty('--tutor-accent', t.accent);
         btn.classList.toggle('is-selected', t.persona === persona);
-        const traits = t.traits.join(' · ');
         btn.innerHTML =
-          `<img src="/home/${t.photo}" alt="" width="148" height="188" loading="lazy" />` +
-          `<span class="bl-tutor-scrim"></span>` +
-          (i === 0 ? `<span class="bl-tutor-reco">Recommended</span>` : '') +
-          `<span class="bl-tutor-meta"><b></b><i></i><em></em></span>`;
-        (btn.querySelector('.bl-tutor-meta b') as HTMLElement).textContent = t.name;
-        (btn.querySelector('.bl-tutor-meta i') as HTMLElement).textContent = tutorTag(t, language);
-        (btn.querySelector('.bl-tutor-meta em') as HTMLElement).textContent = traits;
+          `<img class="bl-card-photo" src="/home/${t.photo}" alt="" width="300" height="400" loading="lazy" />` +
+          '<span class="bl-card-scrim"></span>' +
+          '<span class="bl-card-tags"><span class="bl-pill bl-pill-lang"></span>' +
+          (i === 0 ? '<span class="bl-pill bl-pill-reco">Recommended</span>' : '') +
+          '</span>' +
+          '<span class="bl-card-text"><b></b><em></em><span class="bl-card-traits"></span></span>';
+        (btn.querySelector('.bl-pill-lang') as HTMLElement).textContent = languageName();
+        (btn.querySelector('.bl-card-text b') as HTMLElement).textContent = t.name;
+        (btn.querySelector('.bl-card-text em') as HTMLElement).textContent = tutorTag(t, language);
+        const traits = btn.querySelector('.bl-card-traits') as HTMLElement;
+        t.traits.forEach((trait) => {
+          const pill = document.createElement('span');
+          pill.className = 'bl-pill';
+          pill.textContent = trait;
+          traits.appendChild(pill);
+        });
         btn.addEventListener('click', () => {
           persona = t.persona;
           persist();
           paintTutor();
           tutorsEl.querySelectorAll('.bl-tutor').forEach((c) => c.classList.toggle('is-selected', c === btn));
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
           track('funnel_answer', { funnel: funnel.id, step: 'bliss_tutor', value: t.persona });
         });
         tutorsEl.appendChild(btn);
@@ -673,20 +833,28 @@ const brandStyle =
       if (vocabTier) {
         vocabTier.textContent = (TIER_LABEL[tier] ?? '').replace('{language}', languageName());
       }
+      paintProbeCta();
       probeWordsFor(language, tier).forEach((entry) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'bl-word-chip';
-        btn.innerHTML = `<b></b>${entry.hint ? '<i></i>' : ''}`;
+        btn.innerHTML = `<b></b>${entry.hint ? '<i></i>' : ''}<s class="bl-word-check">✓</s>`;
         (btn.querySelector('b') as HTMLElement).textContent = entry.word;
         if (entry.hint) (btn.querySelector('i') as HTMLElement).textContent = entry.hint;
         btn.addEventListener('click', () => {
           if (picked.has(entry.word)) picked.delete(entry.word);
           else picked.add(entry.word);
           btn.classList.toggle('is-picked', picked.has(entry.word));
+          paintProbeCta();
         });
         wordsEl.appendChild(btn);
       });
+    }
+
+    /** The button IS the "none of these" answer while nothing is ticked — the app's own rule. */
+    function paintProbeCta(): void {
+      const cta = root.querySelector<HTMLButtonElement>('[data-action="words-done"]');
+      if (cta) cta.textContent = picked.size > 0 ? COPY.continue : COPY.vocabularyNone;
     }
 
     /** Ticking nothing is an answer, so the grid is submitted the same way whatever is selected. */
@@ -1065,11 +1233,6 @@ const brandStyle =
       advance();
     });
     root.querySelector<HTMLButtonElement>('[data-action="words-done"]')?.addEventListener('click', submitGrid);
-    root.querySelector<HTMLButtonElement>('[data-action="words-none"]')?.addEventListener('click', () => {
-      picked.clear();
-      wordsEl?.querySelectorAll('.bl-word-chip').forEach((c) => c.classList.remove('is-picked'));
-      submitGrid();
-    });
     root.querySelector<HTMLButtonElement>('[data-action="goal-done"]')?.addEventListener('click', () => {
       if (!goal) return;
       buildName();
@@ -1106,6 +1269,7 @@ const brandStyle =
         introTitle.dataset.title = COPY.introTitle.replace('a language', languageName());
       }
     }
+    buildStrip();
     buildGoals();
     buildName();
     if (language) buildTutors();

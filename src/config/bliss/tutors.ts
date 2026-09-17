@@ -139,20 +139,22 @@ export type TaughtLanguage = {
   name: string;
   /** The two-letter badge on the language tile — `GUIDED_LANGUAGE_BADGE` in the app. */
   badge: string;
+  /** The language's own name, small above the tile's title — the app's `LanguageTileGrid` top row. */
+  native: string;
 };
 
 /** `TAUGHT_LANGUAGE_CODES` order: ES / EN / 中 / FR, then IT / DE / PT, then 日 / 한 / ع. */
 export const TAUGHT_LANGUAGES: readonly TaughtLanguage[] = [
-  { code: 'es', name: 'Spanish', badge: 'ES' },
-  { code: 'en', name: 'English', badge: 'EN' },
-  { code: 'zh', name: 'Mandarin', badge: '中' },
-  { code: 'fr', name: 'French', badge: 'FR' },
-  { code: 'it', name: 'Italian', badge: 'IT' },
-  { code: 'de', name: 'German', badge: 'DE' },
-  { code: 'pt', name: 'Portuguese', badge: 'PT' },
-  { code: 'ja', name: 'Japanese', badge: '日' },
-  { code: 'ko', name: 'Korean', badge: '한' },
-  { code: 'ar', name: 'Arabic', badge: 'ع' },
+  { code: 'es', name: 'Spanish', badge: 'ES', native: 'español' },
+  { code: 'en', name: 'English', badge: 'EN', native: 'English' },
+  { code: 'zh', name: 'Mandarin', badge: '中', native: '中文' },
+  { code: 'fr', name: 'French', badge: 'FR', native: 'français' },
+  { code: 'it', name: 'Italian', badge: 'IT', native: 'italiano' },
+  { code: 'de', name: 'German', badge: 'DE', native: 'Deutsch' },
+  { code: 'pt', name: 'Portuguese', badge: 'PT', native: 'português' },
+  { code: 'ja', name: 'Japanese', badge: '日', native: '日本語' },
+  { code: 'ko', name: 'Korean', badge: '한', native: '한국어' },
+  { code: 'ar', name: 'Arabic', badge: 'ع', native: 'العربية' },
 ];
 
 export const LANGUAGE_BY_CODE: Readonly<Record<string, TaughtLanguage>> = Object.fromEntries(
