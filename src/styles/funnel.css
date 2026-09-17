@@ -11,7 +11,7 @@
  * `--tutor-*` is set on `.fnl` by the script the moment a teacher is chosen, so the screen takes her
  * colour from that step on — exactly as the app does. Until then it is Bliss's violet.
  */
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
 
 .funnel-body .page { min-height: 100dvh; }
 
@@ -305,9 +305,16 @@
 
 /* ---------- Bliss onboarding ---------- */
 
-/* A class that sets `display` beats the UA rule behind the `hidden` attribute, and the date field
-   (`display:flex`) showed through before a date was even asked for. One rule, once. */
-.fnl [hidden] { display: none !important; }
+/* Numbers below are the app's own (`BlissGuidedOnboarding.tsx`, `GuidedIntroDemo.tsx`,
+   `TutorPickCarousel.tsx`), and the card is this site's `.ccard` — which is what the app copied in
+   the first place. Keep them in step: this is one design system rendered twice. */
+
+.funnel-body {
+  /* Plain white, intro included (founder, 2026-09-17). NOT the site's grey-blue page. */
+  background: #ffffff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.funnel-body .fnl-bar { background: #ffffff; }
 
 .fnl {
   --tutor-1: #4b45d6;
@@ -316,15 +323,47 @@
   --tutor-accent: #4b45d6;
   --tutor-soft: #f1efff;
   --tutor-wash: #f6f5ff;
+  --ink: #0e1a3a;
+  --ink-deep: #0b1b3f;
+  --muted: #5a6480;
+  --faint: rgba(14, 26, 58, 0.45);
+  /* GLASS, from the app: a white veil, a whiter edge, a blue-ink shadow. */
+  --glass-bg: rgba(255, 255, 255, 0.66);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 8px 14px rgba(30, 50, 110, 0.07);
 }
 
-/* Titles: the words land one by one, and the accent is the site's own serif.
-   A tap anywhere skips nothing — the answers are already there (see `is-settling`). */
-.bl-title { font-weight: 800; }
-.bl-word {
-  display: inline-block;
-  animation: bl-word-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.fnl [hidden] { display: none !important; }
+
+/* The back chevron is a glass circle, 40px. */
+.fnl-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  color: var(--ink);
 }
+
+/* ---------- titles ---------- */
+/* Inter ExtraBold + Instrument Serif italic for the word that carries the sentence. Left-aligned on
+   every step but the intro, under a small Bliss mark — the app's `titleBlock`. */
+.bl-mark { display: block; width: 22px; height: 22px; margin-bottom: 12px; }
+
+.fnl h1.bl-title {
+  font-family: Inter, sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 7.4vw, 34px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ink-deep);
+  text-align: left;
+  margin-bottom: 0;
+}
+.fnl h1.bl-title-intro { text-align: center; margin-top: 26px; }
+
+.bl-word { display: inline-block; animation: bl-word-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 .bl-em {
   font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic;
@@ -341,6 +380,15 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
 }
+
+.fnl .fnl-sub, .bl-promise {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.4;
+  margin-top: 8px;
+  margin-bottom: 22px;
+}
+.bl-promise { text-align: center; font-size: 15.5px; line-height: 22px; margin: 12px 0 0; }
 
 /* The answers arrive while the title is still landing, never later than a second. */
 .fnl-inner.is-settling .bl-langs,
@@ -359,176 +407,312 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bl-word { animation: none; }
-  .fnl-inner.is-settling .bl-langs,
-  .fnl-inner.is-settling .bl-tutors,
-  .fnl-inner.is-settling .bl-words,
-  .fnl-inner.is-settling .bl-goals,
-  .fnl-inner.is-settling .bl-sources,
-  .fnl-inner.is-settling .bl-stats,
-  .fnl-inner.is-settling .bl-rows,
-  .fnl-inner.is-settling .bl-input,
-  .fnl-inner.is-settling .fnl-cta { opacity: 1; transform: none; }
+  .fnl-inner.is-settling * { opacity: 1 !important; transform: none !important; }
 }
 
-/* ---------- intro demo: the principle, shown ---------- */
-.bl-demo {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 14px;
-  align-items: start;
-  width: 100%;
-  margin: 10px 0 26px;
-  text-align: left;
-}
-
-.bl-demo-card {
-  position: relative;
-  width: 132px;
-  height: 168px;
-  border-radius: 22px;
-  overflow: hidden;
-  background: linear-gradient(158deg, var(--tutor, #6a5bff), #0f1430);
-  box-shadow: 0 10px 40px rgba(30, 50, 110, 0.14);
-  flex: none;
-}
-.bl-demo-photo { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
-.bl-demo-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(8, 12, 38, 0) 34%, rgba(8, 12, 38, 0.55) 62%, rgba(8, 12, 38, 0.88) 100%);
-}
-.bl-demo-name {
-  position: absolute;
-  left: 12px;
-  bottom: 10px;
-  z-index: 1;
-  color: #fff;
-  font-weight: 800;
-  font-size: 17px;
-  letter-spacing: -0.02em;
-}
-.bl-demo-live {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
+/* ---------- glass pills ---------- */
+.bl-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #0e1a3a;
+  gap: 5px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.bl-demo-live i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-  animation: bl-pulse 1400ms ease-in-out infinite;
-}
+.bl-pill-live { background: rgba(8, 12, 38, 0.28); border-color: rgba(255, 255, 255, 0.3); font-weight: 700; }
+.bl-pill-live i { width: 7px; height: 7px; border-radius: 50%; background: #ff4541; animation: bl-pulse 1400ms ease-in-out infinite; }
+.bl-pill-reco { background: rgba(255, 255, 255, 0.92); border-color: transparent; color: #0e1a3a; font-weight: 700; }
 @keyframes bl-pulse { 50% { opacity: 0.35; } }
 
-.bl-demo-talk { min-width: 0; padding-top: 6px; }
+/* ---------- the card (the site's own .ccard) ---------- */
+.bl-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  border: 0;
+  padding: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #0f1430;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.26);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.bl-card-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; }
+.bl-card-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 34%, rgba(8, 12, 38, 0.55) 62%, rgba(8, 12, 38, 0.88) 100%);
+}
+.bl-card-tags { position: absolute; left: 14px; right: 14px; top: 14px; display: flex; gap: 6px; }
+.bl-card-text {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  color: #fff;
+}
+.bl-card-text b { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+/* `.cc-craft`: the serif line, painted in her colours lifted toward white so it holds on the scrim. */
+.bl-card-text em {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.15;
+  background: linear-gradient(92deg,
+    color-mix(in srgb, var(--tutor-1) 62%, #fff),
+    color-mix(in srgb, var(--tutor-2) 62%, #fff));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bl-card-traits { display: flex; gap: 6px; margin-top: 12px; overflow: hidden; }
+
+/* Compact (the intro demo): smaller type, two traits, no pills but « on a call ». */
+.bl-card-compact { border-radius: 22px; }
+.bl-card-compact .bl-card-text { left: 14px; right: 14px; bottom: 14px; gap: 0; }
+.bl-card-compact .bl-card-text b { font-size: 21px; line-height: 24px; letter-spacing: -0.42px; }
+.bl-card-compact .bl-card-traits { margin-top: 7px; gap: 5px; }
+.bl-card-compact .bl-pill { height: 20px; font-size: 10px; padding: 0 7px; }
+.bl-card-compact .bl-pill-live { position: absolute; top: 10px; left: 10px; z-index: 1; }
+
+/* ---------- intro ---------- */
+.bl-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 20px;
+}
+.bl-brand span { font-family: Inter, sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.6px; color: var(--ink-deep); }
+.bl-brand img { border-radius: 7px; }
+
+/* The intro fills the screen once: stage and title centred, the button and the legal line pinned at
+   the bottom. `.fnl-center`'s own min-height would push the button off a phone. */
+.funnel-body .fnl-screen[data-screen='intro'] { display: none; flex-direction: column; }
+.funnel-body .fnl-screen[data-screen='intro'].is-active { display: flex; }
+.funnel-body .fnl-screen[data-screen='intro'] .fnl-inner {
+  flex: 1;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 12px;
+  justify-content: center;
+}
+/* The conversation reads left to right even on a centred screen. */
+.bl-stage, .bl-bubble, .bl-turn, .bl-card-text { text-align: left; }
+
+/* The stage: her card on the left, the bubbles grazing its right edge — the app's geometry
+   (card ≈ half the width, bubble at cardLeft + cardWidth - 28). */
+.bl-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 0.78;
+  max-height: 245px;
+  min-height: 190px;
+}
+.bl-stage .bl-card {
+  position: absolute;
+  left: 4%;
+  top: 0;
+  bottom: 0;
+  width: 46%;
+  aspect-ratio: auto;
+  height: auto;
+}
 
 .bl-bubble {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 18px 18px 18px 6px;
-  padding: 12px 14px;
-  font-size: 15.5px;
-  line-height: 1.4;
-  min-height: 44px;
+  position: absolute;
+  left: calc(4% + 46% - 28px);
+  top: 6%;
+  right: 0;
+  z-index: 5;
+  padding: 10px 13px;
+  border-radius: 20px 20px 20px 6px;
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 14px rgba(30, 50, 110, 0.12);
+  transform-origin: left top;
+  animation: bl-pop 380ms cubic-bezier(0.22, 1.4, 0.36, 1) both;
 }
-.bl-bubble::after {
-  content: '▌';
-  animation: bl-caret 900ms steps(1) infinite;
-  color: var(--tutor-2);
+.bl-bubble.is-out { animation: bl-fade-out 450ms ease forwards; }
+.bl-bubble-head { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+.bl-bubble-dot { width: 8px; height: 8px; border-radius: 4px; background: linear-gradient(135deg, var(--tutor-1), var(--tutor-3)); }
+.bl-bubble-head b { font-size: 10.5px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--tutor-accent); }
+.bl-bubble-text { font-size: 15px; line-height: 20px; font-weight: 600; color: var(--ink); min-height: 20px; }
+
+.bl-dots { display: inline-flex; gap: 5px; height: 21px; align-items: center; }
+.bl-dots i { width: 7px; height: 7px; border-radius: 3.5px; background: var(--tutor-2); animation: bl-dot 1100ms ease-in-out infinite; }
+.bl-dots i:nth-child(2) { animation-delay: 160ms; }
+.bl-dots i:nth-child(3) { animation-delay: 320ms; }
+@keyframes bl-dot { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
+.bl-roman { margin-top: 3px; font-size: 12.5px; line-height: 16px; font-weight: 500; color: var(--muted); }
+
+/* The answer: a gradient frame in her colours, white inside. */
+.bl-turn-frame {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  max-width: 56%;
+  padding: 1.5px;
+  border-radius: 21px;
+  background: linear-gradient(135deg, var(--tutor-1), var(--tutor-2), var(--tutor-3));
+  box-shadow: 0 10px 18px color-mix(in srgb, var(--tutor-2) 28%, transparent);
+  transform-origin: right bottom;
+  animation: bl-pop 380ms cubic-bezier(0.22, 1.4, 0.36, 1) both;
 }
-@keyframes bl-caret { 50% { opacity: 0; } }
+.bl-turn-frame.is-out { animation: bl-fade-out 450ms ease forwards; }
+.bl-turn { border-radius: 19.5px; background: #fff; padding: 11px 13px; }
+.bl-turn-head { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.bl-turn-head b { font-size: 11px; font-weight: 800; letter-spacing: 0.2px; text-transform: uppercase; color: var(--tutor-accent); }
 
-.bl-roman { color: var(--text-dim); font-size: 12.5px; margin-top: 4px; }
+/* The mic badge: bars while she is being answered, a check when the sentence lands. */
+.bl-mic {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--tutor-1), var(--tutor-3));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: none;
+}
+.bl-mic s { display: block; width: 2.5px; height: 6px; border-radius: 1.25px; background: #fff; text-decoration: none; animation: bl-bar 700ms ease-in-out infinite; }
+.bl-mic s:nth-child(2) { animation-delay: 140ms; height: 11px; }
+.bl-mic s:nth-child(3) { animation-delay: 280ms; }
+@keyframes bl-bar { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+.bl-mic.is-done s { display: none; }
+.bl-mic.is-done::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 800; }
 
-.bl-reply { margin-top: 12px; }
-.bl-reply-tag {
+.bl-turn-words { font-size: 15.5px; line-height: 20px; font-weight: 800; }
+.bl-reply-word { color: rgba(14, 26, 58, 0.26); transition: color 260ms ease; }
+.bl-reply-word.is-said { color: var(--tutor-accent); }
+
+@keyframes bl-pop {
+  from { opacity: 0; transform: scale(0.88); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes bl-fade-out { to { opacity: 0; } }
+
+/* The row of teachers under the intro: every face once, the current one in the middle. */
+.bl-strip { position: relative; width: 100%; overflow: hidden; margin-top: 22px; height: 78px; }
+.bl-strip::before, .bl-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 46px;
+  z-index: 2;
+  pointer-events: none;
+}
+.bl-strip::before { left: 0; background: linear-gradient(90deg, #fff, transparent); }
+.bl-strip::after { right: 0; background: linear-gradient(270deg, #fff, transparent); }
+.bl-strip-card {
+  position: relative;
   display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--tutor-accent);
-  margin-bottom: 5px;
+  width: 54px;
+  height: 66px;
+  margin-right: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0f1430;
+  vertical-align: middle;
+  opacity: 0.45;
+  transform: scale(0.92);
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.bl-reply-words {
-  background: var(--tutor-soft);
-  border-radius: 18px 18px 6px 18px;
-  padding: 12px 14px;
-  font-size: 15.5px;
-  line-height: 1.5;
+.bl-strip-card img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; }
+.bl-strip-card i {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 45%, color-mix(in srgb, var(--tutor) 70%, transparent));
+  opacity: 0.5;
 }
-/* Each word takes the colour as the learner would say it. */
-.bl-reply-word { color: rgba(14, 26, 58, 0.32); transition: color 260ms ease; }
-.bl-reply-word.is-said { color: var(--tutor-accent); font-weight: 600; }
+.bl-strip-card.is-centre { opacity: 1; transform: scale(1.06); box-shadow: 0 8px 20px rgba(30, 50, 110, 0.22); }
+.bl-strip { white-space: nowrap; }
+.bl-strip-card { transform-origin: center; }
+.bl-strip-inner {
+  --shift: 0px;
+  display: inline-block;
+  transform: translateX(var(--shift));
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
 
-/* 375px is the commonest phone width, so the two columns have to survive it: the card shrinks
-   instead of the conversation dropping under it. */
-@media (max-width: 400px) {
-  .bl-demo { gap: 11px; }
-  .bl-demo-card { width: 108px; height: 138px; }
-  .bl-demo-name { font-size: 15px; }
-  .bl-bubble, .bl-reply-words { font-size: 14.5px; padding: 11px 12px; }
-}
+.bl-bottom { padding: 0 24px calc(18px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 4px; }
+.bl-legal { text-align: center; color: var(--faint); font-size: 11.5px; line-height: 16px; padding: 6px 12px 0; }
+.bl-legal a { color: var(--muted); text-decoration: underline; }
 
-/* ---------- language ---------- */
+/* ---------- language tiles ---------- */
 .bl-langs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 .bl-lang {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 14px;
-  background: var(--bg-raised);
-  border: 1.5px solid var(--border);
-  border-radius: 18px;
-  color: var(--text);
+  position: relative;
+  min-height: 92px;
+  padding: 12px 16px;
+  border: 2px solid transparent;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--tutor-1), var(--tutor-2), var(--tutor-3));
+  filter: hue-rotate(var(--hue, 0deg));
+  box-shadow: 0 8px 12px rgba(30, 50, 110, 0.18);
+  color: #fff;
   font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: border-color 140ms, transform 140ms, box-shadow 140ms;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 140ms, box-shadow 140ms;
 }
-.bl-lang:hover { border-color: var(--tutor, var(--accent)); transform: translateY(-1px); }
+.bl-lang::before {
+  /* the tile's own light, top right — the app's `glow` */
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  right: -46px;
+  top: -54px;
+  background: rgba(255, 255, 255, 0.45);
+  opacity: 0.45;
+  filter: blur(6px);
+}
+.bl-lang:hover { transform: translateY(-2px); box-shadow: 0 14px 22px rgba(30, 50, 110, 0.24); }
+.bl-lang-top { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.bl-lang-native { font-style: normal; font-size: 13px; font-weight: 600; opacity: 0.92; }
 .bl-lang-badge {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: linear-gradient(158deg, var(--tutor, #6a5bff), color-mix(in srgb, var(--tutor, #6a5bff) 55%, #0f1430));
-  color: #fff;
-  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--tutor-1);
+  font-size: 10.5px;
   font-weight: 800;
-  filter: hue-rotate(var(--hue, 0deg));
 }
-
-/* « None of these » — the honest way out of a grid, and still an answer. */
-.bl-none {
-  align-self: center;
-  margin-top: 14px;
-  padding: 8px 14px;
-  background: none;
-  border: 0;
-  color: var(--text-dim);
-  font-family: inherit;
-  font-size: 14px;
-  text-decoration: underline;
-  cursor: pointer;
-}
+.bl-lang-name { position: relative; z-index: 1; font-size: 23px; font-weight: 800; letter-spacing: -0.7px; }
 
 /* ---------- tutor rail ---------- */
 .bl-tutors {
@@ -536,154 +720,178 @@
   gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding: 4px 20px 14px;
+  padding: 4px 20px 26px;
   margin: 0 -20px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
 .bl-tutors::-webkit-scrollbar { display: none; }
 
 .bl-tutor {
-  position: relative;
-  flex: none;
-  width: 148px;
-  height: 188px;
-  padding: 0;
-  border: 0;
-  border-radius: 26px;
-  overflow: hidden;
-  background: linear-gradient(158deg, var(--tutor, #6a5bff), #0f1430);
+  flex: 0 0 min(280px, 74vw);
   scroll-snap-align: center;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: transform 160ms, box-shadow 160ms;
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 220ms;
 }
-.bl-tutor img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; display: block; }
-.bl-tutor-scrim {
+.bl-tutor::after {
+  /* off-centre cards go darker, not see-through — the site's own rule */
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(8, 12, 38, 0) 30%, rgba(8, 12, 38, 0.6) 62%, rgba(8, 12, 38, 0.92) 100%);
+  z-index: 2;
+  pointer-events: none;
+  background: #0a0e26;
+  opacity: 0.4;
+  transition: opacity 260ms ease;
+  border-radius: inherit;
 }
-.bl-tutor-meta { position: absolute; left: 12px; right: 12px; bottom: 11px; color: #fff; display: block; }
-.bl-tutor-meta b { display: block; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
-.bl-tutor-meta i { display: block; font-style: normal; font-size: 11px; opacity: 0.8; margin-top: 1px; }
-.bl-tutor-meta em { display: block; font-style: normal; font-size: 11.5px; opacity: 0.92; margin-top: 4px; line-height: 1.3; }
-.bl-tutor-reco {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  color: #0e1a3a;
-  font-size: 10.5px;
-  font-weight: 700;
-}
+.bl-tutor.is-selected::after { opacity: 0; }
 .bl-tutor.is-selected {
-  box-shadow: 0 0 0 3px var(--tutor, var(--accent)), 0 12px 32px rgba(30, 50, 110, 0.18);
-  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 0 0 4px var(--tutor-accent), 0 18px 44px rgba(0, 0, 0, 0.28);
 }
 
 /* ---------- vocabulary grid ---------- */
-.bl-words { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-bottom: 22px; }
+.bl-words { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; margin-bottom: 22px; }
 
 .bl-word-chip {
-  padding: 10px 15px;
-  border-radius: 14px;
-  border: 1.5px solid var(--border);
-  background: var(--bg-raised);
-  color: var(--text);
+  position: relative;
+  min-height: 40px;
+  padding: 6px 15px;
+  border-radius: 20px;
+  border: 1px solid rgba(14, 26, 58, 0.14);
+  background: #fff;
+  color: var(--ink);
   font-family: inherit;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
   line-height: 1.2;
   cursor: pointer;
-  transition: background 120ms, border-color 120ms, transform 120ms;
+  transition: background 140ms, border-color 140ms, color 140ms, box-shadow 140ms;
 }
-.bl-word-chip b { font-weight: 600; }
-.bl-word-chip i { display: block; font-style: normal; font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+.bl-word-chip i { display: block; font-style: normal; font-size: 11px; font-weight: 500; color: var(--faint); margin-top: 1px; }
+.bl-word-check {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 17px;
+  height: 17px;
+  border-radius: 9px;
+  border: 1.5px solid var(--tutor-accent);
+  background: #fff;
+  color: var(--tutor-accent);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 14px;
+  text-align: center;
+  text-decoration: none;
+  display: none;
+}
+/* Picked: the chip is FILLED with her colour and the word turns white — not a tint. */
 .bl-word-chip.is-picked {
-  background: var(--tutor-soft);
-  border-color: var(--tutor-accent);
-  transform: scale(0.97);
+  background: linear-gradient(135deg, var(--tutor-1), var(--tutor-2));
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--tutor-2) 28%, transparent);
 }
-.bl-word-chip.is-picked i { color: var(--tutor-accent); }
+.bl-word-chip.is-picked i { color: rgba(255, 255, 255, 0.82); }
+.bl-word-chip.is-picked .bl-word-check { display: block; }
 
 /* ---------- goal + deadline ---------- */
-.bl-goals { display: flex; flex-direction: column; gap: 10px; }
+/* Two columns, as in the app — a vertical list of six reads as a form. */
+.bl-goals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 .bl-goal {
   display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 15px 16px;
-  background: var(--bg-raised);
-  border: 1.5px solid var(--border);
-  border-radius: 18px;
-  color: var(--text);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 96px;
+  padding: 14px;
+  background: var(--glass-bg);
+  border: 1.5px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  border-radius: 22px;
+  color: var(--ink);
   font-family: inherit;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1.25;
   text-align: left;
   cursor: pointer;
-  transition: border-color 140ms, transform 140ms;
+  transition: border-color 140ms, transform 140ms, background 140ms;
 }
-.bl-goal-glyph { font-size: 22px; line-height: 1; flex: none; }
-.bl-goal.is-picked { border-color: var(--tutor-accent); background: var(--tutor-wash); transform: scale(0.99); }
+.bl-goal-glyph { font-size: 22px; line-height: 1; }
+.bl-goal.is-picked {
+  border-color: var(--tutor-accent);
+  background: var(--tutor-wash);
+  transform: scale(0.99);
+}
 
-.bl-deadline { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border); }
-.bl-deadline-q { font-weight: 700; font-size: 16px; margin-bottom: 12px; }
-.bl-deadline-q em {
+.bl-deadline {
+  margin-top: 18px;
+  border-radius: 24px;
+  padding: 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+}
+.bl-deadline-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.bl-deadline-head b { font-family: Inter, sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -0.4px; color: var(--ink-deep); }
+.bl-deadline-head em {
   font-style: normal;
   font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-dim);
-  border: 1px solid var(--border);
+  font-weight: 700;
+  color: var(--muted);
+  background: #f1f4fb;
   border-radius: 999px;
-  padding: 2px 8px;
-  margin-left: 6px;
-  vertical-align: 2px;
+  padding: 4px 9px;
 }
 
 .bl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .bl-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 13px;
-  border-radius: 999px;
-  border: 1.5px solid var(--border);
-  background: var(--bg-raised);
-  color: var(--text);
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(14, 26, 58, 0.08);
+  background: #fff;
+  color: var(--ink);
   font-family: inherit;
-  font-size: 14.5px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
 }
-.bl-chip.is-picked { border-color: var(--tutor-accent); background: var(--tutor-soft); font-weight: 600; }
+.bl-chip.is-picked { border-color: var(--tutor-accent); background: var(--tutor-soft); }
 
-.bl-date { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; font-size: 14px; font-weight: 600; }
+.bl-date { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 14px; font-weight: 600; color: var(--muted); }
 .bl-date input {
-  padding: 13px 14px;
+  flex: 1;
+  padding: 11px 13px;
   border-radius: 14px;
-  border: 1.5px solid var(--border);
-  background: var(--bg-raised);
-  color: var(--text);
+  border: 1.5px solid rgba(14, 26, 58, 0.08);
+  background: #fff;
+  color: var(--ink);
   font-family: inherit;
-  font-size: 16px;
+  font-size: 15px;
 }
 .bl-date input:focus { outline: none; border-color: var(--tutor-accent); }
 
 /* ---------- name ---------- */
 .bl-input {
   width: 100%;
-  padding: 16px 18px;
-  border-radius: 18px;
-  border: 1.5px solid var(--border);
-  background: var(--bg-raised);
-  color: var(--text);
+  height: 60px;
+  padding: 0 18px;
+  border-radius: 22px;
+  background: var(--glass-bg);
+  border: 1.5px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  color: var(--ink);
   font-family: inherit;
-  font-size: 18px;
-  margin-bottom: 18px;
+  font-size: 21px;
+  font-weight: 600;
+  margin: 4px 0 18px;
 }
 .bl-input:focus { outline: none; border-color: var(--tutor-accent); }
 
@@ -692,19 +900,20 @@
 
 .bl-source {
   padding: 15px 12px;
-  border-radius: 16px;
-  border: 1.5px solid var(--border);
-  background: var(--bg-raised);
-  color: var(--text);
+  border-radius: 18px;
+  border: 1.5px solid var(--glass-edge);
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
+  color: var(--ink);
   font-family: inherit;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  border-left: 4px solid var(--brand, var(--accent));
+  border-left: 4px solid var(--brand, var(--tutor-accent));
   transition: transform 140ms, box-shadow 140ms;
 }
 .bl-source.is-picked {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand, var(--accent)) 24%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand, var(--tutor-accent)) 24%, transparent);
   transform: scale(0.98);
 }
 .bl-skip {
@@ -713,7 +922,7 @@
   padding: 8px 14px;
   background: none;
   border: 0;
-  color: var(--text-dim);
+  color: var(--muted);
   font-family: inherit;
   font-size: 14px;
   text-decoration: underline;
@@ -721,22 +930,23 @@
 }
 
 /* ---------- plan ready ---------- */
-.bl-stats { display: flex; gap: 10px; width: 100%; margin: 20px 0 18px; }
+.bl-stats { display: flex; gap: 10px; width: 100%; margin: 18px 0; }
 .bl-stat {
   flex: 1;
-  padding: 15px 8px;
-  border-radius: 18px;
-  background: var(--tutor-wash);
-  border: 1px solid color-mix(in srgb, var(--tutor-accent) 18%, transparent);
+  padding: 15px 10px;
+  border-radius: 22px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
-.bl-stat b { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--tutor-accent); }
-.bl-stat span { color: var(--text-dim); font-size: 12px; line-height: 1.3; }
+.bl-stat b { font-family: Inter, sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--tutor-accent); }
+.bl-stat span { color: var(--muted); font-size: 12px; line-height: 1.3; }
 
 .bl-rows { list-style: none; width: 100%; display: flex; flex-direction: column; gap: 11px; margin-bottom: 26px; text-align: left; }
-.bl-rows li { position: relative; padding-left: 30px; font-size: 15.5px; line-height: 1.4; }
+.bl-rows li { position: relative; padding-left: 30px; font-size: 15.5px; line-height: 1.4; color: var(--ink); }
 .bl-rows li::before {
   content: '✓';
   position: absolute;
@@ -751,4 +961,11 @@
   color: var(--tutor-accent);
   font-size: 12px;
   font-weight: 800;
+}
+
+/* ---------- the pill button ---------- */
+.fnl .fnl-cta {
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  border-radius: 999px;
 }

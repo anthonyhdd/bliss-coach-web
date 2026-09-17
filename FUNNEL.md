@@ -79,6 +79,19 @@ keys the app's `guidedPrefilledAnswers()` produces — `'2'`/`spanish_level`, `'
 — so a web buyer opens the app already knowing their level, goal, tutor and name. The onboarding is
 run once, on the web, and paid for at the end of it.
 
+**The look is the app's, down to the numbers.** The screens here were rebuilt against
+`BlissGuidedOnboarding.tsx`, `GuidedIntroDemo.tsx` and `TutorPickCarousel.tsx`, not approximated from
+the tokens: plain white page (not the site's grey-blue), Inter 800 titles with the Instrument Serif
+accent, a glass back circle and the small Bliss mark over every title, the intro stage with her card
+on the left and the glass bubble grazing its right edge, the answer in a gradient frame with a mic
+badge that becomes a check, coloured language tiles, word chips that FILL with her colour and carry
+a check, two-column goal tiles and a glass deadline panel. The teacher card is this site's own
+`.ccard` — which is what the app copied in the first place, so the round trip closes.
+
+One thing is deliberately not copied: in the app the rail selects the teacher by SWIPING her to the
+centre; here a tap selects, with scroll-snap doing the rest. A swipe-to-select carousel on the web
+costs a pointer-event rig for no conversion.
+
 ⚠️ **The config modules are MIRRORED, not shared.** There is no package between the two repos:
 `src/config/bliss/*` was copied on 2026-09-17. Nothing fails loudly when the app's version moves —
 the web simply grades a learner on a slightly different test, or offers one teacher fewer.
