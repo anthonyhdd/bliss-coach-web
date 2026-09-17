@@ -207,12 +207,12 @@ export const APPS: Record<string, AppDef> = {
     tagline: 'Speak English without the fear of getting it wrong',
     subtitle:
       'Emily is your AI English tutor. Real voice conversations, gentle corrections as you go, and the practice you never get from a textbook — from your very first sentence.',
-    appStoreId: '',
-    appStoreUrl: '',
+    appStoreId: '6806812762',
+    appStoreUrl: 'https://apps.apple.com/app/id6806812762',
     gradient: ['#1D4ED8', '#0EA5E9', '#38BDF8'],
     accent: '#2563EB',
     onGradient: '#ffffff',
-    comingSoon: true,
+    comingSoon: false,
     features: [
       {
         title: 'Talk, don’t tap',
