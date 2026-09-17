@@ -116,6 +116,12 @@ export interface FunnelPlan {
   /** the price actually charged, formatted — MUST equal what the hosted checkout charges */
   price: string;
   /**
+   * The same number, unformatted, for the ad pixels: `value` on InitiateCheckout and Purchase.
+   * ⚠️ It must equal `price`. Meta and TikTok bid on this figure, so a stale one here does not show
+   * up as a wrong label on screen — it shows up as a bidder optimising towards the wrong buyer.
+   */
+  amount: number;
+  /**
    * The undiscounted price, struck through.
    *
    * ⚠️ Under the EU Omnibus directive a struck-through price must be a price genuinely charged
@@ -139,6 +145,8 @@ export interface FunnelDef {
   screens: FunnelScreen[];
   /** the four lines that tick over on the "building your plan" loader */
   buildSteps: string[];
+  /** ISO 4217, for the pixels' `value`/`currency` pair. One per funnel: the hosted checkout charges one. */
+  currency: string;
   plans: FunnelPlan[];
   /** paywall feature list */
   included: { title: string; body: string }[];
@@ -163,6 +171,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
     headline: 'Speak Spanish, from your very first sentence',
     sub: 'Answer 6 quick questions and Sofia builds your speaking plan.',
     countdownMinutes: 10,
+    currency: 'EUR',
     screens: [
       {
         kind: 'question',
@@ -311,6 +320,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
         name: '1 month',
         listPrice: '€14.99',
         price: '€9.99',
+        amount: 9.99,
         perDayList: '€0.50',
         perDay: '€0.33',
         savePercent: 33,
@@ -320,6 +330,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
         name: '1 year',
         listPrice: '€99.99',
         price: '€49.99',
+        amount: 49.99,
         perDayList: '€0.27',
         perDay: '€0.14',
         savePercent: 50,
@@ -331,6 +342,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
         name: '3 months',
         listPrice: '€39.99',
         price: '€19.99',
+        amount: 19.99,
         perDayList: '€0.44',
         perDay: '€0.22',
         savePercent: 50,
