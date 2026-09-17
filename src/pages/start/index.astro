@@ -1,33 +1,38 @@
 ---
-// /start/ — the paid-traffic funnel. Structure read screen by screen off start.praktika.ai
-// (recording, 2026-09-16): a question is never followed by another question, always by a pitch
-// screen. See src/config/funnel.ts for why, and for what is deliberately not copied.
+// /start/ — the paid funnel, running the app's OWN onboarding.
+//
+// The flow, its copy and its vocabulary grids are ported from Bliss (src/config/bliss/*, mirrored
+// from the APPSOFIA repo). v1 of this page was a Praktika-shaped quiz of questions and pitch
+// screens; the founder's verdict on 2026-09-17 was that it sold a product the visitor had not met.
+// Here the visitor picks a teacher and measures their own vocabulary BEFORE seeing a price, and the
+// answers are handed to the app so the onboarding is never run twice. See src/config/funnel.ts.
 //
 // `bare` (no header, no footer) and `noindex`: there is no way out but forward or back, and the page
-// must not rank as a thin duplicate of /sofia/ and split its organic signal.
+// must not rank as a thin duplicate of the landings and split their organic signal.
 //
-// Every screen is in the HTML at build time and switched client-side — a static site can run the
-// whole funnel in one document, and each avoided navigation is conversion that does not leak. The
-// hash still changes per screen so the back button works and GA4 sees the progression.
+// Every screen is in this one document and switched client-side — each avoided navigation is
+// conversion that does not leak. The hash still changes per screen so the back button works and GA4
+// sees the progression. What cannot be static (the tutors of a language, the grid of a language,
+// the goals of a language) is built by the script from the same config.
 import Base from '../../layouts/Base.astro';
 import { FUNNELS, DEFAULT_FUNNEL, isCheckoutConfigured } from '../../config/funnel';
 import { APPS } from '../../config/apps';
+import { COPY } from '../../config/bliss/onboarding';
 import '../../styles/funnel.css';
 
 const funnel = FUNNELS[DEFAULT_FUNNEL];
-const app = APPS[funnel.app];
+const app = APPS[funnel.app] ?? APPS.sofia;
 const checkoutReady = isCheckoutConfigured();
 
-const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
-
-// Pitch screens are not steps the visitor has to "get through", so the progress bar counts only the
-// screens that ask something. A bar that crawls through adverts reads as a longer funnel than it is.
-const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
+// Bliss's own colour (the violet of the site's hero), not a single tutor's: the tutor's colour takes
+// over from the moment one is picked, set on the root as --tutor-* by the script.
+const brandStyle =
+  '--brand-1:#4B45D6;--brand-2:#6A5BFF;--brand-3:#B9A4FF;--accent:#6A5BFF;--on-gradient:#ffffff';
 ---
 
 <Base
-  title={`${funnel.headline} — Sofia`}
-  description={funnel.sub}
+  title="Speak a language for real — Bliss"
+  description="Pick your language and your tutor, measure where you stand, and start speaking."
   bare
   noindex
   pixels
@@ -38,9 +43,9 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
     class="fnl"
     data-funnel={funnel.id}
     data-app={funnel.app}
-    data-asked={String(askedCount)}
     data-countdown={String(funnel.countdownMinutes)}
     data-checkout-ready={checkoutReady ? '1' : '0'}
+    data-store-url={app.appStoreUrl}
   >
     <header class="fnl-bar">
       <button class="fnl-back" type="button" aria-label="Go back" hidden>&larr;</button>
@@ -49,153 +54,125 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
       </div>
     </header>
 
-    <!-- Intro ------------------------------------------------------------ -->
+    <!-- Intro: the principle, shown ---------------------------------------- -->
+    <!--
+      Not argued in three sentences — SHOWN. A teacher card, a caption being typed in the language
+      she teaches, then a "your turn" card whose words colour in one by one. The row rotates through
+      the teachers every ten seconds. This is the app's own intro screen (v2, founder 2026-09-17:
+      « ça doit être court, méga stylé »).
+    -->
     <section class="fnl-screen is-active" data-screen="intro">
       <div class="fnl-inner fnl-center">
-        <h1>{funnel.headline}</h1>
-        <p class="fnl-sub">{funnel.sub}</p>
-        <button class="fnl-cta" type="button" data-action="start">Build my plan</button>
-        <p class="fnl-fineprint">Takes about a minute.</p>
-      </div>
-    </section>
+        <h1 class="bl-title" data-title={COPY.introTitle}></h1>
+        <p class="fnl-sub">{COPY.introPromise}</p>
 
-    <!-- Questions and pitches, alternating ------------------------------- -->
-    {funnel.screens.map((screen) => (
-      <section class="fnl-screen" data-screen={screen.id} data-kind={screen.kind}>
-        <div class:list={['fnl-inner', screen.kind === 'pitch' && 'fnl-center']}>
-          {screen.kind === 'pitch' && (
-            <>
-              <h2>{screen.title}</h2>
-              {screen.punch && (
-                <div class="fnl-punch">
-                  <div class="fnl-punch-side">
-                    <span class="fnl-punch-glyph">{screen.punch.before}</span>
-                    <span class="fnl-punch-label">{screen.punch.beforeLabel}</span>
-                  </div>
-                  <div class="fnl-punch-side">
-                    <span class="fnl-punch-glyph">{screen.punch.after}</span>
-                    <span class="fnl-punch-label">{screen.punch.afterLabel}</span>
-                  </div>
-                  <p class="fnl-punch-line">{screen.punch.line}</p>
-                </div>
-              )}
-              {screen.proof && (
-                <ul class="fnl-proof">
-                  {screen.proof.map((p) => (
-                    <li>
-                      <strong>{p.value}</strong>
-                      <span>{p.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {screen.body && <p class="fnl-sub fnl-pitch-body">{screen.body}</p>}
-              <button class="fnl-cta" type="button" data-action="next">Continue</button>
-            </>
-          )}
-
-          {screen.kind === 'question' && (
-            <>
-              <h2 set:html={screen.question} />
-              {screen.sub && <p class="fnl-sub">{screen.sub}</p>}
-              <div class="fnl-options">
-                {screen.options.map((opt) => (
-                  <button class="fnl-option" type="button" data-step={screen.id} data-value={opt.id}>
-                    {opt.glyph && <span class="fnl-glyph" aria-hidden="true">{opt.glyph}</span>}
-                    <span class="fnl-option-text">
-                      <span class="fnl-option-label">{opt.label}</span>
-                      {opt.hint && <span class="fnl-option-hint">{opt.hint}</span>}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-
-          {screen.kind === 'words' && (
-            <>
-              <h2>{screen.question}</h2>
-              <p class="fnl-sub">{screen.sub}</p>
-              <div class="fnl-words" data-step={screen.id}>
-                {screen.words.map((w) => (
-                  <button class="fnl-word" type="button" data-word={w}>{w}</button>
-                ))}
-              </div>
-              <button class="fnl-cta fnl-sticky-cta" type="button" data-action="next">Continue</button>
-            </>
-          )}
-
-          {screen.kind === 'input' && (
-            <>
-              <h2>{screen.question}</h2>
-              {screen.sub && <p class="fnl-sub">{screen.sub}</p>}
-              <form class="fnl-form" data-name-form novalidate>
-                <input
-                  class="fnl-text"
-                  type="text"
-                  name="name"
-                  placeholder={screen.placeholder}
-                  autocomplete="given-name"
-                  maxlength="40"
-                />
-                <button class="fnl-cta" type="submit" disabled>Continue</button>
-              </form>
-            </>
-          )}
+        <div class="bl-demo" data-demo>
+          <div class="bl-demo-card" data-demo-card>
+            <img class="bl-demo-photo" data-demo-photo src="" alt="" width="132" height="168" />
+            <span class="bl-demo-live"><i></i>{COPY.demoLive}</span>
+            <span class="bl-demo-name" data-demo-name></span>
+          </div>
+          <div class="bl-demo-talk">
+            <p class="bl-bubble" data-demo-line></p>
+            <p class="bl-roman" data-demo-line-roman hidden></p>
+            <div class="bl-reply" data-demo-reply hidden>
+              <span class="bl-reply-tag">{COPY.demoYourTurn}</span>
+              <p class="bl-reply-words" data-demo-reply-words></p>
+              <p class="bl-roman" data-demo-reply-roman hidden></p>
+            </div>
+          </div>
         </div>
-      </section>
-    ))}
 
-    <!-- Building --------------------------------------------------------- -->
-    <!--
-      The pause is short and the work behind it is real — the plan below is assembled from the
-      answers. The delay exists so the reveal reads as a result rather than the next page of a form.
-      Praktika parks a testimonial here; we park a product fact, because our review count is 1-4.
-    -->
-    <section class="fnl-screen" data-screen="building">
-      <div class="fnl-inner fnl-center">
-        <div class="fnl-ring" aria-hidden="true"><span data-ring-pct>0%</span></div>
-        <h2>Building your plan…</h2>
-        <ul class="fnl-build-list">
-          {funnel.buildSteps.map((line) => (
-            <li data-build-line>{line}</li>
-          ))}
-        </ul>
-        <p class="fnl-quote">
-          Sofia explains in the language you already speak, and hands you the Spanish to say. That is
-          why complete beginners can start talking on day one.
-        </p>
+        <button class="fnl-cta" type="button" data-action="start">{COPY.continue}</button>
       </div>
     </section>
 
-    <!-- Plan reveal ------------------------------------------------------- -->
-    <section class="fnl-screen" data-screen="plan">
+    <!-- Language ----------------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="language">
       <div class="fnl-inner">
-        <h2 data-plan-title>Your plan is ready!</h2>
-        <p class="fnl-sub" data-plan-recap></p>
+        <h1 class="bl-title" data-title={COPY.languageTitle}></h1>
+        <div class="bl-langs" data-langs></div>
+      </div>
+    </section>
 
-        <div class="fnl-curve">
-          <span class="fnl-curve-label">Your speaking confidence</span>
-          <svg viewBox="0 0 300 120" role="img" aria-label="Your level rising from today to week four">
-            <defs>
-              <linearGradient id="fnlCurve" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="var(--brand-1)" />
-                <stop offset="100%" stop-color="var(--brand-2)" />
-              </linearGradient>
-            </defs>
-            <path d="M12 104 C 90 100, 150 76, 288 16" fill="none" stroke="url(#fnlCurve)" stroke-width="5" stroke-linecap="round" />
-            <circle cx="12" cy="104" r="7" fill="var(--brand-1)" />
-            <circle cx="288" cy="16" r="7" fill="var(--brand-2)" />
-          </svg>
-          <div class="fnl-curve-axis"><span>Today</span><span>Week 4</span></div>
+    <!-- Tutor -------------------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="tutor">
+      <div class="fnl-inner">
+        <h1 class="bl-title" data-title={COPY.tutorTitle}></h1>
+        <p class="fnl-sub">{COPY.tutorSubtitle}</p>
+        <div class="bl-tutors" data-tutors></div>
+        <button class="fnl-cta" type="button" data-action="next-from-tutor">{COPY.continue}</button>
+      </div>
+    </section>
+
+    <!-- Vocabulary probe ---------------------------------------------------- -->
+    <!--
+      The level is never asked (app: ASKS_LEVEL = false). The grids measure it instead, starting on
+      the easiest one and stepping up or down once — ticking nothing is still an answer.
+    -->
+    <section class="fnl-screen" data-screen="vocabulary">
+      <div class="fnl-inner">
+        <h1 class="bl-title" data-vocab-title></h1>
+        <p class="fnl-sub" data-vocab-tier></p>
+        <div class="bl-words" data-words></div>
+        <button class="fnl-cta" type="button" data-action="words-done">{COPY.continue}</button>
+        <!-- Ticking nothing is an answer, and saying so out loud is what makes it one. -->
+        <button class="bl-none" type="button" data-action="words-none">{COPY.vocabularyNone}</button>
+      </div>
+    </section>
+
+    <!-- Goal + optional deadline -------------------------------------------- -->
+    <section class="fnl-screen" data-screen="goal">
+      <div class="fnl-inner">
+        <h1 class="bl-title" data-title={COPY.goalTitle}></h1>
+        <div class="bl-goals" data-goals></div>
+
+        <div class="bl-deadline" data-deadline hidden>
+          <p class="bl-deadline-q">{COPY.goalDeadline} <em>{COPY.optional}</em></p>
+          <div class="bl-chips" data-events></div>
+          <label class="bl-date" data-date-field hidden>
+            <span>When is it?</span>
+            <input type="date" data-date />
+          </label>
+          <button class="fnl-cta" type="button" data-action="goal-done">{COPY.continue}</button>
         </div>
+      </div>
+    </section>
 
-        <button class="fnl-cta" type="button" data-action="next">See my plan</button>
+    <!-- Name ---------------------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="name">
+      <div class="fnl-inner">
+        <h1 class="bl-title" data-name-title></h1>
+        <input class="bl-input" type="text" data-name-input placeholder={COPY.namePlaceholder} autocomplete="given-name" maxlength="50" />
+        <button class="fnl-cta" type="button" data-action="name-done">{COPY.continue}</button>
+      </div>
+    </section>
+
+    <!-- Where did you hear about us ----------------------------------------- -->
+    <section class="fnl-screen" data-screen="heardAboutUs">
+      <div class="fnl-inner">
+        <h1 class="bl-title bl-title-plain" data-heard-title></h1>
+        <p class="fnl-sub" data-heard-sub></p>
+        <div class="bl-sources" data-sources></div>
+        <button class="bl-skip" type="button" data-action="skip-heard"></button>
+      </div>
+    </section>
+
+    <!-- Plan ready ----------------------------------------------------------- -->
+    <section class="fnl-screen" data-screen="ready">
+      <div class="fnl-inner fnl-center">
+        <h1 class="bl-title" data-ready-title></h1>
+        <p class="fnl-sub" data-ready-sub></p>
+
+        <div class="bl-stats" data-stats></div>
+        <ul class="bl-rows" data-rows></ul>
+
+        <button class="fnl-cta" type="button" data-action="see-plan">{COPY.continue}</button>
       </div>
     </section>
 
     <!-- Paywall ----------------------------------------------------------- -->
-    <section class="fnl-screen" data-screen="paywall">
+    <section class="fnl-screen" data-screen="plan">
       {funnel.countdownMinutes > 0 && (
         <div class="fnl-countdown" data-countdown-bar>
           <span>Your discount is reserved for</span>
@@ -204,8 +181,8 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
       )}
 
       <div class="fnl-inner fnl-paywall">
-        <h2 data-paywall-title>Get unlimited access to Sofia</h2>
-        <p class="fnl-sub">The quickest route to actually speaking Spanish.</p>
+        <h2>{funnel.paywallTitle}</h2>
+        <p class="fnl-sub">{funnel.paywallSub}</p>
 
         <div class="fnl-plans" data-plans>
           {funnel.plans.map((plan) => (
@@ -277,7 +254,7 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
         </section>
 
         <section class="fnl-block">
-          <h3>Start speaking with Sofia</h3>
+          <h3 data-second-cta-title>Start speaking</h3>
           <div class="fnl-plans" data-plans>
             {funnel.plans.map((plan) => (
               <button
@@ -308,19 +285,62 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
       </div>
     </section>
   </div>
+  </div>
 </Base>
 
 <script>
-  import {
-    FUNNELS,
-    DEFAULT_FUNNEL,
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY,
-    checkoutUrl,
-  } from '../../config/funnel';
+  import { FUNNELS, DEFAULT_FUNNEL, SUPABASE_URL, SUPABASE_ANON_KEY, checkoutUrl } from '../../config/funnel';
   import { track } from '../../lib/funnelTrack';
+  import {
+    COPY,
+    RESULT_COPY,
+    STEPS,
+    STEP_ANALYTICS_NAME,
+    TIER_LABEL,
+    HEARD_ABOUT_US,
+    DEADLINE_EVENTS,
+    CEFR_TO_LEVEL_VALUE,
+    INTRO_LESSONS,
+    introSceneTimings,
+    titleWordGroups,
+    plainTitle,
+    TITLE_WORD_STAGGER_MS,
+    titleSettleMs,
+    goalOptions,
+    type Step,
+  } from '../../config/bliss/onboarding';
+  import {
+    TAUGHT_LANGUAGES,
+    LANGUAGE_BY_CODE,
+    TUTORS,
+    TUTOR_BY_PERSONA,
+    tutorsForLanguage,
+    recommendedTutor,
+    tutorTag,
+    hueStep,
+    type Tutor,
+  } from '../../config/bliss/tutors';
+  import {
+    probeWordsFor,
+    hasVocabularyProbe,
+    nextProbeTier,
+    estimateVocabulary,
+    MAX_PROBE_GRIDS,
+    type ProbeResult,
+    type VocabTier,
+  } from '../../config/bliss/vocabularyProbe';
 
-  const STORAGE_KEY = 'bliss_funnel_v2';
+  const STORAGE_KEY = 'bliss_funnel_v3';
+
+  /**
+   * Which language each teacher demonstrates on the intro row. The natives teach their own; the
+   * bilingual friends each take a language nobody else in the row is showing, so the rotation walks
+   * through as many languages as it can (the app's `introRowItems` rule).
+   */
+  const DEMO_LANGUAGE: Record<string, string> = {
+    sofia: 'es', amelie: 'fr', emily: 'en', meilin: 'zh',
+    alex: 'it', mila: 'de', astra: 'pt', charm: 'ja',
+  };
 
   /**
    * Ad attribution, captured from the landing URL and carried to checkout.
@@ -335,176 +355,518 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
   ];
 
   function initFunnel(): void {
-    const root = document.querySelector<HTMLElement>('.fnl');
-    if (!root || root.dataset.initialised === '1') return;
+    const found = document.querySelector<HTMLElement>('.fnl');
+    if (!found || found.dataset.initialised === '1') return;
+    // Bound to a non-null local: every closure below captures it, and TypeScript keeps the guard.
+    const root: HTMLElement = found;
     root.dataset.initialised = '1';
 
-    const funnel = FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL];
-    const order = ['intro', ...funnel.screens.map((s) => s.id), 'building', 'plan', 'paywall'];
-    const askedTotal = Number(root.dataset.asked || '1');
-    const checkoutReady = root.dataset.checkoutReady === '1';
+    // `?t=sofia` sells the single-tutor app: same flow, language and tutor locked. Anything else
+    // falls back to the page's own funnel rather than rendering a funnel that does not exist.
+    const query = new URLSearchParams(window.location.search);
+    const requested = query.get('t') ?? '';
+    const funnel = FUNNELS[requested] ?? FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL] ?? FUNNELS[DEFAULT_FUNNEL];
+    root.dataset.funnel = funnel.id;
 
+    const checkoutReady = root.dataset.checkoutReady === '1';
+    const startedAt = Date.now();
+
+    const attribution: Record<string, string> = {};
+    ATTRIBUTION_KEYS.forEach((key) => {
+      const value = query.get(key);
+      if (value) attribution[key] = value.slice(0, 200);
+    });
+
+    // ── State ───────────────────────────────────────────────────────────────
+    let language = funnel.lockedLanguage ?? '';
+    let persona = funnel.lockedPersona ?? '';
+    let probeResults: ProbeResult[] = [];
+    let knownWords: string[] = [];
+    let currentTier: VocabTier = 'basic';
+    let goal = '';
+    let deadlineEvent = '';
+    let deadlineDate = '';
+    let firstName = '';
+    let heardAboutUs = '';
+    let chosenPackage = funnel.plans.find((p) => p.highlight)?.packageId ?? funnel.plans[0].packageId;
+
+    const tutor = (): Tutor => TUTOR_BY_PERSONA[persona] ?? recommendedTutor(language || 'es');
+    const languageName = (): string => LANGUAGE_BY_CODE[language]?.name ?? '';
+
+    function persist(): void {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ language, persona, goal, firstName, chosenPackage }),
+        );
+      } catch {
+        /* private mode: the funnel works, it simply does not resume */
+      }
+    }
+
+    // ── Screens ─────────────────────────────────────────────────────────────
     const screens = new Map<string, HTMLElement>();
     root.querySelectorAll<HTMLElement>('[data-screen]').forEach((el) => {
       screens.set(el.dataset.screen as string, el);
     });
 
+    /** A locked funnel (Sofia) skips the two steps that would be a lie, and the probe needs a grid. */
+    function sequence(): Step[] {
+      return STEPS.filter((step) => {
+        if (step === 'language' || step === 'tutor') return !funnel.lockedLanguage;
+        if (step === 'vocabulary') return hasVocabularyProbe(language || null);
+        return true;
+      });
+    }
+
+    let current: Step = 'intro';
     const backBtn = root.querySelector<HTMLButtonElement>('.fnl-back');
     const fill = root.querySelector<HTMLElement>('.fnl-progress-fill');
     const bar = root.querySelector<HTMLElement>('.fnl-progress');
 
-    let answers: Record<string, string> = {};
-    let words: string[] = [];
-    let name = '';
-    let chosenPackage = funnel.plans.find((p) => p.highlight)?.packageId ?? funnel.plans[0].packageId;
-    let current = 'intro';
-
-    const stored = sessionStorage.getItem(STORAGE_KEY);
-    let attribution: Record<string, string> = stored ? (JSON.parse(stored).attribution ?? {}) : {};
-    const url = new URL(window.location.href);
-    for (const key of ATTRIBUTION_KEYS) {
-      const value = url.searchParams.get(key);
-      if (value) attribution[key] = value;
-    }
-
-    function persist(): void {
-      try {
-        sessionStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ answers, words, name, attribution, chosenPackage }),
-        );
-      } catch {
-        /* private mode — the funnel still works, it just forgets on reload */
-      }
-    }
-
-    function show(id: string, opts: { push?: boolean } = {}): void {
-      const next = screens.get(id);
-      if (!next) return;
-      screens.forEach((el) => el.classList.remove('is-active'));
-      next.classList.add('is-active');
+    function show(id: Step, opts: { push?: boolean } = {}): void {
+      const el = screens.get(id);
+      if (!el) return;
       current = id;
+      screens.forEach((s) => s.classList.remove('is-active'));
+      el.classList.add('is-active');
 
-      // Pitch screens are not counted: a bar that crawls through adverts reads as a longer funnel.
-      const asked = funnel.screens
-        .slice(0, Math.max(0, order.indexOf(id)))
-        .filter((s) => s.kind !== 'pitch').length;
-      const pct = id === 'intro' ? 0 : Math.min(100, Math.round((asked / askedTotal) * 100));
+      const steps = sequence();
+      const i = steps.indexOf(id);
+      const span = Math.max(1, steps.length - 1);
+      const pct = i <= 0 ? 0 : Math.round(Math.min(1, i / span) * 100);
       if (fill) fill.style.width = `${pct}%`;
       if (bar) bar.setAttribute('aria-valuenow', String(pct));
-      if (backBtn) backBtn.hidden = id === 'intro';
+      if (backBtn) backBtn.hidden = i <= 0;
 
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
       if (opts.push !== false) history.pushState({ screen: id }, '', `#${id}`);
-      track('funnel_step_view', { funnel: funnel.id, step: id });
+      revealTitles(el);
+      track('funnel_step_view', { funnel: funnel.id, step: STEP_ANALYTICS_NAME[id] });
     }
 
     function advance(): void {
-      const next = order[order.indexOf(current) + 1];
-      if (next === 'building') runBuilding();
-      else if (next) show(next);
+      const steps = sequence();
+      const next = steps[steps.indexOf(current) + 1];
+      if (next) show(next);
     }
 
-    // ── Questions ───────────────────────────────────────────────────────────
-    root.querySelectorAll<HTMLButtonElement>('.fnl-option').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const step = btn.dataset.step as string;
-        answers[step] = btn.dataset.value as string;
-        persist();
-        track('funnel_answer', { funnel: funnel.id, step, value: btn.dataset.value });
-        // The selected state is visible for a beat: an instant jump reads as a glitch and people tap twice.
-        btn.classList.add('is-picked');
+    // ── Titles: the accent never breaks, and the words land one by one ──────
+    //
+    // Ported from the app (`titleWordGroups`): the words between *asterisks* are the accent
+    // (Instrument Serif italic), they are one unbreakable word, and a multi-word accent starts its
+    // own line only when at least three words come before it.
+    function renderTitle(el: HTMLElement, raw: string): void {
+      el.textContent = '';
+      el.setAttribute('aria-label', plainTitle(raw));
+      let index = 0;
+      titleWordGroups(raw).forEach((group) => {
+        if (group.breakBefore) el.appendChild(document.createElement('br'));
+        const word = document.createElement('span');
+        word.className = 'bl-word';
+        word.style.animationDelay = `${index * TITLE_WORD_STAGGER_MS}ms`;
+        group.runs.forEach((run) => {
+          const span = document.createElement('span');
+          span.textContent = run.text;
+          if (run.accent) span.className = 'bl-em';
+          word.appendChild(span);
+        });
+        el.appendChild(word);
+        el.appendChild(document.createTextNode(' '));
+        index += 1;
+      });
+    }
+
+    /** Re-run the reveal each time a screen is shown, so a back-and-forward is not a static page. */
+    function revealTitles(screen: HTMLElement): void {
+      screen.querySelectorAll<HTMLElement>('.bl-title').forEach((el) => {
+        const raw = el.dataset.title;
+        if (raw) renderTitle(el, raw);
+        const inner = el.closest('.fnl-inner');
+        const answers = inner?.querySelector<HTMLElement>('.bl-langs, .bl-tutors, .bl-words, .bl-goals, .bl-sources, .bl-stats, .bl-input, .fnl-cta');
+        if (!raw || !answers) return;
+        // The answers arrive while the title is still landing — never later than a second
+        // (founder, 2026-09-17: « les réponses mettent trop de temps à apparaître »).
+        inner?.classList.add('is-settling');
+        window.setTimeout(() => inner?.classList.remove('is-settling'), titleSettleMs(raw));
+      });
+    }
+
+    // ── Intro demo ──────────────────────────────────────────────────────────
+    const demo = {
+      photo: root.querySelector<HTMLImageElement>('[data-demo-photo]'),
+      name: root.querySelector<HTMLElement>('[data-demo-name]'),
+      card: root.querySelector<HTMLElement>('[data-demo-card]'),
+      line: root.querySelector<HTMLElement>('[data-demo-line]'),
+      lineRoman: root.querySelector<HTMLElement>('[data-demo-line-roman]'),
+      reply: root.querySelector<HTMLElement>('[data-demo-reply]'),
+      replyWords: root.querySelector<HTMLElement>('[data-demo-reply-words]'),
+      replyRoman: root.querySelector<HTMLElement>('[data-demo-reply-roman]'),
+    };
+    let demoTimers: number[] = [];
+
+    function stopDemo(): void {
+      demoTimers.forEach((t) => window.clearTimeout(t));
+      demoTimers = [];
+    }
+
+    /** The teachers the row walks through: everyone, or only the locked one. */
+    function demoRow(): Tutor[] {
+      if (funnel.lockedPersona) {
+        const only = TUTOR_BY_PERSONA[funnel.lockedPersona];
+        return only ? [only] : TUTORS.slice(0, 1);
+      }
+      return TUTORS.filter((t) => INTRO_LESSONS[DEMO_LANGUAGE[t.persona]]);
+    }
+
+    function playScene(sceneIndex: number): void {
+      const row = demoRow();
+      if (row.length === 0 || !demo.line) return;
+      const who = row[sceneIndex % row.length];
+      const code = funnel.lockedLanguage ?? DEMO_LANGUAGE[who.persona];
+      const lesson = INTRO_LESSONS[code];
+      if (!lesson) return;
+
+      if (demo.photo) {
+        demo.photo.src = `/home/${who.photo}`;
+        demo.photo.alt = `${who.name}, AI ${LANGUAGE_BY_CODE[code]?.name ?? ''} tutor`;
+      }
+      if (demo.name) demo.name.textContent = who.name;
+      if (demo.card) demo.card.style.setProperty('--tutor', who.gradient[1]);
+      demo.line.textContent = '';
+      if (demo.lineRoman) {
+        demo.lineRoman.textContent = lesson.lineRomanization ?? '';
+        demo.lineRoman.hidden = !lesson.lineRomanization;
+      }
+      if (demo.reply) demo.reply.hidden = true;
+      if (demo.replyWords) demo.replyWords.textContent = '';
+
+      const chars = Array.from(lesson.line);
+      const timings = introSceneTimings(chars.length, lesson.replyWords.length);
+
+      chars.forEach((_, i) => {
+        demoTimers.push(
+          window.setTimeout(() => {
+            if (demo.line) demo.line.textContent = chars.slice(0, i + 1).join('');
+          }, timings.charAt(i + 1)),
+        );
+      });
+
+      demoTimers.push(
         window.setTimeout(() => {
-          btn.classList.remove('is-picked');
+          if (!demo.reply || !demo.replyWords) return;
+          demo.reply.hidden = false;
+          demo.replyWords.textContent = '';
+          lesson.replyWords.forEach((word, w) => {
+            const span = document.createElement('span');
+            span.className = 'bl-reply-word';
+            span.textContent = (w > 0 ? lesson.wordJoiner : '') + word;
+            demo.replyWords?.appendChild(span);
+            demoTimers.push(
+              window.setTimeout(() => span.classList.add('is-said'), timings.wordAt(w) - timings.replyAt),
+            );
+          });
+          if (demo.replyRoman) {
+            demo.replyRoman.textContent = lesson.replyRomanization ?? '';
+            demo.replyRoman.hidden = !lesson.replyRomanization;
+          }
+        }, timings.replyAt),
+      );
+
+      demoTimers.push(window.setTimeout(() => playScene(sceneIndex + 1), timings.endAt));
+    }
+
+    // ── Language ────────────────────────────────────────────────────────────
+    const langsEl = root.querySelector<HTMLElement>('[data-langs]');
+    if (langsEl) {
+      TAUGHT_LANGUAGES.forEach((lang) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'bl-lang';
+        const recommended = recommendedTutor(lang.code);
+        btn.style.setProperty('--tutor', recommended.gradient[1]);
+        btn.style.setProperty('--hue', `${hueStep(recommended.persona, lang.code)}deg`);
+        btn.innerHTML = `<span class="bl-lang-badge">${lang.badge}</span><span class="bl-lang-name"></span>`;
+        (btn.querySelector('.bl-lang-name') as HTMLElement).textContent = lang.name;
+        btn.addEventListener('click', () => {
+          language = lang.code;
+          persona = recommendedTutor(lang.code).persona;
+          currentTier = 'basic';
+          probeResults = [];
+          knownWords = [];
+          persist();
+          paintTutor();
+          track('funnel_answer', { funnel: funnel.id, step: 'bliss_language', value: lang.code });
+          buildTutors();
           advance();
-        }, 180);
+        });
+        langsEl.appendChild(btn);
       });
-    });
+    }
 
-    root.querySelectorAll<HTMLButtonElement>('[data-action="next"]').forEach((btn) => {
-      btn.addEventListener('click', advance);
-    });
+    // ── Tutor ───────────────────────────────────────────────────────────────
+    const tutorsEl = root.querySelector<HTMLElement>('[data-tutors]');
 
-    root.querySelector<HTMLButtonElement>('[data-action="start"]')?.addEventListener('click', () => {
-      track('funnel_started', { funnel: funnel.id, ...attribution });
+    /** The chosen teacher's colour drives the whole screen from here on, as it does in the app. */
+    function paintTutor(): void {
+      const t = tutor();
+      root.style.setProperty('--tutor-1', t.gradient[0]);
+      root.style.setProperty('--tutor-2', t.gradient[1]);
+      root.style.setProperty('--tutor-3', t.gradient[2]);
+      root.style.setProperty('--tutor-accent', t.accent);
+      root.style.setProperty('--tutor-soft', t.soft);
+      root.style.setProperty('--tutor-wash', t.wash);
+      // The teacher's colour takes the whole screen from here on — the CTA, the progress bar and the
+      // paywall included. In the app it is the same rule: after the tutor step, she tints everything.
+      root.style.setProperty('--brand-1', t.gradient[0]);
+      root.style.setProperty('--brand-2', t.gradient[1]);
+      root.style.setProperty('--brand-3', t.gradient[2]);
+      root.style.setProperty('--accent', t.accent);
+    }
+
+    function buildTutors(): void {
+      if (!tutorsEl || !language) return;
+      tutorsEl.textContent = '';
+      tutorsForLanguage(language).forEach((t, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'bl-tutor';
+        btn.dataset.persona = t.persona;
+        btn.style.setProperty('--tutor', t.gradient[1]);
+        btn.classList.toggle('is-selected', t.persona === persona);
+        const traits = t.traits.join(' · ');
+        btn.innerHTML =
+          `<img src="/home/${t.photo}" alt="" width="148" height="188" loading="lazy" />` +
+          `<span class="bl-tutor-scrim"></span>` +
+          (i === 0 ? `<span class="bl-tutor-reco">Recommended</span>` : '') +
+          `<span class="bl-tutor-meta"><b></b><i></i><em></em></span>`;
+        (btn.querySelector('.bl-tutor-meta b') as HTMLElement).textContent = t.name;
+        (btn.querySelector('.bl-tutor-meta i') as HTMLElement).textContent = tutorTag(t, language);
+        (btn.querySelector('.bl-tutor-meta em') as HTMLElement).textContent = traits;
+        btn.addEventListener('click', () => {
+          persona = t.persona;
+          persist();
+          paintTutor();
+          tutorsEl.querySelectorAll('.bl-tutor').forEach((c) => c.classList.toggle('is-selected', c === btn));
+          track('funnel_answer', { funnel: funnel.id, step: 'bliss_tutor', value: t.persona });
+        });
+        tutorsEl.appendChild(btn);
+      });
+    }
+
+    // ── Vocabulary probe ────────────────────────────────────────────────────
+    const wordsEl = root.querySelector<HTMLElement>('[data-words]');
+    const vocabTitle = root.querySelector<HTMLElement>('[data-vocab-title]');
+    const vocabTier = root.querySelector<HTMLElement>('[data-vocab-tier]');
+    let picked = new Set<string>();
+
+    function buildGrid(tier: VocabTier): void {
+      if (!wordsEl) return;
+      currentTier = tier;
+      picked = new Set();
+      wordsEl.textContent = '';
+      const isMore = probeResults.length > 0;
+      if (vocabTitle) {
+        vocabTitle.dataset.title = isMore ? COPY.vocabularyMore : COPY.vocabularyTitle;
+        renderTitle(vocabTitle, vocabTitle.dataset.title);
+      }
+      if (vocabTier) {
+        vocabTier.textContent = (TIER_LABEL[tier] ?? '').replace('{language}', languageName());
+      }
+      probeWordsFor(language, tier).forEach((entry) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'bl-word-chip';
+        btn.innerHTML = `<b></b>${entry.hint ? '<i></i>' : ''}`;
+        (btn.querySelector('b') as HTMLElement).textContent = entry.word;
+        if (entry.hint) (btn.querySelector('i') as HTMLElement).textContent = entry.hint;
+        btn.addEventListener('click', () => {
+          if (picked.has(entry.word)) picked.delete(entry.word);
+          else picked.add(entry.word);
+          btn.classList.toggle('is-picked', picked.has(entry.word));
+        });
+        wordsEl.appendChild(btn);
+      });
+    }
+
+    /** Ticking nothing is an answer, so the grid is submitted the same way whatever is selected. */
+    function submitGrid(): void {
+      const total = probeWordsFor(language, currentTier).length;
+      probeResults.push({ tier: currentTier, picked: picked.size, total });
+      knownWords = knownWords.concat(Array.from(picked)).slice(0, 64);
+      track('funnel_answer', {
+        funnel: funnel.id,
+        step: 'bliss_vocabulary',
+        value: currentTier,
+        picked: picked.size,
+        total,
+      });
+      const next = probeResults.length < MAX_PROBE_GRIDS ? nextProbeTier(probeResults) : null;
+      if (next) {
+        buildGrid(next);
+        revealTitles(screens.get('vocabulary') as HTMLElement);
+        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+        return;
+      }
       advance();
-    });
+    }
 
-    backBtn?.addEventListener('click', () => history.back());
-    window.addEventListener('popstate', () => {
-      const id = window.location.hash.replace('#', '') || 'intro';
-      if (screens.has(id)) show(id, { push: false });
-    });
+    // ── Goal + optional deadline ────────────────────────────────────────────
+    const goalsEl = root.querySelector<HTMLElement>('[data-goals]');
+    const deadlineEl = root.querySelector<HTMLElement>('[data-deadline]');
+    const eventsEl = root.querySelector<HTMLElement>('[data-events]');
+    const dateField = root.querySelector<HTMLElement>('[data-date-field]');
+    const dateInput = root.querySelector<HTMLInputElement>('[data-date]');
 
-    // ── Vocabulary check ────────────────────────────────────────────────────
-    root.querySelectorAll<HTMLButtonElement>('.fnl-word').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const word = btn.dataset.word as string;
-        btn.classList.toggle('is-on');
-        words = btn.classList.contains('is-on') ? [...words, word] : words.filter((w) => w !== word);
-        persist();
+    function buildGoals(): void {
+      if (!goalsEl) return;
+      goalsEl.textContent = '';
+      goalOptionsFor().forEach((option) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'bl-goal';
+        btn.innerHTML = `<span class="bl-goal-glyph">${option.glyph}</span><span></span>`;
+        (btn.querySelectorAll('span')[1] as HTMLElement).textContent = option.label;
+        btn.addEventListener('click', () => {
+          goal = option.value;
+          persist();
+          goalsEl.querySelectorAll('.bl-goal').forEach((c) => c.classList.toggle('is-picked', c === btn));
+          track('funnel_answer', { funnel: funnel.id, step: 'main_goal', value: option.value });
+          // The deadline is an optional block under the goal, not a screen of its own.
+          if (deadlineEl) deadlineEl.hidden = false;
+          deadlineEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        goalsEl.appendChild(btn);
       });
+    }
+
+    if (eventsEl) {
+      DEADLINE_EVENTS.forEach((event) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'bl-chip';
+        chip.innerHTML = `<span>${event.glyph}</span><span></span>`;
+        (chip.querySelectorAll('span')[1] as HTMLElement).textContent = event.label;
+        chip.addEventListener('click', () => {
+          const on = deadlineEvent === event.id;
+          deadlineEvent = on ? '' : event.id;
+          eventsEl.querySelectorAll('.bl-chip').forEach((c) => c.classList.toggle('is-picked', !on && c === chip));
+          if (dateField) dateField.hidden = !deadlineEvent;
+          if (!deadlineEvent) deadlineDate = '';
+        });
+        eventsEl.appendChild(chip);
+      });
+    }
+    dateInput?.addEventListener('change', () => {
+      deadlineDate = dateInput.value;
     });
+
+    /** Mandarin swaps « Living abroad » for « Family or heritage », exactly as the app does. */
+    function goalOptionsFor() {
+      return goalOptions(language || null);
+    }
 
     // ── Name ────────────────────────────────────────────────────────────────
-    const nameForm = root.querySelector<HTMLFormElement>('[data-name-form]');
-    const nameInput = nameForm?.querySelector<HTMLInputElement>('input[name="name"]');
-    const nameSubmit = nameForm?.querySelector<HTMLButtonElement>('button[type="submit"]');
-    nameInput?.addEventListener('input', () => {
-      if (nameSubmit) nameSubmit.disabled = nameInput.value.trim().length === 0;
-    });
-    nameForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      name = (nameInput?.value ?? '').trim();
-      persist();
-      track('funnel_answer', { funnel: funnel.id, step: 'name', value: 'provided' });
-      advance();
-    });
+    const nameTitle = root.querySelector<HTMLElement>('[data-name-title]');
+    const nameInput = root.querySelector<HTMLInputElement>('[data-name-input]');
 
-    // ── Building ────────────────────────────────────────────────────────────
-    function runBuilding(): void {
-      show('building');
-      const lines = root.querySelectorAll<HTMLElement>('[data-build-line]');
-      const ring = root.querySelector<HTMLElement>('[data-ring-pct]');
-      const total = 500 + lines.length * 600 + 400;
-      const started = Date.now();
-
-      lines.forEach((li, i) => {
-        li.classList.remove('is-done');
-        window.setTimeout(() => li.classList.add('is-done'), 500 + i * 600);
-      });
-
-      const tick = window.setInterval(() => {
-        const pct = Math.min(100, Math.round(((Date.now() - started) / total) * 100));
-        if (ring) ring.textContent = `${pct}%`;
-        if (pct >= 100) window.clearInterval(tick);
-      }, 60);
-
-      window.setTimeout(showPlan, total);
+    function buildName(): void {
+      if (!nameTitle) return;
+      nameTitle.dataset.title = COPY.nameTitle.replace('{name}', tutor().name);
+      renderTitle(nameTitle, nameTitle.dataset.title);
     }
 
-    // ── Plan reveal ─────────────────────────────────────────────────────────
-    function showPlan(): void {
-      const title = root.querySelector<HTMLElement>('[data-plan-title]');
-      if (title) title.textContent = name ? `${name}, your plan is ready!` : 'Your plan is ready!';
+    // ── Where did you hear about us ─────────────────────────────────────────
+    const heardTitle = root.querySelector<HTMLElement>('[data-heard-title]');
+    const heardSub = root.querySelector<HTMLElement>('[data-heard-sub]');
+    const sourcesEl = root.querySelector<HTMLElement>('[data-sources]');
+    const skipBtn = root.querySelector<HTMLButtonElement>('[data-action="skip-heard"]');
+    if (heardTitle) heardTitle.textContent = HEARD_ABOUT_US.title;
+    if (heardSub) heardSub.textContent = HEARD_ABOUT_US.subtitle;
+    if (skipBtn) skipBtn.textContent = HEARD_ABOUT_US.skip;
+    if (sourcesEl) {
+      HEARD_ABOUT_US.sources.forEach((source) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'bl-source';
+        btn.style.setProperty('--brand', source.color);
+        btn.textContent = source.label;
+        btn.addEventListener('click', () => {
+          heardAboutUs = source.id;
+          btn.classList.add('is-picked');
+          if (heardSub) heardSub.textContent = HEARD_ABOUT_US.thanks;
+          track('funnel_answer', { funnel: funnel.id, step: 'heard_about_us', value: source.id });
+          window.setTimeout(advance, 650);
+        });
+        sourcesEl.appendChild(btn);
+      });
+    }
 
-      const labelOf = (stepId: string): string => {
-        const screen = funnel.screens.find((s) => s.id === stepId);
-        if (!screen || screen.kind !== 'question') return '';
-        const opt = screen.options.find((o) => o.id === answers[stepId]);
-        return opt ? opt.label.toLowerCase() : '';
-      };
-      const parts = [
-        answers.time ? `${answers.time} minutes a day` : 'a few minutes a day',
-        labelOf('why') && `for ${labelOf('why')}`,
-        words.length ? `${words.length} words already in` : null,
-      ].filter(Boolean);
+    // ── Plan ready ──────────────────────────────────────────────────────────
+    const readyTitle = root.querySelector<HTMLElement>('[data-ready-title]');
+    const readySub = root.querySelector<HTMLElement>('[data-ready-sub]');
+    const statsEl = root.querySelector<HTMLElement>('[data-stats]');
+    const rowsEl = root.querySelector<HTMLElement>('[data-rows]');
 
-      const recap = root.querySelector<HTMLElement>('[data-plan-recap]');
-      if (recap) recap.textContent = `${parts.join(' · ')}.`;
+    function daysUntilDeadline(): number | null {
+      if (!deadlineDate) return null;
+      const target = new Date(`${deadlineDate}T00:00:00`);
+      if (Number.isNaN(target.getTime())) return null;
+      const days = Math.ceil((target.getTime() - Date.now()) / 86400000);
+      return days > 0 ? days : null;
+    }
 
-      show('plan');
-      track('funnel_plan_view', { funnel: funnel.id, ...answers, words_known: words.length });
+    function estimate() {
+      return estimateVocabulary(probeResults);
+    }
+
+    /** The level the tutor teaches at. Nothing was claimed, so it is the grids' verdict alone. */
+    function resolvedLevel(): string {
+      return estimate()?.measuredCefr ?? 'A1';
+    }
+
+    function buildReady(): void {
+      const t = tutor();
+      if (readyTitle) {
+        const raw = firstName
+          ? COPY.readyTitle.replace('{first}', firstName)
+          : COPY.readyTitleAnon;
+        readyTitle.dataset.title = raw;
+        renderTitle(readyTitle, raw);
+      }
+      if (readySub) readySub.textContent = COPY.readySubtitle.replace('{name}', t.name);
+
+      const est = estimate();
+      const days = daysUntilDeadline();
+      if (statsEl) {
+        statsEl.textContent = '';
+        const stat = (value: string, label: string) => {
+          const box = document.createElement('div');
+          box.className = 'bl-stat';
+          box.innerHTML = '<b></b><span></span>';
+          (box.querySelector('b') as HTMLElement).textContent = value;
+          (box.querySelector('span') as HTMLElement).textContent = label;
+          statsEl.appendChild(box);
+        };
+        stat(resolvedLevel(), RESULT_COPY.level);
+        // Rounded to the nearest ten by the estimator — a unit digit would claim a precision the
+        // 16-word grids do not have.
+        if (est) stat(`~${est.knownWords}`, RESULT_COPY.words);
+        if (days) stat(String(days), RESULT_COPY.daysLeft);
+      }
+
+      if (rowsEl) {
+        rowsEl.textContent = '';
+        [
+          RESULT_COPY.rowDefault,
+          RESULT_COPY.rowTutor.replace('{name}', t.name),
+          days ? RESULT_COPY.rowDeadline : RESULT_COPY.rowRhythm,
+        ].forEach((text) => {
+          const li = document.createElement('li');
+          li.textContent = text;
+          rowsEl.appendChild(li);
+        });
+      }
     }
 
     // ── Paywall ─────────────────────────────────────────────────────────────
@@ -533,25 +895,49 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
     });
     selectPlan(chosenPackage);
 
+    const secondTitle = root.querySelector<HTMLElement>('[data-second-cta-title]');
+
+    function showPaywall(): void {
+      if (secondTitle) secondTitle.textContent = `Start speaking with ${tutor().name}`;
+      show('plan');
+      startCountdown();
+      const est = estimate();
+      track('funnel_plan_view', {
+        funnel: funnel.id,
+        language,
+        persona,
+        goal,
+        level: resolvedLevel(),
+        words_known: est?.knownWords ?? 0,
+        has_deadline: Boolean(daysUntilDeadline()),
+        named: Boolean(firstName),
+        heard_about_us: heardAboutUs || 'none',
+      });
+    }
+
     // Countdown. Manufactured urgency, founder decision 2026-09-16 — one config value to remove it.
     // It never reaches zero-and-locks: expiring the offer a visitor is reading would cost the sale
     // the timer exists to win, so it floors at 0:00 and the price stays.
-    const minutes = Number(root.dataset.countdown || '0');
-    if (minutes > 0) {
+    let countdownStarted = false;
+    function startCountdown(): void {
+      if (countdownStarted) return;
+      countdownStarted = true;
+      const minutes = Number(root.dataset.countdown || '0');
+      if (minutes <= 0) return;
       const clock = root.querySelector<HTMLElement>('[data-countdown-clock]');
       let left = minutes * 60;
-      window.setInterval(() => {
-        left = Math.max(0, left - 1);
-        if (clock) {
-          clock.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
-        }
-      }, 1000);
+      const tick = () => {
+        if (!clock) return;
+        const m = Math.floor(left / 60);
+        const sec = left % 60;
+        clock.textContent = `${m}:${String(sec).padStart(2, '0')}`;
+        if (left > 0) left -= 1;
+      };
+      tick();
+      window.setInterval(tick, 1000);
     }
 
     // ── Checkout ────────────────────────────────────────────────────────────
-    // Supabase is loaded only here: ~40 KB the quiz never needs, and weight on an ad landing is
-    // conversion. `signInAnonymously` gives a real, permanent user id with no form — the purchase
-    // lands on the id the buyer will keep, and /start/success/ attaches their email to it.
     const errorEl = root.querySelector<HTMLElement>('[data-checkout-error]');
     function showError(message: string): void {
       if (!errorEl) return;
@@ -560,20 +946,33 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
     }
 
     /**
-     * The app stores a level as one of 'Beginner' | 'Elementary' | 'Intermediate' | 'Advanced'
-     * (`spanish_level` in `onboardingAnswers`, read by `parseTutorOnboardingProfile`). The funnel
-     * never asks for it directly, so derive it from the two signals it does collect: how many of the
-     * 28 words were ticked, and whether they have ever learnt a language before.
+     * What the app would have written itself.
      *
-     * "Never" caps at Beginner whatever the word count — recognising written words is not speaking,
-     * and starting a true beginner too high is the one mistake that makes the first call go badly.
+     * `guidedPrefilledAnswers()` in APPSOFIA turns the guided answers into the tutor onboarding's
+     * own keys: the level under `'2'` / `spanish_level`, the goal under `'8'`, the first name under
+     * `'3'`, and the Bliss-specific extras under `bliss_*`. Writing exactly those keys here is what
+     * makes the web funnel the onboarding rather than a copy of it — the buyer opens the app and it
+     * already knows them. Anything unparsable there is dropped, so a half-written value is safe.
      */
-    function deriveLevel(): string {
-      if (answers.last_time === 'never') return 'Beginner';
-      if (words.length <= 4) return 'Beginner';
-      if (words.length <= 12) return 'Elementary';
-      if (words.length <= 22) return 'Intermediate';
-      return 'Advanced';
+    function appAnswers(): Record<string, string> {
+      const est = estimate();
+      const cefr = resolvedLevel();
+      const answers: Record<string, string> = {
+        '2': CEFR_TO_LEVEL_VALUE[cefr as keyof typeof CEFR_TO_LEVEL_VALUE] ?? 'Elementary',
+        spanish_level: CEFR_TO_LEVEL_VALUE[cefr as keyof typeof CEFR_TO_LEVEL_VALUE] ?? 'Elementary',
+        '8': goal,
+        bliss_cefr_level: cefr,
+      };
+      if (est) {
+        answers.bliss_cefr_measured = est.measuredCefr;
+        answers.bliss_vocab_size = String(est.knownWords);
+      }
+      if (knownWords.length > 0) answers.bliss_known_words = JSON.stringify(knownWords);
+      if (deadlineEvent && deadlineDate) {
+        answers.bliss_deadline = JSON.stringify({ event: deadlineEvent, date: deadlineDate });
+      }
+      if (firstName) answers['3'] = firstName;
+      return answers;
     }
 
     async function beginCheckout(cta: HTMLButtonElement): Promise<void> {
@@ -601,27 +1000,24 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
           userId = data.user.id;
         }
 
-        // Hand the answers to the app before leaving for checkout.
-        //
-        // Without this the buyer answers the same questions twice — level, name, goal — in the
-        // thirty seconds right after paying, which is exactly where the product should feel most
-        // certain of itself. Written against the same user id the purchase is made against, so the
-        // app finds it with no join and no email matching.
-        //
-        // Best-effort on purpose: a failed write must never block a payment. The buyer simply gets
-        // the normal onboarding, which is what happens today anyway.
+        // Hand the onboarding to the app before leaving for checkout. Best-effort on purpose: a
+        // failed write must never block a payment — the buyer simply gets the in-app onboarding.
         try {
           await client.from('web_funnel_profiles').upsert(
             {
               user_id: userId,
               funnel: funnel.id,
-              variant: root.dataset.app ?? funnel.id,
-              name: name || null,
-              answers,
-              words_known: words,
-              derived_level: deriveLevel(),
+              variant: funnel.app,
+              name: firstName || null,
+              persona,
+              taught_language: language,
+              answers: appAnswers(),
+              words_known: knownWords,
+              derived_level: resolvedLevel(),
+              heard_about_us: heardAboutUs || null,
               native_language: (navigator.language || '').split('-')[0] || null,
               attribution,
+              seconds_spent: Math.round((Date.now() - startedAt) / 1000),
               updated_at: new Date().toISOString(),
             },
             { onConflict: 'user_id' },
@@ -632,7 +1028,9 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
 
         const returnTo = new URL('/start/success/', window.location.origin);
         returnTo.searchParams.set('package', chosenPackage);
-        if (name) returnTo.searchParams.set('name', name);
+        returnTo.searchParams.set('t', funnel.id);
+        if (firstName) returnTo.searchParams.set('name', firstName);
+        if (persona) returnTo.searchParams.set('tutor', persona);
 
         track('funnel_checkout_redirect', { funnel: funnel.id, package: chosenPackage });
         window.location.href = checkoutUrl({
@@ -642,7 +1040,7 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
           returnTo: returnTo.href,
           attribution,
         });
-      } catch (err) {
+      } catch {
         // Most likely cause: "Allow anonymous sign-ins" is off in Supabase → Authentication. Fail
         // here rather than sending an untrackable buyer to a payment page.
         showError('We could not start checkout. Please try again in a moment.');
@@ -656,9 +1054,84 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
       cta.addEventListener('click', () => void beginCheckout(cta));
     });
 
-    // Deep link support (refresh, or back into the middle of the funnel).
-    const initial = window.location.hash.replace('#', '');
-    show(screens.has(initial) ? initial : 'intro', { push: false });
+    // ── Wiring ──────────────────────────────────────────────────────────────
+    root.querySelector<HTMLButtonElement>('[data-action="start"]')?.addEventListener('click', () => {
+      track('funnel_started', { funnel: funnel.id, ...attribution });
+      stopDemo();
+      advance();
+    });
+    root.querySelector<HTMLButtonElement>('[data-action="next-from-tutor"]')?.addEventListener('click', () => {
+      buildGrid('basic');
+      advance();
+    });
+    root.querySelector<HTMLButtonElement>('[data-action="words-done"]')?.addEventListener('click', submitGrid);
+    root.querySelector<HTMLButtonElement>('[data-action="words-none"]')?.addEventListener('click', () => {
+      picked.clear();
+      wordsEl?.querySelectorAll('.bl-word-chip').forEach((c) => c.classList.remove('is-picked'));
+      submitGrid();
+    });
+    root.querySelector<HTMLButtonElement>('[data-action="goal-done"]')?.addEventListener('click', () => {
+      if (!goal) return;
+      buildName();
+      advance();
+    });
+    root.querySelector<HTMLButtonElement>('[data-action="name-done"]')?.addEventListener('click', () => {
+      firstName = (nameInput?.value ?? '').trim().slice(0, 50);
+      persist();
+      track('funnel_answer', { funnel: funnel.id, step: 'name', value: firstName ? 'provided' : 'skipped' });
+      advance();
+    });
+    nameInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') root.querySelector<HTMLButtonElement>('[data-action="name-done"]')?.click();
+    });
+    skipBtn?.addEventListener('click', () => {
+      track('funnel_answer', { funnel: funnel.id, step: 'heard_about_us', value: 'skipped' });
+      advance();
+    });
+    root.querySelector<HTMLButtonElement>('[data-action="see-plan"]')?.addEventListener('click', showPaywall);
+
+    backBtn?.addEventListener('click', () => history.back());
+    window.addEventListener('popstate', () => {
+      const id = window.location.hash.replace('#', '') || 'intro';
+      if (screens.has(id)) show(id as Step, { push: false });
+    });
+
+    // A locked funnel already knows its teacher; an unlocked one paints Bliss's own violet until one
+    // is chosen. It also names the language it sells: "Speak a language for real" is Bliss's promise,
+    // not Sofia's — hers is Spanish, and the visitor came from an ad that said so.
+    if (persona) paintTutor();
+    if (funnel.lockedLanguage) {
+      const introTitle = screens.get('intro')?.querySelector<HTMLElement>('.bl-title');
+      if (introTitle) {
+        introTitle.dataset.title = COPY.introTitle.replace('a language', languageName());
+      }
+    }
+    buildGoals();
+    buildName();
+    if (language) buildTutors();
+    if (funnel.lockedLanguage) buildGrid('basic');
+
+    // The 'ready' screen is built from answers, so it is rebuilt every time it is shown.
+    const readyScreen = screens.get('ready');
+    if (readyScreen) {
+      new MutationObserver(() => {
+        if (readyScreen.classList.contains('is-active')) buildReady();
+      }).observe(readyScreen, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // A deep link (refresh, a shared URL, the back button after a hot reload) must not land on a
+    // screen this visitor has no answers for: without a language there are no tutors, no grid and no
+    // plan, and the screen would simply be empty. Anything unreachable falls back to the intro.
+    const initial = window.location.hash.replace('#', '') as Step;
+    const reachable = (step: Step): boolean => {
+      if (!screens.has(step)) return false;
+      if (step === 'intro' || step === 'language') return true;
+      if (!language || !persona) return false;
+      if (step === 'ready' || step === 'plan') return Boolean(goal);
+      return true;
+    };
+    show(reachable(initial) ? initial : 'intro', { push: false });
+    playScene(0);
   }
 
   initFunnel();
