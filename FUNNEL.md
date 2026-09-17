@@ -138,13 +138,55 @@ Do not start a campaign before step 3 passes.
 
 ---
 
-## 7. What this does not do yet
+## 7. Pixels — what each network is told
 
-- **No Meta/TikTok pixel or CAPI.** GA4 fires at every step (`funnel_started`, `funnel_step_view`,
-  `funnel_answer`, `funnel_plan_view`, `funnel_plan_selected`, `funnel_checkout_started`,
-  `funnel_checkout_redirect`, `funnel_checkout_failed`, `funnel_purchase`, `funnel_account_claimed`,
-  `funnel_claim_no_session`) and `utm_*` / `fbclid` / `ttclid` / `gclid` are captured on arrival and
-  carried into the checkout URL. The pixel that lets Meta *optimise* on purchase is the next piece.
+GA4 keeps the funnel's own vocabulary and fires at every step (`funnel_started`, `funnel_step_view`,
+`funnel_answer`, `funnel_plan_view`, `funnel_plan_selected`, `funnel_checkout_started`,
+`funnel_checkout_redirect`, `funnel_checkout_failed`, `funnel_purchase`, `funnel_account_claimed`,
+`funnel_claim_no_session`). `utm_*` / `fbclid` / `ttclid` / `gclid` are captured on arrival and
+carried into the checkout URL.
+
+The **ad pixels get four events only** — a pixel fed thirty custom events optimises on none of them.
+`src/lib/funnelTrack.ts` is the single fan-out:
+
+| Funnel event | Meta | TikTok | Value |
+|---|---|---|---|
+| `funnel_started` | `ViewContent` | `ViewContent` | — |
+| `funnel_plan_view` | `AddToCart` | `AddToCart` | — |
+| `funnel_checkout_started` | `InitiateCheckout` | `InitiateCheckout` | plan price |
+| `funnel_purchase` | `Purchase` | `CompletePayment` | plan price |
+
+- **The value is `FunnelPlan.amount`**, a number kept beside the displayed `price`. The networks bid
+  on that figure, so a stale one does not show up as a wrong label — it shows up as a bidder
+  optimising towards the wrong buyer. Change the two together.
+- **Funnel pages only.** `Base` takes a `pixels` prop; the landings and the articles never load a
+  tracker. Organic readers are not the campaign's audience, and every tracker on them is consent
+  we would owe for nothing.
+- **Nothing loads without an id.** `PUBLIC_META_PIXEL_ID` / `PUBLIC_TIKTOK_PIXEL_ID` are repo
+  secrets passed at build time (`deploy.yml`); unset — the default today — emits no script and makes
+  no request. Meta's id must come from a **clean Business Manager**, never the banned Sofia BM.
+- **Every event carries an `event_id`** (`eventID` for Meta, `event_id` for TikTok) so a server-side
+  copy can be deduplicated against it later. There is no server here — a static site on GitHub Pages
+  has nowhere to hold an access token — but the id cannot be added retroactively to events already
+  collected, so it is sent now.
+- **The purchase is guarded against a reload**: `/start/success/` is a redirect target, and a
+  bookmark or a refresh would fire `Purchase` again. One report per package per browser
+  (`localStorage`), which is the most this page can honestly claim.
+
+### ⚠️ Consent
+
+Both pixels set first-party cookies and this site has **no consent banner**, so EU traffic is not
+covered. That is a decision to make before spending, not a detail: either a banner goes in front of
+the funnel, or the risk is accepted deliberately. Nothing in the code assumes one exists.
+
+### Still missing
+
+- **CAPI / Events API.** Browser-side only today. Meta's server copy is what recovers the ~20-30 %
+  of events a browser loses to ad blockers and ITP, and it needs a server (an edge function, or a
+  purchase webhook from RevenueCat). The `event_id` groundwork is done.
+
+## 8. What this does not do yet
+
 - **The vocabulary check is not graded.** It is collected (`words_known` on `funnel_plan_view`) and
   shown back on the reveal, but it does not yet change the plan or pre-set the level in the app.
 - **`/start/bliss/`** — one entry in `FUNNELS` when Bliss ships.

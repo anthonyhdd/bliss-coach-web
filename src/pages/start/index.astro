@@ -30,6 +30,7 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
   description={funnel.sub}
   bare
   noindex
+  pixels
   brandStyle={brandStyle}
   bodyClass="funnel-body"
 >
@@ -317,6 +318,7 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
     SUPABASE_ANON_KEY,
     checkoutUrl,
   } from '../../config/funnel';
+  import { track } from '../../lib/funnelTrack';
 
   const STORAGE_KEY = 'bliss_funnel_v2';
 
@@ -331,11 +333,6 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
     'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
     'fbclid', 'ttclid', 'gclid',
   ];
-
-  function track(event: string, params: Record<string, unknown> = {}): void {
-    const gtag = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
-    if (typeof gtag === 'function') gtag('event', event, params);
-  }
 
   function initFunnel(): void {
     const root = document.querySelector<HTMLElement>('.fnl');
@@ -584,7 +581,12 @@ const askedCount = funnel.screens.filter((s) => s.kind !== 'pitch').length;
       cta.disabled = true;
       cta.textContent = 'One moment…';
       if (errorEl) errorEl.hidden = true;
-      track('funnel_checkout_started', { funnel: funnel.id, package: chosenPackage });
+      const plan = funnel.plans.find((p) => p.packageId === chosenPackage);
+      track(
+        'funnel_checkout_started',
+        { funnel: funnel.id, package: chosenPackage },
+        plan ? { value: plan.amount, currency: funnel.currency, contentId: chosenPackage } : undefined,
+      );
 
       try {
         const { createClient } = await import('@supabase/supabase-js');

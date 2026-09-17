@@ -30,6 +30,9 @@ jobs:
           PUBLIC_RC_WEB_BILLING_URL: ${{ secrets.PUBLIC_RC_WEB_BILLING_URL }}
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+          # Ad pixels, funnel pages only. Unset = no tracker is emitted at all.
+          PUBLIC_META_PIXEL_ID: ${{ secrets.PUBLIC_META_PIXEL_ID }}
+          PUBLIC_TIKTOK_PIXEL_ID: ${{ secrets.PUBLIC_TIKTOK_PIXEL_ID }}
 
   deploy:
     needs: build

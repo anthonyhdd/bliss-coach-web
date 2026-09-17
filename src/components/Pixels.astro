@@ -1,0 +1,38 @@
+---
+// Meta + TikTok base pixels. Rendered ONLY by pages that pass `pixels` to Base — the paid funnel.
+// Nothing is emitted when an id is unset or malformed, so a build without secrets ships no tracker.
+import { META_PIXEL_ID, TIKTOK_PIXEL_ID, metaEnabled, tiktokEnabled } from '../config/pixels';
+
+const meta = metaEnabled();
+const tiktok = tiktokEnabled();
+
+// One guard for both: with ClientRouter a soft navigation into /start/ inserts these scripts again,
+// and re-initialising a pixel double-counts every event after it.
+const metaSnippet = `if(!window.__metaPixel){window.__metaPixel=1;
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','${META_PIXEL_ID}');fbq('track','PageView');}`;
+
+const tiktokSnippet = `if(!window.__tiktokPixel){window.__tiktokPixel=1;
+!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];
+ttq.setAndDefer=function(e,n){e[n]=function(){e.push([n].concat(Array.prototype.slice.call(arguments,0)))}};
+for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
+ttq.instance=function(e){for(var n=ttq._i[e]||[],i=0;i<ttq.methods.length;i++)ttq.setAndDefer(n,ttq.methods[i]);return n};
+ttq.load=function(e,n){var r='https://analytics.tiktok.com/i18n/pixel/events.js',o=n&&n.partner;ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=r;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};
+var s=d.createElement('script');s.type='text/javascript';s.async=!0;s.src=r+'?sdkid='+e+'&lib='+t;var a=d.getElementsByTagName('script')[0];a.parentNode.insertBefore(s,a)};
+ttq.load('${TIKTOK_PIXEL_ID}');ttq.page();}(window,document,'ttq');}`;
+---
+{meta && <script is:inline set:html={metaSnippet} />}
+{tiktok && <script is:inline set:html={tiktokSnippet} />}
+{meta && (
+  <noscript>
+    <img
+      height="1"
+      width="1"
+      style="display:none"
+      alt=""
+      src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+    />
+  </noscript>
+)}

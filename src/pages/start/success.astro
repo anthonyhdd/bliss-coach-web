@@ -27,6 +27,7 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
   description="Set your password and download Sofia."
   bare
   noindex
+  pixels
   brandStyle={brandStyle}
   bodyClass="funnel-body"
 >
@@ -97,12 +98,8 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
 </Base>
 
 <script>
-  import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../config/funnel';
-
-  function track(event: string, params: Record<string, unknown> = {}): void {
-    const gtag = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
-    if (typeof gtag === 'function') gtag('event', event, params);
-  }
+  import { SUPABASE_URL, SUPABASE_ANON_KEY, FUNNELS, DEFAULT_FUNNEL } from '../../config/funnel';
+  import { track } from '../../lib/funnelTrack';
 
   function initSuccess(): void {
     const root = document.querySelector<HTMLElement>('[data-success]');
@@ -120,9 +117,32 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
     }
 
     // The purchase is the conversion — report it here, not at the redirect to checkout, so the
-    // number in GA4 is money rather than intent.
+    // number in GA4, and the one Meta and TikTok bid on, is money rather than intent.
+    //
+    // ⚠️ This page is reached by a redirect from the hosted checkout, so the browser will fire it
+    // again if the buyer reloads or bookmarks it. Once per package per browser is the most this can
+    // honestly claim; the networks' own deduplication window does not cover a reload an hour later.
     const params = new URLSearchParams(window.location.search);
-    track('funnel_purchase', { package: params.get('package') ?? 'unknown' });
+    const packageId = params.get('package') ?? 'unknown';
+    const funnel = FUNNELS[DEFAULT_FUNNEL];
+    const plan = funnel?.plans.find((p) => p.packageId === packageId);
+    const alreadyReported = (() => {
+      try {
+        const key = `bliss_purchase_reported_${packageId}`;
+        if (localStorage.getItem(key)) return true;
+        localStorage.setItem(key, String(Date.now()));
+        return false;
+      } catch {
+        return false;
+      }
+    })();
+    if (!alreadyReported) {
+      track(
+        'funnel_purchase',
+        { package: packageId },
+        plan ? { value: plan.amount, currency: funnel.currency, contentId: packageId } : undefined,
+      );
+    }
 
     const name = params.get('name');
     if (name) {
