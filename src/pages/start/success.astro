@@ -17,21 +17,30 @@ import { FUNNELS, DEFAULT_FUNNEL } from '../../config/funnel';
 import { APPS } from '../../config/apps';
 import '../../styles/funnel.css';
 
+// Which funnel the buyer came through is a runtime question (`?t=`), so the store links of every
+// funnel ship in the page and the script picks one. Bliss has no store link yet — it is not on the
+// App Store — and the page says so instead of pointing at nothing.
 const funnel = FUNNELS[DEFAULT_FUNNEL];
-const app = APPS[funnel.app];
-const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--brand-3:${app.gradient[2]};--accent:${app.accent};--on-gradient:${app.onGradient}`;
+const downloads = Object.fromEntries(
+  Object.values(FUNNELS).map((f) => {
+    const target = APPS[f.app];
+    return [f.id, { name: target?.name ?? 'Bliss', url: target?.appStoreUrl ?? '' }];
+  }),
+);
+const brandStyle =
+  '--brand-1:#4B45D6;--brand-2:#6A5BFF;--brand-3:#B9A4FF;--accent:#6A5BFF;--on-gradient:#ffffff';
 ---
 
 <Base
   title="You're in — create your account"
-  description="Set your password and download Sofia."
+  description="Set your password and download the app."
   bare
   noindex
   pixels
   brandStyle={brandStyle}
   bodyClass="funnel-body"
 >
-  <div class="fnl" data-success data-app-store-url={app.appStoreUrl}>
+  <div class="fnl" data-success data-downloads={JSON.stringify(downloads)}>
     <section class="fnl-screen is-active" data-screen="claim">
       <div class="fnl-inner">
         <div class="fnl-tick" aria-hidden="true">✓</div>
@@ -63,10 +72,15 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
         <div class="fnl-tick" aria-hidden="true">✓</div>
         <h1>Account created</h1>
         <p class="fnl-sub" data-download-sub>
-          Download Sofia and sign in with the email and password you just set. Your subscription will
-          already be there — nothing to restore.
+          Download the app and sign in with the email and password you just set. Your subscription —
+          and the plan you just built — will already be there. Nothing to restore, nothing to answer
+          twice.
         </p>
-        <a class="fnl-cta" href={app.appStoreUrl} data-store-link>Download Sofia</a>
+        <a class="fnl-cta" href="#" data-store-link>Download</a>
+        <p class="fnl-fineprint" data-no-store hidden>
+          Bliss is not on the App Store yet. We will email you the download link the day it lands —
+          your subscription is already attached to your account.
+        </p>
         <p class="fnl-fineprint">
           Trouble signing in? Email <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a>.
         </p>
@@ -91,7 +105,7 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
           Email <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a> from the address you
           paid with and we will set it up for you the same day.
         </p>
-        <a class="fnl-cta" href={app.appStoreUrl}>Download Sofia</a>
+        <a class="fnl-cta" href="#" data-store-link>Download</a>
       </div>
     </section>
   </div>
@@ -124,7 +138,8 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
     // honestly claim; the networks' own deduplication window does not cover a reload an hour later.
     const params = new URLSearchParams(window.location.search);
     const packageId = params.get('package') ?? 'unknown';
-    const funnel = FUNNELS[DEFAULT_FUNNEL];
+    const funnelId = params.get('t') || DEFAULT_FUNNEL;
+    const funnel = FUNNELS[funnelId] ?? FUNNELS[DEFAULT_FUNNEL];
     const plan = funnel?.plans.find((p) => p.packageId === packageId);
     const alreadyReported = (() => {
       try {
@@ -143,6 +158,27 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
         plan ? { value: plan.amount, currency: funnel.currency, contentId: packageId } : undefined,
       );
     }
+
+    // The store link of the funnel the buyer came through. Bliss has none yet: the CTA is hidden and
+    // the honest line under it takes its place, rather than a button that goes nowhere.
+    let download = { name: 'Bliss', url: '' };
+    try {
+      const map = JSON.parse(root.dataset.downloads ?? '{}');
+      download = map[funnelId] ?? download;
+    } catch {
+      /* keep the default */
+    }
+    root.querySelectorAll<HTMLAnchorElement>('[data-store-link]').forEach((link) => {
+      if (download.url) {
+        link.href = download.url;
+        link.textContent = `Download ${download.name}`;
+      } else {
+        link.hidden = true;
+      }
+    });
+    root.querySelectorAll<HTMLElement>('[data-no-store]').forEach((el) => {
+      el.hidden = Boolean(download.url);
+    });
 
     const name = params.get('name');
     if (name) {

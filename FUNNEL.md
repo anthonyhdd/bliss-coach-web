@@ -35,33 +35,53 @@ campaign never touches the frozen App Store ID.
 
 ---
 
-## 2. The structure, and where it comes from
+## 2. The structure: the app's own onboarding
 
-Read screen by screen off `start.praktika.ai` (recording, 2026-09-16). The rule that makes it work:
-**a question is never followed by another question.** Questions build commitment; the pitch screens
-between them do the selling.
+v1 of this funnel (2026-09-16) was Praktika's shape, read screen by screen off `start.praktika.ai`:
+a question, a pitch screen, a question. The founder's verdict the next day was that it was weak — it
+sold a product the visitor had not met. **The flow is now the Bliss guided onboarding**, ported from
+the app (APPSOFIA `src/config/blissGuidedOnboarding.ts` → `src/config/bliss/onboarding.ts` here):
 
 ```
-intro → why → [pitch: a tutor who talks back] → last_time → [pitch: 50× cheaper]
-      → pain → [pitch: nobody is listening] → vocab → [pitch: building your plan]
-      → time → name → building → plan reveal → paywall
+intro (the principle SHOWN) → language → tutor → vocabulary probe (adaptive, up to 2 grids)
+      → goal + optional deadline → name → where did you hear about us → plan ready → paywall
 ```
 
-Three of Praktika's devices are worth naming because they are the non-obvious part:
+Why this sells better than a quiz of pitches: **the visitor picks a person and measures themselves
+before any price appears.** By the paywall they have a level they earned, a word count, a goal, a
+deadline and a teacher with a name and a face. The thing being sold already exists for them.
 
-- **The pain question is projective.** "*I freeze when I actually have to speak* — is this true for
-  you?" makes the visitor **state** the problem instead of being told it.
-- **The vocabulary check is a game, not a form.** Tapping the Spanish words you know yields a real
-  level signal and, more importantly, makes the plan feel *earned* rather than generated.
-- **The name is collected three screens before the reveal**, then used on it: "*Tony, your plan is
-  ready!*".
+What each screen is doing:
 
-**What is deliberately NOT copied is their proof.** Praktika leads with "30M+ people" and "4.7★";
-Sofia has between 1 and 4 App Store ratings (iTunes lookup, 2026-09-15). Every pitch screen here
-states a product fact a buyer can verify in the app instead — the same rule `src/config/tutorPitch.ts`
-already sets for the landings. Keep it that way.
+- **intro** — not argued, *shown*. A teacher card, a caption typed in the language she teaches, then
+  a "your turn" card whose words colour in one by one. The row rotates through the eight teachers
+  every ten seconds, each on a different language.
+- **language / tutor** — ten languages, eight teachers each (the app's phase 3: every face, every
+  language). The native of the language comes first and is the recommended one; the rest are the
+  bilingual friends. From the tap on a teacher, **her colour owns the screen** — CTA, progress bar,
+  paywall — exactly as in the app.
+- **vocabulary** — « tap the words you understand ». The level is never *asked* (`ASKS_LEVEL = false`
+  in the app since 2026-09-17): the grids measure it, starting easy and stepping up or down once.
+  Ticking nothing is an answer. It yields a CEFR, a word count to show, and the words themselves.
+- **goal + deadline** — the goal values are the app's own (`onboardingAnswers['8']`), and the
+  deadline is an optional block under the goal, not a screen.
+- **name** — collected before the reveal and used on it, the one device worth keeping from Praktika.
+- **where did you hear about us** — the same tiles the five in-app onboardings share.
+- **plan ready** — the level, the ~word count, the days to the deadline, and three plan rows.
 
----
+`/start/` runs the Bliss funnel; **`/start/?t=sofia` runs the same machine with the language and the
+teacher locked** (`lockedLanguage` / `lockedPersona`), which is exactly what a single-tutor app's
+funnel is. Sofia's intro then says "Speak Spanish for real" and the flow opens on the grid.
+
+**The seam is gone.** `beginCheckout` writes the answers to `web_funnel_profiles` under the exact
+keys the app's `guidedPrefilledAnswers()` produces — `'2'`/`spanish_level`, `'8'`, `'3'`,
+`bliss_cefr_level`, `bliss_cefr_measured`, `bliss_vocab_size`, `bliss_known_words`, `bliss_deadline`
+— so a web buyer opens the app already knowing their level, goal, tutor and name. The onboarding is
+run once, on the web, and paid for at the end of it.
+
+⚠️ **The config modules are MIRRORED, not shared.** There is no package between the two repos:
+`src/config/bliss/*` was copied on 2026-09-17. Nothing fails loudly when the app's version moves —
+the web simply grades a learner on a slightly different test, or offers one teacher fewer.
 
 ## 3. How a web purchase reaches the app — and why it cannot orphan
 
@@ -94,8 +114,9 @@ Two prerequisites, both project settings:
 
 1. **RevenueCat → project Sofia AI (`e85dcf03`) → Apps → New → Web Billing.** Connect Stripe. The
    project currently has only `app_store` + `test_store`.
-2. Create packages matching `FUNNELS.sofia.plans` (`monthly`, `annual`, `quarterly`) and attach them
-   to the existing **`Sofia AI Pro`** entitlement.
+2. Create packages matching `PLANS` in `src/config/funnel.ts` (`monthly`, `annual`, `quarterly`) and
+   attach them to the existing **`Sofia AI Pro`** entitlement. Bliss will need its own Web Billing
+   app and its own entitlement when it ships — the package ids are the same, the project is not.
 3. Copy the hosted checkout URL into the repo secret **`PUBLIC_RC_WEB_BILLING_URL`**. Supabase values
    already default correctly, so this is the only secret required.
 4. **Confirm all six prices.** They are placeholders. The web price need not match the App Store —
@@ -132,7 +153,8 @@ Do not start a campaign before step 3 passes.
 | **Direct pay with a discount, no trial** | `plans` | Founder decision 2026-09-16 after reading Praktika's paywall, which sells outright at −50 % with a countdown. Revenue lands immediately instead of three days later. The cost is fewer conversion events per euro for Meta's learning phase. |
 | **10-minute countdown** | `countdownMinutes` | Founder decision, same day. It is manufactured urgency and it is the category norm; set to `0` to remove it without touching the page. It floors at 0:00 rather than expiring — killing the offer a visitor is reading would cost the sale the timer exists to win. |
 | **Account after payment** | `success.astro` | Praktika's order, made safe by anonymous sign-in (§3). |
-| **Sofia first, not Bliss** | `FUNNELS` | Sofia is live, measured, rising, and the only app Meta cannot reach otherwise. Adding Bliss = one entry in `FUNNELS`. |
+| **The app's onboarding, not a quiz** | `src/config/bliss/*` | Founder, 2026-09-17: the Praktika-shaped v1 was weak. Picking a teacher and measuring yourself sells the product by using it. Reverting means restoring the deleted `screens` array — the machine is now the page. |
+| **Bliss is the default, Sofia is `?t=`** | `DEFAULT_FUNNEL` | Bliss is what the flow is FOR (ten languages, eight teachers). Sofia is the same flow locked to one pair — and the one to buy traffic into until Bliss ships. |
 | **`noindex` + out of the sitemap** | `index.astro`, `astro.config.mjs` | The funnel would rank as a thin duplicate of `/sofia/` and split its organic signal. |
 | **Hosted checkout, not raw Stripe** | `RC_WEB_BILLING_URL` | Static site on GitHub Pages: no server, nowhere to hold a secret key. Raw Stripe would need an edge function *and* a hand-written entitlement sync RevenueCat already provides. |
 
@@ -189,6 +211,10 @@ the funnel, or the risk is accepted deliberately. Nothing in the code assumes on
 
 - **The vocabulary check is not graded.** It is collected (`words_known` on `funnel_plan_view`) and
   shown back on the reveal, but it does not yet change the plan or pre-set the level in the app.
-- **`/start/bliss/`** — one entry in `FUNNELS` when Bliss ships.
-- **The recording stopped at the paywall**, so Praktika's own checkout, account creation and app
+- **⚠️ Bliss is not on the App Store yet.** `/start/` sells it, `/start/success/` has no download
+  link to give (it says so honestly instead of pointing at nothing), and the page is `noindex` with
+  no campaign behind it. **Send paid traffic to `/start/?t=sofia` until Bliss ships.**
+- **The probe's words are not handed to the first conversation yet** — `bliss_known_words` is
+  written, the app reads it in `learnerIntake`, but nothing here checks that it arrived.
+- **The recording stopped at Praktika's paywall**, so their checkout, account creation and app
   hand-off were never seen. Those three screens here are our design, not theirs.

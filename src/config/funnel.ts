@@ -9,17 +9,23 @@
 // app-install campaigns at all — a ghost iOS14+ campaign in a banned Business Manager holds App
 // Store ID 6761907539 (#2446692). A web conversion campaign never touches that ID.
 //
-// THE SHAPE IS PRAKTIKA'S, THE SUBSTANCE IS OURS
-// Structure taken from a screen-by-screen reading of start.praktika.ai (recorded 2026-09-16): the
-// funnel never runs two questions back to back. Every question is followed by a PITCH screen, so the
-// questions build commitment while the pitches do the selling. Their questions are projective, not
-// demographic — the strongest one makes the visitor state the pain themselves ("I don't understand
-// when someone speaks fluently" → true / partially true / not true) rather than being told it.
+// THE FLOW IS THE APP'S OWN ONBOARDING
+// v1 of this funnel (2026-09-16) copied Praktika's structure screen by screen — a question, then a
+// pitch, then a question. The founder's verdict on 2026-09-17 was that it was weak: it sold a
+// product the visitor had not met. The flow is now the Bliss guided onboarding, ported from the app
+// (`src/config/bliss/onboarding.ts`, mirrored from APPSOFIA `blissGuidedOnboarding.ts`):
 //
-// What is deliberately NOT copied is their proof. Praktika leads with "30M+ people" and "4.7★";
-// Sofia has between 1 and 4 App Store ratings (iTunes lookup, 2026-09-15). Inventing that number
-// would be a lie a buyer can check in ten seconds, so every pitch screen here states a product fact
-// instead — the same rule `src/config/tutorPitch.ts` already sets for the landings. Keep it that way.
+//   intro (the principle SHOWN — a tutor speaks, you repeat) → language → tutor → vocabulary probe
+//   → goal + optional deadline → name → where did you hear about us → plan ready → paywall
+//
+// Why this is the right funnel and not merely a consistent one: the visitor PICKS A PERSON and
+// MEASURES THEMSELVES before any price is shown. By the paywall they have a level, a goal, a
+// deadline and a teacher with a name — the thing being sold already exists for them. Praktika's
+// own engine is the same trick; the pitch screens were the part worth dropping.
+//
+// It also removes the seam. The answers are written to `web_funnel_profiles` under the exact keys
+// the app's `guidedPrefilledAnswers()` produces, so a web buyer opens the app already knowing their
+// level, their goal, their tutor and their name: the funnel IS the onboarding, run once.
 //
 // THE MONEY PATH, AND WHY IT CANNOT ORPHAN A PURCHASE
 // The app's RevenueCat App User ID is the Supabase user id (`revenueCatService.configure(user.id)`
@@ -51,64 +57,6 @@
 // steering EXISTING app users to web payment: the in-app IAP paywall stays exactly as it is, and no
 // web price is ever shown inside the app.
 
-export interface FunnelOption {
-  id: string;
-  label: string;
-  hint?: string;
-  glyph?: string;
-}
-
-/** A question. Never two in a row — see the pitch screens below. */
-export interface QuestionScreen {
-  kind: 'question';
-  /** URL hash and analytics name — stable, never renamed without updating GA4 */
-  id: string;
-  question: string;
-  sub?: string;
-  options: FunnelOption[];
-}
-
-/** A free-text answer used later by name (Praktika asks the first name and uses it on the reveal). */
-export interface InputScreen {
-  kind: 'input';
-  id: string;
-  question: string;
-  sub?: string;
-  placeholder: string;
-}
-
-/**
- * A multi-select vocabulary check — Praktika's best question.
- *
- * It engages (tapping words is a game, not a form), it yields a real level signal, and above all it
- * makes the plan feel EARNED rather than generated. Worth keeping even though we do not yet grade it.
- */
-export interface WordsScreen {
-  kind: 'words';
-  id: string;
-  question: string;
-  sub: string;
-  words: string[];
-}
-
-/**
- * A belief screen between two questions. This is the part that sells.
- *
- * `proof` must be a fact a buyer can verify in the app. No rating counts, no user counts — see the
- * header of this file.
- */
-export interface PitchScreen {
-  kind: 'pitch';
-  id: string;
-  title: string;
-  body?: string;
-  /** big contrast line, e.g. a price comparison */
-  punch?: { before: string; beforeLabel: string; after: string; afterLabel: string; line: string };
-  proof?: { value: string; label: string }[];
-}
-
-export type FunnelScreen = QuestionScreen | InputScreen | WordsScreen | PitchScreen;
-
 export interface FunnelPlan {
   /** RevenueCat Web Billing package identifier this button buys */
   packageId: string;
@@ -138,13 +86,18 @@ export interface FunnelPlan {
 
 export interface FunnelDef {
   id: string;
-  /** the app a buyer downloads after paying */
+  /** the app a buyer downloads after paying — a key of `APPS` */
   app: string;
-  headline: string;
-  sub: string;
-  screens: FunnelScreen[];
-  /** the four lines that tick over on the "building your plan" loader */
-  buildSteps: string[];
+  /** what the paywall sells, in one line */
+  paywallTitle: string;
+  paywallSub: string;
+  /**
+   * A funnel for a single-tutor app locks the two steps that would otherwise be a lie: Sofia's
+   * buyer is not choosing between ten languages. Locked steps are skipped, and the tutor they
+   * imply is pre-selected — the rest of the flow is identical.
+   */
+  lockedLanguage?: string;
+  lockedPersona?: string;
   /** ISO 4217, for the pixels' `value`/`currency` pair. One per funnel: the hosted checkout charges one. */
   currency: string;
   plans: FunnelPlan[];
@@ -161,197 +114,121 @@ export interface FunnelDef {
   countdownMinutes: number;
 }
 
+/**
+ * ⚠️ PLACEHOLDER PRICES on both funnels — they must equal what RevenueCat Web Billing actually
+ * charges, and each `listPrice` must be a price genuinely charged before (EU Omnibus). The web price
+ * does not have to match the App Store, which is half the point of selling here. Confirm every
+ * number before sending a single euro of traffic. See FUNNEL.md §4.
+ */
+const PLANS: FunnelPlan[] = [
+  {
+    packageId: 'monthly',
+    name: '1 month',
+    listPrice: '€14.99',
+    price: '€9.99',
+    amount: 9.99,
+    perDayList: '€0.50',
+    perDay: '€0.33',
+    savePercent: 33,
+  },
+  {
+    packageId: 'annual',
+    name: '1 year',
+    listPrice: '€99.99',
+    price: '€49.99',
+    amount: 49.99,
+    perDayList: '€0.27',
+    perDay: '€0.14',
+    savePercent: 50,
+    badge: 'Most popular',
+    highlight: true,
+  },
+  {
+    packageId: 'quarterly',
+    name: '3 months',
+    listPrice: '€39.99',
+    price: '€19.99',
+    amount: 19.99,
+    perDayList: '€0.44',
+    perDay: '€0.22',
+    savePercent: 50,
+  },
+];
+
+const FAQ = [
+  {
+    q: 'Do I need to be able to speak already?',
+    a: 'No. Your tutor explains in the language you already speak and hands you the phrase to say. People start from zero every day.',
+  },
+  {
+    q: 'How is this different from Duolingo?',
+    a: 'Duolingo is exercises. This is a conversation out loud, in real time, with corrections on what you actually said.',
+  },
+  {
+    q: 'What happens after I subscribe?',
+    a: 'You create your account, download the app, and sign in with it. Your subscription is already there — nothing to restore, and your plan is already built.',
+  },
+  {
+    q: 'Can I cancel?',
+    a: 'Any time, from your account settings. You keep access until the end of the period you paid for.',
+  },
+];
+
 export const FUNNELS: Record<string, FunnelDef> = {
-  // Sofia first, not Bliss: Sofia is live, its conversion is measured and rising, and it is the one
-  // app Meta cannot reach any other way. Bliss gets this same funnel by adding an entry here once it
-  // ships — the machine is the page, not the app.
+  /**
+   * Bliss — every tutor, every language, one subscription. The flow above is its own onboarding.
+   *
+   * ⚠️ Bliss is NOT on the App Store yet. The page is `noindex` and no campaign points at it, so
+   * nothing is broken today; but a buyer who paid here would have nothing to download. Do not send
+   * traffic to `/start/` until Bliss ships — send it to `/start/?t=sofia`, which sells a live app.
+   */
+  bliss: {
+    id: 'bliss',
+    app: 'bliss',
+    paywallTitle: 'Every tutor, every language',
+    paywallSub: 'One subscription. Switch teacher or language whenever you want.',
+    currency: 'EUR',
+    countdownMinutes: 10,
+    plans: PLANS,
+    included: [
+      { title: 'Unlimited conversations', body: 'Talk as long and as often as you want, with any tutor.' },
+      { title: 'Corrected as you speak', body: 'The sentence you just said, fixed, with the reason in one line.' },
+      { title: 'Ten languages, eight tutors', body: 'Spanish, English, Mandarin, French, Italian, German, Portuguese, Japanese, Korean, Arabic.' },
+      { title: 'Taught in your own language', body: 'Your tutor explains in the language you already speak. A total beginner is never lost.' },
+      { title: 'Starts where you are', body: 'The level you just measured and the goal you just picked — no generic lesson one.' },
+    ],
+    faq: FAQ,
+  },
+
+  /**
+   * Sofia — the same machine with the language and the tutor locked. Sofia is live, its conversion
+   * is measured and rising, and it is the one app Meta cannot reach any other way (a ghost campaign
+   * in a banned Business Manager holds App Store ID 6761907539). This is the funnel to buy traffic
+   * into today.
+   */
   sofia: {
     id: 'sofia',
     app: 'sofia',
-    headline: 'Speak Spanish, from your very first sentence',
-    sub: 'Answer 6 quick questions and Sofia builds your speaking plan.',
-    countdownMinutes: 10,
+    paywallTitle: 'Get unlimited access to Sofia',
+    paywallSub: 'The quickest route to actually speaking Spanish.',
+    lockedLanguage: 'es',
+    lockedPersona: 'sofia',
     currency: 'EUR',
-    screens: [
-      {
-        kind: 'question',
-        id: 'why',
-        question: 'Why do you want to speak Spanish?',
-        sub: 'There is no wrong answer — this sets your first conversation.',
-        options: [
-          { id: 'travel', label: 'Travel', hint: 'Order, ask, get around', glyph: '✈️' },
-          { id: 'people', label: 'Someone I want to talk to', hint: 'Family, partner, friends', glyph: '❤️' },
-          { id: 'work', label: 'Work', hint: 'Colleagues, clients, meetings', glyph: '💼' },
-          { id: 'living', label: 'Living abroad', hint: 'Moving, or already there', glyph: '🏡' },
-          { id: 'always', label: 'I have always wanted to', glyph: '🌎' },
-        ],
-      },
-      {
-        kind: 'pitch',
-        id: 'pitch_tutor',
-        title: 'A tutor who talks back',
-        body: 'Sofia is a real voice conversation, not a set of flashcards. You speak, she answers, and she corrects the sentence you just said.',
-        proof: [
-          { value: 'Voice', label: 'real conversations' },
-          { value: 'Native', label: 'Mexican Spanish' },
-          { value: '0', label: 'drills or flashcards' },
-        ],
-      },
-      {
-        kind: 'question',
-        id: 'last_time',
-        question: 'When did you last try to learn a language?',
-        options: [
-          { id: 'recently', label: 'Recently' },
-          { id: 'year', label: 'About a year ago' },
-          { id: 'long', label: 'More than a year ago' },
-          { id: 'never', label: 'Never' },
-        ],
-      },
-      {
-        kind: 'pitch',
-        id: 'pitch_price',
-        title: 'You are nearly there!',
-        punch: {
-          before: '💰💰💰💰',
-          beforeLabel: 'Private tutor',
-          after: '💰',
-          afterLabel: 'Sofia',
-          line: 'A fraction of the price',
-        },
-        body: 'A private Spanish tutor runs €25–40 an hour. Sofia is unlimited, and she is awake whenever you are.',
-      },
-      {
-        kind: 'question',
-        id: 'pain',
-        question: '“I freeze when I actually have to speak.”',
-        sub: 'Is this true for you?',
-        options: [
-          { id: 'true', label: 'True', glyph: '👍' },
-          { id: 'partly', label: 'Partially true', glyph: '🤷' },
-          { id: 'false', label: 'That’s not true for me', glyph: '👎' },
-        ],
-      },
-      {
-        kind: 'pitch',
-        id: 'pitch_safe',
-        title: 'Nobody is listening but Sofia',
-        body: 'That is the whole point of practising with her first. She never sighs, never rushes you, and never makes you feel stupid for repeating a sentence four times.',
-      },
-      {
-        kind: 'words',
-        id: 'vocab',
-        question: 'Select all the words you know:',
-        sub: 'A1–A2 Beginner Level',
-        words: [
-          'amigo', 'año', 'agua', 'árbol',
-          'bueno', 'beber', 'hola', 'casa',
-          'calor', 'buscar', 'perro', 'cocina',
-          'mañana', 'escuela', 'todavía', 'fácil',
-          'familia', 'hacer', 'hora', 'invierno',
-          'libro', 'gente', 'caminar', 'noche',
-          'trabajo', 'tiempo', 'ahora', 'gracias',
-        ],
-      },
-      {
-        kind: 'pitch',
-        id: 'pitch_plan',
-        title: 'Sofia is building a plan just for you',
-        body: 'Your level, your goal and the time you actually have. A few more questions and it is ready.',
-      },
-      {
-        kind: 'question',
-        id: 'time',
-        question: 'How long can you practise a day?',
-        sub: 'Be honest — the plan is built to be kept, not to impress.',
-        options: [
-          { id: '5', label: '5 minutes', hint: 'One short conversation', glyph: '⚡' },
-          { id: '10', label: '10 minutes', hint: 'The sweet spot', glyph: '🔥' },
-          { id: '20', label: '20 minutes', hint: 'Fast progress', glyph: '🚀' },
-          { id: '30', label: '30 minutes or more', hint: 'All in', glyph: '🏆' },
-        ],
-      },
-      {
-        kind: 'input',
-        id: 'name',
-        question: 'What should Sofia call you?',
-        sub: 'She uses your name from the first conversation.',
-        placeholder: 'Your name',
-      },
-    ],
-    buildSteps: [
-      'Reading your answers',
-      'Choosing your first conversation',
-      'Setting your daily rhythm',
-      'Finishing your plan',
-    ],
+    countdownMinutes: 10,
+    plans: PLANS,
     included: [
       { title: 'Unlimited conversations', body: 'Talk to Sofia as long and as often as you want.' },
       { title: 'Corrected as you speak', body: 'The sentence you just said, fixed, with the reason in one line.' },
       { title: 'Pronunciation checked', body: 'Your actual recording is scored sound by sound, not just the words.' },
       { title: 'Taught in your own language', body: 'Sofia explains in the language you already speak. A total beginner is never lost.' },
-      { title: 'Starts where you are', body: 'Your level and your goal from day one — no generic lesson one.' },
+      { title: 'Starts where you are', body: 'The level you just measured and the goal you just picked — no generic lesson one.' },
     ],
-    faq: [
-      {
-        q: 'Do I need to be able to speak already?',
-        a: 'No. Sofia explains in the language you already speak and hands you the Spanish phrase to say. People start from zero every day.',
-      },
-      {
-        q: 'How is this different from Duolingo?',
-        a: 'Duolingo is exercises. Sofia is a conversation out loud, in real time, with corrections on what you actually said.',
-      },
-      {
-        q: 'What happens after I subscribe?',
-        a: 'You create your account, download the app, and sign in with it. Your subscription is already there — nothing to restore.',
-      },
-      {
-        q: 'Can I cancel?',
-        a: 'Any time, from your account settings. You keep access until the end of the period you paid for.',
-      },
-    ],
-    // ⚠️ PLACEHOLDER PRICES — they must equal what RevenueCat Web Billing actually charges, and each
-    // `listPrice` must be a price genuinely charged before (EU Omnibus). The App Store yearly is
-    // €49.99; the web price does not have to match it, which is half the point of selling here.
-    // Confirm all six numbers before sending a single euro of traffic. See FUNNEL.md §3.
-    plans: [
-      {
-        packageId: 'monthly',
-        name: '1 month',
-        listPrice: '€14.99',
-        price: '€9.99',
-        amount: 9.99,
-        perDayList: '€0.50',
-        perDay: '€0.33',
-        savePercent: 33,
-      },
-      {
-        packageId: 'annual',
-        name: '1 year',
-        listPrice: '€99.99',
-        price: '€49.99',
-        amount: 49.99,
-        perDayList: '€0.27',
-        perDay: '€0.14',
-        savePercent: 50,
-        badge: 'Most popular',
-        highlight: true,
-      },
-      {
-        packageId: 'quarterly',
-        name: '3 months',
-        listPrice: '€39.99',
-        price: '€19.99',
-        amount: 19.99,
-        perDayList: '€0.44',
-        perDay: '€0.22',
-        savePercent: 50,
-      },
-    ],
+    faq: FAQ,
   },
 };
 
-export const DEFAULT_FUNNEL = 'sofia';
+/** `/start/` sells Bliss; `/start/?t=sofia` sells Sofia. */
+export const DEFAULT_FUNNEL = 'bliss';
 
 /**
  * RevenueCat Web Billing — the hosted purchase page, created in the RevenueCat dashboard
