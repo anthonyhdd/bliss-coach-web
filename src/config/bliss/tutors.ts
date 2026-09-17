@@ -27,6 +27,8 @@ export type Tutor = {
   soft: string;
   wash: string;
   veil: string;
+  /** `PERSONA_SEEDS[x].glow` — the colour of the light particles drifting up her card. */
+  glow: string;
 };
 
 /** The four natives first, then the bilingual friends — the app's display order. */
@@ -42,6 +44,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#FFEDE3',
     wash: '#FFF1E8',
     veil: '#9A3412',
+    glow: '#FFD27A',
   },
   {
     persona: 'amelie',
@@ -54,6 +57,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#EAF0FF',
     wash: '#EEF3FF',
     veil: '#1E2A8A',
+    glow: '#B8D8FF',
   },
   {
     persona: 'emily',
@@ -66,6 +70,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#E0F7EE',
     wash: '#EAF8F2',
     veil: '#064E3B',
+    glow: '#B8F7E6',
   },
   {
     persona: 'meilin',
@@ -78,6 +83,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#FFE8F1',
     wash: '#FFF0F5',
     veil: '#831843',
+    glow: '#FFD3E6',
   },
   {
     persona: 'alex',
@@ -90,6 +96,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#E2F4FC',
     wash: '#EBF7FD',
     veil: '#0B3D66',
+    glow: '#B5ECFF',
   },
   {
     persona: 'mila',
@@ -102,6 +109,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#FBF6D2',
     wash: '#FBF9E6',
     veil: '#735000',
+    glow: '#FFF6C2',
   },
   {
     persona: 'astra',
@@ -114,6 +122,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#F4EAFF',
     wash: '#F7F1FF',
     veil: '#4A1680',
+    glow: '#EBD9FF',
   },
   {
     persona: 'charm',
@@ -126,6 +135,7 @@ export const TUTORS: readonly Tutor[] = [
     soft: '#FCE8F9',
     wash: '#FDF2FB',
     veil: '#741A74',
+    glow: '#FFCCF6',
   },
 ];
 

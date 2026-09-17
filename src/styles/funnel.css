@@ -125,137 +125,228 @@
 }
 .fnl-cta:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* ---------- paywall ---------- */
+/* ---------- paywall (the app's own screen) ---------- */
+/* `screens/paywall/bliss/BlissPaywall.tsx`: the teachers, the Bliss+ badge, the title with its
+   serif second line, the pills of the plan they built, then white plan cards whose selected one
+   glows in the teacher's colour. The countdown is the web's own — see the note in the page. */
+
+.bl-paywall { padding-top: 18px; }
+
 .fnl-countdown {
-  position: sticky;
-  top: 0;
-  z-index: 12;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 16px;
-  background: color-mix(in srgb, var(--accent) 12%, var(--bg-raised));
-  border-bottom: 1px solid var(--border);
-  font-size: 14.5px;
+  padding: 10px 16px;
+  background: color-mix(in srgb, var(--tutor-accent) 8%, #fff);
+  border-bottom: 1px solid color-mix(in srgb, var(--tutor-accent) 16%, transparent);
+  color: var(--muted);
+  font-size: 13.5px;
 }
-.fnl-countdown strong { font-variant-numeric: tabular-nums; color: var(--accent); font-size: 16px; }
+.fnl-countdown strong { font-variant-numeric: tabular-nums; color: var(--tutor-accent); font-size: 16px; font-weight: 800; }
 
-.fnl-paywall { padding-top: 22px; }
+.bl-pw-head { display: flex; flex-direction: column; align-items: center; text-align: center; }
 
-.fnl-plans { display: flex; flex-direction: column; gap: 12px; margin: 20px 0 16px; }
+/* The row of teachers: hers in the middle, at full height, the others smaller behind. */
+.bl-pw-row { display: flex; align-items: center; justify-content: center; gap: 8px; height: 96px; margin-bottom: 12px; }
+.bl-pw-face {
+  position: relative;
+  width: 52px;
+  height: 66px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f1430;
+  box-shadow: 0 6px 16px rgba(30, 50, 110, 0.16);
+  opacity: 0.6;
+  transform: scale(0.94);
+  transition: transform 260ms, opacity 260ms;
+}
+.bl-pw-face img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; }
+.bl-pw-face.is-featured {
+  width: 72px;
+  height: 92px;
+  border-radius: 18px;
+  opacity: 1;
+  transform: none;
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--tutor) 30%, rgba(30, 50, 110, 0.2));
+}
 
-.fnl-plan {
+.bl-plus {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 12px 4px 10px;
+  border-radius: 100px;
+  background: #fff;
+  border: 1px solid rgba(14, 26, 58, 0.08);
+  box-shadow: 0 4px 10px rgba(53, 135, 255, 0.12);
+  margin-bottom: 8px;
+}
+.bl-plus b { font-family: Inter, sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; color: var(--ink); }
+.bl-plus i { font-style: normal; font-size: 22px; font-weight: 900; line-height: 22px; color: var(--tutor-accent); }
+
+.bl-pw-title {
+  font-family: Inter, sans-serif;
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  color: var(--ink);
+  margin: 0;
+}
+.bl-pw-title em {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  background: linear-gradient(92deg, var(--tutor-1), var(--tutor-2), var(--tutor-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bl-pw-sub { color: var(--muted); font-size: 15px; line-height: 21px; margin-top: 4px; max-width: 320px; }
+
+/* What the funnel actually measured — never a guess. */
+.bl-pw-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.bl-pw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 100px;
+  background: #fff;
+  border: 1px solid rgba(14, 26, 58, 0.08);
+  box-shadow: 0 2px 8px rgba(30, 50, 110, 0.06);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.bl-pw-pill i { font-style: normal; font-size: 14px; }
+
+.bl-pw-section { margin-top: 26px; }
+.bl-pw-section h3 {
+  font-family: Inter, sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+/* ---------- plan cards ---------- */
+.bl-plans { display: flex; flex-direction: column; gap: 16px; padding-top: 10px; margin-bottom: 18px; }
+
+.bl-plan {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 16px;
-  text-align: left;
-  background: var(--bg-raised);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
+  min-height: 84px;
+  padding: 18px;
+  border-radius: 22px;
+  background: #fff;
+  border: 1.5px solid rgba(14, 26, 58, 0.08);
+  box-shadow: 0 8px 18px rgba(30, 50, 110, 0.07);
+  color: var(--ink);
   font-family: inherit;
+  text-align: left;
   cursor: pointer;
-  transition: border-color 140ms, box-shadow 140ms;
+  transition: border-color 160ms, box-shadow 160ms, transform 160ms;
 }
-.fnl-plan.is-highlight { margin-top: 12px; }
-.fnl-plan.is-selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+/* The chosen plan's edge glows in her colour — the app's `planGlow`. */
+.bl-plan.is-selected {
+  border-color: var(--tutor-accent);
+  box-shadow: 0 0 0 1px var(--tutor-accent), 0 10px 24px color-mix(in srgb, var(--tutor-accent) 28%, transparent);
 }
-
-.fnl-plan-radio {
+.bl-radio {
   flex: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(14, 26, 58, 0.25);
+  margin-right: 14px;
+  display: grid;
+  place-items: center;
+  transition: border-color 160ms;
 }
-.fnl-plan.is-selected .fnl-plan-radio {
-  border-color: var(--accent);
-  background: var(--accent);
-  box-shadow: inset 0 0 0 4px var(--bg-raised);
+.bl-plan.is-selected .bl-radio { border-color: var(--tutor-accent); }
+.bl-plan.is-selected .bl-radio::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--tutor-accent);
 }
+.bl-plan-main { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-right: 10px; }
+.bl-plan-name { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+.bl-plan-sub { color: var(--muted); font-size: 13.5px; }
+.bl-plan-sub s { opacity: 0.75; }
+.bl-plan-day { flex: none; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; }
+.bl-plan-day strong { font-family: Inter, sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--tutor-accent); }
+.bl-plan-day em { color: var(--muted); font-size: 11.5px; font-style: normal; }
 
-.fnl-plan-main { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.fnl-plan-name { font-weight: 700; font-size: 17px; }
-.fnl-plan-save {
-  align-self: flex-start;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-.fnl-plan-totals { color: var(--text-dim); font-size: 13.5px; }
-.fnl-plan-totals s { opacity: 0.7; }
-
-.fnl-plan-day { flex: none; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
-.fnl-plan-day s { color: var(--text-dim); font-size: 12px; }
-.fnl-plan-day strong { font-size: 26px; letter-spacing: -0.02em; }
-.fnl-plan-day em { color: var(--text-dim); font-size: 11.5px; font-style: normal; }
-
-.fnl-plan-badge {
+.bl-plan-badge {
   position: absolute;
   top: -11px;
-  left: 14px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
-  color: var(--on-gradient);
+  left: 18px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: linear-gradient(92deg, var(--tutor-1), var(--tutor-2));
+  color: #fff;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 800;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--tutor-2) 30%, transparent);
 }
 
-.fnl-pay {
+.bl-renewal { color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; margin-top: 12px; }
+
+.bl-pay {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px 14px;
+  gap: 10px;
   margin-top: 16px;
-  color: var(--text-dim);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  color: var(--faint);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
+.bl-secure { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+.bl-secure::before { content: '🔒 '; }
 
-.fnl-secure {
-  margin: 10px auto 0;
-  padding: 7px 14px;
-  width: fit-content;
-  border-radius: 999px;
-  background: #e8f7ee;
-  color: #11703a;
+/* ---------- what it unlocks ---------- */
+.bl-unlock { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.bl-unlock li { display: flex; gap: 12px; align-items: flex-start; }
+.bl-unlock-icon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--tutor-soft);
+  color: var(--tutor-accent);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 800;
 }
-.fnl-secure::before { content: '🔒 '; }
+.bl-unlock b { display: block; font-size: 15.5px; font-weight: 700; }
+.bl-unlock i { display: block; font-style: normal; color: var(--muted); font-size: 14px; line-height: 1.45; margin-top: 2px; }
 
-.fnl-block { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--border); }
-
-.fnl-included { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-.fnl-included li { position: relative; padding-left: 28px; }
-.fnl-included li::before { content: '✓'; position: absolute; left: 0; top: 1px; color: var(--accent); font-weight: 700; }
-.fnl-included strong { display: block; font-size: 15.5px; }
-.fnl-included span { color: var(--text-dim); font-size: 14px; line-height: 1.45; }
-
-.fnl-faq dt { font-weight: 700; font-size: 15.5px; margin-top: 16px; }
-.fnl-faq dd { color: var(--text-dim); font-size: 14.5px; line-height: 1.5; margin-top: 4px; }
+/* ---------- faq ---------- */
+.bl-faq dt { font-weight: 700; font-size: 15.5px; margin-top: 16px; }
+.bl-faq dt:first-child { margin-top: 0; }
+.bl-faq dd { color: var(--muted); font-size: 14.5px; line-height: 1.5; margin-top: 4px; }
 
 .fnl-warn {
-  margin-top: 16px;
+  margin-top: 14px;
   padding: 12px 14px;
-  border-radius: 12px;
-  background: #fff4e5;
-  border: 1px solid #ffd9a0;
-  color: #7a4a00;
+  border-radius: 14px;
+  background: #fff6ec;
+  border: 1px solid #f6d9b8;
+  color: #8a5a00;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -450,11 +541,74 @@
   cursor: pointer;
 }
 .bl-card-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; }
+/* The teacher's colour lives in the bottom 45% only, and it is HER GRADIENT rising — not a navy
+   scrim (`TutorHeroFrame`, appearance "site": a mask of transparent → 0.6 at 42% → 0.92 over her
+   three stops). The dark veil on top of it is only what her name needs to stay readable. */
 .bl-card-scrim {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
   pointer-events: none;
-  background: linear-gradient(transparent 34%, rgba(8, 12, 38, 0.55) 62%, rgba(8, 12, 38, 0.88) 100%);
+  background: linear-gradient(115deg, var(--tutor-1), var(--tutor-2) 50%, var(--tutor-3));
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.6) 58%, transparent);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.6) 58%, transparent);
+}
+.bl-card-scrim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, color-mix(in srgb, var(--tutor-veil, #0b1b3f) 55%, transparent), transparent 70%);
+}
+
+/* Her lights: ten dots drifting up the coloured band and twinkling (`GlowParticles`, count 10,
+   seeded once, 14 s a turn). They never cross onto the face — the band clips them. */
+.bl-lights {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bl-lights i {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--tutor-glow, #fff);
+  opacity: 0;
+  animation: bl-light 14s linear infinite;
+}
+@keyframes bl-light {
+  0% { opacity: 0; transform: translateY(0); }
+  12% { opacity: 0.42; }
+  50% { opacity: 0.2; }
+  76% { opacity: 0.45; }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
+/* The sheen: a band of light crossing the card every seven seconds, tilted 18°. */
+.bl-sheen {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 38%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-160%) rotate(18deg);
+  animation: bl-sheen 7s ease-in-out 1.4s infinite;
+}
+@keyframes bl-sheen {
+  0% { transform: translateX(-160%) rotate(18deg); }
+  21% { transform: translateX(330%) rotate(18deg); }
+  100% { transform: translateX(330%) rotate(18deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bl-lights i { animation: none; opacity: 0.25; }
+  .bl-sheen { display: none; }
 }
 .bl-card-tags { position: absolute; left: 14px; right: 14px; top: 14px; display: flex; gap: 6px; }
 .bl-card-text {
@@ -698,6 +852,22 @@
   opacity: 0.45;
   filter: blur(6px);
 }
+.bl-lang::after {
+  /* `Sheen` in the app's LanguageTileGrid: a light band crossing the tile, staggered per tile. */
+  content: '';
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: translateX(-160%) rotate(18deg);
+  animation: bl-sheen 6s ease-in-out infinite;
+}
+.bl-lang:nth-child(2n)::after { animation-delay: 0.6s; }
+.bl-lang:nth-child(3n)::after { animation-delay: 1.2s; }
+.bl-lang:nth-child(5n)::after { animation-delay: 1.8s; }
+@media (prefers-reduced-motion: reduce) { .bl-lang::after { display: none; } }
 .bl-lang:hover { transform: translateY(-2px); box-shadow: 0 14px 22px rgba(30, 50, 110, 0.24); }
 .bl-lang-top { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .bl-lang-native { font-style: normal; font-size: 13px; font-weight: 600; opacity: 0.92; }
