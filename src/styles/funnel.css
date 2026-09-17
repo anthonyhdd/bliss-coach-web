@@ -450,9 +450,13 @@
   letter-spacing: -0.02em;
   color: var(--ink-deep);
   text-align: left;
-  margin-bottom: 0;
+  /* The app's `titleBlock`: 22 under the title before the answers begin. A question sitting on top
+     of its own options reads as one block of noise. */
+  margin-bottom: 22px;
 }
-.fnl h1.bl-title-intro { text-align: center; margin-top: 26px; }
+/* When a subtitle follows, it takes the gap instead — 8 under the title, its own 22 under itself. */
+.fnl h1.bl-title + .fnl-sub { margin-top: -14px; }
+.fnl h1.bl-title-intro { text-align: center; margin-top: 26px; margin-bottom: 0; }
 
 .bl-word { display: inline-block; animation: bl-word-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 .bl-em {
