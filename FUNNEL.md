@@ -88,6 +88,22 @@ badge that becomes a check, coloured language tiles, word chips that FILL with h
 a check, two-column goal tiles and a glass deadline panel. The teacher card is this site's own
 `.ccard` — which is what the app copied in the first place, so the round trip closes.
 
+The cards carry the app's own lights: ten particles in the teacher's `glow` colour drifting up the
+coloured band and twinkling (`GlowParticles`, count 10), a sheen sweeping across every seven seconds
+(`SheenSweep`, 18°), and a sheen on the language tiles too. The coloured band is HER GRADIENT rising
+through a mask, as in `TutorHeroFrame`'s "site" appearance — not the navy scrim the home page uses.
+All of it stops under `prefers-reduced-motion`.
+
+**The paywall is the app's paywall** (`screens/paywall/bliss/BlissPaywall.tsx`) in its reading order:
+the row of teachers with hers in the middle, the Bliss+ badge, the title with its serif second line,
+**the pills of the plan they just built** (deadline, measured level, goal — only what the funnel
+actually produced), the plans, the button, what it unlocks, the FAQ, the button again.
+
+Three things the app cannot show and the web keeps, all founder decisions: the **countdown**, the
+**struck price**, and the **per-day price point**. App Review forbids the first two (2.3.7 / 3.1.2);
+a web checkout does not. The page is also deliberately **long**, with the **plans shown twice** —
+that is the web funnel's own grammar, not an oversight.
+
 One thing is deliberately not copied: in the app the rail selects the teacher by SWIPING her to the
 centre; here a tap selects, with scroll-snap doing the rest. A swipe-to-select carousel on the web
 costs a pointer-event rig for no conversion.

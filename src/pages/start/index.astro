@@ -72,6 +72,8 @@ const brandStyle =
           <div class="bl-card bl-card-compact" data-demo-card>
             <img class="bl-card-photo" data-demo-photo src="" alt="" width="180" height="240" />
             <span class="bl-card-scrim"></span>
+            <span class="bl-lights" data-demo-lights aria-hidden="true"></span>
+            <span class="bl-sheen"></span>
             <span class="bl-pill bl-pill-live" data-demo-live><i></i>{COPY.demoLive}</span>
             <span class="bl-card-text">
               <b data-demo-name></b>
@@ -211,7 +213,16 @@ const brandStyle =
       </div>
     </section>
 
-    <!-- Paywall ----------------------------------------------------------- -->
+    <!-- Paywall ------------------------------------------------------------ -->
+    <!--
+      The app's own paywall (`screens/paywall/bliss/BlissPaywall.tsx`), in its reading order:
+      the teachers, the Bliss+ badge, the title, the pills of the plan THEY just built, the plans,
+      the button, what it unlocks, the FAQ, the button again.
+
+      Two things the app cannot show and the web keeps, both founder decisions of 2026-09-16: the
+      countdown and the struck price. App Review forbids them (2.3.7 / 3.1.2); a web checkout does
+      not. Everything else is the same screen.
+    -->
     <section class="fnl-screen" data-screen="plan">
       {funnel.countdownMinutes > 0 && (
         <div class="fnl-countdown" data-countdown-bar>
@@ -220,70 +231,67 @@ const brandStyle =
         </div>
       )}
 
-      <div class="fnl-inner fnl-paywall">
-        <h2>{funnel.paywallTitle}</h2>
-        <p class="fnl-sub">{funnel.paywallSub}</p>
+      <div class="fnl-inner bl-paywall">
+        <header class="bl-pw-head">
+          <div class="bl-pw-row" data-pw-row></div>
+          <span class="bl-plus"><b>Bliss</b><i>+</i></span>
+          <h2 class="bl-pw-title" data-pw-title></h2>
+          <p class="bl-pw-sub" data-pw-sub></p>
+          <div class="bl-pw-pills" data-pw-pills></div>
+        </header>
 
-        <div class="fnl-plans" data-plans>
-          {funnel.plans.map((plan) => (
-            <button
-              class:list={['fnl-plan', plan.highlight && 'is-highlight']}
-              type="button"
-              data-package={plan.packageId}
-            >
-              {plan.badge && <span class="fnl-plan-badge">{plan.badge}</span>}
-              <span class="fnl-plan-radio" aria-hidden="true"></span>
-              <span class="fnl-plan-main">
-                <span class="fnl-plan-name">{plan.name}</span>
-                <span class="fnl-plan-save">SAVE {plan.savePercent}%</span>
-                <span class="fnl-plan-totals">
-                  <s>{plan.listPrice}</s> {plan.price}
+        <section class="bl-pw-section">
+          <h3>Pick your plan</h3>
+          <div class="bl-plans" data-plans>
+            {funnel.plans.map((plan) => (
+              <button class:list={['bl-plan', plan.highlight && 'is-highlight']} type="button" data-package={plan.packageId}>
+                {plan.badge && <span class="bl-plan-badge">{plan.badge}</span>}
+                <span class="bl-radio" aria-hidden="true"></span>
+                <span class="bl-plan-main">
+                  <span class="bl-plan-name">{plan.name}</span>
+                  <span class="bl-plan-sub"><s>{plan.listPrice}</s> {plan.price} · save {plan.savePercent}%</span>
                 </span>
-              </span>
-              <span class="fnl-plan-day">
-                <s>{plan.perDayList}</s>
-                <strong>{plan.perDay}</strong>
-                <em>per day</em>
-              </span>
-            </button>
-          ))}
-        </div>
+                <span class="bl-plan-day">
+                  <strong>{plan.perDay}</strong>
+                  <em>per day</em>
+                </span>
+              </button>
+            ))}
+          </div>
 
-        <button class="fnl-cta" type="button" data-action="checkout" disabled>Continue</button>
+          <button class="fnl-cta" type="button" data-action="checkout" disabled>Continue</button>
+          <p class="bl-renewal" data-renewal></p>
+          <p class="fnl-error" data-checkout-error hidden></p>
 
-        <ul class="fnl-pay" aria-label="Accepted payment methods">
-          <li>VISA</li><li>Mastercard</li><li>Apple&nbsp;Pay</li><li>Google&nbsp;Pay</li><li>Amex</li>
-        </ul>
-        <p class="fnl-secure">Secure payment</p>
+          {!checkoutReady && (
+            <p class="fnl-warn">
+              Checkout is not configured. Set <code>PUBLIC_RC_WEB_BILLING_URL</code> in the deploy
+              workflow, and turn on <strong>Allow anonymous sign-ins</strong> in Supabase → Authentication,
+              before sending traffic here.
+            </p>
+          )}
 
-        {!checkoutReady && (
-          <p class="fnl-warn">
-            Checkout is not configured. Set <code>PUBLIC_RC_WEB_BILLING_URL</code> in the deploy
-            workflow, and turn on <strong>Allow anonymous sign-ins</strong> in Supabase → Authentication,
-            before sending traffic here.
-          </p>
-        )}
+          <ul class="bl-pay" aria-label="Accepted payment methods">
+            <li>VISA</li><li>Mastercard</li><li>Apple&nbsp;Pay</li><li>Google&nbsp;Pay</li><li>Amex</li>
+          </ul>
+          <p class="bl-secure">Secure payment</p>
+        </section>
 
-        <p class="fnl-legal" data-renewal></p>
-        <p class="fnl-legal"><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
-
-        <!-- Long-form selling below the fold, then the price block again — Praktika repeats it once
-             with a second headline rather than making the visitor scroll back up. -->
-        <section class="fnl-block">
-          <h3>What you get</h3>
-          <ul class="fnl-included">
+        <section class="bl-pw-section">
+          <h3 data-unlock-title>What Bliss+ unlocks</h3>
+          <ul class="bl-unlock">
             {funnel.included.map((item) => (
               <li>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
+                <span class="bl-unlock-icon" aria-hidden="true">✓</span>
+                <span><b>{item.title}</b><i>{item.body}</i></span>
               </li>
             ))}
           </ul>
         </section>
 
-        <section class="fnl-block">
-          <h3>Frequently asked questions</h3>
-          <dl class="fnl-faq">
+        <section class="bl-pw-section">
+          <h3>FAQ</h3>
+          <dl class="bl-faq">
             {funnel.faq.map((item) => (
               <>
                 <dt>{item.q}</dt>
@@ -293,26 +301,18 @@ const brandStyle =
           </dl>
         </section>
 
-        <section class="fnl-block">
+        <section class="bl-pw-section">
           <h3 data-second-cta-title>Start speaking</h3>
-          <div class="fnl-plans" data-plans>
+          <div class="bl-plans" data-plans>
             {funnel.plans.map((plan) => (
-              <button
-                class:list={['fnl-plan', plan.highlight && 'is-highlight']}
-                type="button"
-                data-package={plan.packageId}
-              >
-                {plan.badge && <span class="fnl-plan-badge">{plan.badge}</span>}
-                <span class="fnl-plan-radio" aria-hidden="true"></span>
-                <span class="fnl-plan-main">
-                  <span class="fnl-plan-name">{plan.name}</span>
-                  <span class="fnl-plan-save">SAVE {plan.savePercent}%</span>
-                  <span class="fnl-plan-totals">
-                    <s>{plan.listPrice}</s> {plan.price}
-                  </span>
+              <button class:list={['bl-plan', plan.highlight && 'is-highlight']} type="button" data-package={plan.packageId}>
+                {plan.badge && <span class="bl-plan-badge">{plan.badge}</span>}
+                <span class="bl-radio" aria-hidden="true"></span>
+                <span class="bl-plan-main">
+                  <span class="bl-plan-name">{plan.name}</span>
+                  <span class="bl-plan-sub"><s>{plan.listPrice}</s> {plan.price} · save {plan.savePercent}%</span>
                 </span>
-                <span class="fnl-plan-day">
-                  <s>{plan.perDayList}</s>
+                <span class="bl-plan-day">
                   <strong>{plan.perDay}</strong>
                   <em>per day</em>
                 </span>
@@ -320,11 +320,12 @@ const brandStyle =
             ))}
           </div>
           <button class="fnl-cta" type="button" data-action="checkout" disabled>Continue</button>
+          <p class="bl-renewal" data-renewal></p>
           <p class="fnl-error" data-checkout-error hidden></p>
+          <p class="bl-legal"><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
         </section>
       </div>
     </section>
-  </div>
   </div>
 </Base>
 
@@ -539,6 +540,7 @@ const brandStyle =
       name: root.querySelector<HTMLElement>('[data-demo-name]'),
       traits: root.querySelector<HTMLElement>('[data-demo-traits]'),
       card: root.querySelector<HTMLElement>('[data-demo-card]'),
+      lights: root.querySelector<HTMLElement>('[data-demo-lights]'),
       bubble: root.querySelector<HTMLElement>('[data-demo-bubble]'),
       bubbleName: root.querySelector<HTMLElement>('[data-demo-bubble-name]'),
       dots: root.querySelector<HTMLElement>('[data-demo-dots]'),
@@ -578,6 +580,8 @@ const brandStyle =
       // and the words all take the colour of whoever is on screen — the card is not the only thing
       // that changes teacher.
       if (demo.stage) {
+        demo.stage.style.setProperty('--tutor-glow', who.glow);
+        demo.stage.style.setProperty('--tutor-veil', who.veil);
         demo.stage.style.setProperty('--tutor-1', who.gradient[0]);
         demo.stage.style.setProperty('--tutor-2', who.gradient[1]);
         demo.stage.style.setProperty('--tutor-3', who.gradient[2]);
@@ -588,6 +592,7 @@ const brandStyle =
         demo.photo.alt = `${who.name}, AI ${LANGUAGE_BY_CODE[code]?.name ?? ''} tutor`;
       }
       if (demo.name) demo.name.textContent = who.name;
+      if (demo.lights && !demo.lights.hasChildNodes()) demo.lights.innerHTML = lights().replace(/<\/?span[^>]*>/g, '');
       if (demo.bubbleName) demo.bubbleName.textContent = who.name;
       if (demo.traits) {
         // Two traits in compact, as in the app: the face must stay clear.
@@ -753,6 +758,28 @@ const brandStyle =
     const tutorsEl = root.querySelector<HTMLElement>('[data-tutors]');
 
     /** The chosen teacher's colour drives the whole screen from here on, as it does in the app. */
+    /**
+     * The light particles that drift up the coloured band of a card (`GlowParticles` in the app:
+     * ten dots, seeded once, rising and twinkling). Ten spans with fixed offsets — a seeded random
+     * would look identical and cost a script; what matters is that they are irregular, not random.
+     */
+    function lights(): string {
+      const seeds = [
+        [8, 74, 3, 0], [22, 88, 2, 3.1], [35, 66, 4, 1.4], [47, 92, 2.5, 5.2], [58, 71, 3, 2.3],
+        [66, 85, 2, 6.6], [74, 63, 3.5, 4.1], [82, 90, 2.5, 1.1], [90, 70, 3, 7.4], [16, 60, 2, 8.8],
+      ];
+      return (
+        '<span class="bl-lights" aria-hidden="true">' +
+        seeds
+          .map(
+            ([x, y, size, delay]) =>
+              `<i style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;animation-delay:-${delay}s"></i>`,
+          )
+          .join('') +
+        '</span>'
+      );
+    }
+
     function paintTutor(): void {
       const t = tutor();
       root.style.setProperty('--tutor-1', t.gradient[0]);
@@ -767,6 +794,8 @@ const brandStyle =
       root.style.setProperty('--brand-2', t.gradient[1]);
       root.style.setProperty('--brand-3', t.gradient[2]);
       root.style.setProperty('--accent', t.accent);
+      root.style.setProperty('--tutor-glow', t.glow);
+      root.style.setProperty('--tutor-veil', t.veil);
     }
 
     function buildTutors(): void {
@@ -784,6 +813,8 @@ const brandStyle =
         btn.style.setProperty('--tutor-2', t.gradient[1]);
         btn.style.setProperty('--tutor-3', t.gradient[2]);
         btn.style.setProperty('--tutor-accent', t.accent);
+        btn.style.setProperty('--tutor-glow', t.glow);
+        btn.style.setProperty('--tutor-veil', t.veil);
         btn.classList.toggle('is-selected', t.persona === persona);
         btn.innerHTML =
           `<img class="bl-card-photo" src="/home/${t.photo}" alt="" width="300" height="400" loading="lazy" />` +
@@ -791,7 +822,9 @@ const brandStyle =
           '<span class="bl-card-tags"><span class="bl-pill bl-pill-lang"></span>' +
           (i === 0 ? '<span class="bl-pill bl-pill-reco">Recommended</span>' : '') +
           '</span>' +
-          '<span class="bl-card-text"><b></b><em></em><span class="bl-card-traits"></span></span>';
+          '<span class="bl-card-text"><b></b><em></em><span class="bl-card-traits"></span></span>' +
+          '<span class="bl-sheen"></span>' +
+          lights();
         (btn.querySelector('.bl-pill-lang') as HTMLElement).textContent = languageName();
         (btn.querySelector('.bl-card-text b') as HTMLElement).textContent = t.name;
         (btn.querySelector('.bl-card-text em') as HTMLElement).textContent = tutorTag(t, language);
@@ -1041,7 +1074,7 @@ const brandStyle =
     function selectPlan(packageId: string): void {
       chosenPackage = packageId;
       persist();
-      root.querySelectorAll<HTMLButtonElement>('.fnl-plan').forEach((p) => {
+      root.querySelectorAll<HTMLButtonElement>('.bl-plan').forEach((p) => {
         p.classList.toggle('is-selected', p.dataset.package === packageId);
       });
       const plan = funnel.plans.find((p) => p.packageId === packageId);
@@ -1055,7 +1088,7 @@ const brandStyle =
       });
     }
 
-    root.querySelectorAll<HTMLButtonElement>('.fnl-plan').forEach((btn) => {
+    root.querySelectorAll<HTMLButtonElement>('.bl-plan').forEach((btn) => {
       btn.addEventListener('click', () => {
         selectPlan(btn.dataset.package as string);
         track('funnel_plan_selected', { funnel: funnel.id, package: btn.dataset.package });
@@ -1065,8 +1098,68 @@ const brandStyle =
 
     const secondTitle = root.querySelector<HTMLElement>('[data-second-cta-title]');
 
+    /**
+     * The paywall's header is the plan they just built, not a price list with a headline.
+     *
+     * `buildPlanPills` in the app: the deadline first (it is the one that makes today matter), then
+     * the measured level, then the goal — and only what the funnel actually produced. A pill with a
+     * guess in it would undo the work the probe just did.
+     */
+    function buildPaywallHead(): void {
+      const t = tutor();
+      const row = root.querySelector<HTMLElement>('[data-pw-row]');
+      const title = root.querySelector<HTMLElement>('[data-pw-title]');
+      const sub = root.querySelector<HTMLElement>('[data-pw-sub]');
+      const pills = root.querySelector<HTMLElement>('[data-pw-pills]');
+      const unlock = root.querySelector<HTMLElement>('[data-unlock-title]');
+
+      if (row) {
+        // Her card in the middle, two of her colleagues on each side — the app's `paywallAvatarRow`.
+        row.textContent = '';
+        const others = TUTORS.filter((x) => x.persona !== t.persona).slice(0, 4);
+        const order = [others[0], others[1], t, others[2], others[3]].filter(Boolean) as Tutor[];
+        order.forEach((who) => {
+          const card = document.createElement('span');
+          card.className = 'bl-pw-face';
+          card.classList.toggle('is-featured', who.persona === t.persona);
+          card.style.setProperty('--tutor', who.gradient[1]);
+          card.innerHTML = `<img src="/home/${who.photo}" alt="" width="64" height="80" loading="lazy" />`;
+          row.appendChild(card);
+        });
+      }
+
+      if (title) {
+        title.textContent = '';
+        const line = document.createElement('span');
+        line.textContent = firstName ? `Your plan is ready, ${firstName}` : 'Your plan is ready';
+        const withName = document.createElement('em');
+        withName.textContent = `with ${t.name}`;
+        title.append(line, document.createElement('br'), withName);
+      }
+      if (sub) sub.textContent = `Pick your plan to keep going with ${t.name}.`;
+      if (unlock) unlock.textContent = `What ${funnel.id === 'bliss' ? 'Bliss+' : `${t.name} Pro`} unlocks`;
+
+      if (pills) {
+        pills.textContent = '';
+        const days = daysUntilDeadline();
+        const event = DEADLINE_EVENTS.find((e) => e.id === deadlineEvent);
+        const add = (glyph: string, text: string) => {
+          const pill = document.createElement('span');
+          pill.className = 'bl-pw-pill';
+          pill.innerHTML = '<i></i><b></b>';
+          (pill.querySelector('i') as HTMLElement).textContent = glyph;
+          (pill.querySelector('b') as HTMLElement).textContent = text;
+          pills.appendChild(pill);
+        };
+        if (days && event) add(event.glyph, `${days} days to go · ${event.label.replace(/^An? /, '')}`);
+        if (estimate()) add('📊', `Level ${resolvedLevel()}`);
+        if (goal) add('🎯', goal);
+      }
+    }
+
     function showPaywall(): void {
       if (secondTitle) secondTitle.textContent = `Start speaking with ${tutor().name}`;
+      buildPaywallHead();
       show('plan');
       startCountdown();
       const est = estimate();
