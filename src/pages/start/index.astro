@@ -482,6 +482,8 @@ const brandStyle =
 
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
       if (opts.push !== false) history.pushState({ screen: id }, '', `#${id}`);
+      // The rail can only be measured once it is on screen — see `railFocus`.
+      if (id === 'tutor') requestAnimationFrame(() => centreOn(persona, 'instant'));
       revealTitles(el);
       track('funnel_step_view', { funnel: funnel.id, step: STEP_ANALYTICS_NAME[id] });
     }
@@ -815,7 +817,6 @@ const brandStyle =
         btn.style.setProperty('--tutor-accent', t.accent);
         btn.style.setProperty('--tutor-glow', t.glow);
         btn.style.setProperty('--tutor-veil', t.veil);
-        btn.classList.toggle('is-selected', t.persona === persona);
         btn.innerHTML =
           `<img class="bl-card-photo" src="/home/${t.photo}" alt="" width="300" height="400" loading="lazy" />` +
           '<span class="bl-card-scrim"></span>' +
@@ -835,17 +836,70 @@ const brandStyle =
           pill.textContent = trait;
           traits.appendChild(pill);
         });
+        // A tap brings her to the centre; the centre is what selects her (see `railFocus`).
         btn.addEventListener('click', () => {
-          persona = t.persona;
-          persist();
-          paintTutor();
-          tutorsEl.querySelectorAll('.bl-tutor').forEach((c) => c.classList.toggle('is-selected', c === btn));
           btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          track('funnel_answer', { funnel: funnel.id, step: 'bliss_tutor', value: t.persona });
         });
         tutorsEl.appendChild(btn);
       });
     }
+
+    /**
+     * THE CENTRED CARD IS THE CHOSEN ONE.
+     *
+     * In the app the rail is a carousel: you swipe a teacher to the middle and that IS the choice
+     * (`onIndexChange` → `onTutorCard`). Selecting by tap instead left the card under the thumb dim
+     * and the chosen one off screen — which is what made the web rail read as broken.
+     *
+     * `--d` is the site's own carousel variable (`.ccard`): 0 for the card under the middle of the
+     * track, 1 for one a card-width away. It drives the scale and the darkening, so the whole row
+     * reacts as you drag rather than snapping between two states.
+     */
+    function railFocus(): void {
+      if (!tutorsEl) return;
+      const cards = Array.from(tutorsEl.querySelectorAll<HTMLElement>('.bl-tutor'));
+      if (cards.length === 0) return;
+      // The rail is built while its screen is still hidden, so every card measures 0 there. Dividing
+      // by that width produced `--d: NaN`, which Chrome resolves to 0 inside the calc() — and
+      // `scale(0)` made the whole rail invisible. Measure only once it has a size.
+      const width = cards[0].offsetWidth;
+      if (width <= 0 || tutorsEl.clientWidth <= 0) return;
+      const mid = tutorsEl.scrollLeft + tutorsEl.clientWidth / 2;
+      let centre: HTMLElement | null = null;
+      let best = Infinity;
+      for (const card of cards) {
+        const d = Math.abs(card.offsetLeft + card.offsetWidth / 2 - mid) / (width * 1.05);
+        card.style.setProperty('--d', Math.min(d, 1).toFixed(3));
+        if (d < best) {
+          best = d;
+          centre = card;
+        }
+      }
+      if (!centre) return;
+      cards.forEach((card) => card.classList.toggle('is-selected', card === centre));
+      const picked = centre.dataset.persona;
+      if (picked && picked !== persona) {
+        persona = picked;
+        persist();
+        paintTutor();
+        track('funnel_answer', { funnel: funnel.id, step: 'bliss_tutor', value: picked });
+      }
+    }
+
+    /** Put a teacher under the middle of the rail. */
+    function centreOn(target: string, behavior: ScrollBehavior): void {
+      if (!tutorsEl) return;
+      const card = tutorsEl.querySelector<HTMLElement>(`.bl-tutor[data-persona="${target}"]`);
+      if (!card) return;
+      tutorsEl.scrollTo({
+        left: card.offsetLeft + card.offsetWidth / 2 - tutorsEl.clientWidth / 2,
+        behavior,
+      });
+      railFocus();
+    }
+
+    tutorsEl?.addEventListener('scroll', () => requestAnimationFrame(railFocus), { passive: true });
+    window.addEventListener('resize', () => requestAnimationFrame(railFocus), { passive: true });
 
     // ── Vocabulary probe ────────────────────────────────────────────────────
     const wordsEl = root.querySelector<HTMLElement>('[data-words]');
