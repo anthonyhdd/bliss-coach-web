@@ -111,7 +111,8 @@ export default defineConfig({
       // /studio/ is the founder's private gallery; /start/ is the paid-traffic funnel, which is
       // noindex on purpose (it would rank as a thin duplicate of the app landing and split its
       // organic signal). Listing either in the sitemap contradicts that.
-      filter: (page) => !page.includes('/studio/') && !page.includes('/start/'),
+      // `/alt/` is a design alternative of the home, noindex, looked at before a decision.
+      filter: (page) => !page.includes('/studio/') && !page.includes('/start/') && !page.includes('/alt/'),
     }),
   ],
 });

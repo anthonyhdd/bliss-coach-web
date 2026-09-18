@@ -1,0 +1,532 @@
+---
+/**
+ * ALT HOME — the front door if bliss-coach.com becomes Bliss's site tomorrow.
+ *
+ * Not linked from anywhere and `noindex`: it exists to be looked at side by side with `/`, on a
+ * phone, before anything is decided. The live studio home (six apps, six chapters) is untouched.
+ *
+ * What changes versus `/`:
+ *  - one product above the fold instead of six — the hero sells Bliss and nothing else;
+ *  - the avatar dock under the horizon is no longer six App Store links, it is the eight TEACHERS
+ *    of the app, and they scroll to the picker rather than leaving the page;
+ *  - the picker IS the pitch: ten languages, and the eight faces re-order under each one (native
+ *    first), which is the one thing no competitor's landing page can show;
+ *  - the primary CTA is `/start/` (web checkout, ~97 % kept) with the App Store as the second door;
+ *  - the eight single-teacher apps survive as a band near the footer — see `ALT_HOME.md` for why
+ *    they must stay reachable at their current URLs.
+ *
+ * Teacher and language data are imported from `src/config/bliss/tutors.ts`, the same mirror the
+ * funnel reads, so this page can never drift from what `/start/` actually offers.
+ */
+import { ClientRouter } from 'astro:transitions';
+import { withBase } from '../../config/apps';
+import Analytics from '../../components/Analytics.astro';
+import { TUTORS, TAUGHT_LANGUAGES, tutorsForLanguage, tutorTag } from '../../config/bliss/tutors';
+
+const title = 'Bliss — pick a language, pick your teacher';
+const description =
+  'Bliss is one app with ten languages and eight AI teachers. Choose the language, choose the face and the voice, and talk out loud from the first minute.';
+
+// Every (language, teacher) pair, pre-rendered as data so the picker is instant and works with
+// JS off (the first language is server-rendered; the rest swap in on click).
+const ORDER = Object.fromEntries(
+  TAUGHT_LANGUAGES.map((l) => [
+    l.code,
+    tutorsForLanguage(l.code).map((t) => ({ persona: t.persona, tag: tutorTag(t, l.code) })),
+  ]),
+);
+
+const FIRST = TAUGHT_LANGUAGES[0];
+
+// One real line per teacher, in the language of the tile they are introduced on.
+const LINES: Record<string, string> = {
+  sofia: '¿Vamos al cine después?',
+  amelie: 'Ça vous dit un ciné ce soir ?',
+  emily: "So — what did you do this weekend?",
+  meilin: '你今天过得怎么样？',
+  alex: 'Dime, ¿qué hiciste ayer?',
+  mila: 'On commence doucement, d’accord ?',
+  astra: 'Racconta, com’è andata oggi?',
+  charm: 'Okay, say that again — slower.',
+};
+
+// Crop per portrait: the assets are framed differently (full body, bust, square), and one shared
+// object-position cut half the faces off. Same idea as the `pos` column on the live home.
+const POS: Record<string, string> = {
+  sofia: '50% 16%', amelie: '50% 16%', emily: '50% 18%', meilin: '50% 18%',
+  alex: '50% 12%', mila: '50% 38%', astra: '50% 38%', charm: '50% 16%',
+};
+
+const steps = [
+  { n: '01', t: 'Pick a language', b: 'Ten of them, from Spanish to Arabic. Switch whenever you want — your progress follows you.' },
+  { n: '02', t: 'Pick who teaches you', b: 'Eight faces, eight voices, eight characters. The native of the language comes first; the others teach it as bilingual friends.' },
+  { n: '03', t: 'Talk. Out loud. Today.', b: 'No drills, no streak guilt. A real conversation, corrected as you go, ten minutes a day.' },
+];
+
+// Real App Store reviews only — the two language ones from the live home's list. Bliss has no
+// reviews of its own yet; do not pad this with invented lines, replace it once it does.
+const REVIEWS = [
+  { name: 'Jane', color: '#FF6B35', text: 'I improved my pronunciation in just a few days.' },
+  { name: 'Emily', color: '#FF4D9E', text: 'Sofia finally made me comfortable speaking Spanish.' },
+];
+
+// The single-teacher apps, kept one click away instead of deleted.
+const APPS = [
+  { slug: 'sofia', name: 'Sofia', craft: 'Spanish' },
+  { slug: 'amelie', name: 'Amélie', craft: 'French' },
+  { slug: 'emily', name: 'Emily', craft: 'English' },
+  { slug: 'meilin', name: 'Meilin', craft: 'Mandarin' },
+  { slug: 'alex', name: 'Alex', craft: 'Interviews' },
+  { slug: 'charm', name: 'Charm', craft: 'Dating' },
+  { slug: 'mila', name: 'Mila', craft: 'Nutrition' },
+  { slug: 'astra', name: 'Astra', craft: 'Astrology · coming soon' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <ClientRouter />
+    <Analytics />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href={withBase('/home/logo.png')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+    <style define:vars={{ n: String(TUTORS.length) }}>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      html, body { background: #0a0a0a; }
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #fff; -webkit-font-smoothing: antialiased; overflow-x: clip;
+      }
+      a { color: inherit; }
+      .serif { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+
+      /* ---------- hero ---------- */
+      .card {
+        position: relative; width: 100%; height: max(760px, 100vh); overflow: hidden;
+        box-shadow: rgba(217,119,87,.7) 0 0 15px 0 inset, rgba(217,119,87,.5) 0 0 25px 0 inset, rgba(217,119,87,.2) 0 0 35px 0 inset;
+      }
+      #stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .nebula {
+        position: absolute; inset: 0; pointer-events: none;
+        background:
+          radial-gradient(44% 40% at 50% 36%, rgba(118,98,188,.34), rgba(94,74,152,.14) 58%, transparent 78%),
+          radial-gradient(24% 20% at 50% 30%, rgba(158,132,224,.2), transparent 68%);
+      }
+      .fade-l, .fade-r, .fade-t { position: absolute; pointer-events: none; top: 0; bottom: 0; }
+      .fade-l { left: 0; width: 45%; background: linear-gradient(90deg, #0a0a0a, rgba(10,10,10,0)); }
+      .fade-r { right: 0; width: 45%; background: linear-gradient(270deg, #0a0a0a, rgba(10,10,10,0)); }
+      .fade-t { left: 0; right: 0; height: 100px; bottom: auto; background: linear-gradient(#0a0a0a, rgba(10,10,10,0)); }
+      .content { position: relative; display: flex; flex-direction: column; align-items: center; padding: 0 24px; }
+      @media (prefers-reduced-motion: no-preference) {
+        .logo-mark, h1, .sub, .cta-wrap, .second { animation: hero-in 1.1s cubic-bezier(.2,.7,.2,1) both; }
+        .sub { animation-delay: .1s; } .cta-wrap { animation-delay: .2s; } .second { animation-delay: .3s; }
+        @keyframes hero-in { from { opacity: 0; filter: blur(14px); transform: translateY(14px); } to { opacity: 1; filter: blur(0); transform: none; } }
+      }
+      .logo-mark { width: 52px; height: 52px; margin: 58px auto 22px; filter: brightness(1.25) drop-shadow(0 0 14px rgba(200,170,255,.28)); }
+      h1 {
+        text-align: center; font-weight: 500; font-size: clamp(34px, 5vw, 62px); line-height: 1.08; letter-spacing: -.05em;
+        background: linear-gradient(0deg, #fbdbff 0%, #fff 15%, #fff 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      h1 .serif { letter-spacing: -.01em; padding-right: .05em; }
+      .sub { margin-top: 24px; text-align: center; font-size: 18px; line-height: 27px; color: rgba(255,255,255,.72); max-width: 46ch; }
+      .hl {
+        background: linear-gradient(92deg, #ffdc83, #ffabad, #ffc1f7);
+        -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 600;
+      }
+      .cta-wrap { position: relative; margin-top: 40px; padding: 1.5px; border-radius: 12px; }
+      .cta-beam { position: absolute; inset: 0; border-radius: 12px; overflow: hidden; }
+      .cta-beam::before {
+        content: ''; position: absolute; left: 50%; top: 50%; width: 420px; height: 420px; margin: -210px 0 0 -210px;
+        background: conic-gradient(from 80.568deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, #ffdc83 78%, #ffabad 86%, #ffc1f7 94%, rgba(0,0,0,0) 100%);
+        animation: beam-spin 2.5s linear infinite;
+      }
+      @keyframes beam-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .cta-beam::before { animation: none; } }
+      .cta-wrap::before {
+        content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 220px; height: 120px;
+        background: conic-gradient(from 80.568deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, #ffdc83 78%, #ffabad 86%, #ffc1f7 94%, rgba(0,0,0,0) 100%);
+        filter: blur(30px); opacity: .32; pointer-events: none; z-index: -1;
+      }
+      .cta {
+        position: relative; display: block; background: #0a0a0a; border-radius: 10.5px; padding: 16px 32px;
+        color: #fff; font-size: 13px; font-weight: 600; line-height: 1.2; text-decoration: none;
+      }
+      .second { margin-top: 16px; font-size: 12.5px; color: rgba(255,255,255,.45); text-decoration: none; }
+      .second b { color: rgba(255,255,255,.72); font-weight: 600; }
+      .second:hover b { color: #fff; }
+
+      .horizon { position: relative; width: 100%; flex: 1 0 auto; margin-top: 54px; min-height: 230px; pointer-events: none; }
+      .horizon .disc {
+        position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 187%; min-width: 1500px; height: 955px;
+        border-radius: 100%; background: #0a0a0a;
+        box-shadow: #fff 0 2px 20px 0 inset, rgba(255,255,255,.49) 0 -10px 50px 1px;
+      }
+      .horizon .flare {
+        position: absolute; left: 50%; top: 0; transform: translate(-50%,-50%); width: 787px; height: 111px;
+        background: radial-gradient(50% 50%, rgba(255,255,255,.5), rgba(10,10,10,0)); filter: blur(57px);
+      }
+      .dock { position: absolute; left: 50%; top: 86px; transform: translateX(-50%); display: flex; pointer-events: auto; }
+      .dock a { display: block; margin-right: -5px; }
+      .dock a:last-child { margin-right: 0; }
+      .dock img {
+        width: 54px; height: 66px; object-fit: cover; object-position: 50% 14%; border-radius: 16px; display: block;
+        box-shadow: 0 6px 24px rgba(0,0,0,.7); transition: transform .18s;
+      }
+      .dock a:hover img { transform: translateY(-4px); }
+      .dock-cap { position: absolute; left: 50%; top: 170px; transform: translateX(-50%); white-space: nowrap;
+        font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+
+      /* ---------- shared section chrome ---------- */
+      section { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+      .kicker { font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+      h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 500; letter-spacing: -.035em; line-height: 1.1; margin-top: 12px; }
+      h2 em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+      .rv { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+      .rv.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+
+      /* ---------- picker ---------- */
+      .picker { padding-top: 96px; padding-bottom: 20px; }
+      .langs { display: flex; flex-wrap: wrap; gap: 8px; margin: 30px 0 34px; }
+      .lang {
+        display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px 9px 9px; border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); color: rgba(255,255,255,.72);
+        font-size: 13.5px; font-weight: 500; cursor: pointer; transition: border-color .18s, color .18s, background .18s;
+      }
+      .lang b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; font-size: 11px; font-weight: 700;
+        background: rgba(255,255,255,.08); color: rgba(255,255,255,.75); }
+      .lang:hover { color: #fff; border-color: rgba(255,255,255,.28); }
+      .lang[aria-pressed='true'] { background: #fff; color: #0a0a0a; border-color: #fff; }
+      .lang[aria-pressed='true'] b { background: rgba(10,10,10,.1); color: #0a0a0a; }
+
+      .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .tcard {
+        position: relative; display: block; overflow: hidden; border-radius: 20px; text-decoration: none;
+        background: #101014; border: 1px solid rgba(255,255,255,.08);
+        transition: transform .22s cubic-bezier(.2,.7,.2,1), border-color .22s;
+        order: var(--o, 0);
+      }
+      .tcard:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.2); }
+      .tband { position: relative; height: 216px; background: linear-gradient(150deg, var(--g1), var(--g2) 55%, var(--g3)); }
+      .tband img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+        mask-image: linear-gradient(#000 62%, transparent); -webkit-mask-image: linear-gradient(#000 62%, transparent); }
+      .tline {
+        position: absolute; left: 10px; right: 10px; bottom: 10px; padding: 7px 11px; border-radius: 12px; border-bottom-left-radius: 4px;
+        background: rgba(10,10,10,.62); backdrop-filter: blur(8px); font-size: 12px; line-height: 1.35; color: rgba(255,255,255,.92);
+      }
+      .tmeta { padding: 13px 14px 15px; }
+      .tname { font-size: 16px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+      /* `nowrap`: "Bilingual friend" broke over two lines in the 2-column phone grid and pushed the
+         traits out of the card — the pill wraps as a block instead. */
+      .tag { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px;
+        white-space: nowrap; background: rgba(255,255,255,.08); color: rgba(255,255,255,.55); }
+      .tcard[data-native='1'] .tag { background: linear-gradient(92deg, #ffdc83, #ffabad); color: #17130a; }
+      .traits { margin-top: 6px; font-size: 12px; color: rgba(255,255,255,.45); }
+      .pick-foot { margin-top: 22px; font-size: 13px; color: rgba(255,255,255,.45); }
+      .pick-foot a { color: #fff; }
+
+      /* ---------- steps ---------- */
+      .steps { padding-top: 110px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .step { padding: 26px 22px 28px; border-radius: 20px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); }
+      .step .n { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-size: 30px; color: rgba(255,255,255,.28); }
+      .step h3 { margin-top: 8px; font-size: 19px; font-weight: 600; letter-spacing: -.02em; }
+      .step p { margin-top: 9px; font-size: 14px; line-height: 1.55; color: rgba(255,255,255,.55); }
+
+      /* ---------- reviews ---------- */
+      .reviews { padding-top: 110px; }
+      .rgrid { margin-top: 28px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 720px; }
+      .rev { padding: 20px; border-radius: 18px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); }
+      .stars { color: #ffdc83; font-size: 12px; letter-spacing: 2px; }
+      .rev p { margin-top: 10px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.8); }
+      .who { margin-top: 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(255,255,255,.45); }
+      .dot { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #0a0a0a; }
+
+      /* ---------- final CTA ---------- */
+      .final { padding: 120px 24px 110px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+      .final .cta-wrap { margin-top: 30px; }
+
+      /* ---------- the eight apps, kept ---------- */
+      .also { padding-top: 10px; padding-bottom: 96px; }
+      .also-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+      .also h3 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+      .also p.lede { margin-top: 6px; font-size: 14px; color: rgba(255,255,255,.45); max-width: 58ch; }
+      .agrid { margin-top: 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+      .acell { display: flex; align-items: center; gap: 11px; padding: 11px 13px; border-radius: 14px; text-decoration: none;
+        background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); transition: border-color .18s, background .18s; }
+      .acell:hover { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.06); }
+      .acell img { width: 34px; height: 34px; border-radius: 9px; display: block; }
+      .acell b { display: block; font-size: 13.5px; font-weight: 600; }
+      .acell span { display: block; font-size: 11.5px; color: rgba(255,255,255,.42); }
+
+      /* ---------- footer ---------- */
+      .foot { border-top: 1px solid rgba(255,255,255,.08); padding: 46px 24px 40px; text-align: center; }
+      .foot-mark { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+      .foot-mark em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; }
+      .foot-tag { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; color: rgba(255,255,255,.6); font-size: 20px; margin: 8px 0 22px; }
+      .foot-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; font-size: 13px; }
+      .foot-links a { color: rgba(255,255,255,.5); text-decoration: none; }
+      .foot-links a:hover { color: #fff; }
+
+      @media (max-width: 900px) {
+        .grid, .agrid { grid-template-columns: repeat(2, 1fr); }
+        .steps { grid-template-columns: 1fr; padding-top: 88px; }
+      }
+      @media (max-width: 640px) {
+        .content { padding: 0 20px; }
+        h1 { font-size: clamp(27px, 8.4vw, 40px); }
+        .sub { font-size: 15.5px; line-height: 23px; max-width: 32ch; }
+        .dock img { width: 42px; height: 52px; }
+        .dock-cap { top: 142px; font-size: 10px; }
+        .picker { padding-top: 74px; }
+        .tband { height: 176px; }
+        /* Ten chips stacked five rows deep pushed the teachers a full screen down. One swipeable
+           row instead, with the overflow signalled by the fade on the right edge. */
+        .langs {
+          flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity;
+          margin: 24px -20px 26px; padding: 2px 20px 10px;
+          scrollbar-width: none; -ms-overflow-style: none;
+          mask-image: linear-gradient(90deg, #000 88%, transparent);
+          -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+        }
+        .langs::-webkit-scrollbar { display: none; }
+        .lang { flex: 0 0 auto; scroll-snap-align: start; }
+        .tname { font-size: 15px; gap: 6px; }
+        .tag { font-size: 9px; padding: 3px 6px; }
+        .agrid, .rgrid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <canvas id="stars" aria-hidden="true"></canvas>
+      <div class="nebula" aria-hidden="true"></div>
+      <div class="fade-l" aria-hidden="true"></div>
+      <div class="fade-r" aria-hidden="true"></div>
+      <div class="fade-t" aria-hidden="true"></div>
+
+      <div class="content">
+        <img class="logo-mark" src={withBase('/home/logo.png')} alt="Bliss" width="52" height="52" />
+        <h1>Pick a language.<br /><span class="serif">Pick who teaches you.</span></h1>
+        <p class="sub">
+          One app, ten languages, eight teachers with a face and a voice.
+          <span class="hl">You talk out loud from minute one.</span>
+        </p>
+        <div class="cta-wrap">
+          <span class="cta-beam" aria-hidden="true"></span>
+          <a class="cta" href={withBase('/start/')}>Build my plan — free</a>
+        </div>
+        <a class="second" href="#teachers">or <b>meet the eight teachers</b> first ↓</a>
+      </div>
+
+      <div class="horizon">
+        <div class="disc" aria-hidden="true"></div>
+        <div class="flare" aria-hidden="true"></div>
+        <nav class="dock" aria-label="The Bliss teachers">
+          {TUTORS.map((t) => (
+            <a href="#teachers" title={t.name}>
+              <img src={withBase(`/home/${t.photo}`)} alt={t.name} width="54" height="66" loading="eager" />
+            </a>
+          ))}
+        </nav>
+        <div class="dock-cap" aria-hidden="true">One app · every one of them</div>
+      </div>
+    </div>
+
+    <!-- THE PICKER: the whole product in one interaction -->
+    <section class="picker" id="teachers">
+      <div class="rv">
+        <div class="kicker">Choose your language</div>
+        <h2>Ten languages. The same <em>eight faces</em>.</h2>
+      </div>
+      <div class="langs rv" role="group" aria-label="Language">
+        {TAUGHT_LANGUAGES.map((l) => (
+          <button class="lang" type="button" data-code={l.code} aria-pressed={l.code === FIRST.code ? 'true' : 'false'}>
+            <b>{l.badge}</b>{l.name}
+          </button>
+        ))}
+      </div>
+
+      <div class="grid rv" id="tgrid">
+        {TUTORS.map((t) => (
+          <a
+            class="tcard"
+            href={withBase('/start/')}
+            data-persona={t.persona}
+            data-native={t.native === FIRST.code ? '1' : '0'}
+            style={`--g1:${t.gradient[0]};--g2:${t.gradient[1]};--g3:${t.gradient[2]};--o:${tutorsForLanguage(FIRST.code).findIndex((x) => x.persona === t.persona)}`}
+          >
+            <div class="tband">
+              <img src={withBase(`/home/${t.photo}`)} alt={`${t.name}, Bliss teacher`} style={`object-position:${POS[t.persona]}`} width="260" height="176" loading="lazy" />
+              <span class="tline">{LINES[t.persona]}</span>
+            </div>
+            <div class="tmeta">
+              <div class="tname">{t.name} <span class="tag">{tutorTag(t, FIRST.code)}</span></div>
+              <div class="traits">{t.traits.join(' · ')}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p class="pick-foot rv">
+        Every teacher teaches every language. The native comes first — the others teach it as bilingual friends,
+        in their own voice. <a href={withBase('/start/')}>Start with any of them →</a>
+      </p>
+    </section>
+
+    <section class="steps">
+      {steps.map((s) => (
+        <div class="step rv">
+          <div class="n">{s.n}</div>
+          <h3>{s.t}</h3>
+          <p>{s.b}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="reviews">
+      <div class="rv">
+        <div class="kicker">From the App Store</div>
+        <h2>People who were <em>never going to speak</em>.</h2>
+      </div>
+      <div class="rgrid">
+        {REVIEWS.map((r) => (
+          <div class="rev rv">
+            <div class="stars">★★★★★</div>
+            <p>{r.text}</p>
+            <div class="who">
+              <span class="dot" style={`background:${r.color}`}>{r.name[0]}</span>{r.name}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="final">
+      <h2 class="rv" style="max-width:18ch">Your teacher is <em>waiting</em>.</h2>
+      <div class="cta-wrap rv">
+        <span class="cta-beam" aria-hidden="true"></span>
+        <a class="cta" href={withBase('/start/')}>Build my plan — free</a>
+      </div>
+      <a class="second" href="https://apps.apple.com/us/developer/bliss-coach/id1628409883"><b>Download on the App Store</b></a>
+    </div>
+
+    <!-- The eight single-teacher apps: demoted, never removed. -->
+    <section class="also">
+      <div class="also-head rv">
+        <div>
+          <h3>Rather have just one?</h3>
+          <p class="lede">
+            Each teacher also has an app of their own — same voice, same method, one subject.
+          </p>
+        </div>
+      </div>
+      <div class="agrid rv">
+        {APPS.map((a) => (
+          <a class="acell" href={withBase(`/${a.slug}/`)}>
+            <img src={withBase(`/icons/${a.slug}.jpg`)} alt="" width="34" height="34" loading="lazy" />
+            <span><b>{a.name}</b><span>{a.craft}</span></span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="foot-mark">Bliss <em>Coach</em></div>
+      <p class="foot-tag">Get better, every day.</p>
+      <nav class="foot-links" aria-label="Legal">
+        <a href={withBase('/privacy/')}>Privacy</a>
+        <a href={withBase('/terms/')}>Terms</a>
+        <a href={withBase('/')}>Studio home (current)</a>
+      </nav>
+    </footer>
+
+    <script is:inline define:vars={{ ORDER: ORDER }}>
+      // Starfield — same one as the live home, trimmed.
+      (() => {
+        const c = document.getElementById('stars');
+        if (!c) return;
+        const ctx = c.getContext('2d');
+        let stars = [];
+        const build = () => {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          c.width = c.offsetWidth * dpr;
+          c.height = c.offsetHeight * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const n = Math.round((c.offsetWidth * c.offsetHeight) / 9000);
+          stars = Array.from({ length: n }, () => ({
+            x: Math.random() * c.offsetWidth,
+            y: Math.random() * c.offsetHeight,
+            r: Math.random() * 1.1 + 0.2,
+            a: Math.random() * 0.6 + 0.2,
+            s: Math.random() * 0.006 + 0.002,
+            p: Math.random() * Math.PI * 2,
+          }));
+        };
+        let t = 0;
+        const draw = () => {
+          ctx.clearRect(0, 0, c.offsetWidth, c.offsetHeight);
+          t += 1;
+          for (const s of stars) {
+            ctx.globalAlpha = s.a * (0.65 + 0.35 * Math.sin(t * s.s + s.p));
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          requestAnimationFrame(draw);
+        };
+        build();
+        addEventListener('resize', build);
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) draw();
+        else { ctx.globalAlpha = 0.6; stars.forEach((s) => { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.3); ctx.fill(); }); }
+      })();
+
+      // Reveal on scroll.
+      (() => {
+        const io = new IntersectionObserver(
+          (es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))),
+          { rootMargin: '0px 0px -12% 0px' },
+        );
+        document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+      })();
+
+      // The picker: re-order and re-tag the eight cards under the chosen language.
+      // Order comes from the same `tutorsForLanguage()` the funnel uses — no second ranking here.
+      (() => {
+        const cards = new Map(
+          [...document.querySelectorAll('.tcard')].map((el) => [el.dataset.persona, el]),
+        );
+        const apply = (code) => {
+          const list = ORDER[code];
+          if (!list) return;
+          list.forEach((row, i) => {
+            const el = cards.get(row.persona);
+            if (!el) return;
+            el.style.setProperty('--o', String(i));
+            el.dataset.native = row.tag === 'Native teacher' ? '1' : '0';
+            const tag = el.querySelector('.tag');
+            if (tag) tag.textContent = row.tag;
+          });
+        };
+        document.querySelectorAll('.lang').forEach((b) => {
+          b.addEventListener('click', () => {
+            document.querySelectorAll('.lang').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+            apply(b.dataset.code);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
