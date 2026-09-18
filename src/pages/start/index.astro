@@ -14,6 +14,7 @@
 // conversion that does not leak. The hash still changes per screen so the back button works and GA4
 // sees the progression. What cannot be static (the tutors of a language, the grid of a language,
 // the goals of a language) is built by the script from the same config.
+import fs from 'node:fs';
 import Base from '../../layouts/Base.astro';
 import { FUNNELS, DEFAULT_FUNNEL, isCheckoutConfigured } from '../../config/funnel';
 import { APPS } from '../../config/apps';
@@ -24,6 +25,17 @@ const funnel = FUNNELS[DEFAULT_FUNNEL];
 const app = APPS[funnel.app] ?? APPS.sofia;
 // Which funnel is running is a runtime question (`?t=`), and each one has its own hosted checkout,
 // so readiness is decided per funnel in the script. This map ships with the page.
+// The tutor's real loop plays in the intro card, as in the app. Built from what ships in
+// public/home/video: the calm `-idle` loop when there is one (a talking mouth out of sync with the
+// typed bubble reads as a glitch), else the persona's main loop. A persona without a file keeps
+// its photo.
+const VIDEO_DIR = 'public/home/video';
+const videoFiles = fs.existsSync(VIDEO_DIR) ? fs.readdirSync(VIDEO_DIR).filter((f) => f.endsWith('.mp4')) : [];
+const tutorVideos: Record<string, string> = {};
+videoFiles.forEach((f) => {
+  const persona = f.replace(/(-idle)?\.mp4$/, '');
+  if (f.endsWith('-idle.mp4') || !tutorVideos[persona]) tutorVideos[persona] = f;
+});
 const checkoutReady = isCheckoutConfigured(DEFAULT_FUNNEL);
 const checkoutReadyByFunnel = Object.fromEntries(
   Object.keys(FUNNELS).map((id) => [id, isCheckoutConfigured(id)]),
@@ -52,6 +64,7 @@ const brandStyle =
     data-checkout-ready={checkoutReady ? '1' : '0'}
     data-checkout-ready-map={JSON.stringify(checkoutReadyByFunnel)}
     data-store-url={app.appStoreUrl}
+    data-tutor-videos={JSON.stringify(tutorVideos)}
   >
     <header class="fnl-bar">
       <button class="fnl-back" type="button" aria-label="Go back" hidden>&larr;</button>
@@ -77,6 +90,7 @@ const brandStyle =
           <!-- Her card: the same card as the "pick your tutor" step, in small. -->
           <div class="bl-card bl-card-compact" data-demo-card>
             <img class="bl-card-photo" data-demo-photo src="" alt="" width="180" height="240" />
+            <video class="bl-card-photo bl-card-video" data-demo-video muted playsinline loop preload="auto" aria-hidden="true" hidden></video>
             <span class="bl-card-scrim"></span>
             <span class="bl-lights" data-demo-lights aria-hidden="true"></span>
             <span class="bl-sheen"></span>
@@ -605,7 +619,16 @@ const brandStyle =
       replyWords: root.querySelector<HTMLElement>('[data-demo-reply-words]'),
       replyRoman: root.querySelector<HTMLElement>('[data-demo-reply-roman]'),
       strip: root.querySelector<HTMLElement>('[data-strip]'),
+      video: root.querySelector<HTMLVideoElement>('[data-demo-video]'),
     };
+    const tutorVideos: Record<string, string> = (() => {
+      try {
+        return JSON.parse(root.dataset.tutorVideos ?? '{}');
+      } catch {
+        return {};
+      }
+    })();
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let demoTimers: number[] = [];
 
     function stopDemo(): void {
@@ -644,6 +667,27 @@ const brandStyle =
       if (demo.photo) {
         demo.photo.src = `/home/${who.photo}`;
         demo.photo.alt = `${who.name}, AI ${LANGUAGE_BY_CODE[code]?.name ?? ''} tutor`;
+      }
+      // The photo stays underneath as the poster: the loop fades in over it once it can play, and a
+      // failed or blocked video simply leaves the photo.
+      const video = demo.video;
+      const file = tutorVideos[who.persona];
+      if (video) {
+        if (file && !reduceMotion) {
+          const src = `/home/video/${file}`;
+          if (!video.src.endsWith(src)) {
+            video.classList.remove('is-playing');
+            video.hidden = false;
+            video.src = src;
+            video.oncanplay = () => {
+              video.play().then(() => video.classList.add('is-playing')).catch(() => { video.hidden = true; });
+            };
+            video.onerror = () => { video.hidden = true; };
+          }
+        } else {
+          video.hidden = true;
+          video.removeAttribute('src');
+        }
       }
       if (demo.name) demo.name.textContent = who.name;
       if (demo.lights && !demo.lights.hasChildNodes()) demo.lights.innerHTML = lights().replace(/<\/?span[^>]*>/g, '');
