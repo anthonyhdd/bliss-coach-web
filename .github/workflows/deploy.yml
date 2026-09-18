@@ -27,7 +27,12 @@ jobs:
           # ship in the bundle. They live in repo secrets only so they are set in one place.
           # Any of them missing = the paywall renders visibly disabled instead of sending a buyer
           # to a dead checkout. See isCheckoutConfigured() in src/config/funnel.ts.
+          # One hosted checkout per funnel: a RevenueCat project can only sell its own app, so
+          # Sofia's URL cannot take money for Emily. The unsuffixed one is the fallback.
           PUBLIC_RC_WEB_BILLING_URL: ${{ secrets.PUBLIC_RC_WEB_BILLING_URL }}
+          PUBLIC_RC_WEB_BILLING_URL_BLISS: ${{ secrets.PUBLIC_RC_WEB_BILLING_URL_BLISS }}
+          PUBLIC_RC_WEB_BILLING_URL_SOFIA: ${{ secrets.PUBLIC_RC_WEB_BILLING_URL_SOFIA }}
+          PUBLIC_RC_WEB_BILLING_URL_EMILY: ${{ secrets.PUBLIC_RC_WEB_BILLING_URL_EMILY }}
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
           # Ad pixels, funnel pages only. Unset = no tracker is emitted at all.
