@@ -305,11 +305,15 @@ export function checkoutUrlForFunnel(funnelId: string): string {
  * PUBLISHABLE key: designed to be public, already shipping inside every App Store binary, with
  * row-level security as the actual protection — exactly like GA_MEASUREMENT_ID in ./analytics.ts.
  * Never put a service-role key here; there is no server on this site to hold one.
+ *
+ * `||`, not `??`: deploy.yml maps these from repo secrets, and an UNSET secret reaches the build as
+ * an empty string, not undefined. With `??` the default never applied, SUPABASE_URL was '', and
+ * isCheckoutConfigured() kept every paywall disabled even once its checkout URL was set.
  */
 export const SUPABASE_URL: string =
-  import.meta.env.PUBLIC_SUPABASE_URL ?? 'https://wbxuxcvxyzmbyshupycs.supabase.co';
+  import.meta.env.PUBLIC_SUPABASE_URL || 'https://wbxuxcvxyzmbyshupycs.supabase.co';
 export const SUPABASE_ANON_KEY: string =
-  import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? 'sb_publishable_X9wDw87UCK50DrYK1-4QEA_5N5HELzq';
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_X9wDw87UCK50DrYK1-4QEA_5N5HELzq';
 
 export function isCheckoutConfigured(funnelId?: string): boolean {
   const url = funnelId ? checkoutUrlForFunnel(funnelId) : RC_WEB_BILLING_URL;
