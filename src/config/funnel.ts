@@ -80,10 +80,15 @@ export interface FunnelPlan {
    * ⚠️ Under the EU Omnibus directive a struck-through price must be a price genuinely charged
    * before, for at least 30 days. Do not invent one to manufacture a discount.
    */
-  listPrice: string;
+  listPrice?: string;
   /** headline per-day figure, and the undiscounted per-day struck next to it */
   perDay: string;
-  perDayList: string;
+  perDayList?: string;
+  /**
+   * What this plan saves against paying the MONTHLY plan for the same length of time — 0 for the
+   * monthly plan itself. A real comparison between two prices on sale today, which is why it can be
+   * shown where a struck-through "was" price cannot (see `PLANS`).
+   */
   savePercent: number;
   badge?: string;
   highlight?: boolean;
@@ -113,50 +118,53 @@ export interface FunnelDef {
    * Minutes the discount banner counts down from, or 0 for no countdown.
    *
    * Founder decision 2026-09-16, after watching Praktika run a 10-minute "50% discount is reserved
-   * for" timer. It is manufactured urgency; it is also the category norm. It is a single number here
-   * so it can be turned off without touching the page.
+   * for" timer. OFF since 2026-09-18 on every funnel: there is no discount any more (see `PLANS`),
+   * and a timer announcing a "reserved discount" that does not exist is a false urgency claim — the
+   * same misleading-practice problem as the struck price, in a louder form. Turn it back on only
+   * together with a real, time-limited offer.
    */
   countdownMinutes: number;
 }
 
 /**
- * ⚠️ PLACEHOLDER PRICES on both funnels — they must equal what RevenueCat Web Billing actually
- * charges, and each `listPrice` must be a price genuinely charged before (EU Omnibus). The web price
- * does not have to match the App Store, which is half the point of selling here. Confirm every
- * number before sending a single euro of traffic. See FUNNEL.md §4.
+ * The launch prices, and NO struck-through price (decided 2026-09-18, founder's delegation).
+ *
+ * The first version showed "€99.99 → €49.99" and a "your discount is reserved" countdown. Under the
+ * EU Omnibus directive (French Code de la consommation, L112-1-1) a struck-through reference price
+ * must be the lowest price actually charged in the 30 days before the reduction — and these web
+ * products are new: there is no previous price at all. A "was" price that never was is a misleading
+ * commercial practice, and ads in France are exactly where the DGCCRF looks. So the paywall shows
+ * what is true instead: the per-day price, and what the longer plans save against the monthly one
+ * (1 year = €4.17 a month instead of €9.99, −58%).
+ *
+ * `amount` must equal what RevenueCat Web Billing charges: the pixels bid on it.
  */
 const PLANS: FunnelPlan[] = [
   {
     packageId: '$rc_monthly',
     name: '1 month',
-    listPrice: '€14.99',
     price: '€9.99',
     amount: 9.99,
-    perDayList: '€0.50',
     perDay: '€0.33',
-    savePercent: 33,
+    savePercent: 0,
   },
   {
     packageId: '$rc_annual',
     name: '1 year',
-    listPrice: '€99.99',
     price: '€49.99',
     amount: 49.99,
-    perDayList: '€0.27',
     perDay: '€0.14',
-    savePercent: 50,
+    savePercent: 58,
     badge: 'Most popular',
     highlight: true,
   },
   {
     packageId: '$rc_three_month',
     name: '3 months',
-    listPrice: '€39.99',
     price: '€19.99',
     amount: 19.99,
-    perDayList: '€0.44',
     perDay: '€0.22',
-    savePercent: 50,
+    savePercent: 33,
   },
 ];
 
@@ -193,7 +201,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
     paywallTitle: 'Every tutor, every language',
     paywallSub: 'One subscription. Switch teacher or language whenever you want.',
     currency: 'EUR',
-    countdownMinutes: 10,
+    countdownMinutes: 0,
     plans: PLANS,
     included: [
       { title: 'Unlimited conversations', body: 'Talk as long and as often as you want, with any tutor.' },
@@ -218,7 +226,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
     lockedLanguage: 'en',
     lockedPersona: 'emily',
     currency: 'EUR',
-    countdownMinutes: 10,
+    countdownMinutes: 0,
     plans: PLANS,
     included: [
       { title: 'Unlimited conversations', body: 'Talk to Emily as long and as often as you want.' },
@@ -244,7 +252,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
     lockedLanguage: 'es',
     lockedPersona: 'sofia',
     currency: 'EUR',
-    countdownMinutes: 10,
+    countdownMinutes: 0,
     plans: PLANS,
     included: [
       { title: 'Unlimited conversations', body: 'Talk to Sofia as long and as often as you want.' },

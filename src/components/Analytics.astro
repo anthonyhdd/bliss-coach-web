@@ -4,6 +4,16 @@
 import { GA_MEASUREMENT_ID } from '../config/analytics';
 import { STORE_ID_TO_SLUG } from '../config/apps';
 
+interface Props {
+  /**
+   * Consent-gated (the paid funnel, whose traffic comes from ads in France): nothing is fetched and no
+   * cookie is set here. The tag only defines `window.__blissLoadGA`, which `ConsentBanner` calls once
+   * — and only if — the visitor accepts audience measurement.
+   */
+  gated?: boolean;
+}
+const { gated = false } = Astro.props;
+
 const id = GA_MEASUREMENT_ID.trim();
 const enabled = /^G-[A-Z0-9]+$/.test(id);
 
@@ -18,7 +28,15 @@ var m=h.match(/[/]id([0-9]{6,})/),pe=a.closest('[data-placement]'),p=location.pa
 pl=pe?pe.getAttribute('data-placement'):(p.indexOf('/blog/')>-1?'blog':(p.split('/').filter(Boolean).length>1?'pseo':'landing'));
 gtag('event',store?'app_store_click':'coach_click',{app:coach||(m&&IDS[m[1]])||'all_apps',placement:pl,page_path:p,transport_type:'beacon'});},true);}`;
 ---
-{enabled && (
+{enabled && gated && (
+  <script
+    is:inline
+    set:html={`window.__blissLoadGA=function(){if(window.__ga4Booted)return;window.__ga4Booted=1;
+var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${id}';document.head.appendChild(s);
+window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());gtag('config','${id}');${clickTracker}};`}
+  />
+)}
+{enabled && !gated && (
   <>
     <script async src={`https://www.googletagmanager.com/gtag/js?id=${id}`}></script>
     <script
