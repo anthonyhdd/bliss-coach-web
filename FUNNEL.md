@@ -164,23 +164,29 @@ Two prerequisites, both project settings:
 
 ## 5. Verify before spending a cent
 
-⚠️ **The checkout URL parameter names are unverified.** Written without access to RevenueCat's Web
-Billing docs (the build container's egress proxy blocks `revenuecat.com`), so `app_user_id`,
-`package` and `redirect_url` are conventional names, not names read from the spec. They live in one
-place — `checkoutUrl()` in `src/config/funnel.ts`.
+The checkout URL format was **verified against RevenueCat's Web Purchase Links documentation on
+2026-09-18** — and the first, blind version had it wrong in three silent ways (`checkoutUrl()` in
+`src/config/funnel.ts` says which). The shape now:
 
-This fails **silently and expensively**: the purchase succeeds, the money arrives, the entitlement
-lands on a customer the app never looks up. So:
+```
+https://pay.rev.cat/<token>/<supabase user id>?package_id=$rc_annual&skip_purchase_success=true
+```
 
-1. Walk `/start/` on a phone and buy.
-2. In RevenueCat → **Customers**, find the purchase. Its App User ID **must** be a Supabase UUID, not
+- The **secret is the link without a user id**: `https://pay.rev.cat/<token>`.
+- The **redirect is set in the dashboard**, once per Web Purchase Link: "Redirect to a custom success
+  page" → `https://bliss-coach.com/start/success/?t=<funnel>`. RevenueCat appends `app_user_id`.
+  Everything else the success page needs is stashed by the paywall in `localStorage` before it leaves.
+- Packages use RevenueCat's own identifiers — `$rc_monthly`, `$rc_annual`, `$rc_three_month` —
+  picked from the dropdown, never typed.
+
+Still do one test purchase before any ad spend — documentation is not a purchase:
+
+1. Point the funnel at the link's **Sandbox** URL, walk `/start/?t=<funnel>` and buy with a Stripe
+   test card.
+2. In RevenueCat → **Customers**, the purchase's App User ID **must** be a Supabase UUID, not
    `$RCAnonymous…`.
-3. Finish on `/start/success/`, install the app, sign in with that email, and confirm Pro is active
-   **without restoring**.
-
-Do not start a campaign before step 3 passes.
-
----
+3. Finish on `/start/success/`, install the app, sign in with that email, confirm Pro is active
+   **without restoring**. Then switch the secret to the **Production** URL.
 
 ## 6. Decisions already made (and how to reverse them)
 

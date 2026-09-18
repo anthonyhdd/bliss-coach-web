@@ -58,7 +58,12 @@
 // web price is ever shown inside the app.
 
 export interface FunnelPlan {
-  /** RevenueCat Web Billing package identifier this button buys */
+  /**
+   * The RevenueCat package this button buys, sent as `package_id`. RevenueCat's own standard
+   * identifiers (`$rc_monthly`, `$rc_annual`, `$rc_three_month`), so the packages are picked from
+   * the dashboard's dropdown instead of typed — one typo there and the pre-selection silently
+   * falls back to the offering's first package.
+   */
   packageId: string;
   name: string;
   /** the price actually charged, formatted — MUST equal what the hosted checkout charges */
@@ -122,7 +127,7 @@ export interface FunnelDef {
  */
 const PLANS: FunnelPlan[] = [
   {
-    packageId: 'monthly',
+    packageId: '$rc_monthly',
     name: '1 month',
     listPrice: '€14.99',
     price: '€9.99',
@@ -132,7 +137,7 @@ const PLANS: FunnelPlan[] = [
     savePercent: 33,
   },
   {
-    packageId: 'annual',
+    packageId: '$rc_annual',
     name: '1 year',
     listPrice: '€99.99',
     price: '€49.99',
@@ -144,7 +149,7 @@ const PLANS: FunnelPlan[] = [
     highlight: true,
   },
   {
-    packageId: 'quarterly',
+    packageId: '$rc_three_month',
     name: '3 months',
     listPrice: '€39.99',
     price: '€19.99',
@@ -306,29 +311,48 @@ export function isCheckoutConfigured(funnelId?: string): boolean {
 /**
  * Build the hosted checkout URL for a buyer who already has a Supabase user id.
  *
- * ⚠️ THE PARAMETER NAMES BELOW ARE UNVERIFIED. They were written without access to RevenueCat's Web
- * Billing documentation (the build container's egress proxy blocks revenuecat.com), so `app_user_id`
- * and `package` are the conventional names, not names read from the spec. Check them when the hosted
- * checkout is created, and fix them here — this function is the single place they appear.
+ * VERIFIED against RevenueCat's Web Purchase Links documentation on 2026-09-18. The first version of
+ * this function was written blind (the build container could not reach revenuecat.com) and got
+ * three things wrong, every one of them silent:
  *
- * Getting `app_user_id` wrong does not fail loudly: the purchase succeeds, the money arrives, and the
- * entitlement lands on a customer the app will never look up. One real test purchase must confirm a
- * Supabase id before any ad spend (FUNNEL.md §4).
+ *   - the App User ID is a PATH SEGMENT — `https://pay.rev.cat/<token>/<appUserId>` — not an
+ *     `?app_user_id=` query parameter. Sent as a query parameter it is ignored: the purchase goes
+ *     through, the money arrives, and the entitlement lands on an anonymous RevenueCat customer the
+ *     app will never look up. That is the one failure this whole design exists to prevent;
+ *   - the package pre-selection is `package_id`, not `package`;
+ *   - the post-purchase redirect is NOT a per-link parameter. It is set once per Web Purchase Link in
+ *     the dashboard ("Redirect to a custom success page"), and RevenueCat appends `app_user_id` to
+ *     it. So the success page learns the funnel from the redirect configured there
+ *     (`/start/success/?t=<funnel>`), and everything else it needs from the context the page
+ *     stashes before leaving (`CHECKOUT_CONTEXT_KEY`).
+ *
+ * `skip_purchase_success=true` skips RevenueCat's own "Purchase complete" screen: ours is the one
+ * that turns the buyer into an app user, and a second success screen is a place to close the tab.
+ *
+ * Attribution is NOT carried on the URL (it is not a supported parameter): it is already written to
+ * `web_funnel_profiles` against the same user id before the redirect.
+ *
+ * `RC_WEB_BILLING_URL_*` must be the link WITHOUT a user id — `https://pay.rev.cat/<token>`.
  */
-export function checkoutUrl(params: {
-  packageId: string;
-  supabaseUserId: string;
-  funnel: string;
-  returnTo: string;
-  attribution?: Record<string, string>;
-}): string {
-  const url = new URL(checkoutUrlForFunnel(params.funnel));
-  url.searchParams.set('app_user_id', params.supabaseUserId);
-  url.searchParams.set('package', params.packageId);
-  url.searchParams.set('funnel', params.funnel);
-  url.searchParams.set('redirect_url', params.returnTo);
-  for (const [k, v] of Object.entries(params.attribution ?? {})) {
-    if (v) url.searchParams.set(k, v);
-  }
+export function checkoutUrl(params: { packageId: string; supabaseUserId: string; funnel: string }): string {
+  const base = checkoutUrlForFunnel(params.funnel).replace(/\/+$/, '');
+  const url = new URL(`${base}/${encodeURIComponent(params.supabaseUserId)}`);
+  url.searchParams.set('package_id', params.packageId);
+  url.searchParams.set('skip_purchase_success', 'true');
   return url.href;
 }
+
+/**
+ * What the success page needs and the checkout cannot carry back: the redirect is configured once in
+ * the RevenueCat dashboard, so the page stashes this in localStorage (same origin) just before it
+ * leaves for the checkout.
+ */
+export const CHECKOUT_CONTEXT_KEY = 'bliss_checkout_ctx';
+export type CheckoutContext = {
+  funnel: string;
+  packageId: string;
+  userId: string;
+  name?: string;
+  persona?: string;
+  at: number;
+};

@@ -112,7 +112,14 @@ const brandStyle =
 </Base>
 
 <script>
-  import { SUPABASE_URL, SUPABASE_ANON_KEY, FUNNELS, DEFAULT_FUNNEL } from '../../config/funnel';
+  import {
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    FUNNELS,
+    DEFAULT_FUNNEL,
+    CHECKOUT_CONTEXT_KEY,
+    type CheckoutContext,
+  } from '../../config/funnel';
   import { track } from '../../lib/funnelTrack';
 
   function initSuccess(): void {
@@ -136,9 +143,24 @@ const brandStyle =
     // ⚠️ This page is reached by a redirect from the hosted checkout, so the browser will fire it
     // again if the buyer reloads or bookmarks it. Once per package per browser is the most this can
     // honestly claim; the networks' own deduplication window does not cover a reload an hour later.
+    // What comes back from RevenueCat: the redirect configured in its dashboard for this funnel's
+    // Web Purchase Link (`/start/success/?t=<funnel>`), plus the `app_user_id` it appends. Everything
+    // else — the plan bought, the first name — was stashed by the paywall just before it left,
+    // because a dashboard-configured redirect cannot carry it.
     const params = new URLSearchParams(window.location.search);
-    const packageId = params.get('package') ?? 'unknown';
-    const funnelId = params.get('t') || DEFAULT_FUNNEL;
+    const context: Partial<CheckoutContext> = (() => {
+      try {
+        return JSON.parse(localStorage.getItem(CHECKOUT_CONTEXT_KEY) || '{}');
+      } catch {
+        return {};
+      }
+    })();
+    // Only trust a stash for the buyer RevenueCat just sent back: a stale one from an earlier,
+    // abandoned checkout in this browser must not label this purchase.
+    const returnedId = params.get('app_user_id');
+    const stash = !returnedId || !context.userId || context.userId === returnedId ? context : {};
+    const packageId = params.get('package') || stash.packageId || 'unknown';
+    const funnelId = params.get('t') || stash.funnel || DEFAULT_FUNNEL;
     const funnel = FUNNELS[funnelId] ?? FUNNELS[DEFAULT_FUNNEL];
     const plan = funnel?.plans.find((p) => p.packageId === packageId);
     const alreadyReported = (() => {
@@ -180,7 +202,7 @@ const brandStyle =
       el.hidden = Boolean(download.url);
     });
 
-    const name = params.get('name');
+    const name = params.get('name') || stash.name || null;
     if (name) {
       const welcome = root.querySelector<HTMLElement>('[data-welcome]');
       if (welcome) welcome.textContent = `You're in, ${name}!`;
