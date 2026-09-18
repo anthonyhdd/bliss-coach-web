@@ -1444,8 +1444,13 @@ const brandStyle =
 
         // Hand the onboarding to the app before leaving for checkout. Best-effort on purpose: a
         // failed write must never block a payment — the buyer simply gets the in-app onboarding.
+        //
+        // supabase-js does NOT throw on a rejected write — it returns `{ error }`. Until 2026-09-18
+        // the result was ignored, and the table sat EMPTY for every buyer: the payload named four
+        // columns the table did not have, PostgREST refused the whole row, and nothing said so.
+        // Report it, so the next schema drift shows up in analytics instead of in a support email.
         try {
-          await client.from('web_funnel_profiles').upsert(
+          const { error: profileError } = await client.from('web_funnel_profiles').upsert(
             {
               user_id: userId,
               funnel: funnel.id,
@@ -1464,8 +1469,16 @@ const brandStyle =
             },
             { onConflict: 'user_id' },
           );
+          if (profileError) {
+            track('funnel_profile_write_failed', {
+              funnel: funnel.id,
+              code: profileError.code ?? 'unknown',
+              message: (profileError.message ?? '').slice(0, 100),
+            });
+          }
         } catch {
           /* the purchase matters more than the hand-off */
+          track('funnel_profile_write_failed', { funnel: funnel.id, code: 'exception' });
         }
 
         // The checkout's redirect back is configured once in the RevenueCat dashboard and cannot
