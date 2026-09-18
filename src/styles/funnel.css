@@ -1205,3 +1205,9 @@
   /* The paywall is the one long screen; let it scroll inside the page rather than stretch the card. */
   .fnl-screen[data-screen='plan'] { padding-bottom: 8px; }
 }
+
+/* Single-tutor funnels (Emily, Sofia): no teacher row under the intro, so the scene gets the room
+   the row used to take and the block stays optically centred between the brand and the button. */
+.fnl.is-single-tutor .bl-stage { max-height: 290px; }
+.fnl.is-single-tutor h1.bl-title-intro { margin-top: 34px; }
+.fnl.is-single-tutor .bl-promise { margin-top: 14px; max-width: 360px; margin-inline: auto; }
