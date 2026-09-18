@@ -67,9 +67,9 @@ const brandStyle =
       teachers, and only then the button. Not argued in three sentences — shown.
     -->
     <section class="fnl-screen is-active" data-screen="intro">
-      <div class="bl-brand">
-        <img src="/brand/bliss-coach-mark.png" alt="" width="26" height="26" />
-        <span>Bliss</span>
+      <div class="bl-brand" data-brand>
+        <img src="/brand/bliss-coach-mark.png" alt="" width="26" height="26" data-brand-mark />
+        <span data-brand-name>Bliss</span>
       </div>
 
       <div class="fnl-inner fnl-center">
@@ -738,6 +738,12 @@ const brandStyle =
      */
     function buildStrip(): void {
       if (!demo.strip) return;
+      // A single-tutor funnel (Emily, Sofia) has one face: a "row of teachers" of one card, shown
+      // twice, reads as a glitch (founder, 2026-09-18). No row at all; the stage takes the room.
+      if (funnel.lockedPersona) {
+        demo.strip.hidden = true;
+        return;
+      }
       demo.strip.textContent = '';
       // One inner rail that slides: moving each card would fight the row's own layout.
       const rail = document.createElement('span');
@@ -1563,6 +1569,17 @@ const brandStyle =
       if (introTitle) {
         introTitle.dataset.title = COPY.introTitle.replace('a language', languageName());
       }
+    }
+    // The visitor came from an Emily (or Sofia) ad, and lands on that app: its icon and name, not
+    // the hub's. The hub brand stays on the default (Bliss) funnel.
+    if (funnel.lockedPersona) {
+      root.classList.add('is-single-tutor');
+      const mark = root.querySelector<HTMLImageElement>('[data-brand-mark]');
+      const name = root.querySelector<HTMLElement>('[data-brand-name]');
+      if (mark) {
+        mark.src = `/icons/${funnel.app}.jpg`;
+      }
+      if (name) name.textContent = funnel.app.charAt(0).toUpperCase() + funnel.app.slice(1);
     }
     buildStrip();
     buildGoals();
