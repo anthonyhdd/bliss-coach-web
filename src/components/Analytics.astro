@@ -23,10 +23,10 @@ const enabled = /^G-[A-Z0-9]+$/.test(id);
 // type (blog / pseo / landing). Registered once, survives ClientRouter navigations.
 const clickTracker = `if(!window.__storeTrack){window.__storeTrack=1;var IDS=${JSON.stringify(STORE_ID_TO_SLUG)};
 document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('a[href]'):null;if(!a)return;
-var h=a.href||'',store=h.indexOf('apps.apple.com')>-1,coach=a.getAttribute('data-coach');if(!store&&!coach)return;
+var h=a.href||'',store=h.indexOf('apps.apple.com')>-1,web=h.indexOf('/start/')>-1&&!!a.closest('[data-placement],.pill-cta,header'),coach=a.getAttribute('data-coach');if(!store&&!coach&&!web)return;
 var m=h.match(/[/]id([0-9]{6,})/),pe=a.closest('[data-placement]'),p=location.pathname,
 pl=pe?pe.getAttribute('data-placement'):(p.indexOf('/blog/')>-1?'blog':(p.split('/').filter(Boolean).length>1?'pseo':'landing'));
-gtag('event',store?'app_store_click':'coach_click',{app:coach||(m&&IDS[m[1]])||'all_apps',placement:pl,page_path:p,transport_type:'beacon'});},true);}`;
+gtag('event',store?'app_store_click':(web?'web_start_click':'coach_click'),{app:coach||(m&&IDS[m[1]])||'all_apps',placement:pl,page_path:p,transport_type:'beacon'});},true);}`;
 ---
 {enabled && gated && (
   <script

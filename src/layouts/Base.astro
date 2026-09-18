@@ -18,7 +18,7 @@ interface Props {
   bodyClass?: string;
   activeApp?: string;
   jsonLd?: object | object[];
-  soloHeader?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean };
+  soloHeader?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean; webUrl?: string | null };
   /** articles/SEO pages: app CTA in the header but the site-wide footer (keeps its cross-links, incl. KAMO) */
   siteFooter?: boolean;
   /** per-app brand CSS vars, applied at body level so header/footer inherit */

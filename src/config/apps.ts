@@ -16,6 +16,13 @@ export interface AppDef {
   blogDescription: string;
   /** app not yet released on the App Store — render a coming-soon pill instead of a store link */
   comingSoon?: boolean;
+  /**
+   * The /start/ funnel that sells this app on the web (a key of FUNNELS). When set AND that funnel's
+   * checkout is configured at build time, the landing's primary CTA opens the web onboarding and the
+   * App Store badge becomes secondary. Unconfigured = the landing stays App Store-first, so a visitor
+   * is never sent to a paywall that cannot take the payment.
+   */
+  webFunnel?: string;
 }
 
 export const APPS: Record<string, AppDef> = {
@@ -28,6 +35,7 @@ export const APPS: Record<string, AppDef> = {
       'Sofia is your AI Spanish teacher from Mexico. Real conversations, instant corrections, zero judgment — practice speaking Spanish out loud from day one.',
     appStoreId: '6761907539',
     appStoreUrl: 'https://apps.apple.com/app/id6761907539',
+    webFunnel: 'sofia',
     gradient: ['#FF2D2D', '#FF8C42', '#FF4D9E'],
     accent: '#FF6B35',
     onGradient: '#ffffff',
@@ -209,6 +217,7 @@ export const APPS: Record<string, AppDef> = {
       'Emily is your AI English tutor. Real voice conversations, gentle corrections as you go, and the practice you never get from a textbook — from your very first sentence.',
     appStoreId: '6806812762',
     appStoreUrl: 'https://apps.apple.com/app/id6806812762',
+    webFunnel: 'emily',
     gradient: ['#1D4ED8', '#0EA5E9', '#38BDF8'],
     accent: '#2563EB',
     onGradient: '#ffffff',
