@@ -69,8 +69,8 @@ What each screen is doing:
 - **where did you hear about us** — the same tiles the five in-app onboardings share.
 - **plan ready** — the level, the ~word count, the days to the deadline, and three plan rows.
 
-`/start/` runs the Bliss funnel; **`/start/?t=sofia` runs the same machine with the language and the
-teacher locked** (`lockedLanguage` / `lockedPersona`), which is exactly what a single-tutor app's
+`/start/` runs the Bliss funnel; **`/start/?t=sofia` and `/start/?t=emily` run the same machine with
+the language and the teacher locked** (`lockedLanguage` / `lockedPersona`), which is exactly what a single-tutor app's
 funnel is. Sofia's intro then says "Speak Spanish for real" and the flow opens on the grid.
 
 **The seam is gone.** `beginCheckout` writes the answers to `web_funnel_profiles` under the exact
@@ -146,8 +146,15 @@ Two prerequisites, both project settings:
 2. Create packages matching `PLANS` in `src/config/funnel.ts` (`monthly`, `annual`, `quarterly`) and
    attach them to the existing **`Sofia AI Pro`** entitlement. Bliss will need its own Web Billing
    app and its own entitlement when it ships — the package ids are the same, the project is not.
-3. Copy the hosted checkout URL into the repo secret **`PUBLIC_RC_WEB_BILLING_URL`**. Supabase values
-   already default correctly, so this is the only secret required.
+3. Copy the hosted checkout URL into that funnel's repo secret — **`PUBLIC_RC_WEB_BILLING_URL_SOFIA`**,
+   **`_EMILY`** or **`_BLISS`** (the unsuffixed `PUBLIC_RC_WEB_BILLING_URL` is the fallback). Supabase
+   values already default correctly, so this is the only secret required per funnel.
+
+   ⚠️ **One checkout per funnel, and never a shared one.** A RevenueCat project sells its own app:
+   Sofia's Web Billing app grants `Sofia AI Pro`, Emily's grants `Emily Pro`. Pointing Emily's buyers
+   at Sofia's checkout takes the money and writes an entitlement Emily's app never looks for — paid
+   for, and silently broken. Each funnel whose secret is missing renders its paywall disabled; the
+   others keep selling.
 4. **Confirm all six prices.** They are placeholders. The web price need not match the App Store —
    that is half the point — but the page and the charge must agree, and under the **EU Omnibus
    directive each struck-through `listPrice` must be a price genuinely charged before**, for at least

@@ -201,6 +201,31 @@ export const FUNNELS: Record<string, FunnelDef> = {
   },
 
   /**
+   * Emily — English, live on the App Store since 2026-09-17. The same machine as Bliss with the
+   * language and the teacher locked, which is what a single-tutor funnel IS: the flow opens on the
+   * vocabulary grid, Emily's green owns the screen, and the buyer downloads an app that exists.
+   */
+  emily: {
+    id: 'emily',
+    app: 'emily',
+    paywallTitle: 'Get unlimited access to Emily',
+    paywallSub: 'The quickest route to actually speaking English.',
+    lockedLanguage: 'en',
+    lockedPersona: 'emily',
+    currency: 'EUR',
+    countdownMinutes: 10,
+    plans: PLANS,
+    included: [
+      { title: 'Unlimited conversations', body: 'Talk to Emily as long and as often as you want.' },
+      { title: 'Corrected as you speak', body: 'The sentence you just said, fixed, with the reason in one line.' },
+      { title: 'Rehearse the hard ones', body: 'Interviews, small talk, IELTS and TOEFL speaking — practised before they count.' },
+      { title: 'Taught in your own language', body: 'Emily explains in the language you already speak. A total beginner is never lost.' },
+      { title: 'Starts where you are', body: 'The level you just measured and the goal you just picked — no generic lesson one.' },
+    ],
+    faq: FAQ,
+  },
+
+  /**
    * Sofia — the same machine with the language and the tutor locked. Sofia is live, its conversion
    * is measured and rising, and it is the one app Meta cannot reach any other way (a ghost campaign
    * in a banned Business Manager holds App Store ID 6761907539). This is the funnel to buy traffic
@@ -240,6 +265,26 @@ export const DEFAULT_FUNNEL = 'bliss';
 export const RC_WEB_BILLING_URL: string = import.meta.env.PUBLIC_RC_WEB_BILLING_URL ?? '';
 
 /**
+ * One hosted checkout PER FUNNEL, because one RevenueCat project cannot sell another's app.
+ *
+ * Sofia's Web Billing app lives in the Sofia project and grants `Sofia AI Pro`; Emily's lives in
+ * hers and grants `Emily Pro`. Sending an Emily buyer to Sofia's checkout would take the money and
+ * grant an entitlement her app does not look for — a silent, paid-for failure. So each funnel reads
+ * its own secret, and `RC_WEB_BILLING_URL` stays as the fallback for a single-app setup.
+ *
+ * Empty for a funnel = that funnel's paywall renders visibly disabled. The others keep working.
+ */
+const CHECKOUT_URLS: Readonly<Record<string, string>> = {
+  bliss: import.meta.env.PUBLIC_RC_WEB_BILLING_URL_BLISS ?? '',
+  sofia: import.meta.env.PUBLIC_RC_WEB_BILLING_URL_SOFIA ?? '',
+  emily: import.meta.env.PUBLIC_RC_WEB_BILLING_URL_EMILY ?? '',
+};
+
+export function checkoutUrlForFunnel(funnelId: string): string {
+  return CHECKOUT_URLS[funnelId] || RC_WEB_BILLING_URL;
+}
+
+/**
  * Supabase — the SAME project as the app, because the user id is what ties the purchase to the app.
  *
  * All variants share one project (`app.json` → `extra.supabaseUrl`, verified 2026-09-16; the "one
@@ -253,8 +298,9 @@ export const SUPABASE_URL: string =
 export const SUPABASE_ANON_KEY: string =
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? 'sb_publishable_X9wDw87UCK50DrYK1-4QEA_5N5HELzq';
 
-export function isCheckoutConfigured(): boolean {
-  return RC_WEB_BILLING_URL !== '' && SUPABASE_URL !== '' && SUPABASE_ANON_KEY !== '';
+export function isCheckoutConfigured(funnelId?: string): boolean {
+  const url = funnelId ? checkoutUrlForFunnel(funnelId) : RC_WEB_BILLING_URL;
+  return url !== '' && SUPABASE_URL !== '' && SUPABASE_ANON_KEY !== '';
 }
 
 /**
@@ -276,7 +322,7 @@ export function checkoutUrl(params: {
   returnTo: string;
   attribution?: Record<string, string>;
 }): string {
-  const url = new URL(RC_WEB_BILLING_URL);
+  const url = new URL(checkoutUrlForFunnel(params.funnel));
   url.searchParams.set('app_user_id', params.supabaseUserId);
   url.searchParams.set('package', params.packageId);
   url.searchParams.set('funnel', params.funnel);
