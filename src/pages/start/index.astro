@@ -336,7 +336,15 @@ const brandStyle =
 </Base>
 
 <script>
-  import { FUNNELS, DEFAULT_FUNNEL, SUPABASE_URL, SUPABASE_ANON_KEY, checkoutUrl } from '../../config/funnel';
+  import {
+    FUNNELS,
+    DEFAULT_FUNNEL,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    checkoutUrl,
+    CHECKOUT_CONTEXT_KEY,
+    type CheckoutContext,
+  } from '../../config/funnel';
   import { track } from '../../lib/funnelTrack';
   import {
     COPY,
@@ -1434,19 +1442,27 @@ const brandStyle =
           /* the purchase matters more than the hand-off */
         }
 
-        const returnTo = new URL('/start/success/', window.location.origin);
-        returnTo.searchParams.set('package', chosenPackage);
-        returnTo.searchParams.set('t', funnel.id);
-        if (firstName) returnTo.searchParams.set('name', firstName);
-        if (persona) returnTo.searchParams.set('tutor', persona);
+        // The checkout's redirect back is configured once in the RevenueCat dashboard and cannot
+        // carry our state, so the success page gets it from here (same origin).
+        const context: CheckoutContext = {
+          funnel: funnel.id,
+          packageId: chosenPackage,
+          userId,
+          name: firstName || undefined,
+          persona: persona || undefined,
+          at: Date.now(),
+        };
+        try {
+          localStorage.setItem(CHECKOUT_CONTEXT_KEY, JSON.stringify(context));
+        } catch {
+          /* private mode: the success page falls back to what the redirect carries */
+        }
 
         track('funnel_checkout_redirect', { funnel: funnel.id, package: chosenPackage });
         window.location.href = checkoutUrl({
           packageId: chosenPackage,
           supabaseUserId: userId,
           funnel: funnel.id,
-          returnTo: returnTo.href,
-          attribution,
         });
       } catch {
         // Most likely cause: "Allow anonymous sign-ins" is off in Supabase → Authentication. Fail
