@@ -13,8 +13,10 @@ interface Props {
   onHome?: boolean;
   /** coming-soon apps: a quiet pill instead of a store link */
   soon?: boolean;
+  /** Bliss-only wording (the /alt/ home): "Bliss" wordmark, "Teachers" instead of "Coaches" */
+  bliss?: boolean;
 }
-const { cta, mode = 'sticky', onHome = false, soon = false } = Astro.props;
+const { cta, mode = 'sticky', onHome = false, soon = false, bliss = false } = Astro.props;
 const sec = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
 ---
 
@@ -22,11 +24,11 @@ const sec = (id: string) => (onHome ? `#${id}` : withBase(`/#${id}`));
   <div class="pillbar-in">
     <a class="pb-logo" href={withBase('/')}>
       <BlissBloom size={26} compact decorative />
-      <span class="wm">Bliss<i>Coach</i></span>
+      {bliss ? <span class="wm">Bliss</span> : <span class="wm">Bliss<i>Coach</i></span>}
     </a>
     <nav class="pb-nav" aria-label="Sections">
-      <a href={sec('coaches')}>Coaches</a>
-      <a href={sec('pillars')}>Why they work</a>
+      <a href={sec('coaches')}>{bliss ? 'Teachers' : 'Coaches'}</a>
+      <a href={sec('pillars')}>{bliss ? 'Why it works' : 'Why they work'}</a>
       <a href={sec('reviews')}>Reviews</a>
     </nav>
     {soon ? (
