@@ -890,12 +890,14 @@
 
 /* ---------- tutor rail ---------- */
 .bl-tutors {
+  position: relative;
   display: flex;
   gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  /* Side padding of half a viewport minus half a card: the first and the last teacher can reach
-     the middle too, which is where choosing happens. */
+  /* The side padding is set in JS from the measured rail and card (`sizeRail`): a percentage here
+     resolves against the column, not against the scroller, and the first card ended up 20px short
+     of the centre it needs to reach. This is only the fallback before the first measure. */
   padding: 8px calc(50% - min(140px, 37vw)) 30px;
   margin: 0 -20px;
   -webkit-overflow-scrolling: touch;

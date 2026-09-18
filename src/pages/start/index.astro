@@ -482,8 +482,18 @@ const brandStyle =
 
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
       if (opts.push !== false) history.pushState({ screen: id }, '', `#${id}`);
-      // The rail can only be measured once it is on screen — see `railFocus`.
-      if (id === 'tutor') requestAnimationFrame(() => centreOn(persona, 'instant'));
+      // The rail can only be measured once it is on screen — see `railFocus`. `is-active` was set
+      // synchronously just above, so measuring here forces one layout and reads the real numbers.
+      //
+      // ⚠️ Not on `requestAnimationFrame` alone: a page in a background tab (or a preview pane that
+      // is not being composited) never runs its rAF callbacks, and the rail would then open with no
+      // `--d` at all — no ring, no colour, every card dimmed. The second pass catches a late shift
+      // from a font or an image.
+      if (id === 'tutor') {
+        centreOn(persona, 'instant');
+        selectTutor(persona);
+        requestAnimationFrame(() => centreOn(persona, 'instant'));
+      }
       revealTitles(el);
       track('funnel_step_view', { funnel: funnel.id, step: STEP_ANALYTICS_NAME[id] });
     }
@@ -713,11 +723,16 @@ const brandStyle =
       const i = inSecond >= 0 ? inSecond : cards.findIndex((c) => c.dataset.persona === persona);
       cards.forEach((c, k) => c.classList.toggle('is-centre', k === i));
       if (i < 0) return;
-      // Slide the rail so the current face sits in the middle of the row.
+      // Slide the rail so the current face sits in the middle of the row. Same rule as `railFocus`:
+      // viewport coordinates, never `offsetLeft` — the strip is not the cards' offsetParent either.
       const card = cards[i];
       const rail = demo.strip.querySelector<HTMLElement>('.bl-strip-inner');
-      const offset = card.offsetLeft + card.offsetWidth / 2 - demo.strip.clientWidth / 2;
-      rail?.style.setProperty('--shift', `${-offset}px`);
+      if (!rail) return;
+      const stripRect = demo.strip.getBoundingClientRect();
+      const rect = card.getBoundingClientRect();
+      const current = Number.parseFloat(getComputedStyle(rail).getPropertyValue('--shift')) || 0;
+      const delta = rect.left + rect.width / 2 - (stripRect.left + stripRect.width / 2);
+      rail.style.setProperty('--shift', `${current - delta}px`);
     }
 
     // ── Language ────────────────────────────────────────────────────────────
@@ -836,9 +851,12 @@ const brandStyle =
           pill.textContent = trait;
           traits.appendChild(pill);
         });
-        // A tap brings her to the centre; the centre is what selects her (see `railFocus`).
+        // A tap selects her AND brings her to the centre. It does not wait for the scroll to report
+        // back: a smooth scroll emits no event at all in a page whose frames are not being
+        // composited (a background tab), and the tap would then do nothing at all.
         btn.addEventListener('click', () => {
-          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          selectTutor(t.persona);
+          centreOn(t.persona, 'smooth');
         });
         tutorsEl.appendChild(btn);
       });
@@ -855,7 +873,7 @@ const brandStyle =
      * track, 1 for one a card-width away. It drives the scale and the darkening, so the whole row
      * reacts as you drag rather than snapping between two states.
      */
-    function railFocus(): void {
+    function railFocus(opts: { select?: boolean } = {}): void {
       if (!tutorsEl) return;
       const cards = Array.from(tutorsEl.querySelectorAll<HTMLElement>('.bl-tutor'));
       if (cards.length === 0) return;
@@ -864,42 +882,98 @@ const brandStyle =
       // `scale(0)` made the whole rail invisible. Measure only once it has a size.
       const width = cards[0].offsetWidth;
       if (width <= 0 || tutorsEl.clientWidth <= 0) return;
-      const mid = tutorsEl.scrollLeft + tutorsEl.clientWidth / 2;
+      // ⚠️ MEASURE IN VIEWPORT COORDINATES, NEVER `offsetLeft`.
+      // A card is `position: relative`, so its offsetParent is the nearest positioned ancestor —
+      // NOT the scroller. On a phone the rail starts at x≈0 and the error was small enough to hide;
+      // on a wide screen the column is centred, the error became hundreds of pixels, and the card
+      // the maths called "centred" was two cards away from the one under your eyes: the wrong card
+      // took the ring and the teacher's colour, and the real centre stayed dimmed.
+      const railRect = tutorsEl.getBoundingClientRect();
+      const mid = railRect.left + railRect.width / 2;
       let centre: HTMLElement | null = null;
       let best = Infinity;
       for (const card of cards) {
-        const d = Math.abs(card.offsetLeft + card.offsetWidth / 2 - mid) / (width * 1.05);
+        const rect = card.getBoundingClientRect();
+        // Position from the rect (exact wherever the rail sits), size from `offsetWidth` (the rect's
+        // width is the SCALED one, which would make `--d` drift as the cards shrink).
+        const d = Math.abs(rect.left + rect.width / 2 - mid) / (width * 1.05);
         card.style.setProperty('--d', Math.min(d, 1).toFixed(3));
         if (d < best) {
           best = d;
           centre = card;
         }
       }
-      if (!centre) return;
-      cards.forEach((card) => card.classList.toggle('is-selected', card === centre));
-      const picked = centre.dataset.persona;
-      if (picked && picked !== persona) {
-        persona = picked;
-        persist();
-        paintTutor();
-        track('funnel_answer', { funnel: funnel.id, step: 'bliss_tutor', value: picked });
-      }
+      // `select: false` is for a centring we asked for ourselves: at the instant `scrollTo` is
+      // called the rail has not moved yet, so the card still under the middle is the OLD one — and
+      // reading the selection from it would immediately undo the tap that asked for the move.
+      if (opts.select !== false && centre?.dataset.persona) selectTutor(centre.dataset.persona);
     }
 
-    /** Put a teacher under the middle of the rail. */
+    /** The chosen teacher: her ring, her colour on the whole screen, one analytics event per change. */
+    function selectTutor(picked: string): void {
+      if (!tutorsEl) return;
+      tutorsEl.querySelectorAll<HTMLElement>('.bl-tutor').forEach((card) => {
+        card.classList.toggle('is-selected', card.dataset.persona === picked);
+      });
+      if (picked === persona) return;
+      persona = picked;
+      persist();
+      paintTutor();
+      track('funnel_answer', { funnel: funnel.id, step: 'bliss_tutor', value: picked });
+    }
+
+    /**
+     * The side padding that lets the FIRST and LAST teacher reach the middle: half the rail minus
+     * half a card, measured, not expressed as a percentage.
+     *
+     * A percentage padding resolves against the containing block — here the column, 420px wide —
+     * while the scroller itself is 460px because of its negative margins. The 20px difference meant
+     * the first card stopped 20px short of the centre: it could never reach `--d: 0`, so it kept a
+     * sliver of the dimming that is supposed to belong to its neighbours.
+     */
+    function sizeRail(): void {
+      if (!tutorsEl) return;
+      const card = tutorsEl.querySelector<HTMLElement>('.bl-tutor');
+      if (!card || tutorsEl.clientWidth <= 0 || card.offsetWidth <= 0) return;
+      const pad = Math.max(0, (tutorsEl.clientWidth - card.offsetWidth) / 2);
+      tutorsEl.style.paddingInline = `${pad}px`;
+    }
+
+    /** Put a teacher under the middle of the rail — same viewport maths as `railFocus`. */
     function centreOn(target: string, behavior: ScrollBehavior): void {
       if (!tutorsEl) return;
       const card = tutorsEl.querySelector<HTMLElement>(`.bl-tutor[data-persona="${target}"]`);
       if (!card) return;
-      tutorsEl.scrollTo({
-        left: card.offsetLeft + card.offsetWidth / 2 - tutorsEl.clientWidth / 2,
-        behavior,
-      });
-      railFocus();
+      sizeRail();
+      const railRect = tutorsEl.getBoundingClientRect();
+      const rect = card.getBoundingClientRect();
+      const delta = rect.left + rect.width / 2 - (railRect.left + railRect.width / 2);
+      tutorsEl.scrollTo({ left: tutorsEl.scrollLeft + delta, behavior });
+      railFocus({ select: false });
     }
 
-    tutorsEl?.addEventListener('scroll', () => requestAnimationFrame(railFocus), { passive: true });
-    window.addEventListener('resize', () => requestAnimationFrame(railFocus), { passive: true });
+    // Throttled by the clock rather than by `requestAnimationFrame`: a page whose frames are not
+    // being composited never runs a rAF callback, and the rail would then stop reacting entirely.
+    let lastFocus = 0;
+    tutorsEl?.addEventListener(
+      'scroll',
+      () => {
+        const now = performance.now();
+        if (now - lastFocus < 16) return;
+        lastFocus = now;
+        railFocus();
+      },
+      { passive: true },
+    );
+    window.addEventListener(
+      'resize',
+      () =>
+        requestAnimationFrame(() => {
+          sizeRail();
+          railFocus();
+        }),
+      { passive: true },
+    );
 
     // ── Vocabulary probe ────────────────────────────────────────────────────
     const wordsEl = root.querySelector<HTMLElement>('[data-words]');
