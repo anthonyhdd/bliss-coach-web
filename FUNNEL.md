@@ -192,8 +192,8 @@ Still do one test purchase before any ad spend — documentation is not a purcha
 
 | Decision | Where | Why |
 |---|---|---|
-| **Direct pay with a discount, no trial** | `plans` | Founder decision 2026-09-16 after reading Praktika's paywall, which sells outright at −50 % with a countdown. Revenue lands immediately instead of three days later. The cost is fewer conversion events per euro for Meta's learning phase. |
-| **10-minute countdown** | `countdownMinutes` | Founder decision, same day. It is manufactured urgency and it is the category norm; set to `0` to remove it without touching the page. It floors at 0:00 rather than expiring — killing the offer a visitor is reading would cost the sale the timer exists to win. |
+| **Direct pay, no trial** | `plans` | Founder decision 2026-09-16 after reading Praktika's paywall. Revenue lands immediately instead of three days later. The cost is fewer conversion events per euro for Meta's learning phase. |
+| **No struck price, no countdown** | `PLANS`, `countdownMinutes: 0` | 2026-09-18, founder's delegation. A struck "was" price must have been really charged in the 30 days before (Omnibus, Code de la consommation L112-1-1) and these web products are new; a "your discount is reserved" timer with no discount is the same false claim, louder. The paywall shows the per-day price and the real saving against the monthly plan instead (1 year −58 %). Turn the countdown back on only with a real, time-limited offer. |
 | **Account after payment** | `success.astro` | Praktika's order, made safe by anonymous sign-in (§3). |
 | **The app's onboarding, not a quiz** | `src/config/bliss/*` | Founder, 2026-09-17: the Praktika-shaped v1 was weak. Picking a teacher and measuring yourself sells the product by using it. Reverting means restoring the deleted `screens` array — the machine is now the page. |
 | **Bliss is the default, Sofia is `?t=`** | `DEFAULT_FUNNEL` | Bliss is what the flow is FOR (ten languages, eight teachers). Sofia is the same flow locked to one pair — and the one to buy traffic into until Bliss ships. |
@@ -237,11 +237,24 @@ The **ad pixels get four events only** — a pixel fed thirty custom events opti
   bookmark or a refresh would fire `Purchase` again. One report per package per browser
   (`localStorage`), which is the most this page can honestly claim.
 
-### ⚠️ Consent
+### Consent — handled (2026-09-18)
 
-Both pixels set first-party cookies and this site has **no consent banner**, so EU traffic is not
-covered. That is a decision to make before spending, not a detail: either a banner goes in front of
-the funnel, or the risk is accepted deliberately. Nothing in the code assumes one exists.
+The funnel is bought with ads in France, so **nothing tracks before the visitor agrees**:
+`Analytics` (gated on funnel pages), `Pixels` and the new `ConsentBanner` follow the CNIL's 2020
+guidelines. The tracker components only define loaders (`__blissLoadGA`, `__blissLoadMeta`,
+`__blissLoadTikTok`); the banner calls them, per purpose (audience measurement / advertising).
+
+- "Tout refuser" and "Tout accepter" are the same button, side by side; nothing is pre-ticked; the
+  per-purpose choice is behind "Personnaliser"; no cookie wall — the funnel works either way.
+- The choice is kept 6 months (a refusal too), then asked again.
+- Every funnel page has a **Cookies** link that reopens it. A withdrawal clears `_ga*`, `_gid`,
+  `_fbp`, `_fbc`, `_ttp` and reloads, since a loaded script cannot be unloaded.
+- French when the browser is French, English otherwise.
+- Events fired before a choice are simply not sent. RevenueCat, Supabase and `web_funnel_profiles`
+  are not trackers and are not gated: the revenue truth never depends on the banner.
+
+⚠️ **The rest of the site (landings, articles) still loads GA4 without consent.** Only the funnel is
+gated. Extending the banner there is a separate, deliberate change.
 
 ### Still missing
 

@@ -281,6 +281,18 @@
 .bl-plan-name { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
 .bl-plan-sub { color: var(--muted); font-size: 13.5px; }
 .bl-plan-sub s { opacity: 0.75; }
+/* The real saving against the monthly plan — not a struck "was" price (see PLANS in funnel.ts). */
+.bl-plan-save {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--tutor-soft);
+  color: var(--tutor-accent);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+}
 .bl-plan-day { flex: none; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; }
 .bl-plan-day strong { font-family: Inter, sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--tutor-accent); }
 .bl-plan-day em { color: var(--muted); font-size: 11.5px; font-style: normal; }
