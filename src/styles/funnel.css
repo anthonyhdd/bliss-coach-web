@@ -557,6 +557,8 @@
   cursor: pointer;
 }
 .bl-card-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; }
+.bl-card-video { opacity: 0; transition: opacity 320ms ease; }
+.bl-card-video.is-playing { opacity: 1; }
 /* The teacher's colour lives in the bottom 45% only, and it is HER GRADIENT rising — not a navy
    scrim (`TutorHeroFrame`, appearance "site": a mask of transparent → 0.6 at 42% → 0.92 over her
    three stops). The dark veil on top of it is only what her name needs to stay readable. */
@@ -1211,3 +1213,8 @@
 .fnl.is-single-tutor .bl-stage { max-height: 290px; }
 .fnl.is-single-tutor h1.bl-title-intro { margin-top: 34px; }
 .fnl.is-single-tutor .bl-promise { margin-top: 14px; max-width: 360px; margin-inline: auto; }
+
+/* Intro title: the serif accent always gets its own line ("Speak English / for real"). The app's
+   rule only breaks after three words, which left "Speak English for real" on one crowded line. */
+.fnl h1.bl-title-intro br { display: none; }
+.fnl h1.bl-title-intro .bl-word:has(.bl-em) { display: block; }
