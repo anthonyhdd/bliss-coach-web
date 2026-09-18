@@ -10,6 +10,7 @@
  *   funnel_plan_view        → AddToCart        / AddToCart        (the paywall was reached)
  *   funnel_checkout_started → InitiateCheckout / InitiateCheckout
  *   funnel_purchase         → Purchase         / CompletePayment  (with value + currency)
+ *   funnel_trial_started    → StartTrial       / Subscribe        (value 0 + predicted_ltv)
  *
  * `eventId` is sent to both networks so the same event can be deduplicated against a server-side
  * copy later (Meta CAPI / TikTok Events API). There is no server here today — a static site on
@@ -31,6 +32,7 @@ const PIXEL_EVENTS: Readonly<Record<string, { meta: string; tiktok: string }>> =
   funnel_plan_view: { meta: 'AddToCart', tiktok: 'AddToCart' },
   funnel_checkout_started: { meta: 'InitiateCheckout', tiktok: 'InitiateCheckout' },
   funnel_purchase: { meta: 'Purchase', tiktok: 'CompletePayment' },
+  funnel_trial_started: { meta: 'StartTrial', tiktok: 'Subscribe' },
 };
 
 /**
@@ -38,7 +40,13 @@ const PIXEL_EVENTS: Readonly<Record<string, { meta: string; tiktok: string }>> =
  * plan they chose) and the purchase. Never on a step view: a value invented to make an event look
  * rich teaches the bidder a lie it will then optimise towards.
  */
-export type TrackValue = { value: number; currency: string; contentId?: string };
+export type TrackValue = {
+  value: number;
+  currency: string;
+  contentId?: string;
+  /** what the subscription is expected to bring — Meta's `predicted_ltv`, sent on StartTrial */
+  predictedLtv?: number;
+};
 
 function eventId(): string {
   const c = globalThis.crypto;
@@ -57,9 +65,10 @@ export function track(event: string, params: Params = {}, value?: TrackValue): v
   const mapped = PIXEL_EVENTS[event];
   if (!mapped) return;
 
-  const contents = value?.contentId
-    ? { content_id: value.contentId, content_type: 'product' }
-    : {};
+  const contents = {
+    ...(value?.contentId ? { content_id: value.contentId, content_type: 'product' } : {}),
+    ...(value?.predictedLtv != null ? { predicted_ltv: value.predictedLtv } : {}),
+  };
 
   if (typeof w.fbq === 'function') {
     w.fbq(
