@@ -7,14 +7,16 @@ import PillBar from './PillBar.astro';
 interface Props {
   activeApp?: string;
   /** app-scoped page: the CTA is this app's store link */
-  solo?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean };
+  solo?: { slug: string; name: string; appStoreUrl: string; comingSoon?: boolean; webUrl?: string | null };
 }
 const { solo } = Astro.props;
 const DEV_PAGE = 'https://apps.apple.com/us/developer/bliss-coach/id1628409883';
 const cta = solo
   ? solo.comingSoon
     ? { href: '', label: 'Coming soon', placement: `${solo.slug}-header` }
-    : { href: storeLink(solo.appStoreUrl, `${solo.slug}-header`), label: `Get ${solo.name}`, placement: `${solo.slug}-header` }
+    : solo.webUrl
+      ? { href: `${solo.webUrl}&utm_content=header`, label: `Start with ${solo.name}`, placement: `${solo.slug}-header` }
+      : { href: storeLink(solo.appStoreUrl, `${solo.slug}-header`), label: `Get ${solo.name}`, placement: `${solo.slug}-header` }
   : { href: storeLink(DEV_PAGE, 'site-header'), label: 'Get the apps', placement: 'site-header' };
 ---
 

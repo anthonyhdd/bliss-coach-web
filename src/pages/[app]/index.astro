@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import AppStoreButton from '../../components/AppStoreButton.astro';
 import CelestialCrest from '../../components/CelestialCrest.astro';
 import { APPS, withBase, avatarFor, storeLink } from '../../config/apps';
+import { isCheckoutConfigured } from '../../config/funnel';
 import { SHOWCASE } from '../../config/showcase';
 import { PSEO_SECTIONS } from '../../config/pseo';
 import ProofRow from '../../components/tutor/ProofRow.astro';
@@ -33,6 +34,14 @@ const brandStyle = `--brand-1:${app.gradient[0]};--brand-2:${app.gradient[1]};--
 
 // Language tutors get the conversion sections modelled on the category leader's landing
 // (proof row, in-product correction, private tutor vs app, FAQ) — see src/config/tutorPitch.ts.
+// Web-first when this app sells on /start/ and that checkout is live (see AppDef.webFunnel).
+// The onboarding keeps ~97% of the payment instead of 70%, measures the sale for the ad pixels, and
+// the buyer opens the app already onboarded. The App Store badge stays, as the secondary path.
+const webStart =
+  app.webFunnel && !app.comingSoon && isCheckoutConfigured(app.webFunnel)
+    ? withBase(`/start/?t=${app.webFunnel}&utm_source=site&utm_medium=landing&utm_campaign=${app.slug}_landing`)
+    : null;
+
 const pitch = TUTOR_PITCH[slug!];
 const faq = pitch ? tutorFaq(app, pitch) : [];
 
@@ -65,7 +74,7 @@ if (faq.length) {
   appStoreId={app.appStoreId}
   ogImage={`/icons/${app.slug}.jpg`}
   activeApp={app.slug}
-  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon }}
+  soloHeader={{ slug: app.slug, name: app.name, appStoreUrl: app.appStoreUrl, comingSoon: app.comingSoon, webUrl: webStart }}
   brandStyle={brandStyle}
   jsonLd={jsonLd}
 >
@@ -88,6 +97,17 @@ if (faq.length) {
           <div class="hero-cta">
             {app.comingSoon ? (
               <span class="coming-soon">Coming soon to the App Store</span>
+            ) : webStart ? (
+              <>
+                <div class="web-cta-row" data-ios-only>
+                  <a class="btn btn-brand" href={`${webStart}&utm_content=hero`} data-placement={`${app.slug}-hero-web`}>
+                    Take the free level test
+                  </a>
+                  <AppStoreButton href={app.appStoreUrl} placement={`${app.slug}-hero`} ghost />
+                </div>
+                <p class="cta-note" data-ios-only>2-minute level test · your plan · then {app.name} on your iPhone</p>
+                <p class="android-note" data-android-note hidden>{app.name} is on iPhone for now — Android is coming soon.</p>
+              </>
             ) : (
               <>
                 <AppStoreButton href={app.appStoreUrl} placement={`${app.slug}-hero`} />
@@ -532,7 +552,14 @@ if (faq.length) {
       </section>
     )}
 
-    {!app.comingSoon && (
+    {!app.comingSoon && webStart && (
+      <a class="sticky-cta" data-ios-only href={`${webStart}&utm_content=sticky`} data-placement={`${app.slug}-sticky-web`} aria-label={`Start with ${app.name}`}>
+        <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" />
+        <span class="sc-txt"><b>Start with {app.name}</b> — free 2-minute level test</span>
+        <span class="sc-btn">Start</span>
+      </a>
+    )}
+    {!app.comingSoon && !webStart && (
       <a class="sticky-cta" href={storeLink(app.appStoreUrl, `${app.slug}-sticky`)} data-placement={`${app.slug}-sticky`} aria-label={`Download ${app.name} on the App Store`}>
         <img src={withBase(`/icons/${app.slug}.jpg`)} alt="" width="30" height="30" loading="lazy" />
         <span class="sc-txt"><b>Get {app.name}</b> — free on the App Store</span>
@@ -550,6 +577,13 @@ if (faq.length) {
         </div>
         {app.comingSoon ? (
           <span class="coming-soon">Coming soon to the App Store</span>
+        ) : webStart ? (
+          <div class="web-cta-row" data-ios-only>
+            <a class="btn btn-brand" href={`${webStart}&utm_content=footer`} data-placement={`${app.slug}-footer-web`}>
+              Take the free level test
+            </a>
+            <AppStoreButton href={app.appStoreUrl} placement={`${app.slug}-footer`} ghost />
+          </div>
         ) : (
           <AppStoreButton href={app.appStoreUrl} placement={`${app.slug}-footer`} />
         )}
@@ -570,6 +604,13 @@ if (faq.length) {
     // designed for the light background. The page flashed to black and back, cards washed out,
     // headings went dark-on-dark (founder: "chelou l'effet noir", 2026-09-16). The strip keeps its
     // own signature moment: the serif line still lights up word by word via `.lit` below.
+
+    // Every app here is iPhone-only. On Android neither the web checkout (it would sell a
+    // subscription the buyer cannot use) nor the App Store badge leads anywhere: say so plainly.
+    if (/android/i.test(navigator.userAgent)) {
+      document.querySelectorAll<HTMLElement>('[data-ios-only]').forEach((el) => { el.hidden = true; el.style.display = 'none'; });
+      document.querySelectorAll<HTMLElement>('[data-android-note]').forEach((el) => { el.hidden = false; });
+    }
 
     // sticky mobile CTA appears once the hero CTA scrolls out of view
     const heroCta = document.querySelector('.hero-cta');

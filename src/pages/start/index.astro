@@ -270,6 +270,8 @@ const brandStyle =
           </div>
 
           <button class="fnl-cta" type="button" data-action="checkout" disabled>Continue</button>
+          {/* Every app sold here is iPhone-only: the script shows this and disables checkout on Android. */}
+          <p class="fnl-warn" data-android-block hidden></p>
           <p class="bl-renewal" data-renewal></p>
           <p class="fnl-error" data-checkout-error hidden></p>
 
@@ -284,7 +286,7 @@ const brandStyle =
           <ul class="bl-pay" aria-label="Accepted payment methods">
             <li>VISA</li><li>Mastercard</li><li>Apple&nbsp;Pay</li><li>Google&nbsp;Pay</li><li>Amex</li>
           </ul>
-          <p class="bl-secure">Secure payment</p>
+          <p class="bl-secure">Secure payment · Works on iPhone</p>
         </section>
 
         <section class="bl-pw-section">
@@ -444,6 +446,12 @@ const brandStyle =
     root.querySelectorAll<HTMLElement>('[data-checkout-warn]').forEach((el) => {
       el.hidden = checkoutReady;
     });
+    // The apps sold here exist on iPhone only. Taking an Android visitor's money would sell a
+    // subscription they cannot use (refund, dispute, and a chargeback on the Stripe account), so the
+    // paywall says so and never opens the checkout on Android.
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const appName = funnel.app.charAt(0).toUpperCase() + funnel.app.slice(1);
+    let androidBlockTracked = false;
     const startedAt = Date.now();
 
     const attribution: Record<string, string> = {};
@@ -1246,8 +1254,18 @@ const brandStyle =
           : '';
       });
       root.querySelectorAll<HTMLButtonElement>('[data-action="checkout"]').forEach((cta) => {
-        cta.disabled = !checkoutReady;
+        cta.disabled = !checkoutReady || isAndroid;
       });
+      if (isAndroid) {
+        root.querySelectorAll<HTMLElement>('[data-android-block]').forEach((el) => {
+          el.textContent = `${appName} is on iPhone only for now — Android is coming soon. Nothing will be charged on this device.`;
+          el.hidden = false;
+        });
+        if (!androidBlockTracked) {
+          androidBlockTracked = true;
+          track('funnel_android_blocked', { funnel: funnel.id });
+        }
+      }
     }
 
     root.querySelectorAll<HTMLButtonElement>('.bl-plan').forEach((btn) => {
@@ -1399,6 +1417,7 @@ const brandStyle =
     }
 
     async function beginCheckout(cta: HTMLButtonElement): Promise<void> {
+      if (isAndroid) return;
       const original = cta.textContent;
       cta.disabled = true;
       cta.textContent = 'One moment…';
