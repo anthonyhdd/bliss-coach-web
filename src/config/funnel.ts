@@ -90,6 +90,14 @@ export interface FunnelPlan {
    * shown where a struck-through "was" price cannot (see `PLANS`).
    */
   savePercent: number;
+  /**
+   * Free-trial length, when the RevenueCat product has one. It changes what the pixels are told:
+   * a trial start is `StartTrial` (value 0, the plan price as `predicted_ltv`), not a `Purchase` —
+   * reporting €49.99 of revenue for a trial that may be cancelled teaches the bidder a lie.
+   * ⚠️ Must mirror the product: RevenueCat Web Billing trials are set on the product and cannot be
+   * edited afterwards. Unset = the plan charges immediately (the case for every plan today).
+   */
+  trialDays?: number;
   badge?: string;
   highlight?: boolean;
 }

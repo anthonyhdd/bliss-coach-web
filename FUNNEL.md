@@ -219,6 +219,12 @@ The **ad pixels get four events only** — a pixel fed thirty custom events opti
 | `funnel_plan_view` | `AddToCart` | `AddToCart` | — |
 | `funnel_checkout_started` | `InitiateCheckout` | `InitiateCheckout` | plan price |
 | `funnel_purchase` | `Purchase` | `CompletePayment` | plan price |
+| `funnel_trial_started` | `StartTrial` | `Subscribe` | 0, plan price as `predicted_ltv` |
+
+- **Trial or purchase is decided by `FunnelPlan.trialDays`**, on the success page. No web plan has a
+  trial today (founder decision 2026-09-16, below), so every sale is a `Purchase`. Set `trialDays`
+  only together with a RevenueCat product that really has the trial — Web Billing trials are fixed
+  on the product at creation.
 
 - **The value is `FunnelPlan.amount`**, a number kept beside the displayed `price`. The networks bid
   on that figure, so a stale one does not show up as a wrong label — it shows up as a bidder
@@ -229,6 +235,8 @@ The **ad pixels get four events only** — a pixel fed thirty custom events opti
 - **Nothing loads without an id.** `PUBLIC_META_PIXEL_ID` / `PUBLIC_TIKTOK_PIXEL_ID` are repo
   secrets passed at build time (`deploy.yml`); unset — the default today — emits no script and makes
   no request. Meta's id must come from a **clean Business Manager**, never the banned Sofia BM.
+  Live since 2026-09-18: dataset `38632645876380895` « bliss-coach.com (funnel web) », owned by the
+  Bliss Coach portfolio (`1911099466174444`).
 - **Every event carries an `event_id`** (`eventID` for Meta, `event_id` for TikTok) so a server-side
   copy can be deduplicated against it later. There is no server here — a static site on GitHub Pages
   has nowhere to hold an access token — but the id cannot be added retroactively to events already

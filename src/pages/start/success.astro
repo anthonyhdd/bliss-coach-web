@@ -175,11 +175,22 @@ const brandStyle =
       }
     })();
     if (!alreadyReported) {
-      track(
-        'funnel_purchase',
-        { package: packageId },
-        plan ? { value: plan.amount, currency: funnel.currency, contentId: packageId } : undefined,
-      );
+      // A plan with a free trial has charged nothing yet: it is a trial start, and the money only
+      // arrives when the trial converts — which happens server-side, days later, where this page
+      // cannot see it (that one needs RevenueCat's Meta integration, see FUNNEL.md).
+      if (plan?.trialDays) {
+        track(
+          'funnel_trial_started',
+          { package: packageId, trial_days: plan.trialDays },
+          { value: 0, currency: funnel.currency, contentId: packageId, predictedLtv: plan.amount },
+        );
+      } else {
+        track(
+          'funnel_purchase',
+          { package: packageId },
+          plan ? { value: plan.amount, currency: funnel.currency, contentId: packageId } : undefined,
+        );
+      }
     }
 
     // The store link of the funnel the buyer came through. Bliss has none yet: the CTA is hidden and
