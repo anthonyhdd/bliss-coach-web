@@ -8,17 +8,29 @@
 // `ConsentBanner` calls them once, and only if, the visitor accepts advertising. The `<noscript>`
 // beacon Meta suggests is gone for the same reason: without JavaScript there is no way to consent.
 import { META_PIXEL_ID, TIKTOK_PIXEL_ID, metaEnabled, tiktokEnabled } from '../config/pixels';
+import { SUPABASE_URL } from '../config/funnel';
+
+// Server-side copy of every Meta event (Conversions API), relayed by the `meta-capi` Supabase edge
+// function because this static site has nowhere to hold an access token. Same `eventID` as the
+// pixel → Meta keeps one of the two. Only ever called once the pixel itself was allowed to load
+// (`__metaPixel`), so a CNIL refusal is never routed around through the server.
+const capiUrl = `${SUPABASE_URL}/functions/v1/meta-capi`;
 
 const meta = metaEnabled();
 const tiktok = tiktokEnabled();
 
 // One guard for both: with ClientRouter a soft navigation into /start/ inserts these scripts again,
 // and re-initialising a pixel double-counts every event after it.
+const capiSnippet = `window.__blissEventId=function(){var c=window.crypto;return c&&c.randomUUID?c.randomUUID():'e'+Date.now()+Math.random().toString(16).slice(2,10);};
+window.__blissCapi=function(name,id,data){if(!window.__metaPixel)return;try{var m=function(k){var r=document.cookie.match('(?:^|; )'+k+'=([^;]*)');return r?decodeURIComponent(r[1]):undefined;};
+var b=Object.assign({event_name:name,event_id:id,event_source_url:location.href,fbp:m('_fbp'),fbc:m('_fbc')},data||{});
+var body=new Blob([JSON.stringify(b)],{type:'text/plain'});if(!(navigator.sendBeacon&&navigator.sendBeacon('${capiUrl}',body)))fetch('${capiUrl}',{method:'POST',body:body,keepalive:true,mode:'cors'}).catch(function(){});}catch(e){}};`;
+
 const metaSnippet = `window.__blissLoadMeta=function(){if(window.__metaPixel)return;window.__metaPixel=1;
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','${META_PIXEL_ID}');fbq('track','PageView');};`;
+fbq('init','${META_PIXEL_ID}');var pv=window.__blissEventId();fbq('track','PageView',{},{eventID:pv});window.__blissCapi('PageView',pv,{});};`;
 
 const tiktokSnippet = `window.__blissLoadTikTok=function(){if(window.__tiktokPixel)return;window.__tiktokPixel=1;
 !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];
@@ -29,5 +41,5 @@ ttq.load=function(e,n){var r='https://analytics.tiktok.com/i18n/pixel/events.js'
 var s=d.createElement('script');s.type='text/javascript';s.async=!0;s.src=r+'?sdkid='+e+'&lib='+t;var a=d.getElementsByTagName('script')[0];a.parentNode.insertBefore(s,a)};
 ttq.load('${TIKTOK_PIXEL_ID}');ttq.page();}(window,document,'ttq');};`;
 ---
-{meta && <script is:inline set:html={metaSnippet} />}
+{meta && <script is:inline set:html={capiSnippet + metaSnippet} />}
 {tiktok && <script is:inline set:html={tiktokSnippet} />}

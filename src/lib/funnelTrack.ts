@@ -13,9 +13,9 @@
  *   funnel_trial_started    → StartTrial       / Subscribe        (value 0 + predicted_ltv)
  *
  * `eventId` is sent to both networks so the same event can be deduplicated against a server-side
- * copy later (Meta CAPI / TikTok Events API). There is no server here today — a static site on
- * GitHub Pages has nowhere to hold an access token — but sending the id now costs nothing and is
- * the one thing that cannot be added retroactively to events already collected.
+ * copy. Meta's server-side copy is live (2026-09-19): `__blissCapi` (Pixels.astro) relays each event to
+ * the `meta-capi` Supabase edge function, which holds the Conversions API token. TikTok Events API
+ * is not wired yet.
  */
 
 type Params = Record<string, unknown>;
@@ -23,6 +23,8 @@ type Params = Record<string, unknown>;
 interface PixelWindow extends Window {
   gtag?: (...a: unknown[]) => void;
   fbq?: (...a: unknown[]) => void;
+  /** Conversions API relay, defined by Pixels.astro; no-op until the visitor accepted the pixel. */
+  __blissCapi?: (event: string, id: string, data: Params) => void;
   ttq?: { track: (event: string, params?: Params, opts?: Params) => void };
 }
 
@@ -77,6 +79,14 @@ export function track(event: string, params: Params = {}, value?: TrackValue): v
       value ? { value: value.value, currency: value.currency, ...contents } : contents,
       { eventID: id },
     );
+  }
+
+  if (typeof w.__blissCapi === 'function') {
+    w.__blissCapi(mapped.meta, id, {
+      ...(value ? { value: value.value, currency: value.currency } : {}),
+      ...(value?.contentId ? { content_id: value.contentId } : {}),
+      ...(value?.predictedLtv != null ? { predicted_ltv: value.predictedLtv } : {}),
+    });
   }
 
   if (w.ttq && typeof w.ttq.track === 'function') {
