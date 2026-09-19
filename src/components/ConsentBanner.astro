@@ -207,6 +207,10 @@
         if (window.__blissLoadMeta) window.__blissLoadMeta();
         if (window.__blissLoadTikTok) window.__blissLoadTikTok();
       }
+      // Events fired before the answer (a checkout tap, a step) wait in funnelTrack — sent now to
+      // what was agreed to, dropped on a refusal. The module may load after this script: retry once.
+      if (window.__blissFlushPixels) window.__blissFlushPixels(c);
+      else setTimeout(function () { if (window.__blissFlushPixels) window.__blissFlushPixels(c); }, 0);
     }
 
     // A loaded script cannot be unloaded: on a withdrawal, clear what the trackers set and reload.
@@ -241,6 +245,9 @@
       var c = { v: 1, analytics: !!analytics, ads: !!ads, at: Date.now() };
       write(c);
       hide();
+      // First-party count of the answer itself (no tracker involved): the consent rate is what
+      // tells a banner that loses people from a page that does.
+      if (window.__blissHit) window.__blissHit('consent', c.analytics && c.ads ? 'accepted' : !c.analytics && !c.ads ? 'refused' : 'partial');
       var gaWithdrawn = window.__ga4Booted && !c.analytics;
       var adsWithdrawn = (window.__metaPixel || window.__tiktokPixel) && !c.ads;
       if (loaded && (gaWithdrawn || adsWithdrawn)) {
