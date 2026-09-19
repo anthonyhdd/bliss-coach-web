@@ -44,24 +44,24 @@ const brandStyle =
     <section class="fnl-screen is-active" data-screen="claim">
       <div class="fnl-inner">
         <div class="fnl-tick" aria-hidden="true">✓</div>
-        <h1 data-welcome>You're in!</h1>
-        <p class="fnl-sub">
+        <h1 data-welcome data-i18n="welcome">You're in!</h1>
+        <p class="fnl-sub" data-i18n="claimSub">
           One last step: set a password. It is how you sign in on your phone — your subscription is
           already attached to this account.
         </p>
 
         <form class="fnl-form" data-claim-form novalidate>
           <label class="fnl-field">
-            <span>Email</span>
+            <span data-i18n="email">Email</span>
             <input type="email" name="email" autocomplete="email" required inputmode="email" />
           </label>
           <label class="fnl-field">
-            <span>Password</span>
+            <span data-i18n="password">Password</span>
             <input type="password" name="password" autocomplete="new-password" required minlength="8" />
-            <small>At least 8 characters.</small>
+            <small data-i18n="min8">At least 8 characters.</small>
           </label>
           <p class="fnl-error" data-claim-error hidden></p>
-          <button class="fnl-cta" type="submit">Create my account</button>
+          <button class="fnl-cta" type="submit" data-i18n="create">Create my account</button>
         </form>
       </div>
     </section>
@@ -70,18 +70,18 @@ const brandStyle =
     <section class="fnl-screen" data-screen="download">
       <div class="fnl-inner fnl-center">
         <div class="fnl-tick" aria-hidden="true">✓</div>
-        <h1>Account created</h1>
-        <p class="fnl-sub" data-download-sub>
+        <h1 data-i18n="created">Account created</h1>
+        <p class="fnl-sub" data-download-sub data-i18n="downloadSub">
           Download the app and sign in with the email and password you just set. Your subscription —
           and the plan you just built — will already be there. Nothing to restore, nothing to answer
           twice.
         </p>
         <a class="fnl-cta" href="#" data-store-link>Download</a>
-        <p class="fnl-fineprint" data-no-store hidden>
+        <p class="fnl-fineprint" data-no-store data-i18n="noStore" hidden>
           Bliss is not on the App Store yet. We will email you the download link the day it lands —
           your subscription is already attached to your account.
         </p>
-        <p class="fnl-fineprint">
+        <p class="fnl-fineprint" data-i18n-html="trouble">
           Trouble signing in? Email <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a>.
           · <a href="#cookies" data-consent-open>Cookies</a>
         </p>
@@ -97,12 +97,12 @@ const brandStyle =
     -->
     <section class="fnl-screen" data-screen="nosession">
       <div class="fnl-inner fnl-center">
-        <h1>Almost there</h1>
-        <p class="fnl-sub">
+        <h1 data-i18n="almost">Almost there</h1>
+        <p class="fnl-sub" data-i18n="otherBrowser">
           Your payment went through, but this browser is not the one you paid in, so we cannot finish
           setting up your sign-in here.
         </p>
-        <p class="fnl-sub">
+        <p class="fnl-sub" data-i18n-html="emailUs">
           Email <a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a> from the address you
           paid with and we will set it up for you the same day.
         </p>
@@ -122,11 +122,44 @@ const brandStyle =
     type CheckoutContext,
   } from '../../config/funnel';
   import { track } from '../../lib/funnelTrack';
+  import { detectUiLang } from '../../config/bliss/i18n';
+
+  const FR = detectUiLang(window.location.search, navigator.languages?.length ? navigator.languages : [navigator.language]) === 'fr';
+  const MAIL = '<a href="mailto:anthony@blisscoach.app">anthony@blisscoach.app</a>';
+  /** French for a French browser, like the funnel before it. Only our own strings reach innerHTML. */
+  const T_FR: Record<string, string> = {
+    welcome: 'C’est bon !',
+    claimSub: 'Dernière étape : choisis un mot de passe. C’est avec lui que tu te connectes sur ton téléphone — ton abonnement est déjà rattaché à ce compte.',
+    email: 'E-mail',
+    password: 'Mot de passe',
+    min8: '8 caractères minimum.',
+    create: 'Créer mon compte',
+    created: 'Compte créé',
+    downloadSub: 'Télécharge l’app et connecte-toi avec l’e-mail et le mot de passe que tu viens de choisir. Ton abonnement — et le plan que tu viens de construire — seront déjà là. Rien à restaurer, rien à refaire.',
+    noStore: 'Bliss n’est pas encore sur l’App Store. On t’enverra le lien le jour de sa sortie — ton abonnement est déjà rattaché à ton compte.',
+    trouble: `Un souci pour te connecter ? Écris à ${MAIL}. · <a href="#cookies" data-consent-open>Cookies</a>`,
+    almost: 'Presque fini',
+    otherBrowser: 'Ton paiement est passé, mais ce navigateur n’est pas celui où tu as payé : on ne peut pas finir de créer ta connexion ici.',
+    emailUs: `Écris à ${MAIL} depuis l’adresse utilisée pour payer, on s’en occupe le jour même.`,
+  };
+  const t = (en: string, fr: string): string => (FR ? fr : en);
 
   function initSuccess(): void {
     const root = document.querySelector<HTMLElement>('[data-success]');
     if (!root || root.dataset.initialised === '1') return;
     root.dataset.initialised = '1';
+
+    if (FR) {
+      document.documentElement.lang = 'fr';
+      root.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
+        const v = T_FR[el.dataset.i18n ?? ''];
+        if (v) el.textContent = v;
+      });
+      root.querySelectorAll<HTMLElement>('[data-i18n-html]').forEach((el) => {
+        const v = T_FR[el.dataset.i18nHtml ?? ''];
+        if (v) el.innerHTML = v;
+      });
+    }
 
     const screens = new Map<string, HTMLElement>();
     root.querySelectorAll<HTMLElement>('[data-screen]').forEach((el) => {
@@ -205,7 +238,7 @@ const brandStyle =
     root.querySelectorAll<HTMLAnchorElement>('[data-store-link]').forEach((link) => {
       if (download.url) {
         link.href = download.url;
-        link.textContent = `Download ${download.name}`;
+        link.textContent = t(`Download ${download.name}`, `Télécharger ${download.name}`);
       } else {
         link.hidden = true;
       }
@@ -217,7 +250,7 @@ const brandStyle =
     const name = params.get('name') || stash.name || null;
     if (name) {
       const welcome = root.querySelector<HTMLElement>('[data-welcome]');
-      if (welcome) welcome.textContent = `You're in, ${name}!`;
+      if (welcome) welcome.textContent = t(`You're in, ${name}!`, `C’est bon, ${name}\u00A0!`);
     }
 
     async function supabase() {
@@ -254,13 +287,13 @@ const brandStyle =
       const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
       if (!email || password.length < 8) {
-        showError('Enter your email and a password of at least 8 characters.');
+        showError(t('Enter your email and a password of at least 8 characters.', 'Entre ton e-mail et un mot de passe d’au moins 8 caractères.'));
         return;
       }
       if (errorEl) errorEl.hidden = true;
       if (submit) {
         submit.disabled = true;
-        submit.textContent = 'One moment…';
+        submit.textContent = t('One moment…', 'Un instant…');
       }
 
       try {
@@ -269,7 +302,7 @@ const brandStyle =
         // at checkout keeps its entitlement and simply gains a way to sign in.
         const { data, error } = await client.auth.updateUser({ email, password });
         if (error || !data.user) {
-          showError(error?.message ?? 'Could not save your account. Please try again.');
+          showError(error?.message ?? t('Could not save your account. Please try again.', 'Impossible d’enregistrer ton compte. Réessaie.'));
           return;
         }
 
@@ -278,17 +311,19 @@ const brandStyle =
         const confirmed = Boolean(data.user.email_confirmed_at) || data.user.email === email;
         const sub = root.querySelector<HTMLElement>('[data-download-sub]');
         if (sub && !confirmed) {
-          sub.textContent =
-            'Check your inbox and confirm your email, then download Sofia and sign in. Your subscription is already attached to your account.';
+          sub.textContent = t(
+            `Check your inbox and confirm your email, then download ${download.name} and sign in. Your subscription is already attached to your account.`,
+            `Vérifie ta boîte mail et confirme ton adresse, puis télécharge ${download.name} et connecte-toi. Ton abonnement est déjà rattaché à ton compte.`,
+          );
         }
         track('funnel_account_claimed', { email_confirmed: confirmed });
         show('download');
       } catch {
-        showError('Something went wrong. Please try again.');
+        showError(t('Something went wrong. Please try again.', 'Un problème est survenu. Réessaie.'));
       } finally {
         if (submit) {
           submit.disabled = false;
-          submit.textContent = 'Create my account';
+          submit.textContent = t('Create my account', 'Créer mon compte');
         }
       }
     });
