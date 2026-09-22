@@ -298,10 +298,18 @@ export function storeLink(url: string, placement: string): string {
   return `${url}${sep}pt=${APP_STORE_PROVIDER_TOKEN}&ct=${encodeURIComponent(`web-${placement}`.slice(0, 40))}&mt=8`;
 }
 
+/** Bliss — the all-tutors language app. Live on the App Store since 2026-09-22.
+ *  Deliberately NOT an APPS entry (no blog, no pSEO, no header nav item of its own),
+ *  so its store link lives here rather than in APPS. Wrap it in storeLink() at each
+ *  call site so the click is attributed like every other store click. */
+export const BLISS_APP_STORE_ID = '6812111788';
+export const BLISS_APP_STORE_URL = `https://apps.apple.com/app/id${BLISS_APP_STORE_ID}`;
+
 /** App Store id -> app slug, for naming store clicks in analytics. */
-export const STORE_ID_TO_SLUG: Record<string, string> = Object.fromEntries(
-  Object.values(APPS).filter((a) => a.appStoreId).map((a) => [a.appStoreId, a.slug]),
-);
+export const STORE_ID_TO_SLUG: Record<string, string> = {
+  ...Object.fromEntries(Object.values(APPS).filter((a) => a.appStoreId).map((a) => [a.appStoreId, a.slug])),
+  [BLISS_APP_STORE_ID]: 'bliss',
+};
 
 export function withBase(path: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');

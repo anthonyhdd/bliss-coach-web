@@ -1,7 +1,7 @@
 ---
 import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
-import { withBase, avatarFor, APPS, storeLink } from '../config/apps';
+import { withBase, avatarFor, APPS, storeLink, BLISS_APP_STORE_URL } from '../config/apps';
 
 const DEV_PAGE = 'https://apps.apple.com/us/developer/bliss-coach/id1628409883';
 // live App Store link for a coach, or '' while the app is not on sale (Emily, Astra)
@@ -34,7 +34,12 @@ const hasIdle = (slug: string) => fs.existsSync(`public/home/video/${slug}-idle.
 
 const title = 'Bliss Coach';
 const description =
-  'Bliss Coach is a mobile app studio building AI-powered coaching apps that help people grow — one conversation at a time.';
+  'Bliss puts four native AI language tutors in one app — Spanish, French, English and Mandarin. From Bliss Coach, the studio building AI coaches that help people grow, one conversation at a time.';
+
+// Bliss went live 2026-09-22 and is now the hero of this page: one app, four tutors.
+// The specialist apps below it keep their own landings (/sofia/, /charm/, …) — they carry the
+// organic traffic and the backlinks, so nothing here redirects or replaces them.
+const blissTutors = ['sofia', 'amelie', 'emily', 'meilin'];
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -1348,6 +1353,55 @@ const coaches = [
         .crsl-arrow { display: none; }
       }
 
+      /* ---- Bliss-first hero + band (added when Bliss went live, 2026-09-22) ---- */
+      /* the hero sits on the violet layer, so these two live in white — not in the
+         page's ink colour, which is only legible further down. */
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 6px; margin: 0 auto 18px;
+        padding: 6px 14px; border-radius: 999px;
+        background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.34);
+        backdrop-filter: blur(6px);
+        color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      }
+      .cta .cta-apple { width: 17px; height: 20px; margin-right: 8px; vertical-align: -3px; }
+      .cta-2 {
+        display: block; margin: 16px auto 0; color: rgba(255, 255, 255, 0.74);
+        font-size: 14.5px; font-weight: 500; text-decoration: none;
+      }
+      .cta-2:hover { color: #fff; }
+      .bliss-band { padding: clamp(48px, 8vw, 104px) 16px clamp(8px, 3vw, 32px); }
+      .bb-card {
+        max-width: 760px; margin: 0 auto; text-align: center;
+        padding: clamp(32px, 5vw, 56px) clamp(20px, 4vw, 48px);
+        border-radius: 32px; border: 1px solid rgba(14, 26, 58, 0.08);
+        background: linear-gradient(180deg, #fff, #fdf6f3);
+        box-shadow: 0 24px 60px rgba(30, 50, 110, 0.09);
+      }
+      .bb-faces { display: flex; justify-content: center; margin-bottom: 22px; }
+      .bb-faces img {
+        width: 60px; height: 74px; object-fit: cover; border-radius: 18px;
+        margin: 0 -6px; border: 3px solid #fff; box-shadow: 0 8px 20px rgba(30, 50, 110, 0.16);
+      }
+      .bb-card h2 {
+        margin: 10px 0 0; font-size: clamp(32px, 4.6vw, 52px); line-height: 1.05;
+        letter-spacing: -0.035em; font-weight: 700; color: #0e1a3a;
+      }
+      .bb-card h2 em {
+        font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400;
+        background: linear-gradient(92deg, #ff6a4d, #ff4f8b);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .bb-card p {
+        margin: 18px auto 30px; max-width: 52ch; font-size: 17px; line-height: 1.55;
+        color: rgba(14, 26, 58, 0.72);
+      }
+      .bb-row { margin-top: 0; }
+      .bb-more { font-size: 15px; font-weight: 600; color: #e2453c; text-decoration: none; }
+      .bb-more:hover { text-decoration: underline; }
+      @media (max-width: 480px) {
+        .bb-faces img { width: 46px; height: 58px; border-radius: 14px; margin: 0 -5px; }
+      }
+
       /* praktika-ish rounding elsewhere */
       .bcell { border-radius: 26px; }
       .review { border-radius: 20px; }
@@ -1365,15 +1419,20 @@ const coaches = [
       <div class="hero-grid">
         <div class="content">
           <BlissBloom class="logo-mark" size={56} mono />
+          <span class="hero-badge">New — Bliss is out</span>
           <h1>
-            <span class="t-desktop">Your personal coach,<br /><span class="serif">one conversation away.</span></span>
-            <span class="t-mobile">Your personal coach,<br /><span class="serif">one conversation</span><br /><span class="serif">away.</span></span>
+            <span class="t-desktop">Every language,<br /><span class="serif">one tutor away.</span></span>
+            <span class="t-mobile">Every language,<br /><span class="serif">one tutor</span><br /><span class="serif">away.</span></span>
           </h1>
-          <p class="sub">Not another app to tap through.<br /> A coach that knows you. <mark class="hl">Ten minutes a day.</mark></p>
+          <p class="sub">Bliss is one app with four native AI tutors.<br /> Spanish, French, English, Mandarin. <mark class="hl">Ten minutes a day.</mark></p>
           <div class="cta-wrap">
             <span class="cta-beam" aria-hidden="true"></span>
-            <a class="cta" href="#coaches">Meet your coaches</a>
+            <a class="cta" href={storeLink(BLISS_APP_STORE_URL, 'home-hero')} data-placement="home-hero">
+              <svg class="cta-apple" viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              Get Bliss — free
+            </a>
           </div>
+          <a class="cta-2" href="#coaches">or meet our other coaches ↓</a>
         </div>
 
       </div>
@@ -1433,10 +1492,36 @@ const coaches = [
       </section>
 
       <!-- one chapter per coach -->
+      <!-- the app the hero promises: one subscription, four language tutors -->
+      <section class="bliss-band" id="bliss" aria-label="Bliss — the language app">
+        <div class="bb-card rv">
+          <div class="bb-faces" aria-hidden="true">
+            {blissTutors.map((slug) => {
+              const a = avatars.find((x) => x.slug === slug)!;
+              return <img src={withBase(`/home/${a.src}`)} alt="" style={`object-position:${a.pos}`} width="60" height="74" loading="lazy" />;
+            })}
+          </div>
+          <span class="sec-kicker">One app</span>
+          <h2>Four tutors.<br /><em>One subscription.</em></h2>
+          <p>
+            Sofia teaches Spanish, Amélie French, Emily English, Meilin Mandarin — and you switch
+            between them in a tap. They explain in the language you already speak, correct you as
+            you talk, and remember where you left off.
+          </p>
+          <div class="store-row bb-row">
+            <a class="store-badge" href={storeLink(BLISS_APP_STORE_URL, 'home-bliss')} data-placement="home-bliss" aria-label="Download Bliss on the App Store">
+              <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              <span class="sb-txt"><small>Download on the</small>App Store</span>
+            </a>
+            <a class="bb-more" href={withBase('/bliss/')}>How Bliss works →</a>
+          </div>
+        </div>
+      </section>
+
       <section class="coaches" id="coaches" aria-label="Meet the coaches">
         <div class="coaches-pin">
         <div class="sec-head rv">
-          <span class="sec-kicker">Meet the coaches</span>
+          <span class="sec-kicker">Our other apps</span>
           <h2>A specialist <em>for every goal</em></h2>
         </div>
         <div class="crsl">
@@ -1472,7 +1557,7 @@ const coaches = [
             <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
             <span class="sb-txt"><small>Download on the</small>App Store</span>
           </a>
-          <span class="store-note">Free to download. Start talking today.</span>
+          <span class="store-note">Every coach is a free download of its own.</span>
         </div>
         </div>
       </section>
