@@ -1,7 +1,8 @@
 ---
-// /bliss/ — the all-tutors language app (Sofia, Amélie, Emily, Meilin in one app), pre-launch.
-// Deliberately NOT an APPS entry: it has no App Store link yet, no blog, no pSEO, and an APPS entry
-// would generate those routes plus a header nav item. Page skeleton = the category leader's
+// /bliss/ — the all-tutors language app (Sofia, Amélie, Emily, Meilin in one app).
+// LIVE on the App Store since 2026-09-22 (id 6812111788).
+// Still deliberately NOT an APPS entry: it has no blog and no pSEO, and an APPS entry would
+// generate those routes plus a header nav item. Its store URL lives in config/apps.ts. Page skeleton = the category leader's
 // (praktika.ai): proof under the headline → tutor roster → features → a correction → private tutor
 // vs app → FAQ. Proof is product facts, never a rating count — see src/config/tutorPitch.ts.
 import Base from '../../layouts/Base.astro';
@@ -9,7 +10,8 @@ import ProofRow from '../../components/tutor/ProofRow.astro';
 import CorrectionCard from '../../components/tutor/CorrectionCard.astro';
 import TutorCompare from '../../components/tutor/TutorCompare.astro';
 import FaqList from '../../components/tutor/FaqList.astro';
-import { APPS, withBase } from '../../config/apps';
+import { APPS, withBase, storeLink, BLISS_APP_STORE_URL } from '../../config/apps';
+import AppStoreButton from '../../components/AppStoreButton.astro';
 import { SHOWCASE } from '../../config/showcase';
 import { TUTOR_PITCH, LANGUAGE_TUTOR_SLUGS, compareRows } from '../../config/tutorPitch';
 import '../../styles/tutor.css';
@@ -62,8 +64,8 @@ const faq = [
     a: 'Bliss is a language learning app with four AI tutors: Sofia for Spanish, Amélie for French, Emily for English and Meilin for Mandarin Chinese. You pick a language, pick your tutor, and learn by talking.',
   },
   {
-    q: 'When will Bliss be available?',
-    a: 'Bliss is coming soon to the App Store, for iPhone. Sofia, Amélie, Emily and Meilin are already available today as their own apps.',
+    q: 'Where can I get Bliss?',
+    a: 'Bliss is available now on the App Store, for iPhone. Sofia, Amélie, Emily and Meilin also remain available as their own single-tutor apps.',
   },
   {
     q: 'Can I change tutor or language later?',
@@ -75,7 +77,7 @@ const faq = [
   },
   {
     q: 'Is Bliss free?',
-    a: 'Bliss will be free to download, with your first tutor included. Bliss Pro unlocks every tutor and every language in one subscription; plans and prices are shown in the app before you pay anything.',
+    a: 'Bliss is free to download, with your first tutor included. Bliss Pro unlocks every tutor and every language in one subscription; plans and prices are shown in the app before you pay anything.',
   },
   {
     q: 'How is Bliss different from the Sofia or Amélie apps?',
@@ -93,6 +95,7 @@ const jsonLd = [
     description:
       'Language learning app with four AI tutors — Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time.',
     url: 'https://bliss-coach.com/bliss/',
+    installUrl: BLISS_APP_STORE_URL,
     author: { '@type': 'Organization', name: 'Bliss Coach' },
   },
   {
@@ -107,14 +110,14 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
 
 <Base
   title="Bliss — Learn a language with the AI tutor you pick"
-  description="Four native AI tutors in one app: Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time. Coming soon."
+  description="Four native AI tutors in one app: Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time. Free on the App Store."
   brandStyle={brandStyle}
   jsonLd={jsonLd}
   activeApp="bliss"
 >
   <div class="app-bliss" style={brandStyle}>
     <div class="brand-strip" aria-hidden="true"></div>
-    <div class="app-banner"><span><i>&gt;</i> Bliss is in the lab — <mark>coming soon</mark> to the App Store <b>✦</b></span></div>
+    <div class="app-banner"><span><i>&gt;</i> Bliss is <mark>out now</mark> on the App Store — four tutors, one app <b>✦</b></span></div>
 
     <!-- hero: promise + proof + the switcher inside a phone -->
     <section class="app-hero2 bliss-hero">
@@ -138,7 +141,7 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
             ]}
           />
           <div class="hero-cta hero-cta-row">
-            <span class="coming-soon">Coming soon to the App Store</span>
+            <AppStoreButton href={BLISS_APP_STORE_URL} placement="bliss-hero" />
             <a class="btn btn-ghost" href="#tutors">Meet the tutors</a>
           </div>
         </div>
@@ -290,8 +293,9 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
           {tutors.map((t) => <img src={withBase(`/icons/${t.slug}.jpg`)} alt="" width="44" height="44" loading="lazy" />)}
         </div>
         <div class="txt">
-          <h2>Bliss is coming soon.</h2>
-          <p>Can’t wait? {liveApps.map((t) => t.app.name).join(', ').replace(/, ([^,]*)$/, ' and $1')} already have their own apps.</p>
+          <h2>Four tutors. One app.</h2>
+          <p>Get Bliss free on the App Store. Prefer a single tutor? {liveApps.map((t) => t.app.name).join(', ').replace(/, ([^,]*)$/, ' and $1')} still have their own apps.</p>
+          <div class="hero-cta"><AppStoreButton href={BLISS_APP_STORE_URL} placement="bliss-final" /></div>
           <div class="other-apps">
             {tutors.map((t) => (
               <a href={withBase(`/${t.slug}/`)}>
