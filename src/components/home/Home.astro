@@ -1,0 +1,1566 @@
+---
+// Home — Bliss, the all-tutors language app (live on the App Store since 2026-09-22).
+// Rendered by src/pages/index.astro (EN) and src/pages/fr/index.astro (FR): one layout, one copy
+// table below. A new string goes in BOTH languages.
+//
+// Layout, measures, type scale and interactions mirror praktika.ai's home (founder request,
+// 2026-09-23): same grid (12 cols, 32px gutter, 1200px layout), same section order, same
+// scroll-driven feature phone, same hover-to-expand tutor row. Everything shown is Bliss:
+// its tutors, its real screens, its real reviews. No rating count and no learner count —
+// Bliss has neither yet, so the hero laurels carry product facts (tutors, languages).
+// The home sells Bliss ONLY (founder 2026-09-23): no links to the single-tutor apps here, so the
+// visit is not diluted. Their landings stay live for SEO.
+import { ClientRouter } from 'astro:transitions';
+import Analytics from '../Analytics.astro';
+import BlissBloom from '../BlissBloom.astro';
+import { withBase, storeLink, BLISS_APP_STORE_URL } from '../../config/apps';
+
+interface Props { lang?: 'en' | 'fr' }
+const { lang = 'en' } = Astro.props;
+const fr = lang === 'fr';
+
+const STORE = BLISS_APP_STORE_URL;
+const START = withBase(fr ? '/start/?lang=fr' : '/start/');
+const u = (p: string) => withBase(p);
+const HOME_URL = fr ? 'https://bliss-coach.com/fr/' : 'https://bliss-coach.com/';
+
+const T = {
+  en: {
+    title: 'Bliss — learn a language with AI tutors',
+    description: 'Bliss is your AI language tutor: pick the tutor you like, speak out loud from day one and get corrected as you go. Spanish, French, English, Mandarin and more.',
+    menu: ['Features', 'Tutors', 'Reviews', 'Pricing', 'Careers', 'Contact us'],
+    cta: 'Try Bliss',
+    h1: 'Speak a new language with AI tutors',
+    tutorsWord: 'AI tutors', langsWord: 'languages',
+    dlCap: 'Download on the', webCap: 'Or start', webName: 'on the web',
+    bubbleUser: ['Yo ', 'soy', ' 25 años'], bubbleTutor: ['You mean «Yo ', 'tengo', ' 25 años»?'],
+    featSub: 'Features', featL1: 'The quality of a ', featL2: 'private tutor.', featL3: 'The ease of an app',
+    steps: [
+      ['Learn in your own language', 'Starting from zero is fine. Your tutor explains in the language you already speak and hands you the phrase to say — one step at a time, with a smile.'],
+      ['A plan built around your goal', 'A move, a trip, a new job: tell Bliss why you’re learning and get a week of conversations built around it, at your pace.'],
+      ['Play the scene before you live it', 'The café, the pharmacy, the landlord on the phone. Rehearse real situations — and see what you can say whenever you’re stuck.'],
+      ['Learn from your mistakes', 'Mistakes are fixed on the sentence you just said, with the reason in one line — then the conversation keeps going.'],
+      ['Watch yourself progress', 'Your streak, your goal, your month. Every day you practise shows up — and your tutor is one call away.'],
+    ],
+    prev: 'Previous feature', next: 'Next feature',
+    lvl: 'I’m just starting out in Spanish', canSay: '✦ You can say', canSayLine: 'Could I get a table for two?', call: 'Call Sofia',
+    betterSay: 'Better to say', why: 'Why', whyAyer: '“Ayer” means yesterday, so the verb goes in the past: fui, not voy.',
+    tutorsTitle: 'Meet our best tutors', tutorsSub: 'Warm, patient friends who remember your conversations and are always there to get you going again',
+    hi: (n: string) => `Hi! I’m ${n}, `, learnWith: 'Learn with',
+    lines: { charm: 'here to tell you straight how you sound', amelie: 'here to help you speak French', emily: 'here to help you speak English', sofia: 'here to help you speak Spanish', mila: 'here to keep your practice lively', meilin: 'here to help you speak Mandarin', alex: 'here to help you speak with confidence', astra: 'here to help you learn, gently' } as Record<string, string>,
+    aiSub: 'Powered by AI', aiTitle: 'Real-time feedback on every sentence',
+    vidTitle: ['Practise freely.', 'Never judged'], pause: 'Pause video', play: 'Play video',
+    improve: 'Improve your pronunciation', sayLike: 'Say it like this', tone3: '3rd tone', toneTip: '“hǎo” dips, then rises — like asking “really?”',
+    mainTitle: 'Speak, read, listen — we take learning seriously',
+    mainBody: 'Build real foundations, not just small talk: role-plays, a weekly plan around your goal, grammar explained in one line, pinyin for Mandarin — just like a real teacher.',
+    toneTitle: 'Pick the personality that keeps you going', tones: ['Gentle', 'Lively', 'Straight'],
+    misTitle: 'Learn from your mistakes', misBefore: 'I ', misWrong: 'am agree', misAfter: ' with you, it’s a great idea',
+    misFixed: 'I agree with you, it’s a great idea', misWhy: '“Agree” is already a verb, so it doesn’t need “am” in front of it',
+    revSub: 'Learners love our tutors', revTitle: 'Real words from real learners', revDate: '6 Sep', stars: '5 stars',
+    cmpTitle: 'A private tutor’s results, without the bill', cmpAny: 'any day, any hour',
+    pros: [
+      ['Learn whenever you want', 'Practise without limits, the moment you’re ready'],
+      ['Instant, precise feedback', 'Corrections on every sentence you say'],
+      ['Tutors you’ll actually like', '8 tutors, 10 languages — pick yours'],
+      ['A no-pressure space', 'Make mistakes without being judged'],
+    ],
+    human: 'Human private tutor', humanPrice: '~$50', perHour: '/ hour',
+    cons: [
+      ['Little flexibility', 'Lessons depend on the teacher’s calendar'],
+      ['Uneven feedback', 'Corrections can be subjective and vague'],
+      ['Finding the right teacher', 'The search is long and tiring'],
+      ['Pressure to perform', 'Getting it wrong quickly feels stressful'],
+    ],
+    footTitle: ['Practise whenever you want.', 'Just download the app'],
+    copy: '© Bliss Coach 2026. All rights reserved.', terms: 'Terms of Use', privacy: 'Privacy Policy',
+    storeAria: 'Bliss on the App Store', mailAria: 'Email us', qr: 'Download', langLabel: 'Language',
+  },
+  fr: {
+    title: 'Bliss — apprends une langue avec des tuteurs IA',
+    description: 'Bliss, ton tuteur de langue IA : choisis le tuteur qui te plaît, parle à voix haute dès le premier jour et fais-toi corriger au fil de la conversation. Espagnol, anglais, français, mandarin et plus.',
+    menu: ['Fonctionnalités', 'Tuteurs', 'Avis', 'Prix', 'Carrières', 'Nous contacter'],
+    cta: 'Essayer Bliss',
+    h1: 'Parle une nouvelle langue avec des tuteurs IA',
+    tutorsWord: 'tuteurs IA', langsWord: 'langues',
+    dlCap: 'Télécharger dans l’', webCap: 'Ou commence', webName: 'sur le web',
+    bubbleUser: ['Yo ', 'soy', ' 25 años'], bubbleTutor: ['Tu veux dire « Yo ', 'tengo', ' 25 años » ?'],
+    featSub: 'Fonctionnalités', featL1: 'La qualité d’un ', featL2: 'cours particulier.', featL3: 'La simplicité d’une appli',
+    steps: [
+      ['Apprends dans ta langue', 'Partir de zéro, c’est OK. Ton tuteur t’explique dans la langue que tu parles déjà et te donne la phrase à dire — pas à pas, avec le sourire.'],
+      ['Un programme construit autour de ton objectif', 'Un déménagement, un voyage, un nouveau job : dis à Bliss pourquoi tu apprends et reçois une semaine de conversations pensée pour ça, à ton rythme.'],
+      ['Joue la scène avant de la vivre', 'Le café, la pharmacie, le proprio au téléphone. Répète des situations réelles — et vois quoi dire dès que tu bloques.'],
+      ['Progresse grâce à tes erreurs', 'Tes erreurs sont corrigées sur la phrase que tu viens de dire, avec la raison en une ligne — puis la conversation continue.'],
+      ['Vois tes progrès', 'Ta série, ton objectif, ton mois. Chaque jour de pratique compte — et ton tuteur est à un appel.'],
+    ],
+    prev: 'Fonctionnalité précédente', next: 'Fonctionnalité suivante',
+    lvl: 'Je débute complètement en espagnol', canSay: '✦ Tu peux dire', canSayLine: 'Une table pour deux, s’il vous plaît ?', call: 'Appeler Sofia',
+    betterSay: 'Mieux vaut dire', why: 'Pourquoi', whyAyer: '« Ayer » veut dire hier : le verbe se met au passé, fui et pas voy.',
+    tutorsTitle: 'Découvre nos meilleurs tuteurs', tutorsSub: 'Des amis bienveillants et patients, qui se souviennent de vos conversations et sont toujours là pour te remotiver',
+    hi: (n: string) => `Salut ! Moi c’est ${n}, `, learnWith: 'Apprendre avec',
+    lines: { charm: 'là pour te dire franchement comment tu sonnes', amelie: 'là pour t’aider à parler français', emily: 'là pour t’aider à parler anglais', sofia: 'là pour t’aider à parler espagnol', mila: 'là pour rendre ta pratique vivante', meilin: 'là pour t’aider à parler mandarin', alex: 'là pour t’aider à parler avec assurance', astra: 'là pour t’apprendre en douceur' } as Record<string, string>,
+    aiSub: 'Propulsé par l’IA', aiTitle: 'Un retour en temps réel sur chaque phrase',
+    vidTitle: ['Pratique librement.', 'Sans jamais être jugé'], pause: 'Mettre la vidéo en pause', play: 'Lire la vidéo',
+    improve: 'Améliore ta prononciation', sayLike: 'Dis-le comme ça', tone3: '3e ton', toneTip: '« hǎo » descend puis remonte — comme quand on demande « ah bon ? »',
+    mainTitle: 'Parler, lire, écouter — on prend l’apprentissage au sérieux',
+    mainBody: 'Construis de vraies bases, pas juste du small talk : jeux de rôle, un programme de la semaine autour de ton objectif, la grammaire expliquée en une ligne, le pinyin pour le mandarin — comme avec un vrai prof.',
+    toneTitle: 'Choisis la personnalité qui te fait avancer', tones: ['Douce', 'Pétillante', 'Franche'],
+    misTitle: 'Apprends de tes erreurs', misBefore: 'I ', misWrong: 'am agree', misAfter: ' with you, it’s a great idea',
+    misFixed: 'I agree with you, it’s a great idea', misWhy: '« Agree » est déjà un verbe : pas de « am » devant (le piège du « je suis d’accord »)',
+    revSub: 'Nos élèves adorent nos tuteurs', revTitle: 'De vrais mots, de vrais élèves', revDate: '6 sept.', stars: '5 étoiles',
+    cmpTitle: 'Les résultats d’un prof particulier, sans la facture', cmpAny: 'tous les jours, à toute heure',
+    pros: [
+      ['Apprends quand tu veux', 'Pratique sans limite, dès que tu es prêt'],
+      ['Un retour précis, tout de suite', 'Des corrections sur chaque phrase que tu dis'],
+      ['Des tuteurs que tu vas adorer', '8 tuteurs, 10 langues — choisis le tien'],
+      ['Un espace sans pression', 'Trompe-toi sans être jugé'],
+    ],
+    human: 'Prof particulier', humanPrice: '~50 €', perHour: '/ heure',
+    cons: [
+      ['Peu de flexibilité', 'Les cours dépendent de l’agenda du prof'],
+      ['Un retour irrégulier', 'Les corrections peuvent être subjectives et floues'],
+      ['Trouver le bon prof', 'La recherche est longue et épuisante'],
+      ['La pression du résultat', 'Se tromper devient vite stressant'],
+    ],
+    footTitle: ['Pratique quand tu veux.', 'Il suffit de télécharger l’appli'],
+    copy: '© Bliss Coach 2026. Tous droits réservés.', terms: 'Conditions d’utilisation', privacy: 'Politique de confidentialité',
+    storeAria: 'Bliss sur l’App Store', mailAria: 'Nous écrire', qr: 'Télécharger', langLabel: 'Langue',
+  },
+}[lang];
+
+const title = T.title;
+const description = T.description;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'MobileApplication',
+  name: 'Bliss',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'iOS',
+  inLanguage: lang,
+  publisher: { '@type': 'Organization', name: 'Bliss Coach' },
+  url: HOME_URL,
+  downloadUrl: STORE,
+  description,
+  image: 'https://bliss-coach.com/brand/bliss-coach-icon-512.png',
+};
+
+// Anchors into this page + company links. No link to the single-tutor apps (see header note).
+const menu = [
+  { label: T.menu[0], href: '#features' },
+  { label: T.menu[1], href: '#tutors' },
+  { label: T.menu[2], href: '#reviews' },
+  { label: T.menu[3], href: '#pricing' },
+  { label: T.menu[4], href: u('/careers/') },
+  { label: T.menu[5], href: 'mailto:anthony@blisscoach.app' },
+];
+
+// The 10 languages Bliss teaches (LAUNCH_BLISS.md), each written in its own script.
+const languages = ['Español', 'Français', 'English', '中文', 'Deutsch', 'Italiano', 'Português', '日本語', '한국어', 'العربية'];
+
+const SCREENS = ['screen-02.webp', 'screen-05.webp', 'screen-04.webp', null, 'screen-07.webp'];
+const steps = T.steps.map(([title, body], i) => ({ title, body, screen: SCREENS[i] }));
+
+// Hover row — Sofia starts in the middle, expanded.
+const tutors = [
+  { slug: 'charm', name: 'Charm' },
+  { slug: 'amelie', name: 'Amélie' },
+  { slug: 'emily', name: 'Emily' },
+  { slug: 'sofia', name: 'Sofia' },
+  { slug: 'mila', name: 'Mila' },
+  { slug: 'meilin', name: 'Meilin' },
+  { slug: 'alex', name: 'Alex' },
+  { slug: 'astra', name: 'Astra' },
+].map((t) => ({ ...t, line: T.lines[t.slug] }));
+const ACTIVE = 3;
+
+// Real reviews only, quoted as written (never translated). Meilin: App Store (France),
+// 2026-09-06. Jane / Emily: the quotes already shown on the Sofia landing (config/showcase.ts).
+// Add Bliss's own as they come — never invent one.
+const reviews = [
+  { title: 'Super', meta: `${T.revDate}・Jukinguhhhh`, body: 'Bravo pour cette app ! J’ai appris plus de mots en 2 semaines qu’en 2 mois.', app: 'Meilin' },
+  { title: 'I improved my pronunciation in just a few days.', meta: 'Sofia・Jane', body: '', app: 'Sofia' },
+  { title: 'Sofia finally made me comfortable speaking Spanish.', meta: 'Sofia・Emily', body: '', app: 'Sofia' },
+];
+
+const PRO_ICONS = [
+  'M7 9.2c-1.6 0-2.9 1.3-2.9 2.8S5.4 14.8 7 14.8c2.6 0 4.2-5.6 7-5.6 1.6 0 2.9 1.3 2.9 2.8s-1.3 2.8-2.9 2.8c-2.8 0-4.4-5.6-7-5.6Z',
+  'M5 6.5h14v9H10l-4 3v-3H5zM8.5 10h7M8.5 12.5h4.5',
+  'M5.5 5.5h13v10h-13zM9 19h6M12 15.5V19M12 8.2a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2Zm-2.6 5.3c.5-1 1.4-1.5 2.6-1.5s2.1.5 2.6 1.5',
+  'M12 19s-7-4.3-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.7 12 19 12 19Z',
+];
+const pros = T.pros.map(([a, b], i) => [a, b, PRO_ICONS[i]]);
+const cons = T.cons;
+
+const tones = [
+  { slug: 'astra', name: T.tones[0] },
+  { slug: 'mila', name: T.tones[1], main: true },
+  { slug: 'charm', name: T.tones[2] },
+];
+const FLAG_FR = '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002654"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce1126"/></svg>';
+const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="gbt"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#gbs)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#gbt)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <ClientRouter />
+    <Analytics />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={HOME_URL} />
+    <link rel="alternate" hreflang="en" href="https://bliss-coach.com/" />
+    <link rel="alternate" hreflang="fr" href="https://bliss-coach.com/fr/" />
+    <link rel="alternate" hreflang="x-default" href="https://bliss-coach.com/" />
+    <link rel="icon" type="image/png" sizes="32x32" href={u('/favicon-32.png')} />
+    <link rel="icon" type="image/png" sizes="192x192" href={u('/favicon-192.png')} />
+    <link rel="apple-touch-icon" href={u('/apple-touch-icon.png')} />
+    <link rel="sitemap" href={u('/sitemap-index.xml')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={HOME_URL} />
+    <meta property="og:locale" content={fr ? 'fr_FR' : 'en_US'} />
+    <meta property="og:image" content="https://bliss-coach.com/home/og.png" />
+    <meta property="og:site_name" content="Bliss Coach" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="apple-itunes-app" content="app-id=6812111788" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" />
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" />
+    <link rel="preload" as="image" href={u('/home/pk/tutor-sofia.webp')} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <style is:global>
+      /* ---------- tokens (10px root, same scale as the reference) ---------- */
+      :root {
+        --b1: #FF6B35; --b2: #DB2777; --b3: #6366F1;
+        --grad: linear-gradient(120deg, #FF6B35 0%, #F0457A 42%, #DB2777 62%, #6366F1 100%);
+        --grad-btn: linear-gradient(90deg, #FF6B35, #DB2777);
+        --brand-50: #fff4f8; --brand-100: #fde8f1; --brand-200: #f9c7dc; --brand-400: #f472b6;
+        --brand-600: #DB2777; --brand-700: #B01A5E; --brand-800: #8E1450; --brand-1000: #4a0a2a;
+        --g-50: #f7f6fa; --g-100: #eeecf3; --g-200: #e5e1ec; --g-300: #d6d1e0; --g-600: #857d94;
+        --g-800: #4b4458; --g-900: #2f2b37; --black: #0d0d0d;
+        --red-500: #ff657d; --red-600: #ff2d55; --orange: #ff9500;
+        --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --font-heading: 'Satoshi', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --r-sm: .8rem; --r-md: 1.6rem; --r-lg: 3.2rem; --r-xl: 4.8rem; --r-2xl: 6rem;
+        --s-3xs: .2rem; --s-2xs: .4rem; --s-xs: .8rem; --s-sm: 1.2rem; --s-md: 1.6rem; --s-lg: 2rem;
+        --s-xl: 2.4rem; --s-2xl: 3.2rem; --s-3xl: 4rem; --s-4xl: 4.8rem; --s-5xl: 6rem; --s-6xl: 8rem;
+        --s-7xl: 12rem; --gutter: 3.2rem;
+      }
+      @media (max-width: 1024px) {
+        :root {
+          --r-md: 1.2rem; --r-lg: 2.8rem; --r-xl: 4rem; --r-2xl: 4.8rem;
+          --s-xs: .4rem; --s-sm: .8rem; --s-md: 1.2rem; --s-lg: 1.6rem; --s-xl: 2rem; --s-2xl: 2.8rem;
+          --s-3xl: 3.6rem; --s-4xl: 4rem; --s-5xl: 5.2rem; --s-6xl: 7.2rem; --s-7xl: 10.4rem; --gutter: 2rem;
+        }
+      }
+      @media (max-width: 480px) {
+        :root {
+          --r-lg: 2.4rem; --r-xl: 3.2rem; --r-2xl: 4rem;
+          --s-md: 1rem; --s-lg: 1.2rem; --s-2xl: 2.4rem; --s-3xl: 3.2rem; --s-4xl: 3.6rem;
+          --s-5xl: 4.8rem; --s-6xl: 6.4rem; --s-7xl: 9.6rem; --gutter: 1.6rem;
+        }
+      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: 10px; background: #fff; }
+      body {
+        background: #fff; color: var(--black); font-family: var(--font-main); line-height: 1;
+        -webkit-font-smoothing: antialiased; text-size-adjust: 100%; overflow-x: clip;
+      }
+      a { color: inherit; }
+      img, video { display: block; }
+      button { font: inherit; border: 0; background: none; color: inherit; }
+
+      /* ---------- design system ---------- */
+      .center { margin: 0 auto; max-width: 120rem; padding: 0 3rem; width: 100%; }
+      @media (max-width: 1024px) { .center { max-width: 100%; padding: 0 3.2rem; } }
+      @media (max-width: 480px) { .center { padding: 0 2rem; } }
+      .grid { display: grid; gap: var(--gutter); grid-template-columns: repeat(12, 1fr); }
+      @media (max-width: 1024px) { .grid { grid-template-columns: repeat(8, 1fr); } }
+      @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+      .section { padding: var(--s-7xl) 0; }
+      @media (max-width: 1024px) { .section { padding: var(--s-6xl) 0; } }
+      .head:not(:last-child) { margin-bottom: var(--s-5xl); }
+      .head__content {
+        align-items: center; display: flex; flex-direction: column; grid-column: 2 / 12;
+        row-gap: var(--s-md); text-align: center;
+      }
+      @media (max-width: 1024px) { .head__content { grid-column: 1 / 9; } }
+      @media (max-width: 480px) { .head__content { grid-column: 1 / 3; } }
+      .subheading {
+        color: var(--g-800); font-family: var(--font-heading); font-size: 1.6rem; font-weight: 500;
+        letter-spacing: .04em; text-transform: uppercase;
+      }
+      @media (max-width: 1024px) { .subheading { font-size: 1.4rem; } }
+
+      .t { color: var(--black); }
+      .t-inv { color: #fff; }
+      .h1 { font-family: var(--font-heading); font-size: 6rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.06; }
+      .h2 { font-family: var(--font-heading); font-size: 4rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.1; }
+      .h3 { font-family: var(--font-heading); font-size: 3.2rem; font-weight: 500; letter-spacing: -.01em; line-height: 1.08; }
+      .h5 { font-family: var(--font-heading); font-size: 2rem; font-weight: 500; line-height: 1.4; }
+      .p1 { font-size: 2rem; font-weight: 500; line-height: 1.4; }
+      .p2 { font-size: 1.6rem; line-height: 1.5; }
+      .p3 { font-size: 1.4rem; line-height: 1.2; }
+      @media (max-width: 1024px) {
+        .h1 { font-size: 4.8rem; } .h2 { font-size: 3.2rem; } .h3 { font-size: 2.8rem; }
+        .h5, .p1 { font-size: 1.8rem; } .p2 { font-size: 1.4rem; } .p3 { font-size: 1.2rem; }
+      }
+      @media (max-width: 480px) {
+        .h1 { font-size: 3.6rem; } .h2 { font-size: 2.8rem; } .h3 { font-size: 2.4rem; }
+        .h5, .p1 { font-size: 1.6rem; }
+      }
+
+      .button {
+        align-items: center; border-radius: 5rem; column-gap: var(--s-xs); cursor: pointer;
+        display: inline-flex; height: 5.2rem; padding: 0 var(--s-xl); position: relative;
+        text-decoration: none; transition: color .2s ease, background-color .2s ease;
+        font-family: var(--font-heading); font-size: 1.6rem; font-weight: 500; line-height: 1.24;
+      }
+      .button:focus-visible, .dl:focus-visible { outline: .3rem solid #fdbe02; outline-offset: .2rem; }
+      .button--primary { background: var(--grad-btn); color: #fff; }
+      .button--primary:hover { filter: brightness(.93); }
+      .button--primary:active { filter: brightness(.86); }
+      .button--ghost { background: #fff; color: var(--black); }
+      .button--ghost:hover { background: var(--g-100); }
+      .button--ghost:active { background: var(--g-200); }
+      .button--wide { justify-content: center; width: 100%; }
+
+      .dl {
+        align-items: center; background: var(--black); border-radius: var(--r-md); color: #fff;
+        column-gap: var(--s-xs); display: inline-flex; text-decoration: none;
+        padding: var(--s-sm) var(--s-lg) var(--s-sm) var(--s-sm); transition: background-color .2s ease;
+      }
+      .dl:hover { background: rgba(13, 13, 13, .8); }
+      .dl:active { background: rgba(13, 13, 13, .6); }
+      .dl--inv { background: #fff; color: var(--black); }
+      .dl--inv:hover { background: var(--g-100); }
+      .dl--inv:active { background: var(--g-200); }
+      .dl__img { align-items: center; display: flex; height: 3.2rem; justify-content: center; width: 3.2rem; }
+      .dl__img svg { height: 100%; width: auto; }
+      .dl__about { display: inline-flex; flex-direction: column; text-align: left; }
+      .dl__cap { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 500; }
+      .dl__name { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 500; line-height: 1.1; }
+
+      .award { align-items: center; column-gap: var(--s-md); display: inline-flex; justify-content: space-between; }
+      @media (max-width: 1024px) { .award { column-gap: var(--s-sm); } }
+      .award__leaf { height: 7.6rem; width: auto; flex-shrink: 0; }
+      .award__leaf--r { transform: scaleX(-1); }
+      @media (max-width: 1024px) { .award__leaf { height: 5.7rem; } }
+      .award__body { align-items: center; display: inline-flex; flex-direction: column; }
+      .award__content { font-weight: 700; }
+      .award__caption { font-weight: 500; text-align: center; }
+
+      /* image fade-in on load (as on the reference) */
+      .image { filter: blur(.1rem); opacity: 0; transition: opacity .2s ease, filter .2s ease; }
+      .image.is-loaded, .no-js .image { filter: none; opacity: 1; }
+
+      /* soft grey glow behind a section, with a grain layer */
+      .noise { pointer-events: none; position: absolute; transform: translateZ(0); }
+      .noise__bg, .noise__grain { border-radius: 50%; height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
+      .noise__bg { background: var(--g-50); filter: blur(8rem); opacity: .7; }
+      .noise__grain {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.45 0 0 0 0 0.6 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 100px 100px; opacity: .6;
+        mask-image: radial-gradient(closest-side, #000 40%, transparent);
+        -webkit-mask-image: radial-gradient(closest-side, #000 40%, transparent);
+      }
+
+      /* the purple "blurred room" behind purple cards */
+      .purple-blur {
+        position: absolute; inset: 0; filter: blur(65px);
+        background:
+          radial-gradient(40% 50% at 12% 18%, #ffb07a 0%, transparent 70%),
+          radial-gradient(30% 40% at 55% 6%, #ff9ec4 0%, transparent 70%),
+          radial-gradient(45% 55% at 92% 80%, #5b5ef0 0%, transparent 70%),
+          radial-gradient(50% 50% at 30% 95%, #e0357f 0%, transparent 70%),
+          var(--grad);
+      }
+
+      /* generic iPhone frame (CSS, no bitmap bezel) */
+      .iphone {
+        position: relative; width: 100%; aspect-ratio: 716 / 1445; border-radius: 15.5% / 7.7%;
+        background: linear-gradient(145deg, #3b3a3f, #111 30%, #1c1c1f 70%, #46454a);
+        padding: 3.1%; filter: drop-shadow(-.9rem -.5rem 4rem rgba(0, 0, 0, .12));
+      }
+      .iphone::before {
+        content: ''; position: absolute; inset: 1.2%; border-radius: 14.6% / 7.2%; background: #050505;
+      }
+      .iphone__screen {
+        position: relative; height: 100%; width: 100%; border-radius: 12.6% / 6%; overflow: hidden; background: #fff;
+      }
+      .iphone__island {
+        position: absolute; top: 2.1%; left: 50%; transform: translateX(-50%); width: 31%; height: 3.6%;
+        background: #000; border-radius: 99px; z-index: 5;
+      }
+    </style>
+  </head>
+  <body class="no-js">
+    <script is:inline>document.body.classList.remove('no-js');</script>
+
+    <!-- ================= HEADER ================= -->
+    <header class="hdr">
+      <div class="hdr__box" id="hdrBox">
+        <div class="hdr__head">
+          <a class="hdr__logo" href={u(fr ? '/fr/' : '/')} aria-label="Bliss">
+            <BlissBloom size={40} compact decorative />
+            <span>Bliss</span>
+          </a>
+          <nav class="menu" aria-label="Main">
+            {menu.map((m) => <a class="menu__item" href={m.href}>{m.label}</a>)}
+          </nav>
+          <div class="hdr__ctl" data-placement="home-header">
+            <a class="button button--primary hdr__cta" href={storeLink(STORE, 'home-header')}>{T.cta}</a>
+            <div class="lang" id="lang">
+              <button class="lang__btn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label={T.langLabel}>
+                <span class="lang__flag" aria-hidden="true"><Fragment set:html={fr ? FLAG_FR : FLAG_GB} /></span>
+              </button>
+              <div class="lang__menu" id="langMenu" hidden>
+                <a class={`lang__opt${fr ? '' : ' is-on'}`} href={u('/')} hreflang="en" lang="en"><span class="lang__flag" aria-hidden="true"><Fragment set:html={FLAG_GB} /></span>English</a>
+                <a class={`lang__opt${fr ? ' is-on' : ''}`} href={u('/fr/')} hreflang="fr" lang="fr"><span class="lang__flag" aria-hidden="true"><Fragment set:html={FLAG_FR} /></span>Français</a>
+              </div>
+            </div>
+            <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="hdrDrop">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path class="l1" d="M4 7h16" /><path class="l2" d="M4 12h16" /><path class="l3" d="M4 17h16" /></svg>
+            </button>
+          </div>
+        </div>
+        <div class="hdr__drop" id="hdrDrop" hidden>
+          <nav class="hdr__dropmenu" aria-label="Mobile">
+            {menu.map((m) => <a class="hdr__dropitem" href={m.href}>{m.label}</a>)}
+          </nav>
+          <div data-placement="home-header-menu">
+            <a class="button button--primary button--wide" href={storeLink(STORE, 'home-header-menu')}>{T.cta}</a>
+          </div>
+          <div class="hdr__droplangs">
+            <a class={fr ? '' : 'is-on'} href={u('/')} hreflang="en">English</a>
+            <a class={fr ? 'is-on' : ''} href={u('/fr/')} hreflang="fr">Français</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ================= HERO ================= -->
+      <div class="center hero-layout">
+        <div class="grid hero-main">
+          <div class="hero">
+            <div class="hero__shadowbox" aria-hidden="true">
+              <div class="purple-blur"></div>
+              <div class="hero__shadow"></div>
+            </div>
+            <div class="hero__content">
+              <div class="hero__head">
+                <div class="hero__bloom" aria-hidden="true"><BlissBloom size={72} mono decorative /></div>
+                <h1 class="h1 t-inv">{T.h1}</h1>
+                <div class="hero__awards">
+                  <div class="award t-inv hero__award">
+                    <svg class="award__leaf" viewBox="0 0 80 158" aria-hidden="true"><use href="#laurel" /></svg>
+                    <div class="award__body">
+                      <span class="h2 award__content">8</span>
+                      <span class="p2 award__caption">{T.tutorsWord}</span>
+                    </div>
+                    <svg class="award__leaf award__leaf--r" viewBox="0 0 80 158" aria-hidden="true"><use href="#laurel" /></svg>
+                  </div>
+                  <div class="award t-inv hero__award">
+                    <svg class="award__leaf" viewBox="0 0 80 158" aria-hidden="true"><use href="#laurel" /></svg>
+                    <div class="award__body">
+                      <span class="h2 award__content">10</span>
+                      <span class="p2 award__caption">{T.langsWord}</span>
+                    </div>
+                    <svg class="award__leaf award__leaf--r" viewBox="0 0 80 158" aria-hidden="true"><use href="#laurel" /></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="hero__download" data-placement="home-hero">
+                <a class="dl dl--inv" href={storeLink(STORE, 'home-hero')}>
+                  <div class="dl__img"><svg viewBox="0 0 384 512"><use href="#apple" /></svg></div>
+                  <div class="dl__about"><span class="dl__cap">{T.dlCap}</span><span class="dl__name">App Store</span></div>
+                </a>
+                <a class="dl dl--inv" href={START}>
+                  <div class="dl__img"><svg viewBox="0 0 24 24"><use href="#globe" /></svg></div>
+                  <div class="dl__about"><span class="dl__cap">{T.webCap}</span><span class="dl__name">{T.webName}</span></div>
+                </a>
+              </div>
+            </div>
+            <div class="hero__side">
+              <div class="hero__sidec">
+                <div class="hero__phone" aria-hidden="true">
+                  <div class="hphone">
+                    <div class="hphone__screen">
+                      <video class="hphone__video" src={u('/home/video/sofia.mp4')} poster={u('/home/pk/tutor-sofia.webp')} autoplay muted loop playsinline preload="auto"></video>
+                      <div class="hphone__bar"><span>12:25</span><svg class="hphone__icons" viewBox="0 0 68 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/><path d="M31 3.3a10 10 0 0 1 7 2.8l1.3-1.4A12 12 0 0 0 31 1.3a12 12 0 0 0-8.3 3.4L24 6.1a10 10 0 0 1 7-2.8Zm0 3.7a6 6 0 0 1 4.3 1.7l1.4-1.4A8 8 0 0 0 31 5a8 8 0 0 0-5.7 2.3l1.4 1.4A6 6 0 0 1 31 7Zm0 3.6 1.9-1.9a2.7 2.7 0 0 0-3.8 0Z"/><rect x="44" y=".5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="46" y="2.5" width="17" height="7" rx="1.8"/><rect x="66" y="4" width="1.6" height="4" rx=".8" opacity=".4"/></g></svg></div>
+                      <div class="hphone__name">Sofia <svg viewBox="0 0 12 8"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></div>
+                      <div class="hphone__island"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hero__mic" aria-hidden="true">
+                  <div class="hero__micbtn">
+                    <div class="hero__wave"></div><div class="hero__wave"></div><div class="hero__wave"></div><div class="hero__wave"></div>
+                    <svg class="hero__micicon" viewBox="0 0 24 24"><use href="#mic" /></svg>
+                  </div>
+                </div>
+                <div class="hero__chat hero__chat--user"><p class="hero__chattext">{T.bubbleUser[0]}<b>{T.bubbleUser[1]}</b>{T.bubbleUser[2]}</p></div>
+                <div class="hero__chat hero__chat--tutor"><p class="hero__chattext">{T.bubbleTutor[0]}<i>{T.bubbleTutor[1]}</i>{T.bubbleTutor[2]}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= LANGUAGES STRIP ================= -->
+      <div class="center">
+        <div class="langs" aria-label="Languages Bliss teaches">
+          <div class="langs__track">
+            {[0, 1].map((k) => (
+              <div class="langs__scroller" aria-hidden={k === 1 ? 'true' : undefined}>
+                {languages.map((l) => <span class="langs__item">{l}</span>)}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= FEATURES (scroll-driven phone) ================= -->
+      <div class="section" id="features">
+        <div class="center">
+          <div class="grid head">
+            <div class="head__content">
+              <span class="subheading">{T.featSub}</span>
+              <h2 class="h1 t feat-title" style={`--ftw:${fr ? '7.4vw' : '9.4vw'}`}><span>{T.featL1}</span><span>{T.featL2}</span><br class="feat-br" /><span>{T.featL3}</span></h2>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="fslider" id="fslider">
+              {steps.map((s, i) => (
+                <div class={`fslide${i === 0 ? ' is-active' : ''}`} data-step={i}>
+                  <span class="fslide__sub">{String(i + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}</span>
+                  <h3 class="h2 t fslide__title">{s.title}</h3>
+                  <p class="p1 t">{s.body}</p>
+                </div>
+              ))}
+              <div class="fnav">
+                <button class="fnav__btn" id="fPrev" type="button" aria-label={T.prev}><svg viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button>
+                <button class="fnav__btn" id="fNext" type="button" aria-label={T.next}><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button>
+              </div>
+            </div>
+            <div class="fbar">
+              <div class="fphone">
+                <div class="iphone">
+                  <div class="iphone__screen">
+                    {steps.map((s, i) =>
+                      s.screen ? (
+                        <img class={`fphone__content${i === 0 ? ' is-active' : ''}`} src={u(`/home/pk/${s.screen}`)} alt={`Bliss — ${s.title}`} loading={i === 0 ? 'eager' : 'lazy'} data-step={i} />
+                      ) : (
+                        <div class="fphone__content fscreen" data-step={i}>
+                          <div class="fscreen__status"><span>12:25</span></div>
+                          <div class="fscreen__top"><span>✕</span><b>Sofia ⌄</b><span></span></div>
+                          <div class="fscreen__cam">
+                            <video src={u('/home/video/sofia-idle.mp4')} poster={u('/home/pk/tutor-sofia.webp')} muted loop playsinline preload="none"></video>
+                          </div>
+                          <div class="fscreen__sheet">
+                            <div class="fscreen__msg">Ayer yo <u>voy</u> al cine con mis amigos</div>
+                            <div class="fscreen__pt"><span class="ico ico--ok">✓</span><div><b>{T.betterSay}</b><p>Ayer fui al cine con mis amigos</p></div></div>
+                            <div class="fscreen__pt"><span class="ico ico--why">?</span><div><b>{T.why}</b><p>{T.whyAyer}</p></div></div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                    <div class="iphone__island"></div>
+                  </div>
+                </div>
+                <div class="fphone__over">
+                  <div class="fover fover--1 is-active" data-step="0">
+                    <span class="fover__lvl">A1</span><span>{T.lvl}</span>
+                  </div>
+                  <div class="fover fover--3" data-step="2">
+                    <span class="fover__say">{T.canSay}</span>
+                    <span class="fover__en">{T.canSayLine}</span>
+                    <span class="fover__es">¿Me da una mesa para dos?</span>
+                  </div>
+                  <div class="fover fover--5" data-step="4">
+                    <svg viewBox="0 0 24 24"><use href="#phone" /></svg> {T.call}
+                  </div>
+                </div>
+              </div>
+              <div class="fprog" aria-hidden="true">
+                {steps.map((_, i) => <span class={i === 0 ? 'is-active' : ''}><i></i></span>)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TUTORS (hover to expand) ================= -->
+      <div class="section" id="tutors">
+        <div class="center tutors-layout">
+          <div class="grid head tutors-head">
+            <div class="head__content">
+              <h2 class="h1 t tutors-title">{T.tutorsTitle}</h2>
+              <p class="p1 tutors-sub">{T.tutorsSub}</p>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="tslider" id="tslider" data-placement="home-tutors">
+              {tutors.map((t, i) => (
+                <div class={`tcard idx${Math.min(4, Math.abs(i - ACTIVE))}${i === ACTIVE ? ' is-active' : ''}`} data-i={i}>
+                  <div class="tcard__inner">
+                    <img class="tcard__photo image" src={u(`/home/pk/tutor-${t.slug}.webp`)} alt={t.name} loading={i === ACTIVE ? 'eager' : 'lazy'} />
+                    <div class="tcard__glow" aria-hidden="true"></div>
+                    <div class="tcard__content">
+                      <span class="tcard__speech">{T.hi(t.name)}{t.line}</span>
+                      <a class="button button--ghost button--wide" href={START}>{T.learnWith} {t.name}</a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div class="tdots" id="tdots" aria-hidden="true">
+              {tutors.map((_, i) => <span class={i === ACTIVE ? 'is-active' : ''}></span>)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= AI BENTO ================= -->
+      <div class="section ai">
+        <div class="noise ai__bg" aria-hidden="true"><div class="noise__bg"></div><div class="noise__grain"></div></div>
+        <div class="center">
+          <div class="grid head">
+            <div class="head__content">
+              <span class="subheading">{T.aiSub}</span>
+              <h2 class="h1 t">{T.aiTitle}</h2>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="tab tab--video">
+              <div class="vid__intro">
+                <video class="vid__video" id="introVideo" src={u('/home/video/mila.mp4')} poster={u('/home/pk/tutor-mila.webp')} autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="vid__content">
+                <h3 class="h3 vid__title">{T.vidTitle[0]}<br />{T.vidTitle[1]}</h3>
+                <div class="vid__footer">
+                  <button class="vid__ctl" id="introCtl" aria-label={T.pause} data-pause={T.pause} data-play={T.play} type="button">
+                    <svg class="vid__ico vid__ico--pause" viewBox="0 0 32 32"><rect x="9" y="7" width="5" height="18" rx="1.5" fill="currentColor" /><rect x="18" y="7" width="5" height="18" rx="1.5" fill="currentColor" /></svg>
+                    <svg class="vid__ico vid__ico--play" viewBox="0 0 32 32"><path d="M11 7.8v16.4c0 1 1.1 1.6 1.9 1.1l12.6-8.2a1.3 1.3 0 0 0 0-2.2L12.9 6.7c-.8-.5-1.9.1-1.9 1.1Z" fill="currentColor" /></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab tab--improve">
+              <h3 class="h3 t improve__title">{T.improve}</h3>
+              <div class="improve__art" aria-hidden="true">
+                <img class="improve__tutor image" src={u('/home/pk/tutor-meilin.webp')} alt="" loading="lazy" />
+                <div class="improve__card">
+                  <div class="improve__row"><span class="improve__lbl">{T.sayLike}</span><span class="improve__pill">{T.tone3}</span></div>
+                  <div class="improve__zh">你好</div>
+                  <div class="improve__py">nǐ <b>hǎo</b></div>
+                  <div class="improve__bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                  <p class="improve__tip">{T.toneTip}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab tab--main">
+              <div class="main__about">
+                <h3 class="h3 t">{T.mainTitle}</h3>
+                <p class="p2 t">{T.mainBody}</p>
+              </div>
+              <div class="main__phones" aria-hidden="true">
+                <div class="main__chat"><div class="iphone"><div class="iphone__screen"><img class="image" src={u('/home/pk/screen-04.webp')} alt="" loading="lazy" /><div class="iphone__island"></div></div></div></div>
+                <div class="main__call"><div class="iphone"><div class="iphone__screen"><img class="image main__callimg" src={u('/home/pk/tutor-emily.webp')} alt="" loading="lazy" /><div class="iphone__island"></div></div></div></div>
+              </div>
+            </div>
+
+            <div class="tab tab--tone">
+              <div class="tone">
+                <h3 class="h3 t">{T.toneTitle}</h3>
+                <div class="tone__levels">
+                  {tones.map((t) => (
+                    <div class={`tone__level${t.main ? ' tone__level--main' : ''}`}>
+                      <img class="tone__img image" src={u(`/home/pk/tutor-${t.slug}.webp`)} alt="" loading="lazy" />
+                      <span class="tone__name">{t.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div class="tab tab--mistakes">
+              <div class="mis__bg"></div>
+              <div class="mis__content">
+                <h3 class="h3 t-inv">{T.misTitle}</h3>
+                <div class="mis__phone">
+                  <div class="mis__nav"><div class="mis__handle"></div></div>
+                  <div class="mis__user"><div class="mis__msg"><span class="mis__text">{T.misBefore}<u>{T.misWrong}</u>{T.misAfter}</span></div></div>
+                  <div class="mis__pt">
+                    <svg class="mis__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#34c759" /><path d="m7 12.3 3.2 3.2L17 8.7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    <div class="mis__ptc"><span class="mis__ptt">{T.betterSay}</span><span class="mis__ptcap">{T.misFixed}</span></div>
+                  </div>
+                  <div class="mis__pt">
+                    <svg class="mis__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#ff9500" /><text x="12" y="16.5" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="Inter,sans-serif">?</text></svg>
+                    <div class="mis__ptc"><span class="mis__ptt">{T.why}</span><span class="mis__ptcap">{T.misWhy}</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mis__fade"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= REVIEWS ================= -->
+      <div class="section" id="reviews">
+        <div class="center">
+          <div class="grid head">
+            <div class="head__content">
+              <span class="subheading">{T.revSub}</span>
+              <div class="award t">
+                <svg class="award__leaf" viewBox="0 0 80 158" aria-hidden="true"><use href="#laurel" /></svg>
+                <div class="award__body"><span class="h1 award-title">{T.revTitle}</span></div>
+                <svg class="award__leaf award__leaf--r" viewBox="0 0 80 158" aria-hidden="true"><use href="#laurel" /></svg>
+              </div>
+            </div>
+          </div>
+          <div class="grid rgrid">
+            {reviews.map((r) => (
+              <div class="rcol">
+                <div class="review">
+                  <span class="h5 t">{r.title}</span>
+                  <div class="review__data">
+                    <div class="review__stars" aria-label={T.stars}>
+                      {[0, 1, 2, 3, 4].map(() => <svg viewBox="0 0 24 24"><use href="#star" /></svg>)}
+                    </div>
+                    <div class="review__col"><span class="p2 review__about">{r.meta}</span></div>
+                  </div>
+                  {r.body && <span class="p2 t review__content">{r.body}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= COMPARE ================= -->
+      <div class="section" id="pricing">
+        <div class="center">
+          <div class="grid head">
+            <div class="head__content">
+              <h2 class="h1 t">{T.cmpTitle}</h2>
+            </div>
+          </div>
+          <div class="cmp-slider">
+            <div class="grid cmp">
+              <div class="cmp__item cmp__item--first">
+                <div class="purple-blur" aria-hidden="true"></div>
+                <h3 class="h3 t-inv cmp__title">Bliss</h3>
+                <div class="cmp__price"><span class="cmp__main">24/7</span><span class="p2 t-inv cmp__dur">{T.cmpAny}</span></div>
+                <div class="cmp__list">
+                  {pros.map(([a, b, d]) => (
+                    <div class="cmp__li cmp__li--pos">
+                      <div class="cmp__icon"><svg viewBox="0 0 24 24"><path d={d} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
+                      <div class="cmp__text"><span class="h5 cmp__lt">{a}</span><span class="p3 cmp__lc">{b}</span></div>
+                    </div>
+                  ))}
+                </div>
+                <div data-placement="home-compare">
+                  <a class="button button--ghost button--wide" href={storeLink(STORE, 'home-compare')}>{T.cta}</a>
+                </div>
+              </div>
+              <div class="cmp__item cmp__item--second">
+                <h3 class="h3 t cmp__title">{T.human}</h3>
+                <div class="cmp__price"><span class="cmp__main cmp__main--red">{T.humanPrice}</span><span class="p2 t cmp__dur">{T.perHour}</span></div>
+                <div class="cmp__list">
+                  {cons.map(([a, b]) => (
+                    <div class="cmp__li cmp__li--neg">
+                      <div class="cmp__icon"><svg viewBox="0 0 24 24"><path d="m7.5 7.5 9 9m0-9-9 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg></div>
+                      <div class="cmp__text"><span class="h5 t cmp__lt">{a}</span><span class="p3 cmp__lc">{b}</span></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="foot">
+      <div class="center">
+        <div class="section foot__main">
+          <div class="noise foot__bg" aria-hidden="true"><div class="noise__bg"></div><div class="noise__grain"></div></div>
+          <img class="foot__logo image" src={u('/home/pk/bliss-icon.webp')} alt="Bliss" width="160" height="160" />
+          <h2 class="h1 t foot__title">{T.footTitle[0]}<br />{T.footTitle[1]}</h2>
+          <div class="foot__dl" data-placement="home-final">
+            <a class="dl" href={storeLink(STORE, 'home-final')}>
+              <div class="dl__img"><svg viewBox="0 0 384 512"><use href="#apple" /></svg></div>
+              <div class="dl__about"><span class="dl__cap">{T.dlCap}</span><span class="dl__name">App Store</span></div>
+            </a>
+            <a class="dl" href={START}>
+              <div class="dl__img"><svg viewBox="0 0 24 24"><use href="#globe" /></svg></div>
+              <div class="dl__about"><span class="dl__cap">{T.webCap}</span><span class="dl__name">{T.webName}</span></div>
+            </a>
+          </div>
+        </div>
+        <div class="grid">
+          <nav class="foot__menu menu" aria-label="Footer">
+            {menu.map((m) => <a class="menu__item" href={m.href}>{m.label}</a>)}
+          </nav>
+        </div>
+        <div class="grid">
+          <div class="foot__bottom">
+            <div class="foot__left">
+              <span class="p3 foot__copy">{T.copy}</span>
+              <div class="foot__links">
+                <a class="p3 foot__link" href={u('/terms/')} rel="nofollow">{T.terms}</a>
+                <a class="p3 foot__link" href={u('/privacy/')} rel="nofollow">{T.privacy}</a>
+              </div>
+            </div>
+            <div class="foot__socials" data-placement="home-footer">
+              <a class="foot__social" href={storeLink(STORE, 'home-footer')} aria-label={T.storeAria}><svg viewBox="0 0 384 512"><use href="#apple" /></svg></a>
+              <a class="foot__social" href="mailto:anthony@blisscoach.app" aria-label={T.mailAria}><svg viewBox="0 0 24 24"><path d="M3.5 6.5h17v11h-17z M3.8 7l8.2 6 8.2-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- QR, fixed bottom-right on desktop -->
+    <div class="qr" aria-hidden="true">
+      <div class="qr__layout">
+        <a class="qr__block" href={storeLink(STORE, 'home-qr')} data-placement="home-qr" tabindex="-1">
+          <img class="qr__code" src={u('/home/pk/qr.svg')} alt="" width="96" height="96" />
+          <span class="qr__cap">{T.qr}</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- icon sprite -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fbe6a2" /><stop offset=".5" stop-color="#e9bf5c" /><stop offset="1" stop-color="#b8862b" />
+        </linearGradient>
+        <symbol id="laurel" viewBox="0 0 80 158">
+          <path d="M62 152C30 136 12 104 14 60 15 42 20 24 30 6" fill="none" stroke="url(#gold)" stroke-width="3.2" stroke-linecap="round" />
+          <g fill="url(#gold)">
+            <ellipse cx="0" cy="0" rx="6" ry="15" transform="translate(40 14) rotate(38)" />
+            <ellipse cx="0" cy="0" rx="6" ry="15" transform="translate(16 18) rotate(-22)" />
+            <ellipse cx="0" cy="0" rx="6.5" ry="16" transform="translate(33 42) rotate(52)" />
+            <ellipse cx="0" cy="0" rx="6.5" ry="16" transform="translate(7 46) rotate(-12)" />
+            <ellipse cx="0" cy="0" rx="7" ry="17" transform="translate(31 72) rotate(62)" />
+            <ellipse cx="0" cy="0" rx="7" ry="17" transform="translate(5 78) rotate(-4)" />
+            <ellipse cx="0" cy="0" rx="7" ry="17" transform="translate(36 101) rotate(72)" />
+            <ellipse cx="0" cy="0" rx="7" ry="17" transform="translate(12 110) rotate(12)" />
+            <ellipse cx="0" cy="0" rx="6.5" ry="16" transform="translate(48 126) rotate(84)" />
+            <ellipse cx="0" cy="0" rx="6.5" ry="16" transform="translate(28 136) rotate(30)" />
+          </g>
+        </symbol>
+        <symbol id="apple" viewBox="0 0 384 512"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></symbol>
+        <symbol id="globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9.5" /><path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5Z" /></g></symbol>
+        <symbol id="mic" viewBox="0 0 24 24"><path fill="currentColor" d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 1 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5Zm6.2-3.6a.9.9 0 1 0-1.8 0 4.4 4.4 0 0 1-8.8 0 .9.9 0 1 0-1.8 0 6.2 6.2 0 0 0 5.3 6.1V20H9.3a.9.9 0 1 0 0 1.8h5.4a.9.9 0 1 0 0-1.8h-1.8v-3a6.2 6.2 0 0 0 5.3-6.1Z" /></symbol>
+        <symbol id="phone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1Z" /></symbol>
+        <symbol id="star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.8 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" /></symbol>
+      </defs>
+    </svg>
+
+    <style>
+      /* ---------- header ---------- */
+      .hdr { position: sticky; top: 0; left: 0; z-index: 30; padding: var(--s-md); pointer-events: none; }
+      .hdr::before {
+        content: ''; position: absolute; left: 0; top: 0; width: 100%; height: calc(100% - var(--s-md)); z-index: -1;
+        background: linear-gradient(180deg, rgba(255, 255, 255, .9) 0, rgba(255, 255, 255, 0) 100%);
+      }
+      @media (max-width: 1024px) { .hdr { padding: var(--s-md) var(--s-xl); } }
+      @media (max-width: 480px) { .hdr { padding: 0; position: relative; } }
+      .hdr__box { border-radius: 3.8rem; margin: 0 auto; max-width: 136rem; pointer-events: auto; position: relative; width: 100%; }
+      .hdr__box::before {
+        content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1; background: #fff; opacity: 0;
+        box-shadow: 0 .1rem .3rem rgba(13, 13, 13, .05), 0 .4rem 1.2rem -.4rem rgba(13, 13, 13, .1);
+        transition: opacity .2s ease;
+      }
+      .hdr__box.is-shadow::before { opacity: 1; }
+      .hdr__head { align-items: center; display: flex; justify-content: space-between; padding: var(--s-sm) var(--s-md); }
+      @media (max-width: 1024px) { .hdr__head { padding: var(--s-md) var(--s-xl); } }
+      @media (max-width: 480px) { .hdr__head { padding: var(--s-lg); padding-left: var(--s-xl); } }
+      .hdr__logo {
+        align-items: center; display: inline-flex; gap: .8rem; height: 4.8rem; text-decoration: none;
+        color: var(--black); font-family: var(--font-heading); font-weight: 700; font-size: 3.2rem; letter-spacing: -.03em;
+      }
+      @media (max-width: 1024px) { .hdr__logo { height: 4.4rem; font-size: 3rem; } }
+      .hdr__ctl { align-items: center; column-gap: var(--s-lg); display: flex; }
+      .menu { display: flex; justify-content: center; }
+      .menu__item {
+        align-items: center; color: var(--black); display: inline-flex; font-family: var(--font-heading);
+        font-size: 1.6rem; font-weight: 500; padding: var(--s-xs) var(--s-sm); text-decoration: none; transition: color .2s ease;
+      }
+      .menu__item:hover { color: var(--g-600); }
+      .burger { display: none; align-items: center; justify-content: center; width: 5.2rem; height: 5.2rem; border-radius: 50%; cursor: pointer; }
+      .burger svg { width: 2.4rem; height: 2.4rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; overflow: visible; }
+      .burger .l1, .burger .l3 { transform-origin: center; transform-box: fill-box; transition: transform .2s ease; }
+      .burger .l2 { transition: opacity .2s ease, transform .2s ease; }
+      .burger.is-open .l1 { transform: translateY(.5rem) rotate(45deg); }
+      .burger.is-open .l2 { opacity: 0; transform: translateX(100%); }
+      .burger.is-open .l3 { transform: translateY(-.5rem) rotate(-45deg); }
+      .hdr__drop { padding: var(--s-md) var(--s-2xl) var(--s-2xl); }
+      .hdr__drop[hidden] { display: none; }
+      .hdr__dropmenu { display: flex; flex-direction: column; margin-bottom: var(--s-xl); }
+      .hdr__dropitem { font-family: var(--font-heading); font-size: 2rem; font-weight: 500; padding: 1.2rem 0; text-decoration: none; border-bottom: 1px solid var(--g-100); }
+      .hdr__box.is-open::before { opacity: 1; }
+      @media (max-width: 1024px) { .hdr .menu { display: none; } .burger { display: flex; } }
+      @media (max-width: 480px) { .hdr__cta { display: none; } }
+      .lang { position: relative; }
+      .lang__btn { width: 4rem; height: 4rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color .2s ease; }
+      .lang__btn:hover { background: var(--g-100); }
+      .lang__flag { display: block; width: 2.8rem; height: 2.8rem; border-radius: 50%; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); flex-shrink: 0; }
+      .lang__flag :global(svg) { display: block; width: 100%; height: 100%; transform: scale(1.5); }
+      .lang__menu {
+        position: absolute; right: 0; top: calc(100% + .8rem); min-width: 18rem; background: #fff; border-radius: var(--r-md); padding: .6rem;
+        box-shadow: 0 .1rem .3rem rgba(13, 13, 13, .05), 0 1.2rem 3.2rem -.8rem rgba(13, 13, 13, .2); z-index: 40;
+      }
+      .lang__menu[hidden] { display: none; }
+      .lang__opt { display: flex; align-items: center; gap: 1.2rem; padding: 1rem 1.2rem; border-radius: var(--r-sm); text-decoration: none; font: 500 1.6rem/1 var(--font-heading); transition: background-color .12s ease; }
+      .lang__opt:hover { background: var(--g-50); }
+      .lang__opt.is-on { color: var(--brand-600); }
+      .hdr__droplangs { display: flex; gap: 1.6rem; margin-top: var(--s-lg); font: 500 1.6rem/1 var(--font-heading); }
+      .hdr__droplangs a { text-decoration: none; color: var(--g-600); }
+      .hdr__droplangs a.is-on { color: var(--black); }
+      @media (max-width: 1024px) { .lang { display: none; } }
+
+      /* ---------- hero ---------- */
+      @media (max-width: 480px) { .hero-layout { padding: 0; } }
+      .hero-main { padding-top: 3%; position: relative; z-index: 1; }
+      @media (max-width: 1024px) { .hero-main { padding-top: 0; } }
+      .hero {
+        background: var(--grad); border-radius: var(--r-2xl); display: flex; grid-column: 1 / 13; position: relative;
+      }
+      @media (max-width: 1024px) { .hero { flex-direction: column; grid-column: 1 / 9; } }
+      @media (max-width: 480px) { .hero { grid-column: 1 / 3; } }
+      .hero__shadowbox { border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; clip-path: inset(0 round var(--r-2xl)); isolation: isolate; }
+      .hero__shadow {
+        background: #1c1c1c; border-radius: 50%; bottom: -40%; filter: blur(8rem); height: 100%;
+        mix-blend-mode: darken; opacity: .1; position: absolute; right: 0; width: 50%;
+      }
+      @media (max-width: 1024px) { .hero__shadow { width: 100%; } }
+      .hero__content {
+        display: flex; flex-direction: column; gap: var(--s-3xl); justify-content: space-between;
+        padding: var(--s-4xl); position: relative; flex: 1 1 auto;
+      }
+      @media (max-width: 1024px) {
+        .hero__content { align-items: center; gap: var(--s-4xl); padding: var(--s-3xl); padding-bottom: var(--s-6xl); text-align: center; }
+      }
+      @media (max-width: 480px) { .hero__content { padding: var(--s-3xl) var(--s-xl); } }
+      .hero__head { display: flex; flex-direction: column; row-gap: var(--s-2xl); }
+      .hero__bloom { display: flex; margin-bottom: calc(var(--s-md) * -1); }
+      @media (max-width: 1024px) { .hero__bloom { justify-content: center; } }
+      @media (max-width: 1024px) { .hero__head { row-gap: var(--s-4xl); } }
+      @media (max-width: 480px) { .hero__head { row-gap: var(--s-2xl); } }
+      .hero__awards { align-items: center; column-gap: var(--s-3xl); display: inline-flex; flex-wrap: wrap; row-gap: var(--s-md); }
+      @media (max-width: 1024px) { .hero__awards { column-gap: var(--s-2xl); justify-content: center; } }
+      @media (max-width: 480px) { .hero__awards { column-gap: var(--s-lg); } }
+      .hero__award { column-gap: 0; width: 20.4rem; }
+      @media (max-width: 1024px) { .hero__award { width: 17.8rem; } }
+      @media (max-width: 480px) { .hero__award { width: 16rem; } }
+      .hero__download { align-items: center; display: inline-flex; flex-wrap: wrap; gap: var(--s-md); }
+      @media (max-width: 1024px) { .hero__download { justify-content: center; } }
+      .hero__side { align-items: flex-end; display: flex; flex-basis: 40%; flex-shrink: 0; padding-right: 10%; position: relative; }
+      @media (max-width: 1024px) { .hero__side { flex-basis: auto; justify-content: center; padding-right: 0; } }
+      .hero__sidec { margin-top: -10%; position: relative; width: 100%; }
+      @media (max-width: 1024px) { .hero__sidec { height: 56rem; margin-top: 0; width: auto; aspect-ratio: 342 / 616; } }
+      @media (max-width: 480px) { .hero__sidec { height: 40rem; } }
+      .hero__phone { height: 100%; position: relative; }
+
+      /* hero phone: top of an iPhone, cut flush by the card's bottom edge */
+      .hphone {
+        position: relative; width: 100%; aspect-ratio: 342 / 616; padding: .7rem .7rem 0;
+        border-radius: 5.6rem 5.6rem 0 0; background: linear-gradient(135deg, #fafafb, #cfced5 28%, #f2f1f4 55%, #bdbcc3);
+        box-shadow: inset 0 0 0 .1rem rgba(0, 0, 0, .12);
+        filter: drop-shadow(-.8rem -.5rem 3.6rem rgba(0, 0, 0, .12));
+      }
+      @media (max-width: 1024px) { .hphone { height: 100%; width: auto; } }
+      .hphone__screen { position: relative; height: 100%; border-radius: 4.3rem 4.3rem 0 0; overflow: hidden; background: #2a1a22; border: .8rem solid #0c0c0d; border-bottom: 0; }
+      .hphone__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+      .hphone__bar {
+        position: absolute; top: 1.6rem; left: 0; right: 0; padding: 0 2.6rem; display: flex; justify-content: space-between;
+        font: 600 1.4rem/1 var(--font-main); color: #fff; z-index: 4;
+      }
+      .hphone__icons { width: 6.8rem; height: 1.2rem; }
+      .hphone__name {
+        position: absolute; top: 5.4rem; left: 2.2rem; z-index: 2; display: flex; align-items: center; gap: .5rem;
+        font: 600 1.5rem/1 var(--font-main); color: #fff; text-shadow: 0 1px 6px rgba(0, 0, 0, .25);
+      }
+      .hphone__name svg { width: 1rem; }
+      .hphone__island { position: absolute; top: 1.3rem; left: 50%; transform: translateX(-50%); width: 30%; height: 2.7rem; background: #000; border-radius: 99px; z-index: 3; }
+
+      .hero__mic {
+        align-items: flex-end; bottom: 0; display: flex; height: 100%; justify-content: center; left: -25%;
+        overflow: hidden; padding: var(--s-sm); position: absolute; width: 150%;
+      }
+      .hero__micbtn { align-items: center; background: #fff; border-radius: 50%; display: flex; height: 10rem; justify-content: center; position: relative; width: 10rem; }
+      @media (max-width: 480px) { .hero__micbtn { height: 6.7rem; width: 6.7rem; } }
+      .hero__wave {
+        animation: pulse 4s ease-in-out infinite; border: 1px solid #535353; border-radius: 50%;
+        height: 100%; left: 0; mix-blend-mode: plus-lighter; position: absolute; top: 0; width: 100%;
+      }
+      .hero__wave:nth-child(2) { animation-delay: .8s; }
+      .hero__wave:nth-child(3) { animation-delay: 1.6s; }
+      .hero__wave:nth-child(4) { animation-delay: 2.4s; }
+      @keyframes pulse { 0% { opacity: .7; transform: scale(1); } to { opacity: 0; transform: scale(4); } }
+      .hero__micicon { color: var(--b2); width: 4.7rem; position: relative; }
+      @media (max-width: 480px) { .hero__micicon { width: 3.2rem; } }
+      .hero__chat { border: 1px solid rgba(255, 255, 255, .3); border-radius: 2.4rem; padding: var(--s-md) var(--s-lg); position: absolute; text-align: left; }
+      @media (max-width: 480px) { .hero__chat { border-radius: 1.8rem; } }
+      .hero__chat::before {
+        content: ''; background: inherit; border-radius: inherit; filter: blur(.4rem); position: absolute; inset: 0; z-index: -1;
+      }
+      .hero__chat--user { background: rgba(255, 232, 240, .85); color: var(--black); right: -24%; top: 53%; transform: rotate(4deg); width: 26rem; z-index: 3; }
+      .hero__chat--tutor { background: rgba(219, 39, 119, .72); color: #fff; left: -18%; top: 69%; transform: rotate(-3deg); width: 32rem; z-index: 4; }
+      @media (max-width: 480px) {
+        .hero__chat--user { top: 55%; width: 18rem; right: -18%; }
+        .hero__chat--tutor { width: 22rem; left: -14%; }
+      }
+      .hero__chattext { font-size: 2.4rem; font-weight: 700; line-height: 1.2; }
+      @media (max-width: 480px) { .hero__chattext { font-size: 1.6rem; } }
+      .hero__chattext b { background: #ff1f1b; border-radius: 1.2rem; color: #fff; padding: .2rem 1rem; }
+      .hero__chattext i { background: #00a806; border-radius: 1.2rem; color: #fff; font-style: normal; padding: .2rem 1rem; }
+
+      /* ---------- languages strip (logos row on the reference) ---------- */
+      .langs {
+        height: 12.8rem; display: flex; align-items: center; overflow: hidden;
+        mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      }
+      .langs__track { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+      .langs:hover .langs__track { animation-play-state: paused; }
+      .langs__scroller { display: flex; align-items: center; column-gap: var(--s-6xl); padding-right: var(--s-6xl); }
+      .langs__item { font-family: var(--font-heading); font-weight: 700; font-size: 3.2rem; letter-spacing: -.02em; color: var(--g-900); white-space: nowrap; }
+      @media (max-width: 480px) { .langs { height: 9.6rem; } .langs__item { font-size: 2.4rem; } }
+      @keyframes marquee { to { transform: translateX(-50%); } }
+
+      /* ---------- features ---------- */
+      .fslider { grid-column: 2 / 7; padding: calc(25vh - 5.4rem - var(--s-md) / 2) 0; }
+      .fslide { display: flex; flex-direction: column; height: 50vh; justify-content: center; opacity: .5; transition: opacity .2s ease; }
+      .fslide.is-active { opacity: 1; }
+      .fslide__sub { color: var(--g-800); font-family: var(--font-heading); font-size: 1.6rem; font-weight: 500; letter-spacing: .04em; line-height: 1.2; margin-bottom: var(--s-xs); }
+      .fslide__title { margin-bottom: var(--s-xl); }
+      .fnav, .fprog { display: none; }
+      /* mobile: exactly three lines — "The quality of a / private tutor. / The ease of an app" */
+      @media (max-width: 480px) {
+        .feat-title { font-size: min(3.6rem, var(--ftw, 9.4vw)); }
+        .feat-title span { display: block; white-space: nowrap; }
+        .feat-br { display: none; }
+      }
+      .fbar { align-items: center; display: flex; grid-column: 8 / 12; height: calc(100vh - 10.8rem - var(--s-md)); position: sticky; top: 10.8rem; }
+      .fphone { position: relative; width: 100%; max-height: 100%; aspect-ratio: 716 / 1445; margin: 0 auto; }
+      .fphone .iphone { height: 100%; width: auto; max-width: 100%; margin: 0 auto; }
+      .fphone__content {
+        height: 100%; left: 0; opacity: 0; position: absolute; top: 0; width: 100%; object-fit: cover; object-position: top;
+        transform: translateZ(0); transition: opacity .4s cubic-bezier(.1, 0, .25, 1);
+      }
+      .fphone__content.is-active { opacity: 1; }
+      .fphone__over { position: absolute; inset: 0; pointer-events: none; }
+      .fover {
+        position: absolute; opacity: 0; transform: translateZ(0) scale(.8);
+        transition: opacity .4s cubic-bezier(.1, 0, .25, 1), transform .2s cubic-bezier(.1, 0, .25, 1);
+      }
+      .fover.is-active { opacity: 1; transform: translateZ(0) scale(1); }
+      .fover--1 {
+        left: -20%; top: 19%; width: 140%; display: flex; align-items: center; gap: 1.6rem; background: #fff;
+        border-radius: 2rem; padding: 1.6rem 2rem; box-shadow: 0 1.2rem 3.2rem -.8rem rgba(13, 13, 13, .18);
+        font: 500 1.8rem/1.3 var(--font-main);
+      }
+      .fover__lvl {
+        font: 900 4rem/1 var(--font-heading); letter-spacing: -.03em;
+        background: linear-gradient(180deg, #FF6B35, #DB2777 60%, #6366F1); -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .fover--3 {
+        left: 15%; top: 53%; width: 100%; display: flex; flex-direction: column; gap: .8rem; padding: 2rem 2.2rem;
+        background: #fff0f6; border: 3px solid #fff; border-radius: 2.4rem; box-shadow: 0 1.2rem 3.2rem -.8rem rgba(13, 13, 13, .18);
+      }
+      .fover__say { color: var(--brand-600); font: 700 1.8rem/1.2 var(--font-main); }
+      .fover__en { color: var(--brand-700); font: 500 1.8rem/1.35 var(--font-main); padding-bottom: 1rem; border-bottom: 1px dashed #f5b3cf; }
+      .fover__es { color: #e0569a; font: 500 1.8rem/1.35 var(--font-main); }
+      .fover--5 {
+        bottom: 6%; left: -10%; width: 120%; height: 6.4rem; display: flex; align-items: center; justify-content: center; gap: 1rem;
+        background: var(--grad-btn); color: #fff; border-radius: 99px; font: 700 2.2rem/1 var(--font-main);
+        box-shadow: 0 1.2rem 3.2rem -.8rem rgba(219, 39, 119, .5);
+      }
+      .fover--5 svg { width: 2.4rem; height: 2.4rem; }
+      /* correction screen (step 4), drawn in HTML */
+      .fscreen { background: #fff; display: flex; flex-direction: column; font-family: var(--font-main); }
+      .fscreen__top { display: flex; justify-content: space-between; align-items: center; padding: 17% 7% 4%; font-size: 1.5rem; color: var(--g-600); }
+      .fscreen__status { position: absolute; top: 3.2%; left: 11%; font: 600 1.4rem/1 var(--font-main); }
+      .fscreen__top b { color: var(--black); font-weight: 600; }
+      .fscreen__cam { margin: 0 4%; border-radius: 1.8rem; overflow: hidden; aspect-ratio: 4 / 3; background: #f3e6ec; }
+      .fscreen__cam video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+      .fscreen__sheet { flex: 1; margin-top: 5%; padding: 6% 6%; border-radius: 2rem 2rem 0 0; box-shadow: 0 -.6rem 2rem rgba(13, 13, 13, .06); display: flex; flex-direction: column; gap: 2rem; }
+      .fscreen__msg { align-self: flex-end; max-width: 88%; background: var(--grad-btn); color: #fff; border-radius: 1.6rem 1.6rem .4rem 1.6rem; padding: 1.2rem 1.4rem; font-size: 1.5rem; line-height: 1.4; font-weight: 500; }
+      .fscreen__msg u { text-decoration-color: #fff; text-decoration-style: wavy; text-underline-offset: 3px; }
+      .fscreen__pt { display: flex; gap: .8rem; align-items: flex-start; }
+      .fscreen__pt b { display: block; font-size: 1.8rem; margin-bottom: .5rem; }
+      .fscreen__pt p { font-size: 1.45rem; line-height: 1.45; color: var(--g-800); }
+      .ico { flex-shrink: 0; width: 2.2rem; height: 2.2rem; border-radius: 50%; color: #fff; font: 700 1.3rem/2.2rem var(--font-main); text-align: center; }
+      .ico--ok { background: #34c759; } .ico--why { background: #ff9500; }
+
+      @media (max-width: 1024px) {
+        .fbar { position: static; order: -1; grid-column: 1 / -1; height: auto; flex-direction: column; gap: var(--s-2xl); }
+        .fphone { width: min(28rem, 66%); }
+        .fprog { display: flex; gap: .8rem; width: min(28rem, 66%); }
+        .fprog span { flex: 1; height: .4rem; border-radius: 99px; background: var(--g-100); overflow: hidden; }
+        .fprog i { display: block; height: 100%; width: 0; background: var(--brand-600); border-radius: inherit; }
+        .fprog span.is-done i { width: 100%; }
+        .fprog span.is-active i { animation: fprog 6s linear forwards; }
+        .fprog.is-paused span.is-active i { animation: none; width: 100%; }
+        .fslider { grid-column: 1 / -1; padding: 0; display: grid; justify-items: center; }
+        .fslide { grid-area: 1 / 1; height: auto; opacity: 0; pointer-events: none; text-align: center; transition: opacity .4s cubic-bezier(.1, 0, .25, 1); max-width: 56rem; }
+        .fslide.is-active { opacity: 1; pointer-events: auto; }
+        .fslide__sub { display: none; }
+        .fslide__title { margin-bottom: var(--s-md); }
+        .fnav { display: flex; gap: var(--s-sm); grid-area: 2 / 1; margin-top: var(--s-2xl); }
+        .fnav__btn { width: 5.2rem; height: 5.2rem; border-radius: 50%; background: var(--g-100); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color .2s ease; }
+        .fnav__btn:hover { background: var(--g-200); }
+        .fnav__btn svg { width: 2.4rem; height: 2.4rem; fill: none; stroke: var(--black); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      }
+      @keyframes fprog { to { width: 100%; } }
+      @media (max-width: 480px) { .fslider { grid-column: 1 / 3; } }
+
+      /* ---------- tutors ---------- */
+      .tutors-layout { margin-bottom: var(--s-5xl); }
+      .tutors-head .head__content { grid-column: 4 / 10; }
+      @media (max-width: 1024px) { .tutors-head .head__content { grid-column: 2 / 8; } }
+      @media (max-width: 480px) { .tutors-head .head__content { grid-column: 1 / 3; } }
+      .tutors-title { margin-bottom: calc(var(--s-xl) - var(--s-md)); }
+      .tutors-sub { color: var(--g-800); }
+      .tslider { align-items: center; column-gap: var(--s-md); display: flex; grid-column: 1 / 13; height: 59.2rem; }
+      @media (max-width: 1024px) { .tslider { column-gap: var(--s-sm); grid-column: 1 / 9; } }
+      .tcard {
+        background: #fff; border-radius: var(--r-lg); flex: 1 1 0; position: relative; cursor: pointer; min-width: 0;
+        transition: flex-basis .2s ease-out, flex-grow .2s ease-out, height .2s ease-out, border-radius .2s ease-out;
+      }
+      .tcard.idx0 { border-radius: var(--r-xl); flex: 0 0 30rem; height: 59.2rem; cursor: default; }
+      @media (max-width: 1024px) { .tcard.idx0 { flex-basis: 26rem; } }
+      .tcard.idx1 { height: 44rem; }
+      .tcard.idx2 { height: 40rem; }
+      .tcard.idx3 { height: 37.6rem; }
+      .tcard.idx4 { height: 34.8rem; }
+      .tcard__inner { border-radius: inherit; height: 100%; overflow: hidden; width: 100%; position: relative; }
+      .tcard__photo { height: 100%; left: 0; object-fit: cover; object-position: 50% 20%; position: absolute; top: 0; width: 100%; }
+      .tcard__glow {
+        bottom: 0; height: 24%; left: 0; opacity: 0; pointer-events: none; position: absolute; width: 100%;
+        background: radial-gradient(60% 100% at 50% 100%, rgba(255, 107, 53, .9), rgba(219, 39, 119, .4) 55%, transparent 80%);
+        transform: translateY(1.6rem); transition: opacity .35s ease, transform .35s ease;
+      }
+      .tcard.is-active .tcard__glow { opacity: 1; transform: translateY(0); transition: opacity .35s ease .2s, transform .35s ease .2s; }
+      .tcard__content {
+        background: linear-gradient(180deg, transparent 0 33%, rgba(0, 0, 0, .7)); display: flex; flex-direction: column;
+        height: 100%; justify-content: flex-end; left: 0; opacity: 0; overflow: hidden; padding: var(--s-xl);
+        position: absolute; row-gap: var(--s-xl); top: 0; width: 100%; pointer-events: none;
+      }
+      .tcard.is-active .tcard__content { opacity: 1; transition: opacity .175s ease-in .2s; pointer-events: auto; }
+      .tcard__speech { color: #fff; font-family: var(--font-heading); font-size: 3.2rem; font-weight: 700; line-height: 1.06; min-width: 24rem; }
+      .tdots { display: none; }
+      @media (max-width: 768px) {
+        .tslider {
+          grid-column: 1 / -1; height: auto; column-gap: var(--s-md); overflow-x: auto; scroll-snap-type: x mandatory;
+          margin: 0 -3.2rem; padding: 0 calc(50% - 15rem); scrollbar-width: none;
+        }
+        .tslider::-webkit-scrollbar { display: none; }
+        .tcard, .tcard.idx0, .tcard.idx1, .tcard.idx2, .tcard.idx3, .tcard.idx4 {
+          flex: 0 0 30rem; height: 52rem; border-radius: var(--r-xl); scroll-snap-align: center;
+          transform: scale(.85); transition: transform .2s ease;
+        }
+        .tcard.is-active { transform: scale(1); }
+        .tcard__speech { font-size: 2.6rem; min-width: 0; }
+        .tdots { display: flex; justify-content: center; gap: .8rem; grid-column: 1 / -1; }
+        .tdots span { width: .8rem; height: .8rem; border-radius: 50%; background: var(--g-100); transition: background-color .2s ease; }
+        .tdots span.is-active { background: var(--brand-600); }
+      }
+      @media (max-width: 480px) { .tslider { margin: 0 -2rem; } }
+
+      /* ---------- AI bento ---------- */
+      .ai { position: relative; }
+      .ai__bg { height: 120%; left: 0; top: -10%; width: 100%; z-index: -1; }
+      .tab { background: #fff; border-radius: var(--r-xl); height: 44rem; overflow: hidden; padding: var(--s-2xl); position: relative; }
+      @media (max-width: 480px) { .tab { height: 40rem; } }
+      .tab--video { grid-column: 2 / 6; }
+      .tab--improve { grid-column: 6 / 12; }
+      .tab--main { grid-column: 2 / 12; }
+      .tab--tone { grid-column: 2 / 8; }
+      .tab--mistakes { grid-column: 8 / 12; }
+      @media (max-width: 1024px) {
+        .tab--video { grid-column: 1 / 5; } .tab--improve { grid-column: 5 / 9; }
+        .tab--main { grid-column: 1 / 9; height: 36rem; }
+        .tab--tone { grid-column: 1 / 5; } .tab--mistakes { grid-column: 5 / 9; }
+      }
+      @media (max-width: 480px) {
+        .tab--video, .tab--improve, .tab--main, .tab--tone, .tab--mistakes { grid-column: 1 / 3; }
+        .tab--main, .tab--mistakes { height: auto; }
+      }
+      .vid__intro, .vid__intro::after { height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
+      .vid__intro::after { background: rgba(0, 0, 0, .15); content: ''; }
+      .vid__video { height: 100%; object-fit: cover; object-position: center 20%; width: 100%; }
+      .vid__content { display: flex; flex-direction: column; height: 100%; justify-content: space-between; position: relative; width: 100%; }
+      .vid__title { color: #fff; }
+      .vid__footer { display: flex; justify-content: flex-end; width: 100%; }
+      .vid__ctl {
+        align-items: center; background: rgba(255, 255, 255, .3); border-radius: 50%; color: #fff; cursor: pointer; display: flex;
+        height: 6.4rem; justify-content: center; width: 6.4rem; margin: 0 calc(var(--s-sm) * -1) calc(var(--s-sm) * -1) 0;
+        transition: background-color .2s ease; backdrop-filter: blur(1rem); -webkit-backdrop-filter: blur(1rem);
+      }
+      .vid__ctl:hover { background: rgba(255, 255, 255, .4); }
+      .vid__ctl:active { background: rgba(255, 255, 255, .5); }
+      .vid__ico { height: 3.2rem; width: auto; }
+      .vid__ico--play, .vid__ctl.is-paused .vid__ico--pause { display: none; }
+      .vid__ctl.is-paused .vid__ico--play { display: block; }
+
+      .improve__title { display: block; max-width: 30rem; position: relative; z-index: 2; }
+      @media (max-width: 1024px) { .improve__title { max-width: 24rem; } }
+      .improve__art { position: absolute; inset: auto 0 0 0; height: 78%; z-index: 1; }
+      .improve__tutor {
+        position: absolute; bottom: 0; left: 4%; height: 100%; width: 46%; object-fit: cover; object-position: 50% 12%;
+        mask-image: linear-gradient(180deg, #000 70%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent);
+        border-radius: 2.4rem 2.4rem 0 0;
+      }
+      .improve__card {
+        position: absolute; right: 6%; bottom: 8%; width: 48%; background: #fff; border-radius: 2.4rem; padding: 2rem 2.2rem;
+        box-shadow: 0 1.6rem 4rem -1.2rem rgba(13, 13, 13, .22); font-family: var(--font-main);
+      }
+      .improve__row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+      .improve__lbl { font-weight: 700; font-size: 1.5rem; }
+      .improve__pill { background: #ebf9ee; color: #207b37; font-weight: 700; font-size: 1.2rem; padding: .4rem 1rem; border-radius: 99px; }
+      .improve__zh { font-size: 4.4rem; font-weight: 500; line-height: 1.1; }
+      .improve__py { font-size: 2.2rem; color: var(--brand-600); margin: .4rem 0 1.2rem; }
+      .improve__py b { background: var(--brand-100); border-radius: .8rem; padding: 0 .6rem; }
+      .improve__bars { display: flex; gap: .4rem; align-items: flex-end; height: 3.2rem; margin-bottom: 1.2rem; }
+      .improve__bars i { flex: 1; border-radius: 99px; background: linear-gradient(180deg, #FF6B35, #DB2777); animation: bar 1.6s ease-in-out infinite; }
+      .improve__bars i:nth-child(3n) { animation-delay: .2s; } .improve__bars i:nth-child(3n+1) { animation-delay: .5s; } .improve__bars i:nth-child(4n) { animation-delay: .8s; }
+      @keyframes bar { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+      .improve__tip { font-size: 1.3rem; line-height: 1.4; color: var(--g-800); }
+      @media (max-width: 480px) { .improve__card { width: 58%; right: 4%; } .improve__zh { font-size: 3.2rem; } }
+
+      .main__about { display: flex; flex-direction: column; height: 100%; justify-content: space-between; position: relative; width: 40%; z-index: 2; }
+      @media (max-width: 1024px) { .main__about { width: 38%; } }
+      @media (max-width: 480px) { .main__about { height: auto; justify-content: flex-start; row-gap: var(--s-md); width: 100%; } }
+      .main__phones { inset: 0; position: absolute; z-index: 1; }
+      @media (max-width: 480px) { .main__phones { height: 36rem; inset: auto; margin: var(--s-lg) calc(var(--s-2xl) * -1) calc(var(--s-2xl) * -1); position: relative; } }
+      .main__chat, .main__call { position: absolute; }
+      .main__chat .iphone, .main__call .iphone { filter: none; }
+      .main__chat {
+        height: 93%; right: 28%; top: 13%; aspect-ratio: 716 / 1445;
+        mask-image: linear-gradient(180deg, #000 73%, transparent 94%); -webkit-mask-image: linear-gradient(180deg, #000 73%, transparent 94%);
+      }
+      .main__chat img, .main__call img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+      .main__call {
+        right: 0; top: 0; width: 25.6%;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, .12) 0, #000 42%); -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, .12) 0, #000 42%);
+      }
+      .main__callimg { object-position: 50% 20% !important; }
+      @media (max-width: 480px) {
+        .main__chat { height: auto; width: 44%; right: auto; left: 4%; top: auto; bottom: -12%; mask-image: none; -webkit-mask-image: none; }
+        .main__call { top: auto; bottom: -12%; right: 4%; width: 44%; }
+      }
+
+      .tone { display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
+      .tone__levels { align-items: center; display: flex; justify-content: center; }
+      @media (max-width: 1024px) { .tone__levels { margin: 0 calc(var(--s-md) * -1); } }
+      .tone__level {
+        align-items: center; background: var(--g-50); border-radius: 2.4rem; display: flex; flex-direction: column; flex-shrink: 0;
+        height: 22.4rem; justify-content: center; row-gap: var(--s-md); width: 14.8rem;
+      }
+      @media (max-width: 1024px) { .tone__level { height: 16.8rem; width: 11rem; } }
+      .tone__level--main {
+        background: #fff; box-shadow: 0 .9rem 2.6rem -.8rem rgba(13, 13, 13, .13); height: 26.4rem;
+        margin: 0 calc(var(--s-sm) * -1); width: 19.2rem; z-index: 2;
+      }
+      @media (max-width: 1024px) { .tone__level--main { height: 19.8rem; margin: 0 calc(var(--s-xl) * -1); width: 14.4rem; } }
+      @media (max-width: 480px) { .tone__level--main { margin: 0 calc(var(--s-2xl) * -1); } }
+      .tone__img { width: 56%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; object-position: 50% 18%; }
+      .tone__name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+      @media (max-width: 480px) { .tone__name { font-size: 1.2rem; } }
+
+      .mis__bg { background: var(--grad); inset: 0; position: absolute; }
+      .mis__content { display: flex; flex-direction: column; height: 100%; justify-content: space-between; position: relative; width: 100%; }
+      @media (max-width: 480px) { .mis__content { row-gap: var(--s-3xl); } }
+      .mis__phone { background: rgba(40, 8, 40, .22); backdrop-filter: blur(1rem); -webkit-backdrop-filter: blur(1rem);
+        mask-image: linear-gradient(180deg, #000 70%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); border-radius: 3rem 3rem 0 0; margin-bottom: calc(var(--s-2xl) * -1); padding: 0 1.2rem; width: 100%; }
+      .mis__nav { display: flex; height: 1.5rem; justify-content: center; padding: .3rem 0; }
+      .mis__handle { background: rgba(255, 255, 255, .4); border-radius: .3rem; height: .3rem; width: 3.3rem; }
+      .mis__user { display: flex; justify-content: flex-end; margin: var(--s-xs) 0 var(--s-lg); }
+      .mis__msg {
+        background: #fff; border-radius: 1.8rem 1.8rem .4rem 1.8rem; max-width: 82%; padding: 1rem 1.4rem;
+        box-shadow: 0 .6rem 1.6rem -.6rem rgba(40, 8, 40, .35);
+      }
+      .mis__text { color: var(--black); font-size: 1.4rem; font-weight: 500; line-height: 1.4; display: block; }
+      .mis__text u { text-decoration: none; background: linear-gradient(90deg, rgba(255, 45, 85, .14), rgba(255, 45, 85, .14)); border-radius: .4rem; padding: 0 .2rem; box-shadow: inset 0 -.2rem 0 #ff2d55; }
+      .mis__pt { align-items: flex-start; column-gap: var(--s-2xs); display: flex; margin-bottom: var(--s-xl); }
+      .mis__icon { flex-shrink: 0; margin-top: -.2rem; width: 2.4rem; }
+      .mis__ptc { display: flex; flex-direction: column; row-gap: var(--s-xs); }
+      .mis__ptt { color: #fff; font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+      .mis__ptcap { color: #fff; font-size: 1.2rem; font-weight: 500; line-height: 1.4; }
+      .mis__fade { display: none; }
+
+      /* ---------- reviews ---------- */
+      .award-title { text-align: center; }
+      @media (max-width: 480px) { .award-title { width: 22rem; } }
+      .rgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); position: relative; }
+      @media (max-width: 1024px) { .rgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 480px) { .rgrid { grid-template-columns: 1fr; } }
+      .rcol { display: flex; flex-direction: column; row-gap: var(--gutter); }
+      .review { background: var(--g-50); border-radius: var(--r-lg); display: flex; flex-direction: column; padding: var(--s-xl); row-gap: var(--s-md); }
+      .review__data { align-items: center; column-gap: var(--s-md); display: flex; justify-content: space-between; }
+      .review__col { flex: 1; min-width: 0; }
+      .review__stars { display: flex; flex-shrink: 0; color: var(--orange); }
+      .review__stars svg { height: 2.4rem; width: 2.4rem; }
+      .review__about { color: var(--g-800); display: block; overflow: hidden; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+
+      /* ---------- compare ---------- */
+      .cmp__item { border-radius: var(--r-lg); padding: var(--s-2xl); }
+      .cmp__item--first { background: var(--grad); grid-column: 2 / 7; overflow: hidden; position: relative; isolation: isolate; clip-path: inset(0 round var(--r-lg)); }
+      .cmp__item--second { border: 1px solid var(--g-200); grid-column: 7 / 12; }
+      @media (max-width: 1024px) { .cmp__item--first { grid-column: 1 / 5; } .cmp__item--second { grid-column: 5 / 9; } }
+      @media (max-width: 480px) {
+        .cmp-slider { margin: 0 -2rem; overflow-x: auto; padding: 0 2rem var(--s-lg); scrollbar-width: none; }
+        .cmp { display: flex; column-gap: var(--s-sm); }
+        .cmp__item { flex-shrink: 0; width: 32rem; }
+      }
+      .cmp__title { display: block; margin-bottom: var(--s-xs); position: relative; z-index: 1; }
+      .cmp__price { margin-bottom: var(--s-3xl); position: relative; z-index: 1; }
+      .cmp__main { color: #fff; font-family: var(--font-heading); font-size: 6rem; font-weight: 500; margin-right: var(--s-xs); }
+      .cmp__main--red { color: var(--red-600); }
+      .cmp__dur { font-weight: 500; }
+      .cmp__list { display: flex; flex-direction: column; position: relative; row-gap: var(--s-md); z-index: 1; }
+      .cmp__list:not(:last-child) { margin-bottom: var(--s-3xl); }
+      .cmp__li { align-items: flex-start; column-gap: var(--s-md); display: flex; }
+      .cmp__icon { align-items: center; color: #fff; display: flex; flex-shrink: 0; height: 4.8rem; justify-content: center; width: 4.8rem; }
+      .cmp__icon svg { height: 2.4rem; }
+      .cmp__li--pos .cmp__icon { background: rgba(255, 255, 255, .16); border-radius: var(--r-md); }
+      .cmp__li--neg .cmp__icon { background: var(--red-600); border-radius: 50%; }
+      .cmp__text { display: flex; flex-direction: column; padding-top: var(--s-2xs); row-gap: var(--s-3xs); }
+      .cmp__li--pos .cmp__lt { color: #fff; }
+      .cmp__lc { color: var(--g-800); font-weight: 500; }
+      .cmp__li--pos .cmp__lc { color: rgba(255, 255, 255, .7); }
+      .cmp__item--first > div[data-placement] { position: relative; z-index: 1; }
+
+      /* ---------- footer ---------- */
+      .foot { position: relative; }
+      .foot__main { align-items: center; display: flex; flex-direction: column; position: relative; }
+      .foot__bg { height: 120%; left: 0; top: -10%; width: 100%; z-index: -1; }
+      .foot__logo { filter: drop-shadow(1.2rem 1.6rem 1.6rem rgba(219, 39, 119, .35)); height: auto; margin-bottom: var(--s-6xl); width: 16rem; border-radius: 22.5%; }
+      .foot__logo.is-loaded { filter: drop-shadow(1.2rem 1.6rem 1.6rem rgba(219, 39, 119, .35)); }
+      @media (max-width: 480px) { .foot__logo { width: 12rem; } }
+      .foot__title { display: block; margin-bottom: var(--s-5xl); text-align: center; }
+      @media (max-width: 1024px) { .foot__title { margin-bottom: var(--s-4xl); } }
+      @media (max-width: 480px) { .foot__title { margin-bottom: var(--s-3xl); } }
+      .foot__dl { column-gap: var(--s-md); display: flex; flex-wrap: wrap; justify-content: center; row-gap: var(--s-md); }
+      .foot__menu { border-bottom: 1px solid var(--g-200); grid-column: 2 / 12; padding-bottom: var(--s-4xl); flex-wrap: wrap; }
+      @media (max-width: 1024px) { .foot__menu { grid-column: 1 / 9; justify-content: space-between; padding-bottom: var(--s-2xl); } }
+      @media (max-width: 480px) {
+        .foot__menu { grid-column: 1 / 3; display: block; column-count: 2; padding-bottom: var(--s-4xl); }
+        .foot__menu .menu__item { display: flex; padding: 0; margin-bottom: var(--s-lg); line-height: 2rem; }
+      }
+      .foot__bottom { align-items: center; display: flex; grid-column: 2 / 12; height: 14.8rem; justify-content: space-between; }
+      @media (max-width: 1024px) { .foot__bottom { grid-column: 1 / 9; height: 9.2rem; } }
+      @media (max-width: 480px) {
+        .foot__bottom { align-items: flex-start; flex-direction: column; grid-column: 1 / 3; height: auto; padding: var(--s-xl) 0 12rem; row-gap: var(--s-xl); }
+      }
+      .foot__left { display: flex; flex-direction: column; }
+      .foot__copy { color: var(--g-800); }
+      .foot__links { display: inline-flex; margin-left: calc(var(--s-xs) * -1); }
+      .foot__link { font-weight: 500; padding: var(--s-xs); text-decoration: none; transition: color .2s ease; }
+      .foot__link:hover { color: var(--brand-700); }
+      .foot__socials { display: inline-flex; }
+      .foot__social { align-items: center; border-radius: 50%; color: var(--g-900); display: flex; height: 5.2rem; justify-content: center; transition: background-color .2s ease; width: 5.2rem; }
+      .foot__social:hover { background: var(--g-100); }
+      .foot__social:active { background: var(--g-200); }
+      .foot__social svg { width: 2.4rem; height: 2.4rem; }
+
+      /* ---------- QR ---------- */
+      .qr { bottom: 0; left: 0; pointer-events: none; position: fixed; width: 100%; z-index: 20; }
+      .qr__layout { display: flex; justify-content: flex-end; margin: 0 auto; max-width: 144rem; padding: 0 var(--s-md); }
+      .qr__block {
+        display: block; pointer-events: auto; text-decoration: none; background: #fff; width: 11.2rem;
+        border-radius: var(--r-md) var(--r-md) 0 0; box-shadow: 0 17.45px 34.9px -4.36px rgba(13, 13, 13, .1);
+        padding: var(--s-xs) var(--s-xs) var(--s-sm);
+      }
+      .qr__code { width: 100%; height: auto; margin-bottom: var(--s-2xs); }
+      .qr__cap {
+        color: var(--brand-700); display: block; font-family: var(--font-heading); font-size: 1.2rem; font-weight: 500;
+        letter-spacing: .02em; line-height: 1.06; text-align: center; text-transform: uppercase;
+      }
+      @media (max-width: 1024px) { .qr { display: none; } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero__wave, .langs__track, .improve__bars i { animation: none; }
+      }
+    </style>
+
+    <script>
+      function init() {
+        // images: fade in once decoded
+        document.querySelectorAll<HTMLImageElement>('img.image').forEach((img) => {
+          const done = () => img.classList.add('is-loaded');
+          if (img.complete && img.naturalWidth) done();
+          else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+        });
+
+        // muted loops: some browsers ignore the autoplay attribute until nudged
+        document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((v) => { v.muted = true; v.play().catch(() => {}); });
+
+        // header: white pill + shadow as soon as the page scrolls
+        const box = document.getElementById('hdrBox');
+        const onScroll = () => box?.classList.toggle('is-shadow', window.scrollY > 0);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        // features: the slide crossing the viewport centre drives the sticky phone
+        const slides = Array.from(document.querySelectorAll<HTMLElement>('.fslide'));
+        const contents = Array.from(document.querySelectorAll<HTMLElement>('.fphone__content'));
+        const overs = Array.from(document.querySelectorAll<HTMLElement>('.fover'));
+        let current = -1;
+        const setStep = (n: number) => {
+          if (n === current) return;
+          current = n;
+          slides.forEach((s, i) => s.classList.toggle('is-active', i === n));
+          contents.forEach((c) => {
+            const on = Number(c.dataset.step) === n;
+            c.classList.toggle('is-active', on);
+            const v = c.querySelector('video');
+            if (v) on ? v.play().catch(() => {}) : v.pause();
+          });
+          overs.forEach((o) => o.classList.toggle('is-active', Number(o.dataset.step) === n));
+        };
+        const pickStep = () => {
+          if (window.innerWidth <= 1024 || !slides.length) return;
+          const mid = window.innerHeight / 2;
+          let best = 0, dist = Infinity;
+          slides.forEach((s, i) => {
+            const r = s.getBoundingClientRect();
+            const d = Math.abs(r.top + r.height / 2 - mid);
+            if (d < dist) { dist = d; best = i; }
+          });
+          setStep(best);
+        };
+        pickStep();
+        window.addEventListener('scroll', pickStep, { passive: true });
+
+        // below 1024px the features become a carousel: timer + arrows, progress segments
+        const prog = Array.from(document.querySelectorAll<HTMLElement>('.fprog span'));
+        const paintProg = (n: number) => prog.forEach((p, i) => {
+          p.classList.remove('is-active', 'is-done');
+          void p.offsetWidth; // restart the fill animation
+          if (i < n) p.classList.add('is-done');
+          if (i === n) p.classList.add('is-active');
+        });
+        let timer = 0;
+        let inView = false;
+        const goTo = (n: number) => {
+          const k = (n + slides.length) % slides.length;
+          current = -1;
+          setStep(k);
+          paintProg(k);
+          window.clearTimeout(timer);
+          if (inView && window.innerWidth <= 1024) timer = window.setTimeout(() => goTo(k + 1), 6000);
+        };
+        document.getElementById('fPrev')?.addEventListener('click', () => goTo(current - 1));
+        document.getElementById('fNext')?.addEventListener('click', () => goTo(current + 1));
+        const feat = document.getElementById('features');
+        if (feat && 'IntersectionObserver' in window) {
+          new IntersectionObserver(([e]) => {
+            inView = e.isIntersecting;
+            if (window.innerWidth > 1024) return;
+            if (inView) goTo(Math.max(0, current)); else window.clearTimeout(timer);
+          }, { threshold: .35 }).observe(feat);
+        }
+
+        // language switcher (desktop): flag button -> small menu
+        const langBtn = document.getElementById('langBtn');
+        const langMenu = document.getElementById('langMenu');
+        langBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const open = langMenu?.hidden ?? false;
+          if (langMenu) langMenu.hidden = !open;
+          langBtn.setAttribute('aria-expanded', String(open));
+        });
+        document.addEventListener('click', (e) => {
+          if (langMenu && !langMenu.hidden && !(e.target as Element).closest('#lang')) {
+            langMenu.hidden = true;
+            langBtn?.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // mobile menu
+        const burger = document.getElementById('burger');
+        const drop = document.getElementById('hdrDrop');
+        burger?.addEventListener('click', () => {
+          const open = burger.getAttribute('aria-expanded') !== 'true';
+          burger.setAttribute('aria-expanded', String(open));
+          burger.classList.toggle('is-open', open);
+          box?.classList.toggle('is-open', open);
+          if (drop) drop.hidden = !open;
+        });
+        window.addEventListener('resize', pickStep);
+
+        // tutors: hovering a card expands it; the others shrink by distance
+        const slider = document.getElementById('tslider');
+        const cards = Array.from(document.querySelectorAll<HTMLElement>('.tcard'));
+        const dots = Array.from(document.querySelectorAll<HTMLElement>('#tdots span'));
+        const activate = (n: number) => {
+          cards.forEach((c, i) => {
+            c.classList.remove('idx0', 'idx1', 'idx2', 'idx3', 'idx4');
+            c.classList.add(`idx${Math.min(4, Math.abs(i - n))}`);
+            c.classList.toggle('is-active', i === n);
+          });
+          dots.forEach((d, i) => d.classList.toggle('is-active', i === n));
+        };
+        const mobile = () => window.innerWidth <= 768;
+        cards.forEach((c, i) => {
+          c.addEventListener('pointerenter', (e) => { if (!mobile() && e.pointerType === 'mouse') activate(i); });
+          c.addEventListener('click', () => {
+            if (mobile()) c.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            else activate(i);
+          });
+        });
+        if (slider) {
+          const centreOnActive = () => {
+            if (!mobile()) return;
+            const a = slider.querySelector<HTMLElement>('.tcard.is-active');
+            if (a) slider.scrollLeft = a.offsetLeft - (slider.clientWidth - a.clientWidth) / 2;
+          };
+          centreOnActive();
+          let t = 0;
+          slider.addEventListener('scroll', () => {
+            if (!mobile()) return;
+            cancelAnimationFrame(t);
+            t = requestAnimationFrame(() => {
+              const mid = slider.getBoundingClientRect().left + slider.clientWidth / 2;
+              let best = 0, dist = Infinity;
+              cards.forEach((c, i) => {
+                const r = c.getBoundingClientRect();
+                const d = Math.abs(r.left + r.width / 2 - mid);
+                if (d < dist) { dist = d; best = i; }
+              });
+              activate(best);
+            });
+          }, { passive: true });
+        }
+
+        // intro video: play / pause toggle
+        const vid = document.getElementById('introVideo') as HTMLVideoElement | null;
+        const ctl = document.getElementById('introCtl');
+        ctl?.addEventListener('click', () => {
+          if (!vid) return;
+          if (vid.paused) { vid.play().catch(() => {}); ctl.classList.remove('is-paused'); ctl.setAttribute('aria-label', ctl.dataset.pause || ''); }
+          else { vid.pause(); ctl.classList.add('is-paused'); ctl.setAttribute('aria-label', ctl.dataset.play || ''); }
+        });
+      }
+      document.addEventListener('astro:page-load', init);
+    </script>
+  </body>
+</html>
