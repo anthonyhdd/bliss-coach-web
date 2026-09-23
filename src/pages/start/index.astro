@@ -433,7 +433,7 @@ const brandStyle =
    */
   const ATTRIBUTION_KEYS = [
     'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
-    'fbclid', 'ttclid', 'gclid',
+    'fbclid', 'ttclid', 'gclid', 'gbraid', 'wbraid',
   ];
 
   function initFunnel(): void {
@@ -477,6 +477,31 @@ const brandStyle =
       const value = query.get(key);
       if (value) attribution[key] = value.slice(0, 200);
     });
+
+    // What the server-side Purchase (RevenueCat webhook -> `web-purchase-capi`) needs to report this
+    // buyer to Meta, captured at checkout. ONLY when the visitor accepted advertising cookies: with a
+    // refusal we store `ads_consent: '0'` and nothing else, and the server sends nothing (CNIL — the
+    // server must not do what the browser was told not to).
+    function adSignals(): Record<string, string> {
+      let ads = false;
+      try {
+        const c = JSON.parse(localStorage.getItem('bliss_consent_v1') || 'null');
+        ads = !!(c && c.v === 1 && c.ads);
+      } catch {}
+      if (!ads) return { ads_consent: '0' };
+      const cookie = (k: string) => {
+        const m = document.cookie.match(new RegExp('(?:^|; )' + k + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : '';
+      };
+      const out: Record<string, string> = { ads_consent: '1', consent_at: new Date().toISOString() };
+      const fbp = cookie('_fbp'), fbc = cookie('_fbc'), ttp = cookie('_ttp');
+      if (fbp) out.fbp = fbp.slice(0, 200);
+      if (fbc) out.fbc = fbc.slice(0, 500);
+      else if (attribution.fbclid) out.fbc = `fb.1.${Date.now()}.${attribution.fbclid}`;
+      if (ttp) out.ttp = ttp.slice(0, 200);
+      out.ua = navigator.userAgent.slice(0, 400);
+      return out;
+    }
 
     // ── State ───────────────────────────────────────────────────────────────
     let language = funnel.lockedLanguage ?? '';
@@ -1598,7 +1623,7 @@ const brandStyle =
               derived_level: resolvedLevel(),
               heard_about_us: heardAboutUs || null,
               native_language: (navigator.language || '').split('-')[0] || null,
-              attribution,
+              attribution: { ...attribution, ...adSignals() },
               seconds_spent: Math.round((Date.now() - startedAt) / 1000),
               updated_at: new Date().toISOString(),
             },
