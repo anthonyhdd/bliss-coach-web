@@ -1,0 +1,63 @@
+---
+// Secondary Bliss CTA, rendered UNDER the primary app CTA box of language-learning articles and
+// pSEO pages only. The single-tutor app stays the primary action (it is what the reader searched
+// for); this is the "more than one language?" follow-up that routes organic traffic toward Bliss.
+// Renders nothing for the coaches (Charm, Alex, Mila, Astra): their readers are not learning a
+// language, and a language-app pitch there is noise.
+import { withBase, storeLink, BLISS_APP_STORE_URL } from '../config/apps';
+import { TUTORS } from '../config/bliss/tutors';
+
+/** The single-tutor language apps — mirror of LANGUAGE_TUTOR_VARIANTS in the app repo. */
+const LANGUAGE_APPS = new Set(['sofia', 'amelie', 'emily', 'meilin']);
+
+interface Props {
+  app: string;
+  /** Page language — translated articles get the block in their own language. */
+  lang?: string;
+}
+const { app, lang = 'en' } = Astro.props;
+
+const COPY: Record<string, { kicker: string; title: string; body: string; cta: string; more: string }> = {
+  en: {
+    kicker: 'Learning more than one language?',
+    title: 'Bliss — 10 languages, one AI tutor app',
+    body: 'Spanish, French, English, Mandarin, Italian, German, Portuguese, Japanese, Korean and Arabic, with eight tutors to choose from. Free to download on iPhone.',
+    cta: 'Get Bliss free',
+    more: 'See all 10 languages',
+  },
+  fr: {
+    kicker: 'Vous apprenez plus d’une langue ?',
+    title: 'Bliss — 10 langues, une seule app de prof IA',
+    body: 'Espagnol, français, anglais, mandarin, italien, allemand, portugais, japonais, coréen et arabe, avec huit profs au choix. Téléchargement gratuit sur iPhone.',
+    cta: 'Télécharger Bliss',
+    more: 'Voir les 10 langues',
+  },
+  es: {
+    kicker: '¿Aprendes más de un idioma?',
+    title: 'Bliss — 10 idiomas, una sola app de tutor con IA',
+    body: 'Español, francés, inglés, mandarín, italiano, alemán, portugués, japonés, coreano y árabe, con ocho tutores a elegir. Descarga gratis en iPhone.',
+    cta: 'Descargar Bliss',
+    more: 'Ver los 10 idiomas',
+  },
+};
+const t = COPY[lang] ?? COPY.en;
+const show = LANGUAGE_APPS.has(app);
+const faces = TUTORS.slice(0, 4);
+---
+
+{show && (
+  <aside class="bliss-second" aria-label="Bliss">
+    <div class="bx-inner">
+      <div class="bx-faces" aria-hidden="true">
+        {faces.map((f) => <img src={withBase(`/icons/${f.persona}.jpg`)} alt="" width="36" height="36" loading="lazy" />)}
+      </div>
+      <div class="bx-txt">
+        <span class="bx-kicker">{t.kicker}</span>
+        <h3>{t.title}</h3>
+        <p>{t.body}</p>
+        <a class="bx-more" href={withBase('/bliss/#languages')}>{t.more} →</a>
+      </div>
+      <a class="bx-btn" href={storeLink(BLISS_APP_STORE_URL, `xsell-${app}`)} data-placement={`bliss-xsell-${app}`}>{t.cta}</a>
+    </div>
+  </aside>
+)}

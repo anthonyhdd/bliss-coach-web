@@ -981,6 +981,26 @@ a { color: inherit; text-decoration: none; }
 }
 @media (max-width: 640px) { .cta-box .btn { margin-left: 0; } }
 
+/* secondary Bliss CTA under the primary app CTA (language-learning articles + pSEO only) */
+.bliss-second { max-width: var(--prose-w); margin: -48px auto 72px; padding: 0 24px; }
+.bliss-second .bx-inner {
+  background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+}
+.bliss-second .bx-faces { display: flex; }
+.bliss-second .bx-faces img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--bg-raised); margin-left: -10px; }
+.bliss-second .bx-faces img:first-child { margin-left: 0; }
+.bliss-second .bx-txt { flex: 1 1 260px; min-width: 0; }
+.bliss-second .bx-kicker { display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #6366f1; }
+.bliss-second h3 { font-size: 17px; letter-spacing: -0.01em; margin: 2px 0 4px; color: #17171c; }
+.bliss-second p { font-size: 14px; color: #5a6480; }
+.bliss-second .bx-more { display: inline-block; margin-top: 6px; font-size: 14px; font-weight: 600; color: #17171c; text-decoration: underline; text-underline-offset: 3px; }
+.bliss-second .bx-btn {
+  margin-left: auto; white-space: nowrap; padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14.5px;
+  color: #fff; background: linear-gradient(100deg, #FF6B35, #DB2777, #6366F1);
+}
+@media (max-width: 640px) { .bliss-second .bx-btn { margin-left: 0; } }
+
 /* ---------- footer ---------- */
 .site-footer { border-top: 1px solid var(--border); padding: 40px 0; margin-top: auto; }
 .site-footer .inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
