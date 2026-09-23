@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import Pixels from '../components/Pixels.astro';
+import CarryParams from '../components/CarryParams.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import { withBase } from '../config/apps';
 
@@ -55,8 +56,10 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta charset="utf-8" />
     <ClientRouter />
     {/* Funnel pages are bought with ads in France: every tracker there waits for consent. */}
-    <Analytics gated={pixels} />
+    {/* GA4 waits for consent on EVERY page (CNIL): ads land on the home and the app landings too. */}
+    <Analytics gated />
     {pixels && <Pixels />}
+    <CarryParams />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -124,6 +127,6 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       }
       document.addEventListener('astro:page-load', initReveal);
     </script>
-    {pixels && <ConsentBanner />}
+    <ConsentBanner />
   </body>
 </html>

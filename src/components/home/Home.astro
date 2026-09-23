@@ -13,6 +13,9 @@
 import { ClientRouter } from 'astro:transitions';
 import Analytics from '../Analytics.astro';
 import BlissBloom from '../BlissBloom.astro';
+import Pixels from '../Pixels.astro';
+import ConsentBanner from '../ConsentBanner.astro';
+import CarryParams from '../CarryParams.astro';
 import { withBase, storeLink, BLISS_APP_STORE_URL } from '../../config/apps';
 
 interface Props { lang?: 'en' | 'fr' }
@@ -215,7 +218,10 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
   <head>
     <meta charset="utf-8" />
     <ClientRouter />
-    <Analytics />
+    {/* Ads land here: GA4 + Meta/TikTok pixels only after consent (ConsentBanner). */}
+    <Analytics gated />
+    <Pixels />
+    <CarryParams />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -850,6 +856,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
               <div class="foot__links">
                 <a class="p3 foot__link" href={u('/terms/')} rel="nofollow">{T.terms}</a>
                 <a class="p3 foot__link" href={u('/privacy/')} rel="nofollow">{T.privacy}</a>
+                <a class="p3 foot__link" href="#cookies" data-consent-open>Cookies</a>
               </div>
             </div>
             <div class="foot__socials" data-placement="home-footer">
@@ -860,6 +867,8 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
         </div>
       </div>
     </footer>
+
+    <ConsentBanner />
 
     <!-- QR, fixed bottom-right on desktop -->
     <div class="qr" aria-hidden="true">
