@@ -197,6 +197,9 @@ const brandStyle =
     const funnelId = params.get('t') || stash.funnel || DEFAULT_FUNNEL;
     const funnel = FUNNELS[funnelId] ?? FUNNELS[DEFAULT_FUNNEL];
     const plan = funnel?.plans.find((p) => p.packageId === packageId);
+    // Deterministic ids (`purchase_<app_user_id>`): the RevenueCat webhook can send the same event
+    // server-side with the same id, and Meta/TikTok keep one of the two.
+    const buyerId = returnedId || context.userId || '';
     const alreadyReported = (() => {
       try {
         const key = `bliss_purchase_reported_${packageId}`;
@@ -216,12 +219,14 @@ const brandStyle =
           'funnel_trial_started',
           { package: packageId, trial_days: plan.trialDays },
           { value: 0, currency: funnel.currency, contentId: packageId, predictedLtv: plan.amount },
+          buyerId ? { eventId: `trial_${buyerId}` } : undefined,
         );
       } else {
         track(
           'funnel_purchase',
           { package: packageId },
           plan ? { value: plan.amount, currency: funnel.currency, contentId: packageId } : undefined,
+          buyerId ? { eventId: `purchase_${buyerId}` } : undefined,
         );
       }
     }

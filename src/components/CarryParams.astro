@@ -1,0 +1,37 @@
+---
+// Keeps the ad's attribution alive across the site (2026-09-23 tracking audit).
+//
+// A paid click lands with utm_* and a click ID (fbclid / ttclid / gclid / gbraid / wbraid) in the URL.
+// The funnel (/start/) is what reads them and stores them with the buyer — but visitors often land on
+// the home or an app landing first, and one click later those parameters were gone (home links had
+// none, landings overwrote the UTMs with their own). Meta's `_fbc` was lost with them.
+//
+// This rewrites, at click time, every same-site link so it carries the ad parameters of the current
+// page. The ad's values WIN over a link's own defaults (`utm_source=site&utm_medium=landing`), which
+// stay as they are for organic visitors. Nothing is stored: no cookie, no localStorage — the
+// parameters only travel in the URL, so this needs no consent.
+---
+<script is:inline>
+  (function () {
+    if (window.__carryParams) return;
+    window.__carryParams = 1;
+    var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id', 'fbclid', 'ttclid', 'gclid', 'gbraid', 'wbraid'];
+    function adParams() {
+      var q = new URLSearchParams(location.search), out = [];
+      KEYS.forEach(function (k) { var v = q.get(k); if (v) out.push([k, v]); });
+      return out;
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a) return;
+      var ps = adParams();
+      if (!ps.length) return;
+      var url;
+      try { url = new URL(a.getAttribute('href'), location.href); } catch (_) { return; }
+      if (url.origin !== location.origin || /\.(png|jpe?g|webp|svg|mp4|pdf|xml|txt)$/i.test(url.pathname)) return;
+      if (url.pathname === location.pathname && url.hash) return; // in-page anchor
+      ps.forEach(function (p) { url.searchParams.set(p[0], p[1]); });
+      a.setAttribute('href', url.pathname + url.search + url.hash);
+    }, true);
+  })();
+</script>

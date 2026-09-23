@@ -150,8 +150,9 @@ function eventId(): string {
   return `e${Date.now()}${Math.random().toString(16).slice(2, 10)}`;
 }
 
-export function track(event: string, params: Params = {}, value?: TrackValue): void {
-  const id = eventId();
+export function track(event: string, params: Params = {}, value?: TrackValue, opts?: { eventId?: string }): void {
+  // A fixed id lets a server-side copy of the same event (RevenueCat webhook -> CAPI) dedupe with it.
+  const id = opts?.eventId || eventId();
   hit(event, typeof params.step === 'string' ? params.step : typeof params.package === 'string' ? params.package : undefined);
   // No answer from the banner yet: keep it for later instead of losing it.
   if (!storedConsent()) {
