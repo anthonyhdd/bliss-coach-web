@@ -35,7 +35,7 @@ const T = {
   en: {
     title: 'Bliss — learn a language with AI tutors',
     description: 'Bliss is your AI language tutor: pick the tutor you like, speak out loud from day one and get corrected as you go. Spanish, French, English, Mandarin and more.',
-    menu: ['Features', 'Tutors', 'Reviews', 'Pricing', 'Careers', 'Contact us'],
+    menu: ['Features', 'Tutors', 'Reviews', 'Pricing', 'Contact us'],
     cta: 'Try Bliss',
     h1: 'Speak a new language with AI tutors',
     tutorsWord: 'AI tutors', langsWord: 'languages',
@@ -85,7 +85,7 @@ const T = {
   fr: {
     title: 'Bliss — apprends une langue avec des tuteurs IA',
     description: 'Bliss, ton tuteur de langue IA : choisis le tuteur qui te plaît, parle à voix haute dès le premier jour et fais-toi corriger au fil de la conversation. Espagnol, anglais, français, mandarin et plus.',
-    menu: ['Fonctionnalités', 'Tuteurs', 'Avis', 'Prix', 'Carrières', 'Nous contacter'],
+    menu: ['Fonctionnalités', 'Tuteurs', 'Avis', 'Prix', 'Nous contacter'],
     cta: 'Essayer Bliss',
     h1: 'Parle une nouvelle langue avec des tuteurs IA',
     tutorsWord: 'tuteurs IA', langsWord: 'langues',
@@ -157,8 +157,7 @@ const menu = [
   { label: T.menu[1], href: '#tutors' },
   { label: T.menu[2], href: '#reviews' },
   { label: T.menu[3], href: '#pricing' },
-  { label: T.menu[4], href: u('/careers/') },
-  { label: T.menu[5], href: 'mailto:anthony@blisscoach.app' },
+  { label: T.menu[4], href: 'mailto:anthony@blisscoach.app' },
 ];
 
 // The 10 languages Bliss teaches (LAUNCH_BLISS.md), each written in its own script.
@@ -186,9 +185,6 @@ const ACTIVE = 3;
 const HERO_TUTORS = ['emily', 'mila'] as const;
 const heroBubbles = T.bubbles;
 
-// Big soft copy of the logo in a corner of the hero: the 8 petals of BlissBloom (ellipses 18x34 of a
-// 100-unit flower, base on the centre) with the heart punched out.
-const PETALS = [0, 1, 2, 3, 4, 5, 6, 7];
 
 // Real reviews only, quoted as written (never translated). Meilin: App Store (France),
 // 2026-09-06. Jane / Emily: the quotes already shown on the Sofia landing (config/showcase.ts).
@@ -472,21 +468,6 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
             <div class="hero__shadowbox" aria-hidden="true">
               <div class="purple-blur"></div>
               <div class="hero__shadow"></div>
-              <svg class="hero__shape" viewBox="-50 -50 100 100">
-                <defs>
-                  <linearGradient id="heroShapeFill" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#fff" stop-opacity=".42" />
-                    <stop offset=".55" stop-color="#fff" stop-opacity=".13" />
-                    <stop offset="1" stop-color="#fff" stop-opacity=".02" />
-                  </linearGradient>
-                  <mask id="heroShapeHeart"><rect x="-50" y="-50" width="100" height="100" fill="#fff" /><circle r="7.5" fill="#000" /></mask>
-                </defs>
-                <g class="hero__shapespin" mask="url(#heroShapeHeart)">
-                  {PETALS.map((k) => (
-                    <ellipse cx="0" cy="-17" rx="9" ry="17" transform={`rotate(${k * 45})`} fill="url(#heroShapeFill)" stroke="#fff" stroke-opacity=".35" stroke-width=".2" />
-                  ))}
-                </g>
-              </svg>
             </div>
             <div class="hero__content">
               <div class="hero__head">
@@ -990,15 +971,6 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
       @media (max-width: 1024px) { .hero { flex-direction: column; grid-column: 1 / 9; } }
       @media (max-width: 480px) { .hero { grid-column: 1 / 3; } }
       .hero__shadowbox { border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; clip-path: inset(0 round var(--r-2xl)); isolation: isolate; }
-      /* big soft logo in the hero corner (bottom-left; top-right when the hero stacks) */
-      .hero__shape {
-        position: absolute; width: 64rem; height: 64rem; left: -19rem; bottom: -23rem; pointer-events: none;
-        filter: drop-shadow(0 0 3rem rgba(255, 255, 255, .22));
-      }
-      .hero__shapespin { transform-origin: 0 0; animation: hero-shape-spin 90s linear infinite; }
-      @keyframes hero-shape-spin { to { transform: rotate(360deg); } }
-      @media (max-width: 1024px) { .hero__shape { width: 44rem; height: 44rem; left: auto; right: -16rem; bottom: auto; top: -16rem; } }
-      @media (prefers-reduced-motion: reduce) { .hero__shapespin { animation: none; } }
       .hero__shadow {
         background: #1c1c1c; border-radius: 50%; bottom: -40%; filter: blur(8rem); height: 100%;
         mix-blend-mode: darken; opacity: .1; position: absolute; right: 0; width: 50%;
