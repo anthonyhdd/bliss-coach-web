@@ -1,4 +1,8 @@
-# `/alt/` — the live home, adapted to Bliss only
+# `/` — the home sells Bliss only (ex-`/alt/`, promoted 2026-09-23)
+
+The previous studio home (Bliss + the 8 coaches) now lives at `/apps/`, linked from the footer.
+Charm is not in the Bliss app, so it is not shown as a Bliss teacher (footer link only).
+
 
 `src/pages/alt/index.astro` is a copy of `src/pages/index.astro`: same design, same sections, same
 scripts. Only the content changes, so the two can be compared on a phone. `noindex`, out of the
