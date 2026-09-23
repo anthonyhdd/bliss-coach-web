@@ -1250,7 +1250,10 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
 
       .improve__title { display: block; max-width: 30rem; position: relative; z-index: 2; }
       @media (max-width: 1024px) { .improve__title { max-width: 24rem; } }
-      .improve__art { position: absolute; inset: auto 0 0 0; height: 78%; z-index: 1; }
+      .tab--improve { display: flex; flex-direction: column; }
+      /* The art takes the space left UNDER the title (it used to be pinned at 78% of the card and ran
+         under a two-line title on phones). Negative margins cancel the card padding on 3 sides. */
+      .improve__art { position: relative; flex: 1 1 auto; min-height: 0; margin: var(--s-md) calc(var(--s-2xl) * -1) calc(var(--s-2xl) * -1); z-index: 1; }
       .improve__tutor {
         position: absolute; bottom: 0; left: 4%; height: 100%; width: 46%; object-fit: cover; object-position: 50% 12%;
         mask-image: linear-gradient(180deg, #000 70%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent);
