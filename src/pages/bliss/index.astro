@@ -14,6 +14,8 @@ import { APPS, withBase, storeLink, BLISS_APP_STORE_URL } from '../../config/app
 import AppStoreButton from '../../components/AppStoreButton.astro';
 import { SHOWCASE } from '../../config/showcase';
 import { TUTOR_PITCH, LANGUAGE_TUTOR_SLUGS, compareRows } from '../../config/tutorPitch';
+import { LEARN_PAGES, learnPath } from '../../config/bliss/learnPages';
+import { recommendedTutor } from '../../config/bliss/tutors';
 import '../../styles/tutor.css';
 
 const tutors = LANGUAGE_TUTOR_SLUGS.map((slug) => ({
@@ -61,7 +63,7 @@ const features = [
 const faq = [
   {
     q: 'What is Bliss?',
-    a: 'Bliss is a language learning app with four AI tutors: Sofia for Spanish, Amélie for French, Emily for English and Meilin for Mandarin Chinese. You pick a language, pick your tutor, and learn by talking.',
+    a: 'Bliss is a language learning app with eight AI tutors and ten languages: Spanish, French, English, Mandarin, Italian, German, Portuguese, Japanese, Korean and Arabic. Sofia, Amélie, Emily and Meilin are the native tutors for Spanish, French, English and Mandarin. You pick a language, pick your tutor, and learn by talking.',
   },
   {
     q: 'Where can I get Bliss?',
@@ -93,7 +95,7 @@ const jsonLd = [
     operatingSystem: 'iOS',
     applicationCategory: 'EducationApplication',
     description:
-      'Language learning app with four AI tutors — Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time.',
+      'Language learning app with eight AI tutors and ten languages — Spanish, French, English, Mandarin, Italian, German, Portuguese, Japanese, Korean and Arabic. Talk out loud, get corrected as you go, and switch tutors any time.',
     url: 'https://bliss-coach.com/bliss/',
     installUrl: BLISS_APP_STORE_URL,
     author: { '@type': 'Organization', name: 'Bliss Coach' },
@@ -110,14 +112,14 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
 
 <Base
   title="Bliss — Learn a language with the AI tutor you pick"
-  description="Four native AI tutors in one app: Spanish, French, English and Mandarin. Talk out loud, get corrected as you go, and switch tutors any time. Free on the App Store."
+  description="Learn 10 languages with AI tutors you talk to: Spanish, French, English, Mandarin, Italian, German, Portuguese, Japanese, Korean, Arabic. Free on the App Store."
   brandStyle={brandStyle}
   jsonLd={jsonLd}
   activeApp="bliss"
 >
   <div class="app-bliss" style={brandStyle}>
     <div class="brand-strip" aria-hidden="true"></div>
-    <div class="app-banner"><span><i>&gt;</i> Bliss is <mark>out now</mark> on the App Store — four tutors, one app <b>✦</b></span></div>
+    <div class="app-banner"><span><i>&gt;</i> Bliss is <mark>out now</mark> on the App Store — ten languages, one app <b>✦</b></span></div>
 
     <!-- hero: promise + proof + the switcher inside a phone -->
     <section class="app-hero2 bliss-hero">
@@ -130,8 +132,9 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
           <div class="kicker">Language learning</div>
           <h1>Learn a language <em class="serif-em">with the tutor you pick.</em></h1>
           <p class="sub">
-            Four native AI tutors — Spanish, French, English and Mandarin — in one app. Talk out loud, get
-            corrected as you go, and switch tutors whenever you want.
+            Native AI tutors for Spanish, French, English and Mandarin — plus Italian, German, Portuguese,
+            Japanese, Korean and Arabic — in one app. Talk out loud, get corrected as you go, and switch tutors
+            whenever you want.
           </p>
           <ProofRow
             items={[
@@ -231,6 +234,23 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
       <p class="troster-note"><b>Your first tutor comes with the free download.</b> Bliss Pro unlocks all of them.</p>
     </section>
 
+    <!-- the ten languages: each links to its /bliss/learn-<language>/ page -->
+    <section class="section container" id="languages">
+      <span class="skicker">Ten languages</span>
+      <h2>Pick the language you want to speak.</h2>
+      <p class="lead">Every tutor can teach every language. Each guide below covers why it is worth learning, how Bliss teaches it, and phrases for your first week.</p>
+      <ul class="blangs">
+        {LEARN_PAGES.map((l) => (
+          <li>
+            <a href={withBase(learnPath(l))}>
+              <img src={withBase(`/home/${recommendedTutor(l.code).photo}`)} alt="" width="40" height="40" loading="lazy" />
+              <span><i lang={l.code} dir={l.rtl ? 'rtl' : undefined}>{l.endonym}</i><b>Learn {l.name}</b></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
     <!-- features -->
     <section class="section container">
       <span class="skicker">Private-tutor quality, app convenience</span>
@@ -293,7 +313,7 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
           {tutors.map((t) => <img src={withBase(`/icons/${t.slug}.jpg`)} alt="" width="44" height="44" loading="lazy" />)}
         </div>
         <div class="txt">
-          <h2>Four tutors. One app.</h2>
+          <h2>Ten languages. One app.</h2>
           <p>Get Bliss free on the App Store. Prefer a single tutor? {liveApps.map((t) => t.app.name).join(', ').replace(/, ([^,]*)$/, ' and $1')} still have their own apps.</p>
           <div class="hero-cta"><AppStoreButton href={BLISS_APP_STORE_URL} placement="bliss-final" /></div>
           <div class="other-apps">
@@ -347,4 +367,11 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
   .hero-stack img { width: 52px; height: 52px; border-color: var(--bg); }
   @media (max-width: 860px) { .hero-stack { justify-content: center; } }
   .cta-band .avatar-stack img { border-color: var(--bg); }
+  .blangs { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .blangs a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-raised); }
+  .blangs a:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+  .blangs img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: top; flex: 0 0 auto; }
+  .blangs span { display: flex; flex-direction: column; line-height: 1.25; }
+  .blangs i { font-style: normal; font-size: 12.5px; color: var(--text-dim); }
+  .blangs b { font-size: 15.5px; }
 </style>

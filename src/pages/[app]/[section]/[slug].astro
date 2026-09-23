@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import BlissCrossSell from '../../../components/BlissCrossSell.astro';
 import Base from '../../../layouts/Base.astro';
 import { APPS, withBase } from '../../../config/apps';
 import { PSEO_SECTIONS } from '../../../config/pseo';
@@ -189,5 +190,6 @@ if (faq.length >= 2) {
         <a class="btn" href={app.comingSoon ? withBase(`/${app.slug}/`) : app.appStoreUrl}>Get {app.name} free</a>
       </div>
     </aside>
+    <BlissCrossSell app={app.slug} />
   </article>
 </Base>
