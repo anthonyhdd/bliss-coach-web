@@ -17,6 +17,7 @@ import Pixels from '../Pixels.astro';
 import ConsentBanner from '../ConsentBanner.astro';
 import CarryParams from '../CarryParams.astro';
 import { withBase, storeLink, BLISS_APP_STORE_URL } from '../../config/apps';
+import { isCheckoutConfigured } from '../../config/funnel';
 
 interface Props { lang?: 'en' | 'fr' }
 const { lang = 'en' } = Astro.props;
@@ -24,6 +25,9 @@ const fr = lang === 'fr';
 
 const STORE = BLISS_APP_STORE_URL;
 const START = withBase(fr ? '/start/?lang=fr' : '/start/');
+// The web path only shows once Bliss can actually be bought on the web (PUBLIC_RC_WEB_BILLING_URL_BLISS
+// set at build). Without it /start/ ends on a disabled paywall — the App Store is the only path then.
+const WEB_OK = isCheckoutConfigured('bliss');
 const u = (p: string) => withBase(p);
 const HOME_URL = fr ? 'https://bliss-coach.com/fr/' : 'https://bliss-coach.com/';
 
@@ -512,10 +516,12 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                   <div class="dl__img"><svg viewBox="0 0 384 512"><use href="#apple" /></svg></div>
                   <div class="dl__about"><span class="dl__cap">{T.dlCap}</span><span class="dl__name">App Store</span></div>
                 </a>
+                {WEB_OK && (
                 <a class="dl dl--inv" href={START}>
                   <div class="dl__img"><svg viewBox="0 0 24 24"><use href="#globe" /></svg></div>
                   <div class="dl__about"><span class="dl__cap">{T.webCap}</span><span class="dl__name">{T.webName}</span></div>
                 </a>
+                )}
               </div>
             </div>
             <div class="hero__side">
@@ -649,7 +655,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                     <div class="tcard__glow" aria-hidden="true"></div>
                     <div class="tcard__content">
                       <span class="tcard__speech">{T.hi(t.name)}{t.line}</span>
-                      <a class="button button--ghost button--wide" href={START}>{T.learnWith} {t.name}</a>
+                      <a class="button button--ghost button--wide" href={WEB_OK ? START : storeLink(STORE, 'home-tutors')}>{T.learnWith} {t.name}</a>
                     </div>
                   </div>
                 </div>
@@ -838,10 +844,12 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
               <div class="dl__img"><svg viewBox="0 0 384 512"><use href="#apple" /></svg></div>
               <div class="dl__about"><span class="dl__cap">{T.dlCap}</span><span class="dl__name">App Store</span></div>
             </a>
+            {WEB_OK && (
             <a class="dl" href={START}>
               <div class="dl__img"><svg viewBox="0 0 24 24"><use href="#globe" /></svg></div>
               <div class="dl__about"><span class="dl__cap">{T.webCap}</span><span class="dl__name">{T.webName}</span></div>
             </a>
+            )}
           </div>
         </div>
         <div class="grid">
