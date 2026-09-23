@@ -60,6 +60,14 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <Analytics gated />
     {pixels && <Pixels />}
     <CarryParams />
+    {pixels && (
+      <>
+        {/* The checkout (RevenueCat + Stripe) is hosted elsewhere: open those connections early. */}
+        <link rel="preconnect" href="https://pay.rev.cat" crossorigin />
+        <link rel="preconnect" href="https://api.revenuecat.com" crossorigin />
+        <link rel="preconnect" href="https://js.stripe.com" crossorigin />
+      </>
+    )}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
