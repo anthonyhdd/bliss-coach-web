@@ -76,13 +76,16 @@ const steps = [
 
 // Hover row — Sofia starts in the middle, expanded.
 const tutors = [
+  { slug: 'charm', name: 'Charm', line: 'here to tell you straight how you sound' },
   { slug: 'amelie', name: 'Amélie', line: 'here to help you speak French' },
   { slug: 'emily', name: 'Emily', line: 'here to help you speak English' },
   { slug: 'sofia', name: 'Sofia', line: 'here to help you speak Spanish' },
+  { slug: 'mila', name: 'Mila', line: 'here to keep your practice lively' },
   { slug: 'meilin', name: 'Meilin', line: 'here to help you speak Mandarin' },
   { slug: 'alex', name: 'Alex', line: 'here to help you speak with confidence' },
+  { slug: 'astra', name: 'Astra', line: 'here to help you learn, gently' },
 ];
-const ACTIVE = 2;
+const ACTIVE = 3;
 
 // Real reviews only. Meilin: App Store (France), 2026-09-06. Jane / Emily: the quotes already
 // shown on the Sofia landing (config/showcase.ts). Add Bliss's own as they come — never invent one.
@@ -144,8 +147,11 @@ const tones = [
     <style is:global>
       /* ---------- tokens (10px root, same scale as the reference) ---------- */
       :root {
-        --brand-50: #f7f2ff; --brand-100: #f1e9ff; --brand-200: #d9c5ff; --brand-400: #aa7dff;
-        --brand-600: #7429ff; --brand-700: #4e0dc7; --brand-800: #3e09a5; --brand-1000: #1f0060;
+        --b1: #FF6B35; --b2: #DB2777; --b3: #6366F1;
+        --grad: linear-gradient(120deg, #FF6B35 0%, #F0457A 42%, #DB2777 62%, #6366F1 100%);
+        --grad-btn: linear-gradient(90deg, #FF6B35, #DB2777);
+        --brand-50: #fff4f8; --brand-100: #fde8f1; --brand-200: #f9c7dc; --brand-400: #f472b6;
+        --brand-600: #DB2777; --brand-700: #B01A5E; --brand-800: #8E1450; --brand-1000: #4a0a2a;
         --g-50: #f7f6fa; --g-100: #eeecf3; --g-200: #e5e1ec; --g-300: #d6d1e0; --g-600: #857d94;
         --g-800: #4b4458; --g-900: #2f2b37; --black: #0d0d0d;
         --red-500: #ff657d; --red-600: #ff2d55; --orange: #ff9500;
@@ -227,9 +233,9 @@ const tones = [
         font-family: var(--font-heading); font-size: 1.6rem; font-weight: 500; line-height: 1.24;
       }
       .button:focus-visible, .dl:focus-visible { outline: .3rem solid #fdbe02; outline-offset: .2rem; }
-      .button--primary { background: var(--brand-600); color: #fff; }
-      .button--primary:hover { background: var(--brand-700); }
-      .button--primary:active { background: var(--brand-800); }
+      .button--primary { background: var(--grad-btn); color: #fff; }
+      .button--primary:hover { filter: brightness(.93); }
+      .button--primary:active { filter: brightness(.86); }
       .button--ghost { background: #fff; color: var(--black); }
       .button--ghost:hover { background: var(--g-100); }
       .button--ghost:active { background: var(--g-200); }
@@ -279,11 +285,11 @@ const tones = [
       .purple-blur {
         position: absolute; inset: 0; filter: blur(65px);
         background:
-          radial-gradient(40% 50% at 18% 20%, #b99bff 0%, transparent 70%),
-          radial-gradient(30% 40% at 60% 8%, #d7c4ff 0%, transparent 70%),
-          radial-gradient(45% 55% at 85% 75%, #5a14e6 0%, transparent 70%),
-          radial-gradient(50% 50% at 30% 90%, #6a2cf5 0%, transparent 70%),
-          #7a36ff;
+          radial-gradient(40% 50% at 12% 18%, #ffb07a 0%, transparent 70%),
+          radial-gradient(30% 40% at 55% 6%, #ff9ec4 0%, transparent 70%),
+          radial-gradient(45% 55% at 92% 80%, #5b5ef0 0%, transparent 70%),
+          radial-gradient(50% 50% at 30% 95%, #e0357f 0%, transparent 70%),
+          var(--grad);
       }
 
       /* generic iPhone frame (CSS, no bitmap bezel) */
@@ -347,6 +353,7 @@ const tones = [
             </div>
             <div class="hero__content">
               <div class="hero__head">
+                <div class="hero__bloom" aria-hidden="true"><BlissBloom size={72} mono decorative /></div>
                 <h1 class="h1 t-inv">Speak a new language with AI tutors</h1>
                 <div class="hero__awards">
                   <div class="award t-inv hero__award">
@@ -423,7 +430,7 @@ const tones = [
           <div class="grid head">
             <div class="head__content">
               <span class="subheading">Features</span>
-              <h2 class="h1 t">The quality of a private tutor.<br />The ease of an app</h2>
+              <h2 class="h1 t feat-title"><span>The quality of a </span><span>private tutor.</span><br class="feat-br" /><span>The ease of an app</span></h2>
             </div>
           </div>
           <div class="grid">
@@ -499,7 +506,7 @@ const tones = [
           <div class="grid">
             <div class="tslider" id="tslider" data-placement="home-tutors">
               {tutors.map((t, i) => (
-                <div class={`tcard idx${Math.abs(i - ACTIVE)}${i === ACTIVE ? ' is-active' : ''}`} data-i={i}>
+                <div class={`tcard idx${Math.min(4, Math.abs(i - ACTIVE))}${i === ACTIVE ? ' is-active' : ''}`} data-i={i}>
                   <div class="tcard__inner">
                     <img class="tcard__photo image" src={u(`/home/pk/tutor-${t.slug}.webp`)} alt={t.name} loading={i === ACTIVE ? 'eager' : 'lazy'} />
                     <div class="tcard__glow" aria-hidden="true"></div>
@@ -531,7 +538,7 @@ const tones = [
           <div class="grid">
             <div class="tab tab--video">
               <div class="vid__intro">
-                <video class="vid__video" id="introVideo" src={u('/home/video/amelie.mp4')} poster={u('/home/pk/tutor-amelie.webp')} autoplay muted loop playsinline preload="metadata"></video>
+                <video class="vid__video" id="introVideo" src={u('/home/video/mila.mp4')} poster={u('/home/pk/tutor-mila.webp')} autoplay muted loop playsinline preload="metadata"></video>
               </div>
               <div class="vid__content">
                 <h3 class="h3 vid__title">Practise freely.<br />Never judged</h3>
@@ -783,7 +790,7 @@ const tones = [
       @media (max-width: 480px) { .hdr__head { padding: var(--s-lg); padding-left: var(--s-xl); } }
       .hdr__logo {
         align-items: center; display: inline-flex; gap: .8rem; height: 4.8rem; text-decoration: none;
-        color: var(--brand-600); font-family: var(--font-heading); font-weight: 700; font-size: 3.2rem; letter-spacing: -.03em;
+        color: var(--black); font-family: var(--font-heading); font-weight: 700; font-size: 3.2rem; letter-spacing: -.03em;
       }
       @media (max-width: 1024px) { .hdr__logo { height: 4.4rem; font-size: 3rem; } }
       .hdr__ctl { align-items: center; column-gap: var(--s-lg); display: flex; }
@@ -813,11 +820,11 @@ const tones = [
       .hero-main { padding-top: 3%; position: relative; z-index: 1; }
       @media (max-width: 1024px) { .hero-main { padding-top: 0; } }
       .hero {
-        background: var(--brand-600); border-radius: var(--r-2xl); display: flex; grid-column: 1 / 13; position: relative;
+        background: var(--grad); border-radius: var(--r-2xl); display: flex; grid-column: 1 / 13; position: relative;
       }
       @media (max-width: 1024px) { .hero { flex-direction: column; grid-column: 1 / 9; } }
       @media (max-width: 480px) { .hero { grid-column: 1 / 3; } }
-      .hero__shadowbox { border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; }
+      .hero__shadowbox { border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; clip-path: inset(0 round var(--r-2xl)); isolation: isolate; }
       .hero__shadow {
         background: #1c1c1c; border-radius: 50%; bottom: -40%; filter: blur(8rem); height: 100%;
         mix-blend-mode: darken; opacity: .1; position: absolute; right: 0; width: 50%;
@@ -832,6 +839,8 @@ const tones = [
       }
       @media (max-width: 480px) { .hero__content { padding: var(--s-3xl) var(--s-xl); } }
       .hero__head { display: flex; flex-direction: column; row-gap: var(--s-2xl); }
+      .hero__bloom { display: flex; margin-bottom: calc(var(--s-md) * -1); }
+      @media (max-width: 1024px) { .hero__bloom { justify-content: center; } }
       @media (max-width: 1024px) { .hero__head { row-gap: var(--s-4xl); } }
       @media (max-width: 480px) { .hero__head { row-gap: var(--s-2xl); } }
       .hero__awards { align-items: center; column-gap: var(--s-3xl); display: inline-flex; flex-wrap: wrap; row-gap: var(--s-md); }
@@ -851,13 +860,13 @@ const tones = [
 
       /* hero phone: top of an iPhone, cut flush by the card's bottom edge */
       .hphone {
-        position: relative; width: 100%; aspect-ratio: 342 / 616; padding: 1.5rem 1.5rem 0;
+        position: relative; width: 100%; aspect-ratio: 342 / 616; padding: .7rem .7rem 0;
         border-radius: 5.6rem 5.6rem 0 0; background: linear-gradient(135deg, #fafafb, #cfced5 28%, #f2f1f4 55%, #bdbcc3);
         box-shadow: inset 0 0 0 .1rem rgba(0, 0, 0, .12);
         filter: drop-shadow(-.8rem -.5rem 3.6rem rgba(0, 0, 0, .12));
       }
       @media (max-width: 1024px) { .hphone { height: 100%; width: auto; } }
-      .hphone__screen { position: relative; height: 100%; border-radius: 4.3rem 4.3rem 0 0; overflow: hidden; background: #d9c9f5; box-shadow: 0 0 0 .8rem #0c0c0d; }
+      .hphone__screen { position: relative; height: 100%; border-radius: 4.3rem 4.3rem 0 0; overflow: hidden; background: #2a1a22; border: .8rem solid #0c0c0d; border-bottom: 0; }
       .hphone__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
       .hphone__bar {
         position: absolute; top: 1.6rem; left: 0; right: 0; padding: 0 2.6rem; display: flex; justify-content: space-between;
@@ -885,15 +894,15 @@ const tones = [
       .hero__wave:nth-child(3) { animation-delay: 1.6s; }
       .hero__wave:nth-child(4) { animation-delay: 2.4s; }
       @keyframes pulse { 0% { opacity: .7; transform: scale(1); } to { opacity: 0; transform: scale(4); } }
-      .hero__micicon { color: #682bdc; width: 4.7rem; position: relative; }
+      .hero__micicon { color: var(--b2); width: 4.7rem; position: relative; }
       @media (max-width: 480px) { .hero__micicon { width: 3.2rem; } }
       .hero__chat { border: 1px solid rgba(255, 255, 255, .3); border-radius: 2.4rem; padding: var(--s-md) var(--s-lg); position: absolute; text-align: left; }
       @media (max-width: 480px) { .hero__chat { border-radius: 1.8rem; } }
       .hero__chat::before {
         content: ''; background: inherit; border-radius: inherit; filter: blur(.4rem); position: absolute; inset: 0; z-index: -1;
       }
-      .hero__chat--user { background: rgba(230, 216, 255, .8); color: var(--black); right: -24%; top: 53%; transform: rotate(4deg); width: 26rem; z-index: 3; }
-      .hero__chat--tutor { background: rgba(159, 106, 255, .8); color: #fff; left: -18%; top: 69%; transform: rotate(-3deg); width: 32rem; z-index: 4; }
+      .hero__chat--user { background: rgba(255, 232, 240, .85); color: var(--black); right: -24%; top: 53%; transform: rotate(4deg); width: 26rem; z-index: 3; }
+      .hero__chat--tutor { background: rgba(219, 39, 119, .72); color: #fff; left: -18%; top: 69%; transform: rotate(-3deg); width: 32rem; z-index: 4; }
       @media (max-width: 480px) {
         .hero__chat--user { top: 55%; width: 18rem; right: -18%; }
         .hero__chat--tutor { width: 22rem; left: -14%; }
@@ -923,6 +932,12 @@ const tones = [
       .fslide__sub { color: var(--g-800); font-family: var(--font-heading); font-size: 1.6rem; font-weight: 500; letter-spacing: .04em; line-height: 1.2; margin-bottom: var(--s-xs); }
       .fslide__title { margin-bottom: var(--s-xl); }
       .fnav, .fprog { display: none; }
+      /* mobile: exactly three lines — "The quality of a / private tutor. / The ease of an app" */
+      @media (max-width: 480px) {
+        .feat-title { font-size: min(3.6rem, 9.4vw); }
+        .feat-title span { display: block; white-space: nowrap; }
+        .feat-br { display: none; }
+      }
       .fbar { align-items: center; display: flex; grid-column: 8 / 12; height: calc(100vh - 10.8rem - var(--s-md)); position: sticky; top: 10.8rem; }
       .fphone { position: relative; width: 100%; max-height: 100%; aspect-ratio: 716 / 1445; margin: 0 auto; }
       .fphone .iphone { height: 100%; width: auto; max-width: 100%; margin: 0 auto; }
@@ -944,19 +959,19 @@ const tones = [
       }
       .fover__lvl {
         font: 900 4rem/1 var(--font-heading); letter-spacing: -.03em;
-        background: linear-gradient(180deg, #aa7dff, #4e0dc7); -webkit-background-clip: text; background-clip: text; color: transparent;
+        background: linear-gradient(180deg, #FF6B35, #DB2777 60%, #6366F1); -webkit-background-clip: text; background-clip: text; color: transparent;
       }
       .fover--3 {
         left: 15%; top: 53%; width: 100%; display: flex; flex-direction: column; gap: .8rem; padding: 2rem 2.2rem;
-        background: #efe6ff; border: 3px solid #fff; border-radius: 2.4rem; box-shadow: 0 1.2rem 3.2rem -.8rem rgba(13, 13, 13, .18);
+        background: #fff0f6; border: 3px solid #fff; border-radius: 2.4rem; box-shadow: 0 1.2rem 3.2rem -.8rem rgba(13, 13, 13, .18);
       }
       .fover__say { color: var(--brand-600); font: 700 1.8rem/1.2 var(--font-main); }
-      .fover__en { color: var(--brand-700); font: 500 1.8rem/1.35 var(--font-main); padding-bottom: 1rem; border-bottom: 1px dashed #c9b3ff; }
-      .fover__es { color: #8f53ff; font: 500 1.8rem/1.35 var(--font-main); }
+      .fover__en { color: var(--brand-700); font: 500 1.8rem/1.35 var(--font-main); padding-bottom: 1rem; border-bottom: 1px dashed #f5b3cf; }
+      .fover__es { color: #e0569a; font: 500 1.8rem/1.35 var(--font-main); }
       .fover--5 {
         bottom: 6%; left: -10%; width: 120%; height: 6.4rem; display: flex; align-items: center; justify-content: center; gap: 1rem;
-        background: var(--brand-600); color: #fff; border-radius: 99px; font: 700 2.2rem/1 var(--font-main);
-        box-shadow: 0 1.2rem 3.2rem -.8rem rgba(79, 33, 163, .5);
+        background: var(--grad-btn); color: #fff; border-radius: 99px; font: 700 2.2rem/1 var(--font-main);
+        box-shadow: 0 1.2rem 3.2rem -.8rem rgba(219, 39, 119, .5);
       }
       .fover--5 svg { width: 2.4rem; height: 2.4rem; }
       /* correction screen (step 4), drawn in HTML */
@@ -964,11 +979,11 @@ const tones = [
       .fscreen__top { display: flex; justify-content: space-between; align-items: center; padding: 17% 7% 4%; font-size: 1.5rem; color: var(--g-600); }
       .fscreen__status { position: absolute; top: 3.2%; left: 11%; font: 600 1.4rem/1 var(--font-main); }
       .fscreen__top b { color: var(--black); font-weight: 600; }
-      .fscreen__cam { margin: 0 4%; border-radius: 1.8rem; overflow: hidden; aspect-ratio: 4 / 3; background: #e9e2f7; }
+      .fscreen__cam { margin: 0 4%; border-radius: 1.8rem; overflow: hidden; aspect-ratio: 4 / 3; background: #f3e6ec; }
       .fscreen__cam video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
       .fscreen__sheet { flex: 1; margin-top: 5%; padding: 6% 6%; border-radius: 2rem 2rem 0 0; box-shadow: 0 -.6rem 2rem rgba(13, 13, 13, .06); display: flex; flex-direction: column; gap: 2rem; }
-      .fscreen__msg { align-self: flex-end; max-width: 88%; background: var(--brand-600); color: #fff; border-radius: 1.6rem 1.6rem .4rem 1.6rem; padding: 1.2rem 1.4rem; font-size: 1.5rem; line-height: 1.4; font-weight: 500; }
-      .fscreen__msg u { text-decoration-color: #ff2d55; text-decoration-style: wavy; text-underline-offset: 3px; }
+      .fscreen__msg { align-self: flex-end; max-width: 88%; background: var(--grad-btn); color: #fff; border-radius: 1.6rem 1.6rem .4rem 1.6rem; padding: 1.2rem 1.4rem; font-size: 1.5rem; line-height: 1.4; font-weight: 500; }
+      .fscreen__msg u { text-decoration-color: #fff; text-decoration-style: wavy; text-underline-offset: 3px; }
       .fscreen__pt { display: flex; gap: .8rem; align-items: flex-start; }
       .fscreen__pt b { display: block; font-size: 1.8rem; margin-bottom: .5rem; }
       .fscreen__pt p { font-size: 1.45rem; line-height: 1.45; color: var(--g-800); }
@@ -1004,14 +1019,14 @@ const tones = [
       @media (max-width: 480px) { .tutors-head .head__content { grid-column: 1 / 3; } }
       .tutors-title { margin-bottom: calc(var(--s-xl) - var(--s-md)); }
       .tutors-sub { color: var(--g-800); }
-      .tslider { align-items: center; column-gap: var(--s-2xl); display: flex; grid-column: 2 / 12; height: 59.2rem; }
-      @media (max-width: 1024px) { .tslider { column-gap: var(--s-xl); grid-column: 1 / 9; } }
+      .tslider { align-items: center; column-gap: var(--s-md); display: flex; grid-column: 1 / 13; height: 59.2rem; }
+      @media (max-width: 1024px) { .tslider { column-gap: var(--s-sm); grid-column: 1 / 9; } }
       .tcard {
-        background: #fff; border-radius: var(--r-lg); flex-basis: 100%; position: relative; cursor: pointer; min-width: 0;
-        transition: flex-basis .2s ease-out, height .2s ease-out, border-radius .2s ease-out;
+        background: #fff; border-radius: var(--r-lg); flex: 1 1 0; position: relative; cursor: pointer; min-width: 0;
+        transition: flex-basis .2s ease-out, flex-grow .2s ease-out, height .2s ease-out, border-radius .2s ease-out;
       }
-      .tcard.idx0 { border-radius: var(--r-xl); flex-basis: 232%; height: 59.2rem; cursor: default; }
-      @media (max-width: 1024px) { .tcard.idx0 { flex-basis: 371%; } }
+      .tcard.idx0 { border-radius: var(--r-xl); flex: 0 0 30rem; height: 59.2rem; cursor: default; }
+      @media (max-width: 1024px) { .tcard.idx0 { flex-basis: 26rem; } }
       .tcard.idx1 { height: 44rem; }
       .tcard.idx2 { height: 40rem; }
       .tcard.idx3 { height: 37.6rem; }
@@ -1020,7 +1035,7 @@ const tones = [
       .tcard__photo { height: 100%; left: 0; object-fit: cover; object-position: 50% 20%; position: absolute; top: 0; width: 100%; }
       .tcard__glow {
         bottom: 0; height: 24%; left: 0; opacity: 0; pointer-events: none; position: absolute; width: 100%;
-        background: radial-gradient(60% 100% at 50% 100%, rgba(170, 125, 255, .95), rgba(116, 41, 255, .35) 55%, transparent 80%);
+        background: radial-gradient(60% 100% at 50% 100%, rgba(255, 107, 53, .9), rgba(219, 39, 119, .4) 55%, transparent 80%);
         transform: translateY(1.6rem); transition: opacity .35s ease, transform .35s ease;
       }
       .tcard.is-active .tcard__glow { opacity: 1; transform: translateY(0); transition: opacity .35s ease .2s, transform .35s ease .2s; }
@@ -1105,7 +1120,7 @@ const tones = [
       .improve__py { font-size: 2.2rem; color: var(--brand-600); margin: .4rem 0 1.2rem; }
       .improve__py b { background: var(--brand-100); border-radius: .8rem; padding: 0 .6rem; }
       .improve__bars { display: flex; gap: .4rem; align-items: flex-end; height: 3.2rem; margin-bottom: 1.2rem; }
-      .improve__bars i { flex: 1; border-radius: 99px; background: linear-gradient(180deg, #aa7dff, #7429ff); animation: bar 1.6s ease-in-out infinite; }
+      .improve__bars i { flex: 1; border-radius: 99px; background: linear-gradient(180deg, #FF6B35, #DB2777); animation: bar 1.6s ease-in-out infinite; }
       .improve__bars i:nth-child(3n) { animation-delay: .2s; } .improve__bars i:nth-child(3n+1) { animation-delay: .5s; } .improve__bars i:nth-child(4n) { animation-delay: .8s; }
       @keyframes bar { 0%, 100% { height: 25%; } 50% { height: 100%; } }
       .improve__tip { font-size: 1.3rem; line-height: 1.4; color: var(--g-800); }
@@ -1151,22 +1166,26 @@ const tones = [
       .tone__name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
       @media (max-width: 480px) { .tone__name { font-size: 1.2rem; } }
 
-      .mis__bg { background: var(--brand-600); inset: 0; position: absolute; }
+      .mis__bg { background: var(--grad); inset: 0; position: absolute; }
       .mis__content { display: flex; flex-direction: column; height: 100%; justify-content: space-between; position: relative; width: 100%; }
       @media (max-width: 480px) { .mis__content { row-gap: var(--s-3xl); } }
-      .mis__phone { background: var(--brand-700); border-radius: 3rem 3rem 0 0; margin-bottom: calc(var(--s-2xl) * -1); padding: 0 1.2rem; width: 100%; }
+      .mis__phone { background: rgba(40, 8, 40, .22); backdrop-filter: blur(1rem); -webkit-backdrop-filter: blur(1rem);
+        mask-image: linear-gradient(180deg, #000 70%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); border-radius: 3rem 3rem 0 0; margin-bottom: calc(var(--s-2xl) * -1); padding: 0 1.2rem; width: 100%; }
       .mis__nav { display: flex; height: 1.5rem; justify-content: center; padding: .3rem 0; }
-      .mis__handle { background: var(--brand-600); border-radius: .3rem; height: .3rem; width: 3.3rem; }
-      .mis__user { display: flex; justify-content: center; margin-bottom: var(--s-md); padding: var(--s-xs) 0; }
-      .mis__msg { background: #fff; border-radius: 1.9rem 1.9rem 0; max-width: 21.8rem; padding: var(--s-xs) var(--s-sm); transform: rotate(-1deg); }
-      .mis__text { color: var(--black); font-size: 1.3rem; font-weight: 500; line-height: 1.4; }
-      .mis__text u { text-decoration: underline wavy #ff2d55; text-underline-offset: 3px; }
+      .mis__handle { background: rgba(255, 255, 255, .4); border-radius: .3rem; height: .3rem; width: 3.3rem; }
+      .mis__user { display: flex; justify-content: flex-end; margin: var(--s-xs) 0 var(--s-lg); }
+      .mis__msg {
+        background: #fff; border-radius: 1.8rem 1.8rem .4rem 1.8rem; max-width: 82%; padding: 1rem 1.4rem;
+        box-shadow: 0 .6rem 1.6rem -.6rem rgba(40, 8, 40, .35);
+      }
+      .mis__text { color: var(--black); font-size: 1.4rem; font-weight: 500; line-height: 1.4; display: block; }
+      .mis__text u { text-decoration: none; background: linear-gradient(90deg, rgba(255, 45, 85, .14), rgba(255, 45, 85, .14)); border-radius: .4rem; padding: 0 .2rem; box-shadow: inset 0 -.2rem 0 #ff2d55; }
       .mis__pt { align-items: flex-start; column-gap: var(--s-2xs); display: flex; margin-bottom: var(--s-xl); }
       .mis__icon { flex-shrink: 0; margin-top: -.2rem; width: 2.4rem; }
       .mis__ptc { display: flex; flex-direction: column; row-gap: var(--s-xs); }
       .mis__ptt { color: #fff; font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
       .mis__ptcap { color: #fff; font-size: 1.2rem; font-weight: 500; line-height: 1.4; }
-      .mis__fade { background: linear-gradient(to bottom, transparent, var(--brand-600)); bottom: 0; height: 7.6rem; left: 0; position: absolute; width: 100%; }
+      .mis__fade { display: none; }
 
       /* ---------- reviews ---------- */
       .award-title { text-align: center; }
@@ -1184,7 +1203,7 @@ const tones = [
 
       /* ---------- compare ---------- */
       .cmp__item { border-radius: var(--r-lg); padding: var(--s-2xl); }
-      .cmp__item--first { background: var(--brand-600); grid-column: 2 / 7; overflow: hidden; position: relative; }
+      .cmp__item--first { background: var(--grad); grid-column: 2 / 7; overflow: hidden; position: relative; isolation: isolate; clip-path: inset(0 round var(--r-lg)); }
       .cmp__item--second { border: 1px solid var(--g-200); grid-column: 7 / 12; }
       @media (max-width: 1024px) { .cmp__item--first { grid-column: 1 / 5; } .cmp__item--second { grid-column: 5 / 9; } }
       @media (max-width: 480px) {
@@ -1214,8 +1233,8 @@ const tones = [
       .foot { position: relative; }
       .foot__main { align-items: center; display: flex; flex-direction: column; position: relative; }
       .foot__bg { height: 120%; left: 0; top: -10%; width: 100%; z-index: -1; }
-      .foot__logo { filter: drop-shadow(1.2rem 1.6rem 1.6rem rgba(79, 33, 163, .45)); height: auto; margin-bottom: var(--s-6xl); width: 16rem; border-radius: 22.5%; }
-      .foot__logo.is-loaded { filter: drop-shadow(1.2rem 1.6rem 1.6rem rgba(79, 33, 163, .45)); }
+      .foot__logo { filter: drop-shadow(1.2rem 1.6rem 1.6rem rgba(219, 39, 119, .35)); height: auto; margin-bottom: var(--s-6xl); width: 16rem; border-radius: 22.5%; }
+      .foot__logo.is-loaded { filter: drop-shadow(1.2rem 1.6rem 1.6rem rgba(219, 39, 119, .35)); }
       @media (max-width: 480px) { .foot__logo { width: 12rem; } }
       .foot__title { display: block; margin-bottom: var(--s-5xl); text-align: center; }
       @media (max-width: 1024px) { .foot__title { margin-bottom: var(--s-4xl); } }
