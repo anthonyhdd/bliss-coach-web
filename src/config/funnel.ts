@@ -199,9 +199,9 @@ export const FUNNELS: Record<string, FunnelDef> = {
   /**
    * Bliss — every tutor, every language, one subscription. The flow above is its own onboarding.
    *
-   * ⚠️ Bliss is NOT on the App Store yet. The page is `noindex` and no campaign points at it, so
-   * nothing is broken today; but a buyer who paid here would have nothing to download. Do not send
-   * traffic to `/start/` until Bliss ships — send it to `/start/?t=sofia`, which sells a live app.
+   * Live on the App Store since 2026-09-22 (id 6812111788). Sellable on the web once
+   * PUBLIC_RC_WEB_BILLING_URL_BLISS is set (RevenueCat project Bliss `proj66c16d51` → Web Billing).
+   * Its web Purchase is also reported server-side (revenuecat-webhook → Meta CAPI, 2026-09-23).
    */
   bliss: {
     id: 'bliss',
