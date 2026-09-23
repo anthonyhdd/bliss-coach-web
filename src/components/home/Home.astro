@@ -33,7 +33,7 @@ const T = {
     h1: 'Speak a new language with AI tutors',
     tutorsWord: 'AI tutors', langsWord: 'languages',
     dlCap: 'Download on the', webCap: 'Or start', webName: 'on the web',
-    bubbleUser: ['Yo ', 'soy', ' 25 años'], bubbleTutor: ['You mean «Yo ', 'tengo', ' 25 años»?'],
+    bubbles: { mila: [['Yo ', 'soy', ' 25 años'], ['You mean «Yo ', 'tengo', ' 25 años»?']], emily: [['I ', 'have', ' 25 years'], ['You mean «I ', 'am', ' 25 years old»?']] },
     featSub: 'Features', featL1: 'The quality of a ', featL2: 'private tutor.', featL3: 'The ease of an app',
     steps: [
       ['Learn in your own language', 'Starting from zero is fine. Your tutor explains in the language you already speak and hands you the phrase to say — one step at a time, with a smile.'],
@@ -83,7 +83,7 @@ const T = {
     h1: 'Parle une nouvelle langue avec des tuteurs IA',
     tutorsWord: 'tuteurs IA', langsWord: 'langues',
     dlCap: 'Télécharger dans l’', webCap: 'Ou commence', webName: 'sur le web',
-    bubbleUser: ['Yo ', 'soy', ' 25 años'], bubbleTutor: ['Tu veux dire « Yo ', 'tengo', ' 25 años » ?'],
+    bubbles: { mila: [['Yo ', 'soy', ' 25 años'], ['Tu veux dire « Yo ', 'tengo', ' 25 años » ?']], emily: [['I ', 'have', ' 25 years'], ['Tu veux dire « I ', 'am', ' 25 years old » ?']] },
     featSub: 'Fonctionnalités', featL1: 'La qualité d’un ', featL2: 'cours particulier.', featL3: 'La simplicité d’une appli',
     steps: [
       ['Apprends dans ta langue', 'Partir de zéro, c’est OK. Ton tuteur t’explique dans la langue que tu parles déjà et te donne la phrase à dire — pas à pas, avec le sourire.'],
@@ -173,6 +173,16 @@ const tutors = [
 ].map((t) => ({ ...t, line: T.lines[t.slug] }));
 const ACTIVE = 3;
 
+// Hero phone: Emily or Mila, 50/50 per visitor (founder 2026-09-23). The HTML ships Emily; the
+// script swaps to Mila for half the visitors, keeps the pick for the session and reports it to GA4
+// (`hero_tutor`) so the two can be compared on click-through.
+const HERO_TUTORS = ['emily', 'mila'] as const;
+const heroBubbles = T.bubbles;
+
+// Big soft copy of the logo in a corner of the hero: the 8 petals of BlissBloom (ellipses 18x34 of a
+// 100-unit flower, base on the centre) with the heart punched out.
+const PETALS = [0, 1, 2, 3, 4, 5, 6, 7];
+
 // Real reviews only, quoted as written (never translated). Meilin: App Store (France),
 // 2026-09-06. Jane / Emily: the quotes already shown on the Sofia landing (config/showcase.ts).
 // Add Bliss's own as they come — never invent one.
@@ -231,7 +241,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" />
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
     <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" />
-    <link rel="preload" as="image" href={u('/home/pk/tutor-sofia.webp')} />
+    <link rel="preload" as="image" href={u('/home/pk/tutor-emily.webp')} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <style is:global>
       /* ---------- tokens (10px root, same scale as the reference) ---------- */
@@ -452,6 +462,21 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
             <div class="hero__shadowbox" aria-hidden="true">
               <div class="purple-blur"></div>
               <div class="hero__shadow"></div>
+              <svg class="hero__shape" viewBox="-50 -50 100 100">
+                <defs>
+                  <linearGradient id="heroShapeFill" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#fff" stop-opacity=".42" />
+                    <stop offset=".55" stop-color="#fff" stop-opacity=".13" />
+                    <stop offset="1" stop-color="#fff" stop-opacity=".02" />
+                  </linearGradient>
+                  <mask id="heroShapeHeart"><rect x="-50" y="-50" width="100" height="100" fill="#fff" /><circle r="7.5" fill="#000" /></mask>
+                </defs>
+                <g class="hero__shapespin" mask="url(#heroShapeHeart)">
+                  {PETALS.map((k) => (
+                    <ellipse cx="0" cy="-17" rx="9" ry="17" transform={`rotate(${k * 45})`} fill="url(#heroShapeFill)" stroke="#fff" stroke-opacity=".35" stroke-width=".2" />
+                  ))}
+                </g>
+              </svg>
             </div>
             <div class="hero__content">
               <div class="hero__head">
@@ -492,9 +517,9 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                 <div class="hero__phone" aria-hidden="true">
                   <div class="hphone">
                     <div class="hphone__screen">
-                      <video class="hphone__video" src={u('/home/video/sofia.mp4')} poster={u('/home/pk/tutor-sofia.webp')} autoplay muted loop playsinline preload="auto"></video>
+                      <video class="hphone__video" id="heroVideo" src={u('/home/video/emily.mp4')} poster={u('/home/pk/tutor-emily.webp')} data-base={u('/home/')} autoplay muted loop playsinline preload="auto"></video>
                       <div class="hphone__bar"><span>12:25</span><svg class="hphone__icons" viewBox="0 0 68 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/><path d="M31 3.3a10 10 0 0 1 7 2.8l1.3-1.4A12 12 0 0 0 31 1.3a12 12 0 0 0-8.3 3.4L24 6.1a10 10 0 0 1 7-2.8Zm0 3.7a6 6 0 0 1 4.3 1.7l1.4-1.4A8 8 0 0 0 31 5a8 8 0 0 0-5.7 2.3l1.4 1.4A6 6 0 0 1 31 7Zm0 3.6 1.9-1.9a2.7 2.7 0 0 0-3.8 0Z"/><rect x="44" y=".5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="46" y="2.5" width="17" height="7" rx="1.8"/><rect x="66" y="4" width="1.6" height="4" rx=".8" opacity=".4"/></g></svg></div>
-                      <div class="hphone__name">Sofia <svg viewBox="0 0 12 8"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></div>
+                      <div class="hphone__name"><span id="heroName">Emily</span> <svg viewBox="0 0 12 8"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></div>
                       <div class="hphone__island"></div>
                     </div>
                   </div>
@@ -505,8 +530,12 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                     <svg class="hero__micicon" viewBox="0 0 24 24"><use href="#mic" /></svg>
                   </div>
                 </div>
-                <div class="hero__chat hero__chat--user"><p class="hero__chattext">{T.bubbleUser[0]}<b>{T.bubbleUser[1]}</b>{T.bubbleUser[2]}</p></div>
-                <div class="hero__chat hero__chat--tutor"><p class="hero__chattext">{T.bubbleTutor[0]}<i>{T.bubbleTutor[1]}</i>{T.bubbleTutor[2]}</p></div>
+                {HERO_TUTORS.map((k, n) => (
+                  <div class="hero__bubbles" data-tutor={k} hidden={n !== 0}>
+                    <div class="hero__chat hero__chat--user"><p class="hero__chattext">{heroBubbles[k][0][0]}<b>{heroBubbles[k][0][1]}</b>{heroBubbles[k][0][2]}</p></div>
+                    <div class="hero__chat hero__chat--tutor"><p class="hero__chattext">{heroBubbles[k][1][0]}<i>{heroBubbles[k][1][1]}</i>{heroBubbles[k][1][2]}</p></div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -944,6 +973,15 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
       @media (max-width: 1024px) { .hero { flex-direction: column; grid-column: 1 / 9; } }
       @media (max-width: 480px) { .hero { grid-column: 1 / 3; } }
       .hero__shadowbox { border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; clip-path: inset(0 round var(--r-2xl)); isolation: isolate; }
+      /* big soft logo in the hero corner (bottom-left; top-right when the hero stacks) */
+      .hero__shape {
+        position: absolute; width: 64rem; height: 64rem; left: -19rem; bottom: -23rem; pointer-events: none;
+        filter: drop-shadow(0 0 3rem rgba(255, 255, 255, .22));
+      }
+      .hero__shapespin { transform-origin: 0 0; animation: hero-shape-spin 90s linear infinite; }
+      @keyframes hero-shape-spin { to { transform: rotate(360deg); } }
+      @media (max-width: 1024px) { .hero__shape { width: 44rem; height: 44rem; left: auto; right: -16rem; bottom: auto; top: -16rem; } }
+      @media (prefers-reduced-motion: reduce) { .hero__shapespin { animation: none; } }
       .hero__shadow {
         background: #1c1c1c; border-radius: 50%; bottom: -40%; filter: blur(8rem); height: 100%;
         mix-blend-mode: darken; opacity: .1; position: absolute; right: 0; width: 50%;
@@ -1015,6 +1053,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
       @keyframes pulse { 0% { opacity: .7; transform: scale(1); } to { opacity: 0; transform: scale(4); } }
       .hero__micicon { color: var(--b2); width: 4.7rem; position: relative; }
       @media (max-width: 480px) { .hero__micicon { width: 3.2rem; } }
+      [hidden].hero__bubbles { display: none; }
       .hero__chat { border: 1px solid rgba(255, 255, 255, .3); border-radius: 2.4rem; padding: var(--s-md) var(--s-lg); position: absolute; text-align: left; }
       @media (max-width: 480px) { .hero__chat { border-radius: 1.8rem; } }
       .hero__chat::before {
@@ -1409,6 +1448,25 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
           if (img.complete && img.naturalWidth) done();
           else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
         });
+
+        // hero phone: Emily or Mila, 50/50, kept for the session
+        const heroVideo = document.getElementById('heroVideo') as HTMLVideoElement | null;
+        if (heroVideo) {
+          let pick = '';
+          try { pick = sessionStorage.getItem('hero_tutor') || ''; } catch {}
+          if (pick !== 'emily' && pick !== 'mila') pick = Math.random() < 0.5 ? 'emily' : 'mila';
+          try { sessionStorage.setItem('hero_tutor', pick); } catch {}
+          if (pick === 'mila') {
+            const base = heroVideo.dataset.base || '/home/';
+            heroVideo.poster = `${base}pk/tutor-mila.webp`;
+            heroVideo.src = `${base}video/mila.mp4`;
+            const nm = document.getElementById('heroName');
+            if (nm) nm.textContent = 'Mila';
+          }
+          document.querySelectorAll<HTMLElement>('.hero__bubbles').forEach((b) => { b.hidden = b.dataset.tutor !== pick; });
+          document.documentElement.dataset.heroTutor = pick;
+          (window as any).gtag?.('event', 'hero_tutor', { tutor: pick, page_path: location.pathname });
+        }
 
         // muted loops: some browsers ignore the autoplay attribute until nudged
         document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((v) => { v.muted = true; v.play().catch(() => {}); });
