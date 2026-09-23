@@ -1,7 +1,7 @@
 # `/` — the home sells Bliss only (ex-`/alt/`, promoted 2026-09-23)
 
 The previous studio home (Bliss + the 8 coaches) now lives at `/apps/`, linked from the footer.
-Charm is not in the Bliss app, so it is not shown as a Bliss teacher (footer link only).
+All 8 faces are Bliss teachers since 1.0.0 (Charm added 2026-09-16, `BILINGUAL_TUTOR_PERSONAS` in the app repo).
 
 
 `src/pages/alt/index.astro` is a copy of `src/pages/index.astro`: same design, same sections, same
