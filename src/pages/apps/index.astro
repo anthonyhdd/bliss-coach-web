@@ -1,14 +1,14 @@
 ---
 import fs from 'node:fs';
 import { ClientRouter } from 'astro:transitions';
-import { withBase, avatarFor, APPS, storeLink } from '../../config/apps';
+import { withBase, avatarFor, APPS, storeLink, BLISS_APP_STORE_URL } from '../../config/apps';
 
 const DEV_PAGE = 'https://apps.apple.com/us/developer/bliss-coach/id1628409883';
-// ALT HOME (/alt/): the live home, same design, adapted to Bliss only. Noindex, unlinked.
-// Every store button points here — swap for Bliss's own App Store URL the day it is on sale.
-const BLISS_STORE = DEV_PAGE;
-// The teachers open the Bliss web funnel, not the single-teacher apps.
-const START = '/start/';
+// live App Store link for a coach, or '' while the app is not on sale (Emily, Astra)
+const liveStore = (slug: string, placement: string) => {
+  const a = APPS[slug];
+  return a && a.appStoreUrl && !a.comingSoon ? storeLink(a.appStoreUrl, placement) : '';
+};
 import Analytics from '../../components/Analytics.astro';
 import PillBar from '../../components/PillBar.astro';
 import BlissBloom from '../../components/BlissBloom.astro';
@@ -32,96 +32,104 @@ const hasIdle = (slug: string) => fs.existsSync(`public/home/video/${slug}-idle.
 // The starfield + violet nebula are canvas-driven on Framer → replicated with a
 // tiny canvas script (stars) + CSS radial (nebula).
 
-const title = 'Bliss — your AI language teacher';
+const title = 'Bliss Coach';
 const description =
-  'Bliss is your AI language teacher: pick the teacher you like, talk out loud from day one, and get corrected as you go.';
+  'Bliss puts four native AI language tutors in one app — Spanish, French, English and Mandarin. From Bliss Coach, the studio building AI coaches that help people grow, one conversation at a time.';
+
+// Bliss went live 2026-09-22 and is now the hero of this page: one app, four tutors.
+// The specialist apps below it keep their own landings (/sofia/, /charm/, …) — they carry the
+// organic traffic and the backlinks, so nothing here redirects or replaces them.
+const blissTutors = ['sofia', 'amelie', 'emily', 'meilin'];
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'MobileApplication',
-  name: 'Bliss',
-  applicationCategory: 'EducationalApplication',
-  operatingSystem: 'iOS',
-  publisher: { '@type': 'Organization', name: 'Bliss Coach' },
+  '@type': 'Organization',
+  name: 'Bliss Coach',
   url: 'https://bliss-coach.com/',
   description,
-  image: 'https://bliss-coach.com/brand/bliss-coach-icon-512.png',
+  logo: 'https://bliss-coach.com/brand/bliss-coach-icon-512.png',
+  sameAs: ['https://apps.apple.com/us/developer/bliss-coach/id1628409883'],
 };
 
 const avatars = [
-  { slug: 'sofia', src: 'sofia.png', href: '#coaches', alt: 'Sofia — Bliss teacher', pos: '50% 16%' },
-  { slug: 'amelie', src: 'amelie.webp', href: '#coaches', alt: 'Amélie — Bliss teacher', pos: '50% 12%' },
-  { slug: 'emily', src: 'emily.jpg', href: '#coaches', alt: 'Emily — Bliss teacher', pos: '50% 22%' },
-  { slug: 'meilin', src: 'meilin.jpg', href: '#coaches', alt: 'Meilin — Bliss teacher', pos: '50% 20%' },
-  { slug: 'alex', src: 'alex.png', href: '#coaches', alt: 'Alex — Bliss teacher', pos: '50% 10%' },
-  { slug: 'mila', src: 'mila.jpg', href: '#coaches', alt: 'Mila — Bliss teacher', pos: '50% 50%' },
-  { slug: 'astra', src: 'astra.jpg', href: '#coaches', alt: 'Astra — Bliss teacher', pos: '50% 26%' },
-  { slug: 'charm', src: 'coach.png', href: '#coaches', alt: 'Charm — Bliss teacher', pos: '50% 14%' },
+  { slug: 'amelie', src: 'amelie.webp', href: '/amelie/', alt: 'Amélie — AI French teacher', pos: '50% 12%' },
+  { slug: 'sofia', src: 'sofia.png', href: '/sofia/', alt: 'Sofia — AI Spanish teacher', pos: '50% 16%' },
+  { slug: 'meilin', src: 'meilin.jpg', href: '/meilin/', alt: 'Meilin — AI Chinese teacher', pos: '50% 20%' },
+  { slug: 'emily', src: 'emily.jpg', href: '/emily/', alt: 'Emily — AI English teacher', pos: '50% 22%' },
+  { slug: 'alex', src: 'alex.png', href: '/alex/', alt: 'Alex — AI interview coach', pos: '50% 10%' },
+  { slug: 'charm', src: 'coach.png', href: '/charm/', alt: 'Charm — AI dating coach', pos: '50% 14%' },
+  { slug: 'mila', src: 'mila.jpg', href: '/mila/', alt: 'Mila — AI dietician', pos: '50% 50%' },
+  { slug: 'astra', src: 'astra.jpg', href: '/astra/', alt: 'Astra — AI astrologer', pos: '50% 26%' },
 ];
 
 // Real store reviews (from the apps' App Store pages).
-// Real App Store reviews only, and only the language ones. Bliss has none of its own yet —
-// replace these with its reviews once it does, never with invented lines.
 const REVIEWS = [
   { name: 'Jane', color: '#FF6B35', text: 'I improved my pronunciation in just a few days.' },
+  { name: 'Marcus', color: '#C9A14A', text: 'Charm helped me say the right thing. We’re exclusive now.' },
   { name: 'Emily', color: '#FF4D9E', text: 'Sofia finally made me comfortable speaking Spanish.' },
+  { name: 'Tom', color: '#8a6a1f', text: 'Updated my bio with Charm, tripled my matches in a week.' },
+  { name: 'Jake', color: '#C084FC', text: 'I used to stare at my screen for 20 min. Now I just open and get replies.' },
+  { name: 'Rayan', color: '#22C55E', text: 'Tried Charm, got 3 dates in two weeks. Lesson learned.' },
 ];
 
 // Scroll-story manifesto — revealed word by word as you scroll.
 const manifesto = [
-  'You learn a language by speaking it.',
-  'Most people never get the chance — a private teacher was a luxury. $50 an hour, and still too shy to say a word.',
-  'So we put your teacher in your pocket. She talks with you, listens to you, and remembers you.',
-  'Speak a little better, every day.',
+  'A great coach changes everything.',
+  'Most people never get one — coaching was a luxury. $200 an hour, if you knew the right people.',
+  'So we build coaches that live in your pocket. They talk with you, listen to you, and remember you.',
+  'Get better, every day.',
 ];
 
-// One card per teacher. The natives teach their own language; the others are the bilingual
-// friends — their card sells their character, not the job they do in their own app.
+// One chapter per coach, with a real line from each app.
 const coaches = [
   {
     slug: 'sofia', name: 'Sofia', craft: 'teaches Spanish', img: 'sofia.png', pos: '50% 16%',
+    line: '¿Vamos al cine después?', reply: '¡Buena idea, vamos!',
+    blurb: 'Real conversations, instant corrections, zero drills. Fluent 10 minutes a day.',
     c1: '#FF2D2D', c2: '#FF4D9E',
   },
   {
     slug: 'amelie', name: 'Amélie', craft: 'teaches French', img: 'amelie.webp', pos: '50% 12%',
+    line: 'Ça vous dit un ciné ce soir ?', reply: 'Oui, on va voir quoi ?',
+    blurb: 'Real Parisian French, corrected as you go. Finally fit in anywhere.',
     c1: '#6D28D9', c2: '#DB2777',
   },
   {
-    slug: 'emily', name: 'Emily', craft: 'teaches English', img: 'emily.jpg', pos: '50% 22%',
-    c1: '#1D4ED8', c2: '#38BDF8',
-  },
-  {
     slug: 'meilin', name: 'Meilin', craft: 'teaches Chinese', img: 'meilin.jpg', pos: '50% 20%',
+    line: 'In Chinese, “How are you?” is: 你好吗？(nǐ hǎo ma)', reply: '我很好，谢谢！',
+    blurb: 'She explains in your language and hands you the Mandarin — characters, pinyin, tone tips.',
     c1: '#B91C1C', c2: '#F59E0B',
   },
   {
-    slug: 'alex', name: 'Alex', craft: 'keeps it calm', img: 'alex.png', pos: '50% 10%',
+    slug: 'emily', name: 'Emily', craft: 'teaches English', img: 'emily.jpg', pos: '50% 22%',
+    line: 'So what did you get up to this weekend?', reply: 'I finally went hiking!',
+    blurb: 'Speak English without freezing up — corrected as you speak, never a sigh.',
+    c1: '#1D4ED8', c2: '#38BDF8',
+  },
+  {
+    slug: 'alex', name: 'Alex', craft: 'lands your next job', img: 'alex.png', pos: '50% 10%',
+    line: "Let's talk about your experience.", reply: null,
+    blurb: 'Mock interviews built around the real job posting. Walk in prepared.',
     c1: '#60A5FA', c2: '#C084FC',
   },
   {
-    slug: 'mila', name: 'Mila', craft: 'keeps it lively', img: 'mila.jpg', pos: '50% 50%',
+    slug: 'charm', name: 'Charm', craft: 'fixes your texting game', img: 'coach.png', pos: '50% 14%',
+    line: 'Be more gentle and calm. Don’t stress her out…', reply: null,
+    blurb: 'Paste the convo. Charm reads the subtext and writes the reply.',
+    c1: '#C9A14A', c2: '#8a6a1f',
+  },
+  {
+    slug: 'mila', name: 'Mila', craft: 'plans your plate', img: 'mila.jpg', pos: '50% 50%',
+    line: 'One pizza 🍕 isn’t a setback. It’s Tuesday.', reply: null,
+    blurb: 'Snap your meal, get answers. No counting, no guilt — just progress.',
     c1: '#16A34A', c2: '#14B8A6',
   },
   {
-    slug: 'astra', name: 'Astra', craft: 'takes it gently', img: 'astra.jpg', pos: '50% 26%',
+    slug: 'astra', name: 'Astra', craft: 'reads your sky', img: 'astra.jpg', pos: '50% 26%',
+    line: 'Sun in Leo, moon in Pisces — no wonder today felt big.', reply: null,
+    blurb: 'Your natal chart, decoded in plain language. Daily guidance from your own sky.',
     c1: '#6366F1', c2: '#C9A14A',
   },
-  {
-    slug: 'charm', name: 'Charm', craft: 'tells it straight', img: 'coach.png', pos: '50% 14%',
-    c1: '#C9A14A', c2: '#8a6a1f',
-  },
-];
-
-// The single-teacher apps stay one click away, in the footer (see ALT_HOME.md).
-const lpApps = [
-  { slug: 'sofia', name: 'Sofia', craft: 'Spanish' },
-  { slug: 'amelie', name: 'Amélie', craft: 'French' },
-  { slug: 'emily', name: 'Emily', craft: 'English' },
-  { slug: 'meilin', name: 'Meilin', craft: 'Chinese' },
-  { slug: 'alex', name: 'Alex', craft: 'Interviews' },
-  { slug: 'charm', name: 'Charm', craft: 'Dating' },
-  { slug: 'mila', name: 'Mila', craft: 'Nutrition' },
-  { slug: 'astra', name: 'Astra', craft: 'Astrology' },
 ];
 ---
 
@@ -134,7 +142,7 @@ const lpApps = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="https://bliss-coach.com/apps/" />
     <link rel="icon" type="image/png" sizes="32x32" href={withBase('/favicon-32.png')} />
     <link rel="icon" type="image/png" sizes="192x192" href={withBase('/favicon-192.png')} />
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
@@ -142,7 +150,7 @@ const lpApps = [
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://bliss-coach.com/" />
+    <meta property="og:url" content="https://bliss-coach.com/apps/" />
     <meta property="og:image" content="https://bliss-coach.com/home/og.png" />
     <meta property="og:site_name" content="Bliss Coach" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -1345,13 +1353,62 @@ const lpApps = [
         .crsl-arrow { display: none; }
       }
 
+      /* ---- Bliss-first hero + band (added when Bliss went live, 2026-09-22) ---- */
+      /* the hero sits on the violet layer, so these two live in white — not in the
+         page's ink colour, which is only legible further down. */
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 6px; margin: 0 auto 18px;
+        padding: 6px 14px; border-radius: 999px;
+        background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.34);
+        backdrop-filter: blur(6px);
+        color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      }
+      .cta .cta-apple { width: 17px; height: 20px; margin-right: 8px; vertical-align: -3px; }
+      .cta-2 {
+        display: block; margin: 16px auto 0; color: rgba(255, 255, 255, 0.74);
+        font-size: 14.5px; font-weight: 500; text-decoration: none;
+      }
+      .cta-2:hover { color: #fff; }
+      .bliss-band { padding: clamp(48px, 8vw, 104px) 16px clamp(8px, 3vw, 32px); }
+      .bb-card {
+        max-width: 760px; margin: 0 auto; text-align: center;
+        padding: clamp(32px, 5vw, 56px) clamp(20px, 4vw, 48px);
+        border-radius: 32px; border: 1px solid rgba(14, 26, 58, 0.08);
+        background: linear-gradient(180deg, #fff, #fdf6f3);
+        box-shadow: 0 24px 60px rgba(30, 50, 110, 0.09);
+      }
+      .bb-faces { display: flex; justify-content: center; margin-bottom: 22px; }
+      .bb-faces img {
+        width: 60px; height: 74px; object-fit: cover; border-radius: 18px;
+        margin: 0 -6px; border: 3px solid #fff; box-shadow: 0 8px 20px rgba(30, 50, 110, 0.16);
+      }
+      .bb-card h2 {
+        margin: 10px 0 0; font-size: clamp(32px, 4.6vw, 52px); line-height: 1.05;
+        letter-spacing: -0.035em; font-weight: 700; color: #0e1a3a;
+      }
+      .bb-card h2 em {
+        font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400;
+        background: linear-gradient(92deg, #ff6a4d, #ff4f8b);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .bb-card p {
+        margin: 18px auto 30px; max-width: 52ch; font-size: 17px; line-height: 1.55;
+        color: rgba(14, 26, 58, 0.72);
+      }
+      .bb-row { margin-top: 0; }
+      .bb-more { font-size: 15px; font-weight: 600; color: #e2453c; text-decoration: none; }
+      .bb-more:hover { text-decoration: underline; }
+      @media (max-width: 480px) {
+        .bb-faces img { width: 46px; height: 58px; border-radius: 14px; margin: 0 -5px; }
+      }
+
       /* praktika-ish rounding elsewhere */
       .bcell { border-radius: 26px; }
       .review { border-radius: 20px; }
     </style>
   </head>
   <body>
-    <PillBar mode="fixed" onHome bliss cta={{ href: storeLink(BLISS_STORE, 'home-header'), label: 'Get Bliss', placement: 'home-header' }} />
+    <PillBar mode="fixed" onHome cta={{ href: storeLink(DEV_PAGE, 'home-header'), label: 'Get the apps', placement: 'home-header' }} />
     <div class="card">
       <canvas id="stars" aria-hidden="true"></canvas>
       <div class="nebula" aria-hidden="true"></div>
@@ -1362,23 +1419,28 @@ const lpApps = [
       <div class="hero-grid">
         <div class="content">
           <BlissBloom class="logo-mark" size={56} mono />
+          <span class="hero-badge">New — Bliss is out</span>
           <h1>
-            <span class="t-desktop">Your language teacher,<br /><span class="serif">one conversation away.</span></span>
-            <span class="t-mobile">Your language teacher,<br /><span class="serif">one conversation</span><br /><span class="serif">away.</span></span>
+            <span class="t-desktop">Every language,<br /><span class="serif">one tutor away.</span></span>
+            <span class="t-mobile">Every language,<br /><span class="serif">one tutor</span><br /><span class="serif">away.</span></span>
           </h1>
-          <p class="sub">Not another app to tap through.<br /> A teacher who knows you. <mark class="hl">Ten minutes a day.</mark></p>
+          <p class="sub">Bliss is one app with four native AI tutors.<br /> Spanish, French, English, Mandarin. <mark class="hl">Ten minutes a day.</mark></p>
           <div class="cta-wrap">
             <span class="cta-beam" aria-hidden="true"></span>
-            <a class="cta" href="#coaches">Meet your teachers</a>
+            <a class="cta" href={storeLink(BLISS_APP_STORE_URL, 'home-hero')} data-placement="home-hero">
+              <svg class="cta-apple" viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              Get Bliss — free
+            </a>
           </div>
+          <a class="cta-2" href="#coaches">or meet our other coaches ↓</a>
         </div>
 
       </div>
 
       <div class="horizon">
-        <nav class="avatars" aria-label="The Bliss teachers">
+        <nav class="avatars" aria-label="Our apps">
           {avatars.map((a) => (
-            <a href={withBase(a.href)} title={a.alt} class="dock-chip" data-coach={a.slug}>
+            <a href={withBase(a.href)} title={a.alt} class="dock-chip" data-coach={a.slug} data-store={liveStore(a.slug, 'home-dock') || undefined} data-placement="home-dock">
               <img src={withBase(`/home/${a.src}`)} alt={a.alt} style={`object-position:${a.pos}`} width="54" height="66" loading="eager" />
               {hasVideo(a.slug) && (
                 <video class="dock-vid" src={withBase(`/home/video/${a.slug}.mp4`)} muted loop playsinline preload="none" aria-hidden="true" width="54" height="66"></video>
@@ -1394,16 +1456,16 @@ const lpApps = [
       <section class="manifesto" id="manifesto" aria-label="Our manifesto">
         <div class="props" aria-hidden="true">
           <div class="prop prop-invoice" data-depth="0.9">
-            <div class="inv-head">PRIVATE LANGUAGE LESSONS</div>
-            <div class="inv-row"><span>1:1 lesson — 1 hr</span><span>$50.00</span></div>
-            <div class="inv-row"><span>Textbook</span><span>$35.00</span></div>
-            <div class="inv-total"><span>TOTAL</span><span>$85.00</span></div>
-            <div class="inv-foot">CANCELLATIONS BILLED IN FULL</div>
+            <div class="inv-head">LIFE COACHING LLC</div>
+            <div class="inv-row"><span>1:1 session — 1 hr</span><span>$200.00</span></div>
+            <div class="inv-row"><span>Travel fee</span><span>$35.00</span></div>
+            <div class="inv-total"><span>TOTAL</span><span>$235.00</span></div>
+            <div class="inv-foot">CASH ONLY · NO REFUNDS</div>
           </div>
           <div class="prop prop-edamame" data-depth="0.6">
-            <div class="ed-name">le croissant 🥐</div>
-            <div class="ed-bar"><i style="width:72%"></i></div>
-            <div class="ed-row"><b>noun</b> · masculine · <b>/kʁwa.sɑ̃/</b></div>
+            <div class="ed-name">Edamame 🫛</div>
+            <div class="ed-bar"><i style="width:38%"></i></div>
+            <div class="ed-row"><b>120</b> kcal · <b>11g</b> prot · <b>10g</b> carbs</div>
           </div>
           <div class="prop prop-ticket" data-depth="1.1">
             <span class="tk-punch"></span>
@@ -1411,38 +1473,64 @@ const lpApps = [
             <div class="tk-line">¿Vamos al cine después?</div>
           </div>
           <div class="prop prop-postit" data-depth="1.0">
-            <div class="pi-line done">cancel the $50/h tutor</div>
+            <div class="pi-line done">cancel the $200/h coach</div>
             <div class="pi-line nope">buy another textbook</div>
             <div class="pi-line todo">talk to Sofia — 10 min</div>
           </div>
           <div class="prop prop-tarot" data-depth="0.75">
             <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="14" fill="none" stroke="#E8C375" stroke-width="1.4"/><circle cx="36" cy="26" r="10" fill="#0d0a14"/><circle cx="24" cy="34" r="1.6" fill="#E8C375"/><circle cx="40" cy="40" r="1.2" fill="#F4E3B8"/></svg>
-            <div class="ta-label">LA LUNA · 月</div>
+            <div class="ta-label">THE MOON</div>
           </div>
         </div>
         {manifesto.map((sentence, si) => (
           <p>
             {sentence.split(' ').map((word) => (
-              <><span class={si === 1 && ['$50', 'an', 'hour,'].includes(word) ? 'w hlw' : 'w'}>{word}</span>{' '}</>
+              <><span class={si === 1 && ['$200', 'an', 'hour,'].includes(word) ? 'w hlw' : 'w'}>{word}</span>{' '}</>
             ))}
           </p>
         ))}
       </section>
 
       <!-- one chapter per coach -->
-      <section class="coaches" id="coaches" aria-label="Meet the teachers">
+      <!-- the app the hero promises: one subscription, four language tutors -->
+      <section class="bliss-band" id="bliss" aria-label="Bliss — the language app">
+        <div class="bb-card rv">
+          <div class="bb-faces" aria-hidden="true">
+            {blissTutors.map((slug) => {
+              const a = avatars.find((x) => x.slug === slug)!;
+              return <img src={withBase(`/home/${a.src}`)} alt="" style={`object-position:${a.pos}`} width="60" height="74" loading="lazy" />;
+            })}
+          </div>
+          <span class="sec-kicker">One app</span>
+          <h2>Four tutors.<br /><em>One subscription.</em></h2>
+          <p>
+            Sofia teaches Spanish, Amélie French, Emily English, Meilin Mandarin — and you switch
+            between them in a tap. They explain in the language you already speak, correct you as
+            you talk, and remember where you left off.
+          </p>
+          <div class="store-row bb-row">
+            <a class="store-badge" href={storeLink(BLISS_APP_STORE_URL, 'home-bliss')} data-placement="home-bliss" aria-label="Download Bliss on the App Store">
+              <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              <span class="sb-txt"><small>Download on the</small>App Store</span>
+            </a>
+            <a class="bb-more" href={withBase('/bliss/')}>How Bliss works →</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="coaches" id="coaches" aria-label="Meet the coaches">
         <div class="coaches-pin">
         <div class="sec-head rv">
-          <span class="sec-kicker">Meet your teachers</span>
-          <h2>Pick the one <em>you’d actually call</em></h2>
+          <span class="sec-kicker">Our other apps</span>
+          <h2>A specialist <em>for every goal</em></h2>
         </div>
         <div class="crsl">
-          <button class="crsl-arrow prev" type="button" aria-label="Previous teacher">
+          <button class="crsl-arrow prev" type="button" aria-label="Previous coach">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="crsl-track">
         {coaches.map((c, i) => (
-          <a class="chapter ccard" href={withBase(START)} data-coach={c.slug} data-placement="home-carousel" style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
+          <a class="chapter ccard" href={withBase(`/${c.slug}/`)} data-coach={c.slug} data-store={liveStore(c.slug, 'home-carousel') || undefined} data-placement="home-carousel" style={`--c1:${c.c1};--c2:${c.c2};--i:${i}`}>
             <span class="cc-media">
               {hasVideo(c.slug) ? (
                 /* one standing loop per card — no idle-video swap on hover here (founder 2026-09-16) */
@@ -1455,30 +1543,30 @@ const lpApps = [
             <span class="cc-text">
               <span class="cc-name">{c.name}</span>
               <span class="cc-craft">{c.craft}</span>
-              <span class="cc-cta">Learn with {c.name}</span>
+              <span class="cc-cta">Talk to {c.name}</span>
             </span>
           </a>
         ))}
           </div>
-          <button class="crsl-arrow next" type="button" aria-label="Next teacher">
+          <button class="crsl-arrow next" type="button" aria-label="Next coach">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
         <div class="store-row">
-          <a class="store-badge" href={storeLink(BLISS_STORE, 'home-badge')} data-placement="home-badge" aria-label="Download on the App Store">
+          <a class="store-badge" href={storeLink(DEV_PAGE, 'home-badge')} data-placement="home-badge" aria-label="Download on the App Store">
             <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
             <span class="sb-txt"><small>Download on the</small>App Store</span>
           </a>
-          <span class="store-note">Free to download. Start talking today.</span>
+          <span class="store-note">Every coach is a free download of its own.</span>
         </div>
         </div>
       </section>
 
       <!-- the pillars: what makes every coach great -->
-      <section class="pillars" id="pillars" aria-label="Why Bliss works">
+      <section class="pillars" id="pillars" aria-label="The pillars of every coach">
         <div class="pillars-head sec-head rv">
-          <span class="sec-kicker">Why it works</span>
-          <h2>The pillars of <em>every lesson</em></h2>
+          <span class="sec-kicker">Why they work</span>
+          <h2>The pillars of <em>every coach</em></h2>
         </div>
         <div class="bento">
 
@@ -1513,7 +1601,7 @@ const lpApps = [
             </div>
             <div class="btxt">
               <h3>Memory</h3>
-              <p>Your teacher remembers — goals, slip-ups, wins. <em>Today picks up where yesterday stopped.</em></p>
+              <p>Your coach remembers — goals, slip-ups, wins. <em>Session 12 builds on session 11.</em></p>
             </div>
           </div>
 
@@ -1526,8 +1614,8 @@ const lpApps = [
               </div>
             </div>
             <div class="btxt">
-              <h3>Choice</h3>
-              <p>Pick the face and the voice you want to hear. Change your mind anytime — <em>your progress comes with you.</em></p>
+              <h3>Craft</h3>
+              <p>One coach, one craft. Sofia does Spanish. Mila does meals. <em>Nobody does everything.</em></p>
             </div>
           </div>
 
@@ -1548,13 +1636,13 @@ const lpApps = [
 
           <div class="bcell b7 rv">
             <div class="art art-character">
-              <span class="cb">Okay — tell me about your weekend. En español, porfa 😉</span>
-              <span class="cb reply">Fui a la playa… con mis amigos?</span>
+              <span class="cb">Okay — tell me about the interview. What's the company?</span>
+              <span class="cb reply">A fintech startup, final round 😬</span>
               <span class="cb"><span class="typing"><i></i><i></i><i></i></span></span>
             </div>
             <div class="btxt">
               <h3>Character</h3>
-              <p>A teacher is a person, not a chatbot. Ours have <em>faces, moods and opinions</em> — and they use them.</p>
+              <p>A coach is a person, not a chatbot. Ours have <em>faces, moods and opinions</em> — and they use them.</p>
             </div>
           </div>
 
@@ -1564,7 +1652,7 @@ const lpApps = [
             </div>
             <div class="btxt">
               <h3>Pocket</h3>
-              <p>A private teacher costs $50 an hour. Yours lives in your pocket — <em>ten minutes a day,</em> wherever you are.</p>
+              <p>Coaching used to cost $200 an hour. Now it lives in your pocket — <em>ten minutes a day,</em> wherever you are.</p>
             </div>
           </div>
 
@@ -1581,7 +1669,7 @@ const lpApps = [
         </div>
         <div class="marquee">
           <div class="marquee-track">
-            {[...REVIEWS, ...REVIEWS, ...REVIEWS, ...REVIEWS].map((r) => (
+            {[...REVIEWS, ...REVIEWS].map((r) => (
               <figure class="review">
                 {avatarFor(r.name)
                   ? <img class="rev-avatar rev-photo" src={withBase(avatarFor(r.name)!)} alt="" width="30" height="30" loading="lazy" />
@@ -1595,16 +1683,16 @@ const lpApps = [
       </section>
 
       <!-- final call: bookends the violet hero -->
-      <section class="final" aria-label="Get Bliss">
+      <section class="final" aria-label="Get the apps">
         <div class="final-card rv">
           <div class="final-faces" aria-hidden="true">
             {avatars.map((a) => (
               <img src={withBase(`/home/${a.src}`)} alt="" style={`object-position:${a.pos}`} width="52" height="64" loading="lazy" />
             ))}
           </div>
-          <h2>Pick your teacher.<br /><em>Start speaking today.</em></h2>
+          <h2>Pick your coach.<br /><em>Start today.</em></h2>
           <p>Voice-first, personal, and ready whenever you are.</p>
-          <a class="store-badge light" href={storeLink(BLISS_STORE, 'home-final')} data-placement="home-final" aria-label="Download on the App Store">
+          <a class="store-badge light" href={storeLink(DEV_PAGE, 'home-final')} data-placement="home-final" aria-label="Download on the App Store">
             <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
             <span class="sb-txt"><small>Download on the</small>App Store</span>
           </a>
@@ -1617,19 +1705,19 @@ const lpApps = [
         <div class="sf-brand">
           <a class="sf-logo" href={withBase('/')}>
             <BlissBloom size={28} compact decorative />
-            <span>Bliss</span>
+            <span>Bliss Coach</span>
           </a>
-          <p>Speak a little better, every day.</p>
+          <p>Get better, every day.</p>
         </div>
-        <nav class="sf-col" aria-label="Our other apps">
-          <h3>Also by Bliss Coach</h3>
-          {lpApps.map((c) => (
+        <nav class="sf-col" aria-label="Coaches">
+          <h3>Coaches</h3>
+          {coaches.map((c) => (
             <a href={withBase(`/${c.slug}/`)} data-coach={c.slug} data-placement="home-footer">{c.name} <span>{c.craft}</span></a>
           ))}
         </nav>
         <nav class="sf-col" aria-label="Company">
           <h3>Bliss Coach</h3>
-          <a href={storeLink(BLISS_STORE, 'home-footer')} data-placement="home-footer">App Store</a>
+          <a href={storeLink(DEV_PAGE, 'home-footer')} data-placement="home-footer">App Store</a>
           <a href={withBase('/careers/')}>Careers</a>
           <a href="https://playkamo.com/" target="_blank" rel="noopener">KAMO</a>
           <a href={withBase('/privacy/')}>Privacy</a>
