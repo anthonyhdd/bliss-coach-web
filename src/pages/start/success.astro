@@ -14,17 +14,17 @@
 // speaking Spanish. Decide it deliberately; the copy below assumes it may happen and says so.
 import Base from '../../layouts/Base.astro';
 import { FUNNELS, DEFAULT_FUNNEL } from '../../config/funnel';
-import { APPS } from '../../config/apps';
+import { APPS, BLISS_APP_STORE_URL } from '../../config/apps';
 import '../../styles/funnel.css';
 
 // Which funnel the buyer came through is a runtime question (`?t=`), so the store links of every
-// funnel ship in the page and the script picks one. Bliss has no store link yet — it is not on the
-// App Store — and the page says so instead of pointing at nothing.
+// funnel ship in the page and the script picks one. Bliss is not an APPS entry (no landing/blog), so
+// its store URL comes from BLISS_APP_STORE_URL (live since 2026-09-22).
 const funnel = FUNNELS[DEFAULT_FUNNEL];
 const downloads = Object.fromEntries(
   Object.values(FUNNELS).map((f) => {
     const target = APPS[f.app];
-    return [f.id, { name: target?.name ?? 'Bliss', url: target?.appStoreUrl ?? '' }];
+    return [f.id, target ? { name: target.name, url: target.appStoreUrl ?? '' } : { name: 'Bliss', url: f.app === 'bliss' ? BLISS_APP_STORE_URL : '' }];
   }),
 );
 const brandStyle =
@@ -231,8 +231,8 @@ const brandStyle =
       }
     }
 
-    // The store link of the funnel the buyer came through. Bliss has none yet: the CTA is hidden and
-    // the honest line under it takes its place, rather than a button that goes nowhere.
+    // The store link of the funnel the buyer came through. A funnel without one hides the CTA and the
+    // honest line under it takes its place, rather than a button that goes nowhere.
     let download = { name: 'Bliss', url: '' };
     try {
       const map = JSON.parse(root.dataset.downloads ?? '{}');
