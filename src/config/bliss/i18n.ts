@@ -103,7 +103,7 @@ const LANGUAGE_NAME_FR: Record<string, string> = {
   de: 'allemand', pt: 'portugais', ja: 'japonais', ko: 'coréen', ar: 'arabe',
 };
 
-/** Per tutor, because French adjectives agree: Alex and Charm are men. */
+/** Per tutor, because French adjectives agree: Alex is a man, every other tutor (Charm included) a woman. */
 const TRAITS_FR: Record<string, [string, string, string]> = {
   sofia: ['Chaleureuse', 'Directe', 'Drôle'],
   amelie: ['Pétillante', 'Taquine', 'Élégante'],
@@ -112,7 +112,7 @@ const TRAITS_FR: Record<string, [string, string, string]> = {
   alex: ['Calme', 'Méthodique', 'Patient'],
   mila: ['Pétillante', 'Curieuse', 'Franche'],
   astra: ['Calme', 'Douce', 'Encourageante'],
-  charm: ['Franc', 'Chaleureux', 'Taquin'],
+  charm: ['Franche', 'Chaleureuse', 'Taquine'],
 };
 
 const PLAN_NAME_FR: Record<string, string> = {
@@ -229,7 +229,7 @@ const EN: Strings = {
   recommended: 'Recommended',
   price: (p) => p,
   planName: (_id, f) => f,
-  mostPopular: 'Most popular',
+  mostPopular: 'Best value',
   saveVsMonthly: (pct) => `−${pct}% vs monthly`,
   perDay: 'per day',
   included: () => null,
@@ -275,7 +275,7 @@ const FR: Strings = {
   recommended: 'Notre choix',
   price: frenchPrice,
   planName: (id, f) => PLAN_NAME_FR[id] ?? f,
-  mostPopular: 'Le plus choisi',
+  mostPopular: 'Meilleur prix',
   saveVsMonthly: (pct) => `−${pct} % vs mensuel`,
   perDay: 'par jour',
   included: (id) => INCLUDED_FR[id] ?? null,

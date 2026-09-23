@@ -420,12 +420,13 @@
 .funnel-body .fnl-bar { background: #ffffff; }
 
 .fnl {
-  --tutor-1: #4b45d6;
-  --tutor-2: #6a5bff;
-  --tutor-3: #b9a4ff;
-  --tutor-accent: #4b45d6;
-  --tutor-soft: #f1efff;
-  --tutor-wash: #f6f5ff;
+  /* Bliss brand until a tutor is picked (was violet; the home and the ads use this gradient) */
+  --tutor-1: #ff6b35;
+  --tutor-2: #db2777;
+  --tutor-3: #6366f1;
+  --tutor-accent: #db2777;
+  --tutor-soft: #fde8f1;
+  --tutor-wash: #fff4f8;
   --ink: #0e1a3a;
   --ink-deep: #0b1b3f;
   --muted: #5a6480;

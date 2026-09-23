@@ -163,7 +163,8 @@ const PLANS: FunnelPlan[] = [
     amount: 49.99,
     perDay: '€0.14',
     savePercent: 58,
-    badge: 'Most popular',
+    // Not "most popular": no sales data backs that claim yet. The yearly plan IS the cheapest per day.
+    badge: 'Best value',
     highlight: true,
   },
   {

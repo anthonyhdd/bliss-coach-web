@@ -44,7 +44,7 @@ const checkoutReadyByFunnel = Object.fromEntries(
 // Bliss's own colour (the violet of the site's hero), not a single tutor's: the tutor's colour takes
 // over from the moment one is picked, set on the root as --tutor-* by the script.
 const brandStyle =
-  '--brand-1:#4B45D6;--brand-2:#6A5BFF;--brand-3:#B9A4FF;--accent:#6A5BFF;--on-gradient:#ffffff';
+  '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#DB2777;--on-gradient:#ffffff';
 ---
 
 <Base
@@ -421,7 +421,7 @@ const brandStyle =
    */
   const DEMO_LANGUAGE: Record<string, string> = {
     sofia: 'es', amelie: 'fr', emily: 'en', meilin: 'zh',
-    alex: 'it', mila: 'de', astra: 'pt', charm: 'ja',
+    alex: 'it', mila: 'de', astra: 'pt', charm: 'en',
   };
 
   /**
@@ -750,7 +750,15 @@ const brandStyle =
         const only = TUTOR_BY_PERSONA[funnel.lockedPersona];
         return only ? [only] : TUTORS.slice(0, 1);
       }
-      return TUTORS.filter((t) => INTRO_LESSONS[DEMO_LANGUAGE[t.persona]]);
+      // Opens on Charm, in English (founder 2026-09-24). Emily also demos English: she goes last so
+      // the row never shows the same language twice in a row.
+      const first = ['charm'];
+      const last = ['emily'];
+      const rank = (p: string) => (first.includes(p) ? -1 : last.includes(p) ? 1 : 0);
+      return TUTORS.filter((t) => INTRO_LESSONS[DEMO_LANGUAGE[t.persona]])
+        .map((t, i) => ({ t, i }))
+        .sort((a, b) => rank(a.t.persona) - rank(b.t.persona) || a.i - b.i)
+        .map(({ t }) => t);
     }
 
     function playScene(sceneIndex: number): void {
