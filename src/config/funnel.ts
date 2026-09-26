@@ -372,18 +372,18 @@ export function checkoutUrl(params: {
 }
 
 /**
- * US visitors pay in dollars — OFF until the Web Billing products carry a USD price.
+ * US visitors pay in dollars.
  *
  * Added 2026-09-26 after the first US web campaign: the two Americans who reached the paywall saw
- * €49.99 and neither clicked. RevenueCat cannot add a currency to an EXISTING price from here, and
- * a `?currency=USD` link on a product with no USD price is a dead checkout — so this stays `false`
- * until USD is visible on the Bliss Web products in the RevenueCat dashboard (Product catalog →
- * bliss_web_monthly / quarterly / annual). Then flip it and deploy; nothing else changes.
+ * €49.99 and neither clicked. ON since the same evening, once bliss_web_monthly / quarterly / annual
+ * got a USD price (RevenueCat store-state plan). ⚠️ Only the BLISS web products have USD: Sofia and
+ * Emily's web products are EUR-only, and a `?currency=USD` link on a product with no USD price is a
+ * dead checkout — hence the `funnel.id === 'bliss'` gate in `buyerCurrency`.
  *
  * Same numbers in both currencies ($9.99 / $19.99 / $49.99): US prices are shown before tax and no
  * US sales tax is collected (Stripe Tax is registered in France only).
  */
-export const USD_PRICES_LIVE = false;
+export const USD_PRICES_LIVE = true;
 
 /** Every IANA zone in the 50 states. Time zone, not IP: this site has no server to ask. */
 const US_TIME_ZONE =
@@ -391,7 +391,7 @@ const US_TIME_ZONE =
 
 /** The currency this visitor is shown and charged in. */
 export function buyerCurrency(funnel: FunnelDef): string {
-  if (!USD_PRICES_LIVE) return funnel.currency;
+  if (!USD_PRICES_LIVE || funnel.id !== 'bliss') return funnel.currency;
   try {
     return US_TIME_ZONE.test(Intl.DateTimeFormat().resolvedOptions().timeZone) ? 'USD' : funnel.currency;
   } catch {
