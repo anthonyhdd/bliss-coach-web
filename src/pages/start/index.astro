@@ -440,6 +440,15 @@ const brandStyle =
     'fbclid', 'ttclid', 'gclid', 'gbraid', 'wbraid',
   ];
 
+  /**
+   * The face rows show 54-64 px faces: they load `/home/thumb/<persona>.webp` (160 px wide, ~5 KB),
+   * not the 720×1280 card photo (up to 280 KB each — the rows alone weighed ~800 KB on the first
+   * screen, and sat grey for ~2.5 s). A missing thumbnail falls back to the full photo.
+   */
+  function thumbImg(t: Tutor, w: number, h: number): string {
+    return `<img src="/home/thumb/${t.persona}.webp" alt="" width="${w}" height="${h}" loading="lazy" onerror="this.onerror=null;this.src='/home/${t.photo}'" />`;
+  }
+
   function initFunnel(): void {
     const found = document.querySelector<HTMLElement>('.fnl');
     if (!found || found.dataset.initialised === '1') return;
@@ -453,6 +462,12 @@ const brandStyle =
     const requested = query.get('t') ?? '';
     const funnel = FUNNELS[requested] ?? FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL] ?? FUNNELS[DEFAULT_FUNNEL];
     const currency = buyerCurrency(funnel);
+    // `?learn=fr` — put on an ad's link — opens the intro on the tutor who teaches that language.
+    // The UGC ads are about French ("French pronunciation is very hard"): landing on Charm speaking
+    // English told that visitor they were in the wrong place. Without the parameter the intro still
+    // opens on Charm (founder, 2026-09-24).
+    const learn = (query.get('learn') ?? '').toLowerCase();
+    const introOpener = Object.keys(DEMO_LANGUAGE).find((p) => DEMO_LANGUAGE[p] === learn) ?? 'charm';
     const localPrice = (price: string): string => S.price(inCurrency(price, currency));
     // The markup is rendered with Bliss's plans at build time, and only Bliss's yearly has a trial:
     // `?t=sofia` / `?t=emily` must not promise one their checkout does not have.
@@ -774,10 +789,10 @@ const brandStyle =
         const only = TUTOR_BY_PERSONA[funnel.lockedPersona];
         return only ? [only] : TUTORS.slice(0, 1);
       }
-      // Opens on Charm, in English (founder 2026-09-24). Emily also demos English: she goes last so
-      // the row never shows the same language twice in a row.
-      const first = ['charm'];
-      const last = ['emily'];
+      // Opens on Charm, in English (founder 2026-09-24) — or on `?learn=`'s tutor. Emily also demos
+      // English: she goes last so the row never shows the same language twice in a row.
+      const first = [introOpener];
+      const last = introOpener === 'emily' ? [] : ['emily'];
       const rank = (p: string) => (first.includes(p) ? -1 : last.includes(p) ? 1 : 0);
       return TUTORS.filter((t) => INTRO_LESSONS[DEMO_LANGUAGE[t.persona]])
         .map((t, i) => ({ t, i }))
@@ -941,7 +956,7 @@ const brandStyle =
         item.className = 'bl-strip-card';
         item.dataset.persona = t.persona;
         item.style.setProperty('--tutor', t.gradient[1]);
-        item.innerHTML = `<img src="/home/${t.photo}" alt="" width="54" height="66" loading="lazy" /><i></i>`;
+        item.innerHTML = `${thumbImg(t, 54, 66)}<i></i>`;
         rail.appendChild(item);
       });
     }
@@ -1498,7 +1513,7 @@ const brandStyle =
           card.className = 'bl-pw-face';
           card.classList.toggle('is-featured', who.persona === t.persona);
           card.style.setProperty('--tutor', who.gradient[1]);
-          card.innerHTML = `<img src="/home/${who.photo}" alt="" width="64" height="80" loading="lazy" />`;
+          card.innerHTML = thumbImg(who, 64, 80);
           row.appendChild(card);
         });
       }
