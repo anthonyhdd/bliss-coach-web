@@ -270,6 +270,7 @@ const brandStyle =
                 <span class="bl-radio" aria-hidden="true"></span>
                 <span class="bl-plan-main">
                   <span class="bl-plan-name">{plan.name}</span>
+                  {plan.trialDays && <span class="bl-plan-trial" data-trial={String(plan.trialDays)}>{plan.trialDays} days free</span>}
                   <span class="bl-plan-sub" data-price={plan.price} data-save={String(plan.savePercent)}>
                     {plan.listPrice && <s>{plan.listPrice}</s>} {plan.price}
                     {plan.savePercent > 0 && <em class="bl-plan-save">−{plan.savePercent}% vs monthly</em>}
@@ -336,6 +337,7 @@ const brandStyle =
                 <span class="bl-radio" aria-hidden="true"></span>
                 <span class="bl-plan-main">
                   <span class="bl-plan-name">{plan.name}</span>
+                  {plan.trialDays && <span class="bl-plan-trial" data-trial={String(plan.trialDays)}>{plan.trialDays} days free</span>}
                   <span class="bl-plan-sub" data-price={plan.price} data-save={String(plan.savePercent)}>
                     {plan.listPrice && <s>{plan.listPrice}</s>} {plan.price}
                     {plan.savePercent > 0 && <em class="bl-plan-save">−{plan.savePercent}% vs monthly</em>}
@@ -452,6 +454,12 @@ const brandStyle =
     const funnel = FUNNELS[requested] ?? FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL] ?? FUNNELS[DEFAULT_FUNNEL];
     const currency = buyerCurrency(funnel);
     const localPrice = (price: string): string => S.price(inCurrency(price, currency));
+    // The markup is rendered with Bliss's plans at build time, and only Bliss's yearly has a trial:
+    // `?t=sofia` / `?t=emily` must not promise one their checkout does not have.
+    root.querySelectorAll<HTMLElement>('.bl-plan').forEach((btn) => {
+      const plan = funnel.plans.find((p) => p.packageId === btn.dataset.package);
+      if (!plan?.trialDays) btn.querySelector('.bl-plan-trial')?.remove();
+    });
     // The markup is rendered in euros at build time; a dollar visitor gets the same numbers in $.
     // (Non-English interfaces rewrite these nodes again below, through `localPrice`.)
     if (currency === 'USD') {
@@ -586,6 +594,8 @@ const brandStyle =
         if (perDay) perDay.textContent = localPrice(plan.perDay);
         const perDayLabel = btn.querySelector<HTMLElement>('.bl-plan-day em');
         if (perDayLabel) perDayLabel.textContent = S.perDay;
+        const trial = btn.querySelector<HTMLElement>('.bl-plan-trial');
+        if (trial && plan.trialDays) trial.textContent = S.trialTag(plan.trialDays);
       });
       const included = S.included(funnel.id);
       const unlockList = root.querySelector<HTMLElement>('[data-included]');
@@ -1432,11 +1442,14 @@ const brandStyle =
       const plan = funnel.plans.find((p) => p.packageId === packageId);
       root.querySelectorAll<HTMLElement>('[data-renewal]').forEach((el) => {
         el.textContent = plan
-          ? S.renewal(localPrice(plan.price))
+          ? plan.trialDays
+            ? S.trialRenewal(plan.trialDays, localPrice(plan.price))
+            : S.renewal(localPrice(plan.price))
           : '';
       });
       root.querySelectorAll<HTMLButtonElement>('[data-action="checkout"]').forEach((cta) => {
         cta.disabled = !checkoutReady || isAndroid;
+        cta.textContent = plan?.trialDays ? S.trialCta(plan.trialDays) : (S.static?.continue ?? 'Continue');
       });
       if (isAndroid) {
         root.querySelectorAll<HTMLElement>('[data-android-block]').forEach((el) => {
