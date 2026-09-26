@@ -218,14 +218,14 @@ const brandStyle =
         track(
           'funnel_trial_started',
           { package: packageId, trial_days: plan.trialDays },
-          { value: 0, currency: funnel.currency, contentId: packageId, predictedLtv: plan.amount },
+          { value: 0, currency: stash.currency || funnel.currency, contentId: packageId, predictedLtv: plan.amount },
           buyerId ? { eventId: `trial_${buyerId}` } : undefined,
         );
       } else {
         track(
           'funnel_purchase',
           { package: packageId },
-          plan ? { value: plan.amount, currency: funnel.currency, contentId: packageId } : undefined,
+          plan ? { value: plan.amount, currency: stash.currency || funnel.currency, contentId: packageId } : undefined,
           buyerId ? { eventId: `purchase_${buyerId}` } : undefined,
         );
       }

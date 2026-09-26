@@ -355,12 +355,53 @@ export function isCheckoutConfigured(funnelId?: string): boolean {
  *
  * `RC_WEB_BILLING_URL_*` must be the link WITHOUT a user id — `https://pay.rev.cat/<token>`.
  */
-export function checkoutUrl(params: { packageId: string; supabaseUserId: string; funnel: string }): string {
+export function checkoutUrl(params: {
+  packageId: string;
+  supabaseUserId: string;
+  funnel: string;
+  currency?: string;
+}): string {
   const base = checkoutUrlForFunnel(params.funnel).replace(/\/+$/, '');
   const url = new URL(`${base}/${encodeURIComponent(params.supabaseUserId)}`);
   url.searchParams.set('package_id', params.packageId);
   url.searchParams.set('skip_purchase_success', 'true');
+  // Pin the checkout to the currency the paywall showed. RevenueCat otherwise picks one from its own
+  // geolocation, and a buyer who saw $49.99 must not land on €49.99 (or the reverse).
+  if (params.currency) url.searchParams.set('currency', params.currency);
   return url.href;
+}
+
+/**
+ * US visitors pay in dollars — OFF until the Web Billing products carry a USD price.
+ *
+ * Added 2026-09-26 after the first US web campaign: the two Americans who reached the paywall saw
+ * €49.99 and neither clicked. RevenueCat cannot add a currency to an EXISTING price from here, and
+ * a `?currency=USD` link on a product with no USD price is a dead checkout — so this stays `false`
+ * until USD is visible on the Bliss Web products in the RevenueCat dashboard (Product catalog →
+ * bliss_web_monthly / quarterly / annual). Then flip it and deploy; nothing else changes.
+ *
+ * Same numbers in both currencies ($9.99 / $19.99 / $49.99): US prices are shown before tax and no
+ * US sales tax is collected (Stripe Tax is registered in France only).
+ */
+export const USD_PRICES_LIVE = false;
+
+/** Every IANA zone in the 50 states. Time zone, not IP: this site has no server to ask. */
+const US_TIME_ZONE =
+  /^(America\/(New_York|Detroit|Chicago|Denver|Phoenix|Boise|Los_Angeles|Anchorage|Juneau|Sitka|Nome|Adak|Yakutat|Metlakatla|Menominee|Indiana\/.+|Kentucky\/.+|North_Dakota\/.+)|Pacific\/Honolulu)$/;
+
+/** The currency this visitor is shown and charged in. */
+export function buyerCurrency(funnel: FunnelDef): string {
+  if (!USD_PRICES_LIVE) return funnel.currency;
+  try {
+    return US_TIME_ZONE.test(Intl.DateTimeFormat().resolvedOptions().timeZone) ? 'USD' : funnel.currency;
+  } catch {
+    return funnel.currency;
+  }
+}
+
+/** `PLANS` are written in euros; the dollar amounts are the same numbers. */
+export function inCurrency(price: string, currency: string): string {
+  return currency === 'USD' ? price.replace(/^€/, '$') : price;
 }
 
 /**
@@ -375,5 +416,7 @@ export type CheckoutContext = {
   userId: string;
   name?: string;
   persona?: string;
+  /** what the paywall showed and the checkout charged — the pixels' Purchase must say the same */
+  currency?: string;
   at: number;
 };
