@@ -280,6 +280,8 @@
 .bl-plan-main { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-right: 10px; }
 .bl-plan-name { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
 .bl-plan-sub { color: var(--muted); font-size: 13.5px; }
+/* The free trial, on the plan that has one (Bliss yearly). */
+.bl-plan-trial { color: var(--tutor-accent); font-size: 13px; font-weight: 800; }
 .bl-plan-sub s { opacity: 0.75; }
 /* The real saving against the monthly plan — not a struck "was" price (see PLANS in funnel.ts). */
 .bl-plan-save {

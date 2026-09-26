@@ -205,6 +205,10 @@ export type Strings = {
   daysToGo: (days: number, what: string) => string;
   levelPill: (level: string) => string;
   renewal: (price: string) => string;
+  /** plans with a free trial: the line under the plans, the plan's tag and the button */
+  trialRenewal: (days: number, price: string) => string;
+  trialTag: (days: number) => string;
+  trialCta: (days: number) => string;
   android: (app: string) => string;
   oneMoment: string;
   checkoutError: string;
@@ -242,6 +246,10 @@ const EN: Strings = {
   daysToGo: (days, what) => `${days} days to go · ${what}`,
   levelPill: (level) => `Level ${level}`,
   renewal: (price) => `Your subscription renews at ${price} until you cancel. Cancel any time from your account settings.`,
+  trialRenewal: (days, price) =>
+    `Free for ${days} days, then ${price} per year until you cancel. Cancel before the trial ends and you pay nothing.`,
+  trialTag: (days) => `${days} days free`,
+  trialCta: (days) => `Start my ${days}-day free trial`,
   android: (app) => `${app} is on iPhone only for now — Android is coming soon. Nothing will be charged on this device.`,
   oneMoment: 'One moment…',
   checkoutError: 'We could not start checkout. Please try again in a moment.',
@@ -289,6 +297,10 @@ const FR: Strings = {
   levelPill: (level) => `Niveau ${level}`,
   renewal: (price) =>
     `Ton abonnement se renouvelle à ${price} jusqu’à ce que tu résilies. Résiliable à tout moment depuis les réglages de ton compte.`,
+  trialRenewal: (days, price) =>
+    `Gratuit pendant ${days} jours, puis ${price} par an jusqu’à ce que tu résilies. Résilie avant la fin de l’essai et tu ne paies rien.`,
+  trialTag: (days) => `${days} jours gratuits`,
+  trialCta: (days) => `Commencer mes ${days} jours gratuits`,
   android: (app) =>
     `${app} n’existe que sur iPhone pour l’instant — Android arrive bientôt. Rien ne sera débité sur cet appareil.`,
   oneMoment: 'Un instant…',

@@ -177,6 +177,14 @@ const PLANS: FunnelPlan[] = [
   },
 ];
 
+/**
+ * Bliss sells the yearly plan with a 3-day free trial, like its App Store yearly (added 2026-09-26:
+ * the first US trial came from the app while the web — no trial — sold nothing). The trial lives on
+ * `bliss_web_annual` in RevenueCat (eligibility: never subscribed). Sofia's and Emily's web
+ * products have NO trial, so they keep `PLANS` as-is.
+ */
+const BLISS_PLANS: FunnelPlan[] = PLANS.map((p) => (p.packageId === '$rc_annual' ? { ...p, trialDays: 3 } : p));
+
 const FAQ = [
   {
     q: 'Do I need to be able to speak already?',
@@ -211,7 +219,7 @@ export const FUNNELS: Record<string, FunnelDef> = {
     paywallSub: 'One subscription. Switch teacher or language whenever you want.',
     currency: 'EUR',
     countdownMinutes: 0,
-    plans: PLANS,
+    plans: BLISS_PLANS,
     included: [
       { title: 'Unlimited conversations', body: 'Talk as long and as often as you want, with any tutor.' },
       { title: 'Corrected as you speak', body: 'The sentence you just said, fixed, with the reason in one line.' },
