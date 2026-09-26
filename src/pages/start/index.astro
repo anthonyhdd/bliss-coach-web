@@ -365,6 +365,8 @@ const brandStyle =
     SUPABASE_URL,
     SUPABASE_ANON_KEY,
     checkoutUrl,
+    buyerCurrency,
+    inCurrency,
     CHECKOUT_CONTEXT_KEY,
     type CheckoutContext,
   } from '../../config/funnel';
@@ -448,6 +450,18 @@ const brandStyle =
     const query = new URLSearchParams(window.location.search);
     const requested = query.get('t') ?? '';
     const funnel = FUNNELS[requested] ?? FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL] ?? FUNNELS[DEFAULT_FUNNEL];
+    const currency = buyerCurrency(funnel);
+    const localPrice = (price: string): string => S.price(inCurrency(price, currency));
+    // The markup is rendered in euros at build time; a dollar visitor gets the same numbers in $.
+    // (Non-English interfaces rewrite these nodes again below, through `localPrice`.)
+    if (currency === 'USD') {
+      root.querySelectorAll<HTMLElement>('.bl-plan-sub, .bl-plan-day strong').forEach((el) => {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          n.textContent = (n.textContent ?? '').replace(/€(?=\d)/g, '$');
+        }
+      });
+    }
     root.dataset.funnel = funnel.id;
 
     // Per funnel: Sofia's checkout cannot sell Emily's app, so each one is configured on its own and
@@ -560,7 +574,7 @@ const brandStyle =
         if (badge && plan.badge) badge.textContent = S.mostPopular;
         const sub = btn.querySelector<HTMLElement>('.bl-plan-sub');
         if (sub) {
-          sub.textContent = S.price(plan.price);
+          sub.textContent = localPrice(plan.price);
           if (plan.savePercent > 0) {
             const save = document.createElement('em');
             save.className = 'bl-plan-save';
@@ -569,7 +583,7 @@ const brandStyle =
           }
         }
         const perDay = btn.querySelector<HTMLElement>('.bl-plan-day strong');
-        if (perDay) perDay.textContent = S.price(plan.perDay);
+        if (perDay) perDay.textContent = localPrice(plan.perDay);
         const perDayLabel = btn.querySelector<HTMLElement>('.bl-plan-day em');
         if (perDayLabel) perDayLabel.textContent = S.perDay;
       });
@@ -1418,7 +1432,7 @@ const brandStyle =
       const plan = funnel.plans.find((p) => p.packageId === packageId);
       root.querySelectorAll<HTMLElement>('[data-renewal]').forEach((el) => {
         el.textContent = plan
-          ? S.renewal(S.price(plan.price))
+          ? S.renewal(localPrice(plan.price))
           : '';
       });
       root.querySelectorAll<HTMLButtonElement>('[data-action="checkout"]').forEach((cta) => {
@@ -1594,7 +1608,7 @@ const brandStyle =
       track(
         'funnel_checkout_started',
         { funnel: funnel.id, package: chosenPackage },
-        plan ? { value: plan.amount, currency: funnel.currency, contentId: chosenPackage } : undefined,
+        plan ? { value: plan.amount, currency, contentId: chosenPackage } : undefined,
       );
 
       try {
@@ -1657,6 +1671,7 @@ const brandStyle =
           userId,
           name: firstName || undefined,
           persona: persona || undefined,
+          currency,
           at: Date.now(),
         };
         try {
@@ -1670,6 +1685,7 @@ const brandStyle =
           packageId: chosenPackage,
           supabaseUserId: userId,
           funnel: funnel.id,
+          currency: currency !== funnel.currency ? currency : undefined,
         });
       } catch {
         // Most likely cause: "Allow anonymous sign-ins" is off in Supabase → Authentication. Fail
