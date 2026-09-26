@@ -562,7 +562,7 @@
 .bl-card-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 16%; }
 .bl-card-video { opacity: 0; transition: opacity 320ms ease; }
 .bl-card-video.is-playing { opacity: 1; }
-/* The teacher's colour lives in the bottom 45% only, and it is HER GRADIENT rising — not a navy
+/* The teacher's colour lives in the bottom 35% only (founder, 2026-09-27; was 45%), and it is HER GRADIENT rising — not a navy
    scrim (`TutorHeroFrame`, appearance "site": a mask of transparent → 0.6 at 42% → 0.92 over her
    three stops). The dark veil on top of it is only what her name needs to stay readable. */
 .bl-card-scrim {
@@ -570,7 +570,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 45%;
+  height: 35%;
   pointer-events: none;
   background: linear-gradient(115deg, var(--tutor-1), var(--tutor-2) 50%, var(--tutor-3));
   -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.6) 58%, transparent);
@@ -590,7 +590,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 45%;
+  height: 35%;
   overflow: hidden;
   pointer-events: none;
 }
