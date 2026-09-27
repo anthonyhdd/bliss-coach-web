@@ -396,7 +396,6 @@ const brandStyle =
     TUTORS,
     TUTOR_BY_PERSONA,
     tutorsForLanguage,
-    recommendedTutor,
     hueStep,
     type Tutor,
   } from '../../config/bliss/tutors';
@@ -425,6 +424,19 @@ const brandStyle =
    * bilingual friends each take a language nobody else in the row is showing, so the rotation walks
    * through as many languages as it can (the app's `introRowItems` rule).
    */
+  /**
+   * Charm leads the web funnel whatever the language (founder, 2026-09-27): she is the intro's face,
+   * so she is also the first card and the "Recommended" one on the tutor step — a French-learning
+   * visitor no longer meets Charm on screen 1 and is then steered to Amélie. The natives stay on the
+   * rail right behind her. Scoped to /start/: the /bliss/ learn pages keep the native-first order.
+   */
+  const FUNNEL_LEAD = 'charm';
+  function funnelTutors(code: string): Tutor[] {
+    const all = tutorsForLanguage(code);
+    return [...all.filter((t) => t.persona === FUNNEL_LEAD), ...all.filter((t) => t.persona !== FUNNEL_LEAD)];
+  }
+  const funnelRecommended = (code: string): Tutor => funnelTutors(code)[0];
+
   const DEMO_LANGUAGE: Record<string, string> = {
     sofia: 'es', amelie: 'fr', emily: 'en', meilin: 'zh',
     alex: 'it', mila: 'de', astra: 'pt', charm: 'en',
@@ -577,7 +589,7 @@ const brandStyle =
     let heardAboutUs = '';
     let chosenPackage = funnel.plans.find((p) => p.highlight)?.packageId ?? funnel.plans[0].packageId;
 
-    const tutor = (): Tutor => TUTOR_BY_PERSONA[persona] ?? recommendedTutor(language || 'es');
+    const tutor = (): Tutor => TUTOR_BY_PERSONA[persona] ?? funnelRecommended(language || 'es');
     const languageName = (): string => S.languageName(language, LANGUAGE_BY_CODE[language]?.name ?? '');
     const langLabel = (): string => capitalise(languageName());
 
@@ -1016,7 +1028,7 @@ const brandStyle =
         // The app's `LanguageTileGrid`: the tile IS the colour, with the language's own name above
         // its English one and a white code badge. Not a white card with a coloured square.
         btn.className = 'bl-lang';
-        const recommended = recommendedTutor(lang.code);
+        const recommended = funnelRecommended(lang.code);
         btn.style.setProperty('--tutor-1', recommended.gradient[0]);
         btn.style.setProperty('--tutor-2', recommended.gradient[1]);
         btn.style.setProperty('--tutor-3', recommended.gradient[2]);
@@ -1037,7 +1049,7 @@ const brandStyle =
     /** A tile tap, or "Continue" on the tile `?learn=` pre-selected: the same answer either way. */
     function chooseLanguage(code: string): void {
       language = code;
-      persona = recommendedTutor(code).persona;
+      persona = funnelRecommended(code).persona;
       currentTier = 'basic';
       probeResults = [];
       knownWords = [];
@@ -1105,7 +1117,7 @@ const brandStyle =
     function buildTutors(): void {
       if (!tutorsEl || !language) return;
       tutorsEl.textContent = '';
-      tutorsForLanguage(language).forEach((t, i) => {
+      funnelTutors(language).forEach((t, i) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         // The site's own coach card (`.ccard` on the home page) — which is exactly what the app's
