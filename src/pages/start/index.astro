@@ -462,12 +462,14 @@ const brandStyle =
     const requested = query.get('t') ?? '';
     const funnel = FUNNELS[requested] ?? FUNNELS[root.dataset.funnel ?? DEFAULT_FUNNEL] ?? FUNNELS[DEFAULT_FUNNEL];
     const currency = buyerCurrency(funnel);
-    // `?learn=fr` — put on an ad's link — opens the intro on the tutor who teaches that language.
-    // The UGC ads are about French ("French pronunciation is very hard"): landing on Charm speaking
-    // English told that visitor they were in the wrong place. Without the parameter the intro still
-    // opens on Charm (founder, 2026-09-24).
-    const learn = (query.get('learn') ?? '').toLowerCase();
-    const introOpener = Object.keys(DEMO_LANGUAGE).find((p) => DEMO_LANGUAGE[p] === learn) ?? 'charm';
+    // `?learn=fr` — put on an ad's link — sets the language the intro OPENS on. The face stays
+    // Charm's whatever the campaign (founder, 2026-09-27): only her demo switches to the ad's
+    // language, so a UGC ad about French pronunciation lands on Charm speaking French, not English.
+    const learnParam = (query.get('learn') ?? '').toLowerCase();
+    const learn = INTRO_LESSONS[learnParam] ? learnParam : '';
+    /** The language a teacher demonstrates on the intro: Charm takes `?learn=`'s when there is one. */
+    const demoLanguage = (persona: string): string =>
+      persona === 'charm' && learn ? learn : DEMO_LANGUAGE[persona];
     const localPrice = (price: string): string => S.price(inCurrency(price, currency));
     // The markup is rendered with Bliss's plans at build time, and only Bliss's yearly has a trial:
     // `?t=sofia` / `?t=emily` must not promise one their checkout does not have.
@@ -789,12 +791,13 @@ const brandStyle =
         const only = TUTOR_BY_PERSONA[funnel.lockedPersona];
         return only ? [only] : TUTORS.slice(0, 1);
       }
-      // Opens on Charm, in English (founder 2026-09-24) — or on `?learn=`'s tutor. Emily also demos
-      // English: she goes last so the row never shows the same language twice in a row.
-      const first = [introOpener];
-      const last = introOpener === 'emily' ? [] : ['emily'];
-      const rank = (p: string) => (first.includes(p) ? -1 : last.includes(p) ? 1 : 0);
-      return TUTORS.filter((t) => INTRO_LESSONS[DEMO_LANGUAGE[t.persona]])
+      // Always opens on Charm (founder 2026-09-24, re-stated 2026-09-27), in English or in `?learn=`'s
+      // language. Whoever else demos that same language goes last, so the row never shows the same
+      // language twice in a row.
+      const opening = demoLanguage('charm');
+      const last = TUTORS.filter((t) => t.persona !== 'charm' && DEMO_LANGUAGE[t.persona] === opening).map((t) => t.persona);
+      const rank = (p: string) => (p === 'charm' ? -1 : last.includes(p) ? 1 : 0);
+      return TUTORS.filter((t) => INTRO_LESSONS[demoLanguage(t.persona)])
         .map((t, i) => ({ t, i }))
         .sort((a, b) => rank(a.t.persona) - rank(b.t.persona) || a.i - b.i)
         .map(({ t }) => t);
@@ -804,7 +807,7 @@ const brandStyle =
       const row = demoRow();
       if (row.length === 0 || !demo.line) return;
       const who = row[sceneIndex % row.length];
-      const code = funnel.lockedLanguage ?? DEMO_LANGUAGE[who.persona];
+      const code = funnel.lockedLanguage ?? demoLanguage(who.persona);
       const lesson = INTRO_LESSONS[code];
       if (!lesson) return;
 
