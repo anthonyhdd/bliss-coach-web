@@ -17,40 +17,66 @@
 //   - Withdrawing is as easy as agreeing: every funnel page carries a "Cookies" link that reopens
 //     this. A script cannot be unloaded, so a withdrawal clears the trackers' cookies and reloads.
 //
+// ON A PHONE IT IS A BAR, NOT A SHEET (2026-09-27)
+// The first version was a card with a paragraph: on a 375px iPhone it covered the bottom half of the
+// funnel's intro, "Continue" included — and 84% of the ad traffic left on that very screen. It now
+// opens as a two-line bar with Refuse / Accept side by side, and while it is up it publishes its
+// height as `--consent-bar-h` (with `html.has-consent-bar`): the page makes room above it, so the
+// primary button is never under it. The long explanation and the per-purpose choice are one tap
+// away ("Customise"), which is also what the "Cookies" links open.
+//
+// US VISITORS: OPT-OUT, NO BANNER (2026-09-27)
+// US privacy law (CCPA/CPRA and the state laws modelled on it) is an opt-out regime: trackers may
+// run on arrival as long as the visitor can say no — the "Do not sell or share my personal
+// information" link. The banner cost us the measurement of US traffic (Meta saw ~6 of 31 US
+// visitors) for no legal reason. So a US visitor (same time-zone test as the dollar prices —
+// `isUsVisitor` in config/funnel.ts) gets consent stored as granted with `implied: 'us'`, GA + Meta
+// + TikTok + the CAPI relay load at once, no banner shows, and every "Cookies" link becomes the
+// opt-out link. Refusing from there withdraws exactly like a European withdrawal (cookies cleared,
+// reload, nothing loads again). `web_funnel_hits.consent` reads `implied_us` for them.
+//
 // What it does NOT gate: RevenueCat and Supabase, which are the purchase and the account themselves
 // (strictly necessary to the service the visitor asked for), and `web_funnel_profiles`, first-party
 // data written against the visitor's own account. The revenue truth never depends on this banner.
+import { US_TIME_ZONE } from '../config/funnel';
+const usTimeZone = US_TIME_ZONE.source;
 ---
 
-<div class="bc" id="bliss-consent" role="dialog" aria-modal="false" aria-labelledby="bc-title" hidden>
+<div class="bc" id="bliss-consent" role="dialog" aria-modal="false" aria-describedby="bc-short" hidden>
   <div class="bc-card">
-    <p class="bc-title" id="bc-title" data-bc="title">Cookies et publicité</p>
-    <p class="bc-body" data-bc="body"></p>
+    <!-- Compact (first open): two lines and the two equal buttons. -->
+    <p class="bc-short" id="bc-short" data-bc-compact>
+      <span data-bc="short"></span>
+      <a class="bc-link" href="/privacy/" data-bc="privacy"></a>
+    </p>
 
-    <div class="bc-prefs" data-bc-prefs hidden>
-      <label class="bc-row" for="bc-analytics">
-        <input type="checkbox" id="bc-analytics" />
-        <span><b data-bc="analytics"></b><i data-bc="analyticsDesc"></i></span>
-      </label>
-      <label class="bc-row" for="bc-ads">
-        <input type="checkbox" id="bc-ads" />
-        <span><b data-bc="ads"></b><i data-bc="adsDesc"></i></span>
-      </label>
+    <!-- Full (Customise, or a "Cookies" / opt-out link): the explanation and the per-purpose choice. -->
+    <div data-bc-full hidden>
+      <p class="bc-title" data-bc="title">Cookies et publicité</p>
+      <p class="bc-body" data-bc="body"></p>
+      <div class="bc-prefs">
+        <label class="bc-row" for="bc-analytics">
+          <input type="checkbox" id="bc-analytics" />
+          <span><b data-bc="analytics"></b><i data-bc="analyticsDesc"></i></span>
+        </label>
+        <label class="bc-row" for="bc-ads">
+          <input type="checkbox" id="bc-ads" />
+          <span><b data-bc="ads"></b><i data-bc="adsDesc"></i></span>
+        </label>
+      </div>
     </div>
 
     <div class="bc-actions" data-bc-main>
+      <button type="button" class="bc-link bc-custom" data-bc-action="customize" data-bc="customize"></button>
       <button type="button" class="bc-btn" data-bc-action="refuse" data-bc="refuse"></button>
       <button type="button" class="bc-btn" data-bc-action="accept" data-bc="accept"></button>
     </div>
-    <div class="bc-actions" data-bc-save hidden>
-      <button type="button" class="bc-btn bc-wide" data-bc-action="save" data-bc="save"></button>
+    <!-- Refusing stays one tap in the detailed view too. -->
+    <div class="bc-actions bc-actions-full" data-bc-save hidden>
+      <button type="button" class="bc-btn" data-bc-action="refuse" data-bc="refuse"></button>
+      <button type="button" class="bc-btn" data-bc-action="save" data-bc="save"></button>
+      <a class="bc-link bc-privacy-full" href="/privacy/" data-bc="privacy"></a>
     </div>
-
-    <p class="bc-links">
-      <button type="button" class="bc-link" data-bc-action="customize" data-bc="customize"></button>
-      <span aria-hidden="true">·</span>
-      <a class="bc-link" href="/privacy/" data-bc="privacy"></a>
-    </p>
   </div>
 </div>
 
@@ -59,6 +85,7 @@
      row showed on first open. One rule, for the whole banner. */
   .bc [hidden], .bc[hidden] { display: none !important; }
 
+  /* A bar pinned to the bottom edge, full width on a phone, a centred sheet on a wide screen. */
   .bc {
     position: fixed;
     left: 0;
@@ -67,22 +94,25 @@
     z-index: 1000;
     display: flex;
     justify-content: center;
-    padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
     pointer-events: none;
   }
   .bc-card {
     pointer-events: auto;
     width: 100%;
-    max-width: 480px;
-    padding: 18px 18px 14px;
-    border-radius: 22px;
+    max-width: 560px;
+    max-height: 85dvh;
+    overflow-y: auto;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-radius: 18px 18px 0 0;
     background: #ffffff;
     color: #0e1a3a;
     border: 1px solid rgba(14, 26, 58, 0.1);
-    box-shadow: 0 18px 50px rgba(14, 26, 58, 0.22);
+    border-bottom: 0;
+    box-shadow: 0 -8px 30px rgba(14, 26, 58, 0.14);
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
-  .bc-title { margin: 0 0 6px; font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+  .bc-short { margin: 0; font-size: 12.5px; line-height: 17px; color: #5a6480; }
+  .bc-title { margin: 4px 0 6px; font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
   .bc-body { margin: 0; font-size: 13.5px; line-height: 1.5; color: #5a6480; }
 
   .bc-prefs { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
@@ -101,41 +131,44 @@
   .bc-row i { display: block; font-style: normal; font-size: 12.5px; line-height: 1.45; color: #5a6480; }
 
   /* Refuse and accept are the SAME button — same size, same colour, side by side. */
-  .bc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .bc-actions { display: grid; grid-template-columns: auto 1fr 1fr; align-items: center; gap: 8px; margin-top: 10px; }
+  .bc-actions-full { grid-template-columns: 1fr 1fr; margin-top: 14px; }
   .bc-btn {
-    height: 46px;
+    height: 40px;
+    padding: 0 10px;
     border: 0;
     border-radius: 999px;
     background: #0e1a3a;
     color: #ffffff;
     font: inherit;
-    font-size: 14.5px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
   }
   .bc-btn:focus-visible, .bc-link:focus-visible { outline: 2px solid #6a5bff; outline-offset: 2px; }
-  .bc-wide { grid-column: 1 / -1; }
 
-  .bc-links {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 10px 0 0;
-    font-size: 12.5px;
-    color: #8a93ad;
-  }
   .bc-link {
     padding: 0;
     border: 0;
     background: none;
     color: #5a6480;
     font: inherit;
+    font-size: 12.5px;
     text-decoration: underline;
+    white-space: nowrap;
     cursor: pointer;
   }
+  .bc-custom { padding: 0 4px; }
+  .bc-privacy-full { grid-column: 1 / -1; justify-self: center; }
 </style>
 
-<script is:inline>
+<style is:global>
+  /* While the bar is up the page makes room for it, so nothing it covers is out of reach — the
+     funnel intro additionally shrinks to the space above it (see funnel.css). */
+  html.has-consent-bar body { padding-bottom: var(--consent-bar-h, 0px); }
+</style>
+
+<script is:inline define:vars={{ usTimeZone }}>
   (function () {
     var root = document.getElementById('bliss-consent');
     if (!root || root.dataset.ready === '1') return;
@@ -145,46 +178,75 @@
     // CNIL: keep the choice for 6 months, then ask again — a refusal included.
     var MAX_AGE = 182 * 24 * 60 * 60 * 1000;
 
-    var fr = /^fr\b/i.test(navigator.language || '');
+    var query = new URLSearchParams(location.search);
+    // Same test as `isUsVisitor` (config/funnel.ts) — same pattern, same `?geo=` QA override.
+    var us = (function () {
+      var forced = query.get('geo');
+      if (forced === 'us' || forced === 'eu') return forced === 'us';
+      try {
+        return new RegExp(usTimeZone).test(Intl.DateTimeFormat().resolvedOptions().timeZone);
+      } catch (e) {
+        return false;
+      }
+    })();
+
+    // `?lang=` first, as the funnel does, then the browser.
+    var forcedLang = query.get('lang');
+    var fr = forcedLang === 'fr' || forcedLang === 'en' ? forcedLang === 'fr' : /^fr\b/i.test(navigator.language || '');
     var T = fr
       ? {
+          short: 'Cookies pour mesurer nos pubs (Google, Meta, TikTok). Refuser ne change rien.',
           title: 'Cookies et publicité',
           body:
             "Avec ton accord, nous mesurons l'audience de cette page (Google Analytics) et l'efficacité de nos publicités (Meta, TikTok). Tu peux refuser : le parcours fonctionne exactement pareil. Ton choix est gardé 6 mois et se change à tout moment via « Cookies ».",
           refuse: 'Tout refuser',
           accept: 'Tout accepter',
           customize: 'Personnaliser',
-          save: 'Enregistrer mes choix',
+          save: 'Enregistrer',
           privacy: 'Confidentialité',
           analytics: "Mesure d'audience",
           analyticsDesc: 'Google Analytics : quelles étapes du parcours sont vues.',
           ads: 'Publicité',
           adsDesc: "Meta et TikTok : savoir quelle publicité t'a amené ici.",
+          optOut: 'Ne pas vendre ni partager mes informations personnelles',
         }
       : {
+          short: 'Cookies help us measure our ads (Google, Meta, TikTok). Saying no changes nothing for you.',
           title: 'Cookies and advertising',
           body:
             'With your consent, we measure how this page is used (Google Analytics) and how well our ads work (Meta, TikTok). You can say no: everything works exactly the same. Your choice is kept for 6 months and can be changed any time via “Cookies”.',
           refuse: 'Reject all',
           accept: 'Accept all',
           customize: 'Customise',
-          save: 'Save my choices',
+          save: 'Save',
           privacy: 'Privacy',
           analytics: 'Audience measurement',
           analyticsDesc: 'Google Analytics: which steps of the flow are seen.',
           ads: 'Advertising',
           adsDesc: 'Meta and TikTok: knowing which ad brought you here.',
+          optOut: 'Do not sell or share my personal information',
         };
+    // In the US the detailed view IS the opt-out: it says so.
+    if (us) {
+      T.title = T.optOut;
+      T.body = fr
+        ? 'Nous utilisons Google Analytics, Meta et TikTok pour mesurer cette page et nos publicités. Décoche pour refuser : le parcours fonctionne exactement pareil.'
+        : 'We use Google Analytics, Meta and TikTok to measure this page and our ads. Untick to opt out: everything works exactly the same.';
+    }
     root.querySelectorAll('[data-bc]').forEach(function (el) {
       var k = el.getAttribute('data-bc');
       if (T[k]) el.textContent = T[k];
     });
+    root.setAttribute('aria-label', T.title);
 
-    var prefs = root.querySelector('[data-bc-prefs]');
+    var compact = root.querySelector('[data-bc-compact]');
+    var full = root.querySelector('[data-bc-full]');
     var main = root.querySelector('[data-bc-main]');
     var saveRow = root.querySelector('[data-bc-save]');
+    var card = root.querySelector('.bc-card');
     var boxA = document.getElementById('bc-analytics');
     var boxB = document.getElementById('bc-ads');
+    var html = document.documentElement;
 
     function read() {
       try {
@@ -201,6 +263,12 @@
       }
     }
 
+    // funnelTrack (a module) runs after this inline script but before DOMContentLoaded.
+    function whenModulesRan(fn) {
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, { once: true });
+      else setTimeout(fn, 0);
+    }
+
     function apply(c) {
       if (c.analytics && window.__blissLoadGA) window.__blissLoadGA();
       if (c.ads) {
@@ -208,9 +276,9 @@
         if (window.__blissLoadTikTok) window.__blissLoadTikTok();
       }
       // Events fired before the answer (a checkout tap, a step) wait in funnelTrack — sent now to
-      // what was agreed to, dropped on a refusal. The module may load after this script: retry once.
+      // what was agreed to, dropped on a refusal. The module may load after this script.
       if (window.__blissFlushPixels) window.__blissFlushPixels(c);
-      else setTimeout(function () { if (window.__blissFlushPixels) window.__blissFlushPixels(c); }, 0);
+      else whenModulesRan(function () { if (window.__blissFlushPixels) window.__blissFlushPixels(c); });
     }
 
     // A loaded script cannot be unloaded: on a withdrawal, clear what the trackers set and reload.
@@ -227,17 +295,42 @@
         });
     }
 
+    // The page keeps its primary button above the bar: it reads this height (see the global style).
+    var ro = null;
+    function publishHeight() {
+      if (root.hidden) {
+        html.classList.remove('has-consent-bar');
+        html.style.removeProperty('--consent-bar-h');
+        return;
+      }
+      html.style.setProperty('--consent-bar-h', card.offsetHeight + 'px');
+      html.classList.add('has-consent-bar');
+    }
+
     function show(withPrefs) {
       var c = read();
       boxA.checked = !!(c && c.analytics);
       boxB.checked = !!(c && c.ads);
-      prefs.hidden = !withPrefs;
+      compact.hidden = !!withPrefs;
+      full.hidden = !withPrefs;
       saveRow.hidden = !withPrefs;
       main.hidden = !!withPrefs;
       root.hidden = false;
+      // Only the compact bar reserves room: the detailed view is a deliberate, temporary overlay.
+      if (withPrefs) {
+        html.classList.remove('has-consent-bar');
+        html.style.removeProperty('--consent-bar-h');
+      } else {
+        publishHeight();
+        if (!ro && window.ResizeObserver) {
+          ro = new ResizeObserver(function () { if (!full.hidden) return; publishHeight(); });
+          ro.observe(card);
+        }
+      }
     }
     function hide() {
       root.hidden = true;
+      publishHeight();
     }
 
     function decide(analytics, ads) {
@@ -268,16 +361,40 @@
       else if (action === 'customize') show(true);
     });
 
-    // Every funnel page carries a "Cookies" link: withdrawing is as easy as agreeing.
-    document.addEventListener('click', function (e) {
-      var t = e.target.closest ? e.target.closest('[data-consent-open]') : null;
-      if (!t) return;
-      e.preventDefault();
-      show(true);
-    });
+    // Every funnel page carries a "Cookies" link: withdrawing is as easy as agreeing. Registered
+    // once per document — ClientRouter re-runs this script on every soft navigation.
+    if (!window.__bcOpenBound) {
+      window.__bcOpenBound = 1;
+      document.addEventListener('click', function (e) {
+        var t = e.target.closest ? e.target.closest('[data-consent-open]') : null;
+        if (!t) return;
+        e.preventDefault();
+        var r = document.getElementById('bliss-consent');
+        if (r && r.__bcShow) r.__bcShow(true);
+      });
+    }
+    root.__bcShow = show;
+
+    // US: every "Cookies" link is the opt-out link. Relabelled once the page has rendered its own
+    // copy (the funnel swaps its French legal line in from a module, after this script).
+    if (us) {
+      var relabel = function () {
+        document.querySelectorAll('[data-consent-open]').forEach(function (a) { a.textContent = T.optOut; });
+      };
+      relabel();
+      whenModulesRan(relabel);
+      document.addEventListener('astro:page-load', relabel, { once: true });
+    }
 
     var existing = read();
     if (existing) apply(existing);
-    else show(false);
+    else if (us) {
+      // Opt-out regime: granted until they say no, recorded as such so it is never mistaken for a
+      // "yes" in the numbers (`implied_us` in web_funnel_hits).
+      var implied = { v: 1, analytics: true, ads: true, at: Date.now(), implied: 'us' };
+      write(implied);
+      apply(implied);
+      whenModulesRan(function () { if (window.__blissHit) window.__blissHit('consent', 'implied_us'); });
+    } else show(false);
   })();
 </script>

@@ -393,18 +393,32 @@ export function checkoutUrl(params: {
  */
 export const USD_PRICES_LIVE = true;
 
-/** Every IANA zone in the 50 states. Time zone, not IP: this site has no server to ask. */
-const US_TIME_ZONE =
+/**
+ * Every IANA zone in the 50 states. Time zone, not IP: this site has no server to ask.
+ * Exported for `ConsentBanner` (an inline script, it cannot import this module): it gets the
+ * pattern's `source` through `define:vars`, so the two never disagree on who is American.
+ */
+export const US_TIME_ZONE =
   /^(America\/(New_York|Detroit|Chicago|Denver|Phoenix|Boise|Los_Angeles|Anchorage|Juneau|Sitka|Nome|Adak|Yakutat|Metlakatla|Menominee|Indiana\/.+|Kentucky\/.+|North_Dakota\/.+)|Pacific\/Honolulu)$/;
+
+/**
+ * Is this visitor in the US? Drives the dollar prices AND the consent model (opt-out, no banner —
+ * see ConsentBanner). `?geo=us|eu` forces the answer, for QA only: nothing links with it.
+ */
+export function isUsVisitor(): boolean {
+  try {
+    const forced = new URLSearchParams(window.location.search).get('geo');
+    if (forced === 'us' || forced === 'eu') return forced === 'us';
+    return US_TIME_ZONE.test(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  } catch {
+    return false;
+  }
+}
 
 /** The currency this visitor is shown and charged in. */
 export function buyerCurrency(funnel: FunnelDef): string {
   if (!USD_PRICES_LIVE || funnel.id !== 'bliss') return funnel.currency;
-  try {
-    return US_TIME_ZONE.test(Intl.DateTimeFormat().resolvedOptions().timeZone) ? 'USD' : funnel.currency;
-  } catch {
-    return funnel.currency;
-  }
+  return isUsVisitor() ? 'USD' : funnel.currency;
 }
 
 /** `PLANS` are written in euros; the dollar amounts are the same numbers. */

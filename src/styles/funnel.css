@@ -14,6 +14,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
 
 .funnel-body .page { min-height: 100dvh; }
+/* The consent bar is up (ConsentBanner publishes its height): the intro fits in the space above it,
+   so "Continue" is on screen and never under the bar. */
+html.has-consent-bar .funnel-body .page,
+html.has-consent-bar .fnl { min-height: calc(100dvh - var(--consent-bar-h, 0px)); }
 
 .fnl {
   --fnl-w: 460px;
@@ -472,6 +476,9 @@
 /* When a subtitle follows, it takes the gap instead — 8 under the title, 28 under itself. */
 .fnl h1.bl-title + .fnl-sub { margin-top: -24px; margin-bottom: 28px; }
 .fnl h1.bl-title-intro { text-align: center; margin-top: 26px; margin-bottom: 0; }
+/* The ad's own headline (`?learn=`) is a sentence plus a sentence: one size down, so it holds in
+   three lines on a phone and the button stays on screen. */
+.fnl h1.bl-title-intro.bl-title-learn { font-size: clamp(22px, 6vw, 30px); }
 
 .bl-word { display: inline-block; animation: bl-word-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 .bl-em {
@@ -890,6 +897,19 @@
 .bl-lang:nth-child(5n)::after { animation-delay: 1.8s; }
 @media (prefers-reduced-motion: reduce) { .bl-lang::after { display: none; } }
 .bl-lang:hover { transform: translateY(-2px); box-shadow: 0 14px 22px rgba(30, 50, 110, 0.24); }
+/* Pre-selected by `?learn=` (the ad's language): ringed, and a "Continue" pinned under the grid. */
+.bl-lang.is-selected {
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px var(--ink-deep), 0 14px 22px rgba(30, 50, 110, 0.24);
+}
+.bl-lang-cta {
+  position: sticky;
+  bottom: calc(12px + env(safe-area-inset-bottom) + var(--consent-bar-h, 0px));
+  z-index: 2;
+  margin-top: 18px;
+  box-shadow: 0 10px 24px rgba(30, 50, 110, 0.22);
+}
 .bl-lang-top { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .bl-lang-native { font-style: normal; font-size: 13px; font-weight: 600; opacity: 0.92; }
 .bl-lang-badge {
@@ -1221,3 +1241,9 @@
    rule only breaks after three words, which left "Speak English for real" on one crowded line. */
 .fnl h1.bl-title-intro br { display: none; }
 .fnl h1.bl-title-intro .bl-word:has(.bl-em) { display: block; }
+/* …except the ad's headline (`?learn=`), whose accent is a whole sentence of single accented words
+   (see `learnTitle`): it keeps the app's break before the accent and lets the sentence wrap. */
+.fnl h1.bl-title-intro.bl-title-learn br { display: inline; }
+.fnl h1.bl-title-intro.bl-title-learn .bl-word:has(.bl-em) { display: inline-block; }
+/* With the consent bar up, the intro gives back its loosest spacing so "Continue" clears the bar. */
+html.has-consent-bar .fnl h1.bl-title-intro { margin-top: 14px; }

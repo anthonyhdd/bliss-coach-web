@@ -147,6 +147,8 @@ const brandStyle =
         <img class="bl-mark" src="/brand/bliss-coach-mark.png" alt="" width="22" height="22" />
         <h1 class="bl-title" data-title={COPY.languageTitle} data-title-key="languageTitle"></h1>
         <div class="bl-langs" data-langs></div>
+        <!-- Only when `?learn=` pre-selected a language: the ad already answered, a tap confirms. -->
+        <button class="fnl-cta bl-lang-cta" type="button" data-action="language-done" data-copy="continue" hidden>{COPY.continue}</button>
       </div>
     </section>
 
@@ -449,6 +451,17 @@ const brandStyle =
     return `<img src="/home/thumb/${t.persona}.webp" alt="" width="${w}" height="${h}" loading="lazy" onerror="this.onerror=null;this.src='/home/${t.photo}'" />`;
   }
 
+  /**
+   * A title whose second line is a whole accented sentence. `titleWordGroups` makes an accent ONE
+   * unbreakable word — right for « for real », but a six-word sentence in 34px serif is wider than
+   * a phone. So the first two words form the accent that opens its own line, and the rest are
+   * single accented words, which stay inline and wrap like any other word.
+   */
+  function learnTitle(hook: string, accent: string): string {
+    const words = accent.trim().split(/\s+/);
+    return `${hook} *${words.slice(0, 2).join(' ')}*${words.slice(2).map((w) => ` *${w}*`).join('')}`;
+  }
+
   function initFunnel(): void {
     const found = document.querySelector<HTMLElement>('.fnl');
     if (!found || found.dataset.initialised === '1') return;
@@ -470,6 +483,10 @@ const brandStyle =
     /** The language a teacher demonstrates on the intro: Charm takes `?learn=`'s when there is one. */
     const demoLanguage = (persona: string): string =>
       persona === 'charm' && learn ? learn : DEMO_LANGUAGE[persona];
+    // The ad already said which language: its tile is pre-selected on the language step (still
+    // shown — a tap on "Continue" confirms it, any other tile overrides it). Only the language: the
+    // teacher is set when it is confirmed, so the intro keeps Bliss's colours and Charm's face.
+    const preselectedLanguage = learn && !funnel.lockedLanguage && LANGUAGE_BY_CODE[learn] ? learn : '';
     const localPrice = (price: string): string => S.price(inCurrency(price, currency));
     // The markup is rendered with Bliss's plans at build time, and only Bliss's yearly has a trial:
     // `?t=sofia` / `?t=emily` must not promise one their checkout does not have.
@@ -523,9 +540,11 @@ const brandStyle =
     // server must not do what the browser was told not to).
     function adSignals(): Record<string, string> {
       let ads = false;
+      let implied = '';
       try {
         const c = JSON.parse(localStorage.getItem('bliss_consent_v1') || 'null');
         ads = !!(c && c.v === 1 && c.ads);
+        implied = c && typeof c.implied === 'string' ? c.implied : '';
       } catch {}
       if (!ads) return { ads_consent: '0' };
       const cookie = (k: string) => {
@@ -533,6 +552,9 @@ const brandStyle =
         return m ? decodeURIComponent(m[1]) : '';
       };
       const out: Record<string, string> = { ads_consent: '1', consent_at: new Date().toISOString() };
+      // A US visitor did not say yes, they did not opt out (ConsentBanner). `ads_consent` stays '1'
+      // (the server-side Purchase keys on it); the basis keeps them apart from a real "yes".
+      if (implied) out.consent_basis = `implied_${implied}`;
       const fbp = cookie('_fbp'), fbc = cookie('_fbc'), ttp = cookie('_ttp');
       if (fbp) out.fbp = fbp.slice(0, 200);
       if (fbc) out.fbc = fbc.slice(0, 500);
@@ -1005,20 +1027,35 @@ const brandStyle =
         (btn.querySelector('.bl-lang-native') as HTMLElement).textContent = lang.native;
         (btn.querySelector('.bl-lang-badge') as HTMLElement).textContent = lang.badge;
         (btn.querySelector('.bl-lang-name') as HTMLElement).textContent = capitalise(S.languageName(lang.code, lang.name));
-        btn.addEventListener('click', () => {
-          language = lang.code;
-          persona = recommendedTutor(lang.code).persona;
-          currentTier = 'basic';
-          probeResults = [];
-          knownWords = [];
-          persist();
-          paintTutor();
-          track('funnel_answer', { funnel: funnel.id, step: 'bliss_language', value: lang.code });
-          buildTutors();
-          advance();
-        });
+        btn.dataset.lang = lang.code;
+        btn.classList.toggle('is-selected', lang.code === preselectedLanguage);
+        btn.addEventListener('click', () => chooseLanguage(lang.code));
         langsEl.appendChild(btn);
       });
+    }
+
+    /** A tile tap, or "Continue" on the tile `?learn=` pre-selected: the same answer either way. */
+    function chooseLanguage(code: string): void {
+      language = code;
+      persona = recommendedTutor(code).persona;
+      currentTier = 'basic';
+      probeResults = [];
+      knownWords = [];
+      persist();
+      paintTutor();
+      track('funnel_answer', {
+        funnel: funnel.id,
+        step: 'bliss_language',
+        value: code,
+        ...(code === preselectedLanguage ? { preselected: 'learn' } : {}),
+      });
+      buildTutors();
+      advance();
+    }
+    const languageCta = root.querySelector<HTMLButtonElement>('[data-action="language-done"]');
+    if (languageCta && preselectedLanguage) {
+      languageCta.hidden = false;
+      languageCta.addEventListener('click', () => chooseLanguage(preselectedLanguage));
     }
 
     // ── Tutor ───────────────────────────────────────────────────────────────
@@ -1777,6 +1814,19 @@ const brandStyle =
       const introTitle = screens.get('intro')?.querySelector<HTMLElement>('.bl-title');
       if (introTitle) {
         introTitle.dataset.title = S.copy.introTitleLocked.replace('{language}', languageName());
+      }
+    }
+    // `?learn=` came from an ad about THAT language's pronunciation: the intro says it back, in the
+    // ad's words (« French pronunciation is hard. / Practice it out loud with Charm. »), second line
+    // in the serif accent. Without the parameter the headline is Bliss's own, unchanged.
+    if (learn && !funnel.lockedLanguage) {
+      const introTitle = screens.get('intro')?.querySelector<HTMLElement>('.bl-title');
+      if (introTitle) {
+        introTitle.dataset.title = learnTitle(
+          S.learnHook(learn, LANGUAGE_BY_CODE[learn]?.name ?? learn),
+          S.copy.introLearnAccent.replace('{name}', TUTOR_BY_PERSONA.charm?.name ?? 'Charm'),
+        );
+        introTitle.classList.add('bl-title-learn');
       }
     }
     // The visitor came from an Emily (or Sofia) ad, and lands on that app: its icon and name, not
