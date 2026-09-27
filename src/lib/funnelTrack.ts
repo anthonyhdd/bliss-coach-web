@@ -64,6 +64,7 @@ function consentLabel(): string {
   if (!c) return 'unknown';
   // A US visitor's opt-out default (ConsentBanner) — granted, but never counted as a "yes".
   if (c.implied === 'us') return 'implied_us';
+  if (c.implied === 'us_gpc') return 'implied_us_gpc';
   if (c.analytics && c.ads) return 'accepted';
   if (!c.analytics && !c.ads) return 'refused';
   return 'partial';

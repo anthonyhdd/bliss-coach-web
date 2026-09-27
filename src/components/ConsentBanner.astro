@@ -391,10 +391,13 @@ const usTimeZone = US_TIME_ZONE.source;
     else if (us) {
       // Opt-out regime: granted until they say no, recorded as such so it is never mistaken for a
       // "yes" in the numbers (`implied_us` in web_funnel_hits).
-      var implied = { v: 1, analytics: true, ads: true, at: Date.now(), implied: 'us' };
+      // Global Privacy Control IS a "no" to sale/share, and California requires honouring it: such a
+      // browser gets analytics but no ad pixels, with nothing to click (`implied_us_gpc`).
+      var gpc = navigator.globalPrivacyControl === true;
+      var implied = { v: 1, analytics: true, ads: !gpc, at: Date.now(), implied: gpc ? 'us_gpc' : 'us' };
       write(implied);
       apply(implied);
-      whenModulesRan(function () { if (window.__blissHit) window.__blissHit('consent', 'implied_us'); });
+      whenModulesRan(function () { if (window.__blissHit) window.__blissHit('consent', gpc ? 'implied_us_gpc' : 'implied_us'); });
     } else show(false);
   })();
 </script>
