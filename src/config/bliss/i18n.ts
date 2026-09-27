@@ -26,10 +26,11 @@ export function detectUiLang(search: string, languages: readonly string[]): UiLa
   return first.startsWith('fr') ? 'fr' : 'en';
 }
 
-type Copy = { -readonly [K in keyof typeof COPY]: string } & { introTitleLocked: string };
+type Copy = { -readonly [K in keyof typeof COPY]: string } & { introTitleLocked: string; introLearnAccent: string };
 type ResultCopy = { -readonly [K in keyof typeof RESULT_COPY]: string };
 
 const COPY_FR: Copy = {
+  introLearnAccent: 'Entraîne-toi à voix haute avec {name}.',
   introTitle: 'Parle une langue *pour de vrai*',
   introTitleLocked: 'Parle {language} *pour de vrai*',
   introPromise: 'Une prof qui t’écoute, te répond et te corrige. À voix haute, dès la première minute.',
@@ -101,6 +102,12 @@ const SOURCE_LABEL_FR: Record<string, string> = {
 const LANGUAGE_NAME_FR: Record<string, string> = {
   es: 'espagnol', en: 'anglais', zh: 'mandarin', fr: 'français', it: 'italien',
   de: 'allemand', pt: 'portugais', ja: 'japonais', ko: 'coréen', ar: 'arabe',
+};
+
+/** The same languages as adjectives agreeing with « la prononciation » (feminine). */
+const LANGUAGE_ADJ_FR: Record<string, string> = {
+  es: 'espagnole', en: 'anglaise', zh: 'chinoise', fr: 'française', it: 'italienne',
+  de: 'allemande', pt: 'portugaise', ja: 'japonaise', ko: 'coréenne', ar: 'arabe',
 };
 
 /** Per tutor, because French adjectives agree: Alex is a man, every other tutor (Charm included) a woman. */
@@ -187,6 +194,11 @@ export type Strings = {
   deadlineShort: (id: string, fallback: string) => string;
   sourceLabel: (id: string, fallback: string) => string;
   languageName: (code: string, fallback: string) => string;
+  /**
+   * The intro's first line when the ad named a language (`?learn=`): « French pronunciation is
+   * hard. » French needs the adjective, which agrees with « prononciation » — hence a function.
+   */
+  learnHook: (code: string, fallbackName: string) => string;
   traits: (persona: string, fallback: readonly string[]) => readonly string[];
   tutorTag: (native: boolean, persona: string) => string;
   recommended: string;
@@ -219,7 +231,7 @@ export type Strings = {
 
 const EN: Strings = {
   lang: 'en',
-  copy: { ...COPY, introTitleLocked: 'Speak {language} *for real*' },
+  copy: { ...COPY, introLearnAccent: 'Practice it out loud with {name}.', introTitleLocked: 'Speak {language} *for real*' },
   result: { ...RESULT_COPY },
   tier: { ...TIER_LABEL },
   heard: { title: HEARD_ABOUT_US.title, subtitle: HEARD_ABOUT_US.subtitle, thanks: HEARD_ABOUT_US.thanks, skip: HEARD_ABOUT_US.skip },
@@ -228,6 +240,7 @@ const EN: Strings = {
   deadlineShort: (_id, f) => f.replace(/^An? /, ''),
   sourceLabel: (_id, f) => f,
   languageName: (_c, f) => f,
+  learnHook: (_c, f) => `${f} pronunciation is hard.`,
   traits: (_p, f) => f,
   tutorTag: (native, _persona) => (native ? 'Native teacher' : 'Bilingual friend'),
   recommended: 'Recommended',
@@ -277,6 +290,8 @@ const FR: Strings = {
   deadlineShort: (id, f) => DEADLINE_SHORT_FR[id] ?? f,
   sourceLabel: (id, f) => SOURCE_LABEL_FR[id] ?? f,
   languageName: (c, f) => LANGUAGE_NAME_FR[c] ?? f,
+  learnHook: (c, f) =>
+    LANGUAGE_ADJ_FR[c] ? `La prononciation ${LANGUAGE_ADJ_FR[c]}, c’est dur.` : `La prononciation en ${LANGUAGE_NAME_FR[c] ?? f}, c’est dur.`,
   traits: (p, f) => TRAITS_FR[p] ?? f,
   tutorTag: (native, persona) =>
     native ? 'Prof native' : MALE_TUTORS.has(persona) ? 'Ami bilingue' : 'Amie bilingue',

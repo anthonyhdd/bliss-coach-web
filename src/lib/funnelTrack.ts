@@ -47,11 +47,11 @@ const pending: Pending[] = [];
 const PENDING_MAX = 30;
 
 /** What the banner stored — the same key and shape as ConsentBanner's `read()`. */
-function storedConsent(): { analytics: boolean; ads: boolean } | null {
+function storedConsent(): { analytics: boolean; ads: boolean; implied?: string } | null {
   try {
     const c = JSON.parse(localStorage.getItem('bliss_consent_v1') || 'null');
     if (c && c.v === 1 && typeof c.at === 'number' && Date.now() - c.at < 182 * 24 * 60 * 60 * 1000) {
-      return { analytics: !!c.analytics, ads: !!c.ads };
+      return { analytics: !!c.analytics, ads: !!c.ads, implied: typeof c.implied === 'string' ? c.implied : undefined };
     }
   } catch {
     /* private mode */
@@ -62,6 +62,8 @@ function storedConsent(): { analytics: boolean; ads: boolean } | null {
 function consentLabel(): string {
   const c = storedConsent();
   if (!c) return 'unknown';
+  // A US visitor's opt-out default (ConsentBanner) — granted, but never counted as a "yes".
+  if (c.implied === 'us') return 'implied_us';
   if (c.analytics && c.ads) return 'accepted';
   if (!c.analytics && !c.ads) return 'refused';
   return 'partial';
