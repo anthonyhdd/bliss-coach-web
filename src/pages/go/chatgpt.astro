@@ -1,0 +1,22 @@
+---
+// Paid-traffic bounce for ChatGPT Ads (US). OpenAI only accepts ad URLs on the
+// verified domain until the account is verified, so the ad points here and we
+// hand off to the AppsFlyer attribution link, which redirects to the App Store.
+const AF = 'https://app.appsflyer.com/id6812111788?pid=chatgpt_int&c=bliss_us_chatgpt';
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bliss AI</title>
+    <meta http-equiv="refresh" content={`0;url=${AF}`} />
+    <script is:inline define:vars={{ AF }}>
+      var q = location.search ? '&' + location.search.slice(1) : '';
+      location.replace(AF + q);
+    </script>
+  </head>
+  <body>
+    <p><a href={AF}>Open Bliss AI on the App Store</a></p>
+  </body>
+</html>
