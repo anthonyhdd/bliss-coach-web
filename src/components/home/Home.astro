@@ -166,12 +166,13 @@ const languages = ['Español', 'Français', 'English', '中文', 'Deutsch', 'Ita
 const SCREENS = ['screen-02.webp', 'screen-05.webp', 'screen-04.webp', null, 'screen-07.webp'];
 const steps = T.steps.map(([title, body], i) => ({ title, body, screen: SCREENS[i] }));
 
-// Hover row — Charm starts in the middle, expanded (founder 2026-09-29: Charm is the default face).
+// Hover row — the Charm face starts in the middle, expanded (founder 2026-09-29: she is the default face).
+// Inside Bliss she is called « Maya » (founder 2026-09-29) — the /charm/ dating-coach app keeps « Charm ».
 const tutors = [
   { slug: 'amelie', name: 'Amélie' },
   { slug: 'emily', name: 'Emily' },
   { slug: 'sofia', name: 'Sofia' },
-  { slug: 'charm', name: 'Charm' },
+  { slug: 'charm', name: 'Maya' },
   { slug: 'mila', name: 'Mila' },
   { slug: 'meilin', name: 'Meilin' },
   { slug: 'alex', name: 'Alex' },
@@ -511,7 +512,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                     <div class="hphone__screen">
                       <video class="hphone__video" id="heroVideo" src={u('/home/video/charm.mp4')} poster={u('/home/pk/tutor-charm.webp')} autoplay muted loop playsinline preload="auto"></video>
                       <div class="hphone__bar"><span>12:25</span><svg class="hphone__icons" viewBox="0 0 68 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/><path d="M31 3.3a10 10 0 0 1 7 2.8l1.3-1.4A12 12 0 0 0 31 1.3a12 12 0 0 0-8.3 3.4L24 6.1a10 10 0 0 1 7-2.8Zm0 3.7a6 6 0 0 1 4.3 1.7l1.4-1.4A8 8 0 0 0 31 5a8 8 0 0 0-5.7 2.3l1.4 1.4A6 6 0 0 1 31 7Zm0 3.6 1.9-1.9a2.7 2.7 0 0 0-3.8 0Z"/><rect x="44" y=".5" width="21" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="46" y="2.5" width="17" height="7" rx="1.8"/><rect x="66" y="4" width="1.6" height="4" rx=".8" opacity=".4"/></g></svg></div>
-                      <div class="hphone__name"><span id="heroName">Charm</span> <svg viewBox="0 0 12 8"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></div>
+                      <div class="hphone__name"><span id="heroName">Maya</span> <svg viewBox="0 0 12 8"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></div>
                       <div class="hphone__island"></div>
                     </div>
                   </div>
@@ -526,7 +527,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                   <div class="hero__bubbles" data-tutor={k} hidden={n !== 0}>
                     <div class="hero__chat hero__chat--user"><p class="hero__chattext">{heroBubbles[k][0][0]}<b>{heroBubbles[k][0][1]}</b>{heroBubbles[k][0][2]}</p></div>
                     <div class="hero__chat hero__chat--tutor">
-                      <span class="hero__who"><img src={u(`/home/pk/tutor-${k}.webp`)} alt="" />{k.charAt(0).toUpperCase() + k.slice(1)}</span>
+                      <span class="hero__who"><img src={u(`/home/pk/tutor-${k}.webp`)} alt="" />{tutors.find((t) => t.slug === k)?.name ?? k}</span>
                       <span class="hero__typing"><i></i><i></i><i></i></span>
                       <p class="hero__chattext">{heroBubbles[k][1][0]}<i>{heroBubbles[k][1][1]}</i>{heroBubbles[k][1][2]}</p>
                     </div>
@@ -584,7 +585,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                       ) : (
                         <div class="fphone__content fscreen" data-step={i}>
                           <div class="fscreen__status"><span>12:25</span></div>
-                          <div class="fscreen__top"><span>✕</span><b>Charm ⌄</b><span></span></div>
+                          <div class="fscreen__top"><span>✕</span><b>Maya ⌄</b><span></span></div>
                           <div class="fscreen__cam">
                             <video src={u('/home/video/charm.mp4')} poster={u('/home/pk/tutor-charm.webp')} muted loop playsinline preload="none"></video>
                           </div>

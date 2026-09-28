@@ -126,7 +126,9 @@ export const TUTORS: readonly Tutor[] = [
   },
   {
     persona: 'charm',
-    name: 'Charm',
+    // « Maya » inside Bliss (founder 2026-09-29): « Charm » reads as a dating coach. Same face, same
+    // persona id; the standalone /charm/ dating-coach app keeps its name.
+    name: 'Maya',
     native: null,
     traits: ['Frank', 'Warm', 'Teasing'],
     photo: 'coach.png',
