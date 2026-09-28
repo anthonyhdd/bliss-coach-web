@@ -166,12 +166,12 @@ const languages = ['Español', 'Français', 'English', '中文', 'Deutsch', 'Ita
 const SCREENS = ['screen-02.webp', 'screen-05.webp', 'screen-04.webp', null, 'screen-07.webp'];
 const steps = T.steps.map(([title, body], i) => ({ title, body, screen: SCREENS[i] }));
 
-// Hover row — Sofia starts in the middle, expanded.
+// Hover row — Charm starts in the middle, expanded (founder 2026-09-29: Charm is the default face).
 const tutors = [
-  { slug: 'charm', name: 'Charm' },
   { slug: 'amelie', name: 'Amélie' },
   { slug: 'emily', name: 'Emily' },
   { slug: 'sofia', name: 'Sofia' },
+  { slug: 'charm', name: 'Charm' },
   { slug: 'mila', name: 'Mila' },
   { slug: 'meilin', name: 'Meilin' },
   { slug: 'alex', name: 'Alex' },
@@ -205,8 +205,8 @@ const cons = T.cons;
 
 const tones = [
   { slug: 'astra', name: T.tones[0] },
-  { slug: 'mila', name: T.tones[1], main: true },
-  { slug: 'charm', name: T.tones[2] },
+  { slug: 'charm', name: T.tones[2], main: true },
+  { slug: 'mila', name: T.tones[1] },
 ];
 const FLAG_FR = '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002654"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce1126"/></svg>';
 const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="gbt"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#gbs)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#gbt)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>';
@@ -422,7 +422,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
       <div class="hdr__box" id="hdrBox">
         <div class="hdr__head">
           <a class="hdr__logo" href={u(fr ? '/fr/' : '/')} aria-label="Bliss">
-            <BlissBloom size={40} compact decorative />
+            <img class="hdr__icon" src={u('/home/pk/bliss-appicon-128.webp')} alt="" width="40" height="40" />
             <span>Bliss</span>
           </a>
           <nav class="menu" aria-label="Main">
@@ -525,7 +525,11 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                 {HERO_TUTORS.map((k, n) => (
                   <div class="hero__bubbles" data-tutor={k} hidden={n !== 0}>
                     <div class="hero__chat hero__chat--user"><p class="hero__chattext">{heroBubbles[k][0][0]}<b>{heroBubbles[k][0][1]}</b>{heroBubbles[k][0][2]}</p></div>
-                    <div class="hero__chat hero__chat--tutor"><p class="hero__chattext">{heroBubbles[k][1][0]}<i>{heroBubbles[k][1][1]}</i>{heroBubbles[k][1][2]}</p></div>
+                    <div class="hero__chat hero__chat--tutor">
+                      <span class="hero__who"><img src={u(`/home/pk/tutor-${k}.webp`)} alt="" />{k.charAt(0).toUpperCase() + k.slice(1)}</span>
+                      <span class="hero__typing"><i></i><i></i><i></i></span>
+                      <p class="hero__chattext">{heroBubbles[k][1][0]}<i>{heroBubbles[k][1][1]}</i>{heroBubbles[k][1][2]}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -580,9 +584,9 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
                       ) : (
                         <div class="fphone__content fscreen" data-step={i}>
                           <div class="fscreen__status"><span>12:25</span></div>
-                          <div class="fscreen__top"><span>✕</span><b>Sofia ⌄</b><span></span></div>
+                          <div class="fscreen__top"><span>✕</span><b>Charm ⌄</b><span></span></div>
                           <div class="fscreen__cam">
-                            <video src={u('/home/video/sofia-idle.mp4')} poster={u('/home/pk/tutor-sofia.webp')} muted loop playsinline preload="none"></video>
+                            <video src={u('/home/video/charm.mp4')} poster={u('/home/pk/tutor-charm.webp')} muted loop playsinline preload="none"></video>
                           </div>
                           <div class="fscreen__sheet">
                             <div class="fscreen__msg">Ayer yo <u>voy</u> al cine con mis amigos</div>
@@ -661,7 +665,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
           <div class="grid">
             <div class="tab tab--video">
               <div class="vid__intro">
-                <video class="vid__video" id="introVideo" src={u('/home/video/mila.mp4')} poster={u('/home/pk/tutor-mila.webp')} autoplay muted loop playsinline preload="metadata"></video>
+                <video class="vid__video" id="introVideo" src={u('/home/video/charm.mp4')} poster={u('/home/pk/tutor-charm.webp')} autoplay muted loop playsinline preload="metadata"></video>
               </div>
               <div class="vid__content">
                 <h3 class="h3 vid__title">{T.vidTitle[0]}<br />{T.vidTitle[1]}</h3>
@@ -677,7 +681,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
             <div class="tab tab--improve">
               <h3 class="h3 t improve__title">{T.improve}</h3>
               <div class="improve__art" aria-hidden="true">
-                <img class="improve__tutor image" src={u('/home/pk/tutor-meilin.webp')} alt="" loading="lazy" />
+                <img class="improve__tutor image" src={u('/home/pk/tutor-charm.webp')} alt="" loading="lazy" />
                 <div class="improve__card">
                   <div class="improve__row"><span class="improve__lbl">{T.sayLike}</span><span class="improve__pill">{T.tone3}</span></div>
                   <div class="improve__zh">你好</div>
@@ -695,7 +699,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
               </div>
               <div class="main__phones" aria-hidden="true">
                 <div class="main__chat"><div class="iphone"><div class="iphone__screen"><img class="image" src={u('/home/pk/screen-04.webp')} alt="" loading="lazy" /><div class="iphone__island"></div></div></div></div>
-                <div class="main__call"><div class="iphone"><div class="iphone__screen"><img class="image main__callimg" src={u('/home/pk/tutor-emily.webp')} alt="" loading="lazy" /><div class="iphone__island"></div></div></div></div>
+                <div class="main__call"><div class="iphone"><div class="iphone__screen"><img class="image main__callimg" src={u('/home/pk/tutor-charm.webp')} alt="" loading="lazy" /><div class="iphone__island"></div></div></div></div>
               </div>
             </div>
 
@@ -916,6 +920,7 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
       .hdr__head { align-items: center; display: flex; justify-content: space-between; padding: var(--s-sm) var(--s-md); }
       @media (max-width: 1024px) { .hdr__head { padding: var(--s-md) var(--s-xl); } }
       @media (max-width: 480px) { .hdr__head { padding: var(--s-lg); padding-left: var(--s-xl); } }
+      .hdr__icon { border-radius: 22.5%; display: block; height: 4rem; width: 4rem; }
       .hdr__logo {
         align-items: center; display: inline-flex; gap: .8rem; height: 4.8rem; text-decoration: none;
         color: var(--black); font-family: var(--font-heading); font-weight: 700; font-size: 3.2rem; letter-spacing: -.03em;
@@ -1042,21 +1047,58 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
       .hero__micicon { color: var(--b2); width: 4.7rem; position: relative; }
       @media (max-width: 480px) { .hero__micicon { width: 3.2rem; } }
       [hidden].hero__bubbles { display: none; }
-      .hero__chat { border: 1px solid rgba(255, 255, 255, .3); border-radius: 2.4rem; padding: var(--s-md) var(--s-lg); position: absolute; text-align: left; }
-      @media (max-width: 480px) { .hero__chat { border-radius: 1.8rem; } }
-      .hero__chat::before {
-        content: ''; background: inherit; border-radius: inherit; filter: blur(.4rem); position: absolute; inset: 0; z-index: -1;
+      /* Hero chat: glass bubbles replaying a correction on a 10 s loop — the user's line pops in, the
+         wrong word gets struck, the tutor "types", then the fix lands and glows. Pop = scale/opacity,
+         idle drift = translate, tilt = rotate: separate properties, so the animations compose. */
+      .hero__chat {
+        -webkit-backdrop-filter: blur(1.6rem) saturate(1.5); backdrop-filter: blur(1.6rem) saturate(1.5);
+        border: 1px solid rgba(255, 255, 255, .45); border-radius: 2.4rem; padding: var(--s-md) var(--s-lg);
+        position: absolute; text-align: left; transform-origin: center bottom;
+        box-shadow: 0 1.8rem 4rem -1.2rem rgba(40, 10, 60, .45), inset 0 1px 0 rgba(255, 255, 255, .6);
+        animation: chatDrift 6s ease-in-out infinite;
       }
-      .hero__chat--user { background: rgba(255, 232, 240, .85); color: var(--black); right: -24%; top: 53%; transform: rotate(4deg); width: 26rem; z-index: 3; }
-      .hero__chat--tutor { background: rgba(219, 39, 119, .72); color: #fff; left: -18%; top: 69%; transform: rotate(-3deg); width: 32rem; z-index: 4; }
+      @media (max-width: 480px) { .hero__chat { border-radius: 1.8rem; } }
+      .hero__chat--user {
+        background: linear-gradient(160deg, rgba(255, 255, 255, .92), rgba(255, 228, 238, .78)); color: var(--black);
+        border-bottom-right-radius: .6rem; right: -24%; top: 50%; rotate: 4deg; width: 26rem; z-index: 3;
+        animation: chatDrift 6s ease-in-out infinite, chatUser 10s cubic-bezier(.34, 1.56, .64, 1) infinite;
+      }
+      .hero__chat--tutor {
+        background: linear-gradient(150deg, rgba(30, 27, 75, .88), rgba(49, 46, 129, .82)); border-color: rgba(165, 180, 252, .45); color: #fff;
+        border-bottom-left-radius: .6rem; left: -18%; top: 67%; rotate: -3deg; width: 32rem; z-index: 4; padding-top: var(--s-sm);
+        animation: chatDrift 7s ease-in-out -2s infinite, chatTutor 10s cubic-bezier(.34, 1.56, .64, 1) infinite;
+      }
       @media (max-width: 480px) {
-        .hero__chat--user { top: 55%; width: 18rem; right: -18%; }
+        .hero__chat--user { top: 52%; width: 18rem; right: -18%; }
         .hero__chat--tutor { width: 22rem; left: -14%; }
       }
+      .hero__who { align-items: center; display: flex; font-size: 1.3rem; font-weight: 700; gap: .6rem; letter-spacing: .04em; margin-bottom: .4rem; opacity: .9; text-transform: uppercase; }
+      .hero__who img { border: 2px solid rgba(255, 255, 255, .8); border-radius: 50%; height: 2.4rem; object-fit: cover; width: 2.4rem; }
+      @media (max-width: 480px) { .hero__who { font-size: 1rem; } .hero__who img { height: 1.8rem; width: 1.8rem; } }
+      .hero__typing { display: flex; gap: .5rem; left: var(--s-lg); opacity: 0; position: absolute; top: 58%; animation: chatTyping 10s linear infinite; }
+      .hero__typing i { animation: chatDot 1s ease-in-out infinite; background: #fff; border-radius: 50%; height: .9rem; width: .9rem; }
+      .hero__typing i:nth-child(2) { animation-delay: .15s; }
+      .hero__typing i:nth-child(3) { animation-delay: .3s; }
       .hero__chattext { font-size: 2.4rem; font-weight: 700; line-height: 1.2; }
+      .hero__chat--tutor .hero__chattext { animation: chatReveal 10s ease-out infinite; }
       @media (max-width: 480px) { .hero__chattext { font-size: 1.6rem; } }
-      .hero__chattext b { background: #ff1f1b; border-radius: 1.2rem; color: #fff; padding: .2rem 1rem; }
-      .hero__chattext i { background: #00a806; border-radius: 1.2rem; color: #fff; font-style: normal; padding: .2rem 1rem; }
+      .hero__chattext b, .hero__chattext i { border-radius: 1.2rem; color: #fff; display: inline-block; font-style: normal; padding: .2rem 1rem; position: relative; }
+      .hero__chattext b { background: #ff1f1b; animation: chatWrong 10s ease-in-out infinite; }
+      .hero__chattext b::after { background: #fff; border-radius: 2px; content: ''; height: .25rem; left: .6rem; position: absolute; right: .6rem; top: 52%; transform: scaleX(0); transform-origin: left; animation: chatStrike 10s ease-in-out infinite; }
+      .hero__chattext i { background: #00a806; animation: chatRight 10s ease-in-out infinite; }
+      @keyframes chatDrift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -.8rem; } }
+      @keyframes chatUser { 0% { opacity: 0; scale: .5; } 6%, 88% { opacity: 1; scale: 1; } 94%, 100% { opacity: 0; scale: .85; } }
+      @keyframes chatTutor { 0%, 26% { opacity: 0; scale: .5; } 32%, 90% { opacity: 1; scale: 1; } 96%, 100% { opacity: 0; scale: .85; } }
+      @keyframes chatTyping { 0%, 28% { opacity: 0; } 31%, 43% { opacity: 1; } 46%, 100% { opacity: 0; } }
+      @keyframes chatDot { 0%, 100% { opacity: .4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-.4rem); } }
+      @keyframes chatReveal { 0%, 44% { opacity: 0; filter: blur(.4rem); } 50%, 100% { opacity: 1; filter: blur(0); } }
+      @keyframes chatWrong { 0%, 14%, 24%, 100% { rotate: 0deg; } 16%, 20% { rotate: -6deg; } 18%, 22% { rotate: 6deg; } }
+      @keyframes chatStrike { 0%, 16% { transform: scaleX(0); } 24%, 100% { transform: scaleX(1); } }
+      @keyframes chatRight {
+        0%, 50% { box-shadow: 0 0 0 0 rgba(0, 168, 6, 0); scale: 1; }
+        54% { box-shadow: 0 0 0 .6rem rgba(0, 220, 10, .35), 0 0 2.4rem rgba(0, 255, 20, .6); scale: 1.12; }
+        62%, 100% { box-shadow: 0 0 1.2rem rgba(0, 255, 20, .35); scale: 1; }
+      }
 
       /* ---------- languages strip (logos row on the reference) ---------- */
       .langs {
@@ -1428,6 +1470,8 @@ const FLAG_GB = '<svg viewBox="0 0 60 30"><clipPath id="gbs"><path d="M0 0v30h60
 
       @media (prefers-reduced-motion: reduce) {
         .hero__wave, .langs__track, .improve__bars i { animation: none; }
+        .hero__chat, .hero__chattext, .hero__chattext b, .hero__chattext i, .hero__typing { animation: none !important; }
+        .hero__chattext b::after { animation: none; transform: scaleX(1); }
       }
     </style>
 
