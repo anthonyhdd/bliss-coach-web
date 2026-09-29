@@ -1,6 +1,13 @@
 {
   "schema": 1,
   "variant": "charm",
-  "rev": "2026-09-28 init",
-  "blocks": {}
+  "rev": "2026-09-29 fondateur = même voix que tous (flux + suppression bruit coupés)",
+  "blocks": {
+    "killSwitches": {
+      "value": {
+        "ttsStream": true,
+        "noiseSuppression": true
+      }
+    }
+  }
 }
