@@ -2,19 +2,60 @@
 // Paid-traffic bounce for ChatGPT Ads (US). OpenAI only accepts ad URLs on the
 // verified domain until the account is verified, so the ad points here and we
 // hand off to the AppsFlyer attribution link, which redirects to the App Store.
+//
+// OpenAI Ads measurement pixel (data source 6N4DeiQvjLCzYeexwJsiR2) fires the
+// "Vers App Store" conversion (standard event page_viewed) before the hand-off.
+// The SDK reads the `oppref` click id from location.search, so the URL is left
+// untouched until the redirect. The redirect waits for the SDK script onload +
+// 400 ms (time for the beacon to leave), with a hard 1200 ms cap so a blocked
+// CDN never traps the user. No meta refresh for JS users: a 0 s refresh would
+// leave before the pixel runs; it only exists inside <noscript>.
+// Consent: this page never had the site-wide banner (US-only traffic) — unchanged.
 const AF = 'https://app.appsflyer.com/id6812111788?pid=chatgpt_int&c=bliss_us_chatgpt';
+const PIXEL_ID = '6N4DeiQvjLCzYeexwJsiR2';
 ---
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script is:inline define:vars={{ AF, PIXEL_ID }}>
+      (function (w, d) {
+        var q = location.search ? '&' + location.search.slice(1) : '';
+        var target = AF + q;
+        var gone = false;
+        function go() {
+          if (gone) return;
+          gone = true;
+          location.replace(target);
+        }
+        // Hard cap: never hold the user longer than 1.2 s.
+        setTimeout(go, 1200);
+        try {
+          if (!w.oaiq) {
+            var oq = function () { oq.q.push(arguments); };
+            oq.q = [];
+            w.oaiq = oq;
+            var js = d.createElement('script');
+            js.async = true;
+            js.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
+            js.onload = function () { setTimeout(go, 400); };
+            js.onerror = go;
+            var f = d.getElementsByTagName('script')[0];
+            f.parentNode.insertBefore(js, f);
+          }
+          w.oaiq('init', { pixelId: PIXEL_ID });
+          w.oaiq('measure', 'page_viewed', {
+            type: 'contents',
+            contents: [{ id: 'go_chatgpt', name: 'Vers App Store', content_type: 'page' }],
+          });
+        } catch (e) {
+          go();
+        }
+      })(window, document);
+    </script>
     <meta name="robots" content="noindex" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bliss AI</title>
-    <meta http-equiv="refresh" content={`0;url=${AF}`} />
-    <script is:inline define:vars={{ AF }}>
-      var q = location.search ? '&' + location.search.slice(1) : '';
-      location.replace(AF + q);
-    </script>
+    <noscript><meta http-equiv="refresh" content={`0;url=${AF}`} /></noscript>
   </head>
   <body>
     <p><a href={AF}>Open Bliss AI on the App Store</a></p>
