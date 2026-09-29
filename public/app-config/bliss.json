@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-09-29 fondateur = même voix que tous (flux + suppression bruit coupés)",
+  "rev": "2026-09-29 1.0.3 en vente : invite de mise à jour aussi pour 1.0.2",
   "blocks": {
     "updateGate": {
-      "maxBinary": "1.0.1",
+      "maxBinary": "1.0.2",
       "value": {
         "blocking": false
       }
