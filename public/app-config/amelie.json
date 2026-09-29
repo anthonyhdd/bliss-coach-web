@@ -1,12 +1,13 @@
 {
   "schema": 1,
   "variant": "amelie",
-  "rev": "2026-09-29 fondateur = même voix que tous (flux + suppression bruit coupés)",
+  "rev": "2026-09-29 exp_paywall_timing coupée : 100 % premier appel avant le paywall",
   "blocks": {
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true
+        "noiseSuppression": true,
+        "paywallTiming": true
       }
     }
   }
