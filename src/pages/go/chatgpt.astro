@@ -7,8 +7,14 @@
 // "Vers App Store" conversion (standard event page_viewed) before the hand-off.
 // The SDK reads the `oppref` click id from location.search, so the URL is left
 // untouched until the redirect. The redirect waits for the SDK script onload +
-// 400 ms (time for the beacon to leave), with a hard 1200 ms cap so a blocked
-// CDN never traps the user. No meta refresh for JS users: a 0 s refresh would
+// 400 ms (pixel config fetched), with a hard 1200 ms cap so a blocked CDN never
+// traps the user.
+// The SDK BATCHES events and only sends ~2 s after measure(), or on pagehide via
+// sendBeacon. A hand-off into the App Store from ChatGPT's in-app browser does
+// not reliably fire pagehide, so before 2026-09-29 the event died with the page:
+// 49 ad clicks -> 1 event in Ads Manager. go() now dispatches pagehide itself,
+// which makes the SDK flush the queue with sendBeacon (verified: beacon to
+// bzr.openai.com/v1/sdk/events 2 ms after dispatch) before location.replace. No meta refresh for JS users: a 0 s refresh would
 // leave before the pixel runs; it only exists inside <noscript>.
 // Consent: this page never had the site-wide banner (US-only traffic) — unchanged.
 const AF = 'https://app.appsflyer.com/id6812111788?pid=chatgpt_int&c=bliss_us_chatgpt';
@@ -25,6 +31,7 @@ const PIXEL_ID = '6N4DeiQvjLCzYeexwJsiR2';
         function go() {
           if (gone) return;
           gone = true;
+          try { w.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: false })); } catch (e) {}
           location.replace(target);
         }
         // Hard cap: never hold the user longer than 1.2 s.
