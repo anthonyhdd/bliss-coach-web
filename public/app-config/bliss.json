@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-09-29 1.0.3 en vente : invite de mise à jour aussi pour 1.0.2",
+  "rev": "2026-10-03 carte Apple Wallet retirée (killSwitches.walletPass)",
   "blocks": {
     "updateGate": {
       "maxBinary": "1.0.2",
@@ -12,7 +12,8 @@
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true
+        "noiseSuppression": true,
+        "walletPass": true
       }
     }
   }
