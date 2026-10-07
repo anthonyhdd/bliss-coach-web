@@ -1,19 +1,20 @@
 ---
-// /bliss/vs/ — hub of the "Bliss vs X" comparisons (src/config/bliss/vsPages.ts).
-import Base from '../../../layouts/Base.astro';
-import AppStoreButton from '../../../components/AppStoreButton.astro';
-import { withBase, BLISS_APP_STORE_URL, BLISS_APP_STORE_ID } from '../../../config/apps';
-import { VS_PAGES, vsPath } from '../../../config/bliss/vsPages';
-import '../../../styles/tutor.css';
+// /fr/bliss/vs/ — French hub of the "Bliss vs X" comparisons (src/config/bliss/vsPages.ts).
+import Base from '../../../../layouts/Base.astro';
+import AppStoreButton from '../../../../components/AppStoreButton.astro';
+import { withBase, BLISS_APP_STORE_URL, BLISS_APP_STORE_ID } from '../../../../config/apps';
+import { vsPathFr } from '../../../../config/bliss/vsPages';
+import { VS_PAGES_FR as VS_PAGES } from '../../../../config/bliss/vsPages.fr';
+import '../../../../styles/tutor.css';
 
 const brandStyle = '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#DB2777;--on-gradient:#ffffff';
-const url = 'https://bliss-coach.com/bliss/vs/';
+const url = 'https://bliss-coach.com/fr/bliss/vs/';
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Bliss compared with other language learning apps',
-    itemListElement: VS_PAGES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: `Bliss vs ${p.name}`, url: `https://bliss-coach.com${vsPath(p)}` })),
+    name: 'Bliss comparé aux autres applis pour apprendre une langue',
+    itemListElement: VS_PAGES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: `Bliss vs ${p.name}`, url: `https://bliss-coach.com${vsPathFr(p)}` })),
   },
   {
     '@context': 'https://schema.org',
@@ -21,7 +22,7 @@ const jsonLd = [
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
       { '@type': 'ListItem', position: 2, name: 'Bliss', item: 'https://bliss-coach.com/bliss/' },
-      { '@type': 'ListItem', position: 3, name: 'Comparisons', item: url },
+      { '@type': 'ListItem', position: 3, name: 'Comparatifs', item: url },
     ],
   },
 ];
@@ -33,9 +34,10 @@ const alternates = [
 ---
 
 <Base
+  lang="fr"
   alternates={alternates}
-  title="Bliss vs Other Language Apps: Honest Comparisons"
-  description="How Bliss compares with Praktika, Speak, Duolingo, Babbel, Busuu, Preply and more — and why learners who want to speak pick Bliss."
+  title="Bliss vs autres applis de langues : nos comparatifs"
+  description="Bliss comparé à Praktika, Speak, Duolingo, Babbel, Busuu, Preply et d’autres — et pourquoi ceux qui veulent parler choisissent Bliss."
   appStoreId={BLISS_APP_STORE_ID}
   brandStyle={brandStyle}
   jsonLd={jsonLd}
@@ -44,20 +46,20 @@ const alternates = [
 >
   <div class="app-bliss" style={brandStyle}>
     <section class="section container">
-      <span class="skicker">Comparisons</span>
-      <h1 class="hub-h1">Bliss vs other language learning apps</h1>
-      <p class="lead">Side-by-side comparisons with the AI tutors and language apps learners ask us about. Short version: if you want to actually speak, talk to a tutor who explains in your language and corrects you live.</p>
+      <span class="skicker">Comparatifs</span>
+      <h1 class="hub-h1">Bliss vs les autres applis pour apprendre une langue</h1>
+      <p class="lead">Des comparatifs point par point avec les profs IA et les applis de langues dont on nous parle le plus. En bref : si vous voulez vraiment parler, parlez à un prof qui vous explique en français et vous corrige en direct.</p>
       <ul class="hub-list">
         {VS_PAGES.map((p) => (
           <li>
-            <a href={withBase(vsPath(p))}>
+            <a href={withBase(vsPathFr(p))}>
               <b>Bliss vs {p.name}</b>
               <span>{p.description}</span>
             </a>
           </li>
         ))}
       </ul>
-      <div class="hub-cta"><AppStoreButton href={BLISS_APP_STORE_URL} placement="vs-hub" /></div>
+      <div class="hub-cta"><AppStoreButton href={BLISS_APP_STORE_URL} placement="vs-hub-fr" label="Télécharger sur l’App Store" /></div>
     </section>
   </div>
 </Base>
