@@ -1,0 +1,13 @@
+---
+// /de/bliss/vs/<competitor>/ — German "Bliss vs X" pages. Content: src/config/bliss/vsPages.de.ts
+import VsPage from '../../../../components/bliss/VsPage.astro';
+import type { VsPage as VsPageData } from '../../../../config/bliss/vsPages';
+import { VS_PAGES_DE } from '../../../../config/bliss/vsPages.de';
+
+export function getStaticPaths() {
+  return VS_PAGES_DE.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+const { page } = Astro.props as { page: VsPageData };
+---
+
+<VsPage page={page} others={VS_PAGES_DE.filter((p) => p.slug !== page.slug)} lang="de" />

@@ -1,19 +1,21 @@
 ---
-// /bliss/vs/ — hub of the "Bliss vs X" comparisons (src/config/bliss/vsPages.ts).
-import Base from '../../../layouts/Base.astro';
-import AppStoreButton from '../../../components/AppStoreButton.astro';
-import { withBase, BLISS_APP_STORE_URL, BLISS_APP_STORE_ID } from '../../../config/apps';
-import { VS_PAGES, vsPath } from '../../../config/bliss/vsPages';
-import '../../../styles/tutor.css';
+// /de/bliss/vs/ — German hub of the "Bliss vs X" comparisons (src/config/bliss/vsPages.ts).
+import Base from '../../../../layouts/Base.astro';
+import AppStoreButton from '../../../../components/AppStoreButton.astro';
+import { withBase, BLISS_APP_STORE_URL, BLISS_APP_STORE_ID } from '../../../../config/apps';
+import { vsPathLang, type VsPage } from '../../../../config/bliss/vsPages';
+const vsPathDe = (p: VsPage) => vsPathLang(p, 'de');
+import { VS_PAGES_DE as VS_PAGES } from '../../../../config/bliss/vsPages.de';
+import '../../../../styles/tutor.css';
 
 const brandStyle = '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#DB2777;--on-gradient:#ffffff';
-const url = 'https://bliss-coach.com/bliss/vs/';
+const url = 'https://bliss-coach.com/de/bliss/vs/';
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Bliss compared with other language learning apps',
-    itemListElement: VS_PAGES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: `Bliss vs ${p.name}`, url: `https://bliss-coach.com${vsPath(p)}` })),
+    name: 'Bliss im Vergleich mit anderen Sprachlern-Apps',
+    itemListElement: VS_PAGES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: `Bliss vs ${p.name}`, url: `https://bliss-coach.com${vsPathDe(p)}` })),
   },
   {
     '@context': 'https://schema.org',
@@ -21,7 +23,7 @@ const jsonLd = [
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
       { '@type': 'ListItem', position: 2, name: 'Bliss', item: 'https://bliss-coach.com/bliss/' },
-      { '@type': 'ListItem', position: 3, name: 'Comparisons', item: url },
+      { '@type': 'ListItem', position: 3, name: 'Vergleiche', item: url },
     ],
   },
 ];
@@ -35,9 +37,10 @@ const alternates = [
 ---
 
 <Base
+  lang="de"
   alternates={alternates}
-  title="Bliss vs Other Language Apps: Honest Comparisons"
-  description="How Bliss compares with Praktika, Speak, Duolingo, Babbel, Busuu, Preply and more — and why learners who want to speak pick Bliss."
+  title="Bliss vs andere Sprach-Apps: alle Vergleiche"
+  description="Bliss im Vergleich mit Praktika, Speak, Duolingo, Babbel, Busuu, Preply und mehr – und warum alle, die sprechen wollen, Bliss wählen."
   appStoreId={BLISS_APP_STORE_ID}
   brandStyle={brandStyle}
   jsonLd={jsonLd}
@@ -46,20 +49,20 @@ const alternates = [
 >
   <div class="app-bliss" style={brandStyle}>
     <section class="section container">
-      <span class="skicker">Comparisons</span>
-      <h1 class="hub-h1">Bliss vs other language learning apps</h1>
-      <p class="lead">Side-by-side comparisons with the AI tutors and language apps learners ask us about. Short version: if you want to actually speak, talk to a tutor who explains in your language and corrects you live.</p>
+      <span class="skicker">Vergleiche</span>
+      <h1 class="hub-h1">Bliss vs andere Apps zum Sprachenlernen</h1>
+      <p class="lead">Direkte Vergleiche mit den KI-Tutoren und Sprach-Apps, nach denen wir am häufigsten gefragt werden. Kurz gesagt: Wenn du wirklich sprechen willst, sprich mit einem Tutor, der dir auf Deutsch erklärt und dich sofort korrigiert.</p>
       <ul class="hub-list">
         {VS_PAGES.map((p) => (
           <li>
-            <a href={withBase(vsPath(p))}>
+            <a href={withBase(vsPathDe(p))}>
               <b>Bliss vs {p.name}</b>
               <span>{p.description}</span>
             </a>
           </li>
         ))}
       </ul>
-      <div class="hub-cta"><AppStoreButton href={BLISS_APP_STORE_URL} placement="vs-hub" /></div>
+      <div class="hub-cta"><AppStoreButton href={BLISS_APP_STORE_URL} placement="vs-hub-de" label="Im App Store laden" /></div>
     </section>
   </div>
 </Base>

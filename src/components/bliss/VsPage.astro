@@ -18,7 +18,7 @@ const { page, others, lang } = Astro.props;
 const pathFor = (p: VsPage) => vsPathLang(p, lang);
 const hubPath = vsHubPath(lang);
 const otherLangs = VS_LANGS.filter((l) => l !== lang);
-const LANG_LABEL: Record<VsLang, string> = { en: 'English', fr: 'Français', es: 'Español' };
+const LANG_LABEL: Record<VsLang, string> = { en: 'English', fr: 'Français', es: 'Español', de: 'Deutsch' };
 const sfx = lang === 'en' ? '' : `-${lang}`;
 const url = `https://bliss-coach.com${pathFor(page)}`;
 const brandStyle = '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#DB2777;--on-gradient:#ffffff';
@@ -98,6 +98,30 @@ const UI = {
     learnSpanish: 'Aprender inglés con Bliss',
     ctaH2: 'Prueba Bliss gratis',
     ctaP: 'Descarga Bliss en la App Store, elige un idioma y un profe, y di tu primera frase hoy mismo. Bliss Pro te da todos los profes con práctica ilimitada.',
+  },
+  de: {
+    download: 'Im App Store laden',
+    chips: ['Erklärt dir auf Deutsch', '8 Tutoren, 10 Sprachen', 'Unbegrenzt mit Bliss Pro'],
+    shot: 'Die Bliss-App: Rollenspiele mit deinem Tutor',
+    heroFine: 'Kostenlos fürs iPhone · unbegrenzt üben mit Bliss Pro',
+    faces: 'Sofia, Amélie, Emily, Meilin und vier weitere Bliss-Tutoren',
+    comparisons: 'Vergleiche',
+    verdict: 'Unser Fazit',
+    chooseBliss: 'Nimm Bliss, wenn…',
+    chooseThem: (n: string) => `${n} passt vielleicht noch zu dir, wenn…`,
+    sideBySide: 'Im direkten Vergleich',
+    tableH2: (n: string) => `Bliss und ${n} im Detail`,
+    tableLead: 'Die Angaben zum Mitbewerber stammen aus seinem eigenen App-Store-Eintrag zum Zeitpunkt des Schreibens (Oktober 2026) und können sich ändern. Preise nennen wir bewusst nicht – prüfe die aktuellen Abos in beiden Apps.',
+    wins: 'Vorteil Bliss',
+    whyBliss: 'Warum Bliss',
+    whyH2: (n: string) => `Warum Lernende Bliss statt ${n} wählen`,
+    fair: (n: string) => `Fairerweise zu ${n}`,
+    faqH2: (n: string) => `Bliss vs ${n}: häufige Fragen`,
+    more: 'Weitere Vergleiche',
+    moreH2: 'Du vergleichst noch andere Sprach-Apps?',
+    learnSpanish: 'Spanisch lernen mit Bliss (auf Englisch)',
+    ctaH2: 'Bliss kostenlos testen',
+    ctaP: 'Lade Bliss im App Store, wähle eine Sprache und einen Tutor und sag noch heute deinen ersten Satz. Mit Bliss Pro bekommst du alle Tutoren und unbegrenztes Üben.',
   },
 } as const;
 const t = UI[lang];
@@ -369,6 +393,7 @@ const jsonLd = [
     .vs-chips li { font-size: 13px; padding: 8px 12px 8px 8px; }
     .vs-choose, .vs-grid { grid-template-columns: 1fr; }
     .vs-verdict { padding: 22px 20px; }
+    .vs-langs { display: flex; margin: 8px 0 0; padding: 0; border: 0; }
     .vs-verdict p { font-size: 16px; }
   }
 </style>
