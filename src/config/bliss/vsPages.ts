@@ -50,7 +50,7 @@ export type VsPage = {
 /** Rows that are the same on every page — Bliss's side never changes, only theirs does. */
 const BLISS_LANGS = '10: Spanish, French, English, Mandarin, Italian, German, Portuguese, Japanese, Korean, Arabic';
 const BLISS_PLATFORM = 'iPhone (App Store)';
-const BLISS_FREE = 'Free download with a first tutor; Pro unlocks every tutor';
+const BLISS_FREE = 'Free download with a first tutor; Bliss Pro = every tutor, unlimited practice';
 
 export const VS_PAGES: readonly VsPage[] = [
   {
@@ -314,6 +314,7 @@ export const VS_PAGES: readonly VsPage[] = [
       { label: 'Corrections', bliss: 'Fixes the sentence you just said and has you repeat it', them: 'Grammar corrections and pronunciation scores', win: true },
       { label: 'Tutors', bliss: 'Eight characters you pick from', them: 'AI characters per scenario', win: true },
       { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone, Android and web' },
+      { label: 'Practice time', bliss: 'Unlimited with Bliss Pro', them: 'See their current plans', win: true },
     ],
     theirStrengths: [
       { title: 'Huge language list', body: 'If you are learning something like Swahili or Finnish, TalkPal likely covers it and Bliss does not.' },
@@ -355,6 +356,7 @@ export const VS_PAGES: readonly VsPage[] = [
       { label: 'Feedback', bliss: 'Live: the sentence you just said, corrected and repeated', them: 'Detailed error lists after the conversation', win: true },
       { label: 'Explanations', bliss: 'In the language you already speak', them: 'Mostly in the target language', win: true },
       { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'Web and mobile' },
+      { label: 'Practice time', bliss: 'Unlimited with Bliss Pro', them: 'See their current plans', win: true },
     ],
     theirStrengths: [
       { title: 'Deep review', body: 'Categorised errors and interactive transcripts are excellent for learners who like to study their mistakes after the fact.' },
@@ -395,6 +397,7 @@ export const VS_PAGES: readonly VsPage[] = [
       { label: 'Level setting', bliss: 'Your tutor adapts as you talk', them: 'Placement test', win: true },
       { label: 'Explanations', bliss: 'In the language you already speak', them: 'Course explanations and chat feedback', win: true },
       { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone, Android and web' },
+      { label: 'Practice time', bliss: 'Unlimited with Bliss Pro', them: 'See their current plans', win: true },
     ],
     theirStrengths: [
       { title: 'Course plus conversation', body: 'A placement test and a course give you a clear path, with conversation to practise it.' },
@@ -482,6 +485,7 @@ export const VS_PAGES: readonly VsPage[] = [
       { label: 'Explanations', bliss: 'In the language you already speak', them: 'Course explanations in your language' },
       { label: 'Speaking practice', bliss: 'The whole session is speaking', them: 'Speaking exercises inside the course', win: true },
       { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone, Android and web' },
+      { label: 'Practice time', bliss: 'Unlimited with Bliss Pro', them: 'See their current plans', win: true },
     ],
     theirStrengths: [
       { title: 'A course by level', body: 'Busuu’s lessons are organised by proficiency level, which helps if you are working toward an exam.' },
@@ -524,6 +528,7 @@ export const VS_PAGES: readonly VsPage[] = [
       { label: 'Languages', bliss: BLISS_LANGS, them: 'Many more, in varying depth' },
       { label: 'Explanations', bliss: 'In the language you already speak, when you need them', them: 'Narrated in the lesson script', win: true },
       { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone, Android, web, car audio' },
+      { label: 'Practice time', bliss: 'Unlimited with Bliss Pro', them: 'See their current plans', win: true },
     ],
     theirStrengths: [
       { title: 'Hands-free', body: 'Audio lessons fit a drive or a run in a way a conversation app does not.' },

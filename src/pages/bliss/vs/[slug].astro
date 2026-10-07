@@ -59,7 +59,7 @@ const jsonLd = [
         <p class="sub">{page.intro}</p>
         <div class="vs-hero-cta">
           <AppStoreButton href={BLISS_APP_STORE_URL} placement={`vs-${page.slug}-hero`} />
-          <span>Free to download on iPhone</span>
+          <span>Free to download on iPhone · unlimited practice with Bliss Pro</span>
         </div>
         <div class="vs-faces" aria-hidden="true">
           {faces.map((t) => <img src={withBase(`/home/${t.photo}`)} alt="" width="44" height="44" loading="eager" />)}
@@ -145,7 +145,7 @@ const jsonLd = [
         <img src={withBase(`/home/${TUTORS[0].photo}`)} alt="" width="72" height="72" loading="lazy" />
         <div class="txt">
           <h2>Try Bliss free</h2>
-          <p>Download Bliss on the App Store, pick a language and a tutor, and say your first sentence today.</p>
+          <p>Download Bliss on the App Store, pick a language and a tutor, and say your first sentence today. Bliss Pro gives you every tutor with unlimited practice.</p>
         </div>
         <AppStoreButton href={BLISS_APP_STORE_URL} placement={`vs-${page.slug}-final`} />
       </div>
