@@ -1,0 +1,273 @@
+---
+// One "Bliss vs X" page, in English (/bliss/vs/<slug>/) or French (/fr/bliss/vs/<slug>/).
+// Content: src/config/bliss/vsPages.ts (+ vsPages.fr.ts) — read its header before editing.
+import Base from '../../layouts/Base.astro';
+import FaqList from '../tutor/FaqList.astro';
+import AppStoreButton from '../AppStoreButton.astro';
+import { withBase, BLISS_APP_STORE_URL, BLISS_APP_STORE_ID } from '../../config/apps';
+import { vsPath, vsPathFr, vsHubPath, type VsPage } from '../../config/bliss/vsPages';
+import { TUTORS } from '../../config/bliss/tutors';
+import '../../styles/tutor.css';
+
+interface Props {
+  page: VsPage;
+  others: readonly VsPage[];
+  lang: 'en' | 'fr';
+}
+const { page, others, lang } = Astro.props;
+const fr = lang === 'fr';
+const pathFor = (p: VsPage) => (fr ? vsPathFr(p) : vsPath(p));
+const hubPath = vsHubPath(lang);
+const altPath = fr ? vsPath(page) : vsPathFr(page);
+const altLang = fr ? 'en' : 'fr';
+const sfx = fr ? '-fr' : '';
+const url = `https://bliss-coach.com${pathFor(page)}`;
+const brandStyle = '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#DB2777;--on-gradient:#ffffff';
+const faces = TUTORS.slice(0, 4);
+
+const UI = {
+  en: {
+    download: 'Download on the App Store',
+    heroFine: 'Free to download on iPhone · unlimited practice with Bliss Pro',
+    faces: 'Sofia, Amélie, Emily, Meilin and four more Bliss tutors',
+    comparisons: 'Comparisons',
+    otherLang: 'Version française',
+    verdict: 'Our verdict',
+    chooseBliss: 'Choose Bliss if…',
+    chooseThem: (n: string) => `${n} may still suit you if…`,
+    sideBySide: 'Side by side',
+    tableH2: (n: string) => `Bliss and ${n}, feature by feature`,
+    tableLead: 'Competitor details reflect their own store listings at the time of writing (October 2026) and can change. We leave prices out on purpose — check both apps for current plans.',
+    wins: 'Bliss wins',
+    whyBliss: 'Why Bliss',
+    whyH2: (n: string) => `Why learners pick Bliss over ${n}`,
+    fair: (n: string) => `To be fair to ${n}`,
+    faqH2: (n: string) => `Bliss vs ${n}: questions, answered`,
+    more: 'More comparisons',
+    moreH2: 'Comparing other language apps?',
+    learnSpanish: 'Learn Spanish with Bliss',
+    ctaH2: 'Try Bliss free',
+    ctaP: 'Download Bliss on the App Store, pick a language and a tutor, and say your first sentence today. Bliss Pro gives you every tutor with unlimited practice.',
+  },
+  fr: {
+    download: 'Télécharger sur l’App Store',
+    heroFine: 'Téléchargement gratuit sur iPhone · pratique illimitée avec Bliss Pro',
+    faces: 'Sofia, Amélie, Emily, Meilin et quatre autres profs Bliss',
+    comparisons: 'Comparatifs',
+    otherLang: 'English version',
+    verdict: 'Notre verdict',
+    chooseBliss: 'Choisissez Bliss si…',
+    chooseThem: (n: string) => `${n} peut encore vous convenir si…`,
+    sideBySide: 'Côte à côte',
+    tableH2: (n: string) => `Bliss et ${n}, point par point`,
+    tableLead: 'Les informations sur le concurrent reprennent sa propre fiche App Store au moment où nous écrivons (octobre 2026) et peuvent changer. Nous ne citons volontairement aucun prix : vérifiez les offres actuelles dans chaque app.',
+    wins: 'Avantage Bliss',
+    whyBliss: 'Pourquoi Bliss',
+    whyH2: (n: string) => `Pourquoi choisir Bliss plutôt que ${n}`,
+    fair: (n: string) => `Pour être juste envers ${n}`,
+    faqH2: (n: string) => `Bliss vs ${n} : vos questions`,
+    more: 'Autres comparatifs',
+    moreH2: 'Vous comparez d’autres applis de langues ?',
+    learnSpanish: 'Apprendre l’espagnol avec Bliss (en anglais)',
+    ctaH2: 'Essayez Bliss gratuitement',
+    ctaP: 'Téléchargez Bliss sur l’App Store, choisissez une langue et un prof, et dites votre première phrase dès aujourd’hui. Bliss Pro vous donne tous les profs, en pratique illimitée.',
+  },
+} as const;
+const t = UI[lang];
+
+const alternates = [
+  { hreflang: 'en', href: `https://bliss-coach.com${vsPath(page)}` },
+  { hreflang: 'fr', href: `https://bliss-coach.com${vsPathFr(page)}` },
+  { hreflang: 'x-default', href: `https://bliss-coach.com${vsPath(page)}` },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: lang,
+    mainEntity: page.faq.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Bliss', item: 'https://bliss-coach.com/bliss/' },
+      { '@type': 'ListItem', position: 3, name: t.comparisons, item: `https://bliss-coach.com${hubPath}` },
+      { '@type': 'ListItem', position: 4, name: `Bliss vs ${page.name}`, item: url },
+    ],
+  },
+];
+---
+
+
+<Base
+  lang={lang}
+  alternates={alternates}
+  title={page.title}
+  description={page.description}
+  appStoreId={BLISS_APP_STORE_ID}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+  activeApp="bliss"
+  ogImage="/home/og.png"
+>
+  <div class="app-bliss vs" style={brandStyle}>
+    <section class="vs-hero">
+      <div class="container">
+        <nav class="vs-crumb" aria-label="Breadcrumb">
+          <a href={withBase('/bliss/')}>Bliss</a> <span aria-hidden="true">/</span>
+          <a href={withBase(hubPath)}>{t.comparisons}</a> <span aria-hidden="true">/</span> Bliss vs {page.name}
+          <a class="vs-lang" href={withBase(altPath)} hreflang={altLang}>{t.otherLang}</a>
+        </nav>
+        <span class="skicker">Bliss vs {page.name}</span>
+        <h1>{page.h1}</h1>
+        <p class="sub">{page.intro}</p>
+        <div class="vs-hero-cta">
+          <AppStoreButton href={BLISS_APP_STORE_URL} placement={`vs-${page.slug}-hero${sfx}`} label={t.download} />
+          <span>{t.heroFine}</span>
+        </div>
+        <div class="vs-faces" aria-hidden="true">
+          {faces.map((t) => <img src={withBase(`/home/${t.photo}`)} alt="" width="44" height="44" loading="eager" />)}
+          <span>{t.faces}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container vs-verdict-wrap">
+      <div class="vs-verdict">
+        <span class="skicker">{t.verdict}</span>
+        <p>{page.verdict}</p>
+      </div>
+      <div class="vs-choose">
+        <div class="vs-col bliss">
+          <h2>{t.chooseBliss}</h2>
+          <ul>{page.chooseBliss.map((c) => <li>{c}</li>)}</ul>
+        </div>
+        <div class="vs-col them">
+          <h2>{t.chooseThem(page.name)}</h2>
+          <ul>{page.chooseThem.map((c) => <li>{c}</li>)}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <span class="skicker">{t.sideBySide}</span>
+      <h2>{t.tableH2(page.name)}</h2>
+      <p class="lead">{t.tableLead}</p>
+      <div class="vs-table-wrap">
+        <table class="vs-table">
+          <thead>
+            <tr><th scope="col"></th><th scope="col">Bliss</th><th scope="col">{page.name}</th></tr>
+          </thead>
+          <tbody>
+            {page.rows.map((r) => (
+              <tr><th scope="row">{r.label}</th><td class={r.win ? 'win' : undefined}>{r.win && <span class="tick" aria-label={t.wins}>✓</span>}{r.bliss}</td><td>{r.them}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section container">
+      <span class="skicker">{t.whyBliss}</span>
+      <h2>{t.whyH2(page.name)}</h2>
+      <div class="vs-grid">
+        {page.blissDifference.map((s) => (
+          <div class="vs-card accent"><h3>{s.title}</h3><p>{s.body}</p></div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section container vs-fair">
+      <h2>{t.fair(page.name)}</h2>
+      <ul>
+        {page.theirStrengths.slice(0, 2).map((s) => <li><b>{s.title}.</b> {s.body}</li>)}
+      </ul>
+    </section>
+
+    <section class="section container">
+      <span class="skicker">FAQ</span>
+      <h2>{t.faqH2(page.name)}</h2>
+      <FaqList items={page.faq} />
+    </section>
+
+    <section class="section container vs-more">
+      <span class="skicker">{t.more}</span>
+      <h2>{t.moreH2}</h2>
+      <ul>
+        {others.map((o) => (
+          <li><a href={withBase(pathFor(o))}>Bliss vs {o.name} →</a></li>
+        ))}
+        {page.related?.map((r) => (
+          <li><a href={withBase(r.href)}>{r.label} →</a></li>
+        ))}
+        <li><a href={withBase('/bliss/learn-spanish/')}>{t.learnSpanish} →</a></li>
+      </ul>
+    </section>
+
+    <section class="cta-band">
+      <div class="container inner-cta">
+        <img src={withBase(`/home/${TUTORS[0].photo}`)} alt="" width="72" height="72" loading="lazy" />
+        <div class="txt">
+          <h2>{t.ctaH2}</h2>
+          <p>{t.ctaP}</p>
+        </div>
+        <AppStoreButton href={BLISS_APP_STORE_URL} placement={`vs-${page.slug}-final${sfx}`} label={t.download} />
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .vs-hero { padding: 56px 0 8px; }
+  .vs-hero h1 { font-size: clamp(30px, 4.6vw, 48px); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 18px; max-width: 22ch; }
+  .vs-hero .sub { color: var(--text-dim); font-size: 17px; max-width: 64ch; }
+  .vs-crumb { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+  .vs-crumb a { text-decoration: underline; text-underline-offset: 3px; }
+  .vs-crumb .vs-lang { margin-left: 12px; font-weight: 600; }
+  .vs-faces { display: flex; align-items: center; gap: 4px; margin-top: 24px; flex-wrap: wrap; }
+  .vs-faces img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--bg-raised); margin-right: -10px; }
+  .vs-faces span { margin-left: 18px; font-size: 13.5px; color: var(--text-dim); }
+  .vs-verdict { padding: 22px 24px; border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 8%, var(--bg-raised)); border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); max-width: 860px; }
+  .vs-verdict p { font-size: 17px; line-height: 1.55; }
+  .vs-choose { display: grid; gap: 18px; margin-top: 24px; }
+  .vs-col { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+  .vs-col.bliss { border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 5%, var(--bg-raised)); }
+  .vs-col.them { opacity: 0.85; }
+  .vs-col.them h2 { font-size: 16px; color: var(--text-dim); }
+  .vs-col.them li { font-size: 14px; color: var(--text-dim); }
+  .vs-choose { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+  .vs-hero-cta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 24px; }
+  .vs-hero-cta span { font-size: 13px; color: var(--text-dim); }
+  .vs-table td.win { font-weight: 600; }
+  .tick { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; vertical-align: -3px; }
+  .vs-fair { padding-block: 32px; }
+  .vs-fair h2 { font-size: 18px; margin-bottom: 10px; }
+  .vs-fair ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 780px; }
+  .vs-fair li { font-size: 14.5px; color: var(--text-dim); }
+  .vs-col h2 { font-size: 20px; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .vs-col ul { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .vs-col li { font-size: 15px; }
+  .vs-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-raised); }
+  .vs-table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
+  .vs-table th, .vs-table td { text-align: left; vertical-align: top; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .vs-table tbody tr:last-child th, .vs-table tbody tr:last-child td { border-bottom: 0; }
+  .vs-table thead th { font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); }
+  .vs-table thead th:nth-child(2) { color: var(--accent); }
+  .vs-table tbody th { font-weight: 600; width: 22%; }
+  .vs-table td:nth-child(2) { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+  .vs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 24px; }
+  .vs-card { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+  .vs-card.accent { border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .vs-card h3 { font-size: 17px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .vs-card p { color: var(--text-dim); font-size: 15px; }
+  .vs-more ul { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+  .vs-more a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .cta-band .inner-cta img { border-radius: 50%; object-fit: cover; object-position: top; }
+  @media (max-width: 860px) {
+    .vs-choose, .vs-grid { grid-template-columns: 1fr; }
+    .vs-more ul { grid-template-columns: 1fr; }
+  }
+</style>

@@ -591,3 +591,6 @@ export const VS_PAGES: readonly VsPage[] = [
 ];
 
 export const vsPath = (p: VsPage) => `/bliss/vs/${p.slug}/`;
+/** French twins live at /fr/bliss/vs/<slug>/ (content: vsPages.fr.ts, same slugs). */
+export const vsPathFr = (p: VsPage) => `/fr/bliss/vs/${p.slug}/`;
+export const vsHubPath = (lang: 'en' | 'fr') => (lang === 'fr' ? '/fr/bliss/vs/' : '/bliss/vs/');
