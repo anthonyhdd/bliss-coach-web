@@ -547,7 +547,7 @@ export const VS_PAGES: readonly VsPage[] = [
       'Bliss vs Preply: book and pay a human tutor per lesson, or talk to an AI tutor any time, as much as you want? Cost, flexibility and who each one suits.',
     h1: 'Bliss vs Preply: a human tutor by appointment, or an AI tutor any time?',
     intro:
-      'Preply is a marketplace of human tutors: you pick a teacher, book a time and pay per lesson. Bliss is an AI tutor you open whenever you want — at 7 a.m., on your lunch break, for five minutes or forty — with one subscription.',
+      'Preply is a marketplace of human tutors: you pick a teacher, book a time and pay per lesson. Bliss is an AI tutor you open whenever you want — at 7 a.m., on your lunch break, for five minutes or forty — unlimited with Bliss Pro.',
     verdict:
       'For speaking practice, Bliss gives you far more of it: no booking, no scheduling, no per-lesson cost, and no awkwardness about making the same mistake for the tenth time. A human tutor on Preply mainly makes sense for exam prep or very specific professional needs — and many learners combine a weekly human lesson with daily Bliss practice.',
     chooseBliss: [
@@ -563,7 +563,7 @@ export const VS_PAGES: readonly VsPage[] = [
     rows: [
       { label: 'Format', bliss: 'AI tutor, available any time', them: 'Human tutors, booked lessons' },
       { label: 'Scheduling', bliss: 'None — open the app and talk', them: 'Book a slot with your tutor', win: true },
-      { label: 'Cost model', bliss: 'One subscription, practise daily at no extra cost per session', them: 'Paid per lesson, price set by each tutor', win: true },
+      { label: 'Cost model', bliss: 'One subscription — unlimited practice with Bliss Pro', them: 'Paid per lesson, price set by each tutor', win: true },
       { label: 'Languages', bliss: BLISS_LANGS, them: 'Very many, depending on available tutors' },
       { label: 'Comfort', bliss: 'No judgement, repeat a mistake as often as needed', them: 'A real person, which some learners find intimidating', win: true },
       { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'Web, iPhone and Android' },
@@ -574,12 +574,12 @@ export const VS_PAGES: readonly VsPage[] = [
     ],
     blissDifference: [
       { title: 'Practice whenever you have five minutes', body: 'No calendar, no time zones: your tutor is ready the second you open the app.' },
-      { title: 'Volume', body: 'Speaking improves with repetition. Bliss lets you practise daily without the cost adding up lesson by lesson.' },
+      { title: 'Volume', body: 'Speaking improves with repetition. Bliss Pro is unlimited: practise every day, as long as you like, without the cost adding up lesson by lesson.' },
       { title: 'No stage fright', body: 'Say it wrong ten times. Your tutor corrects you patiently, every time, in your own language.' },
     ],
     faq: [
       { q: 'Is an AI tutor as good as a human tutor?', a: 'For daily speaking practice, an AI tutor gives you far more repetitions, any time. For exam preparation or specialised needs, a human tutor adds things an app cannot. Many learners use both.' },
-      { q: 'Is Bliss cheaper than Preply?', a: 'Bliss is one subscription rather than a price per lesson. Check current plans in the app and on Preply, as prices vary by tutor and country.' },
+      { q: 'Is Bliss cheaper than Preply?', a: 'Bliss Pro is one subscription with unlimited practice, rather than a price per lesson. Check current plans in the app and on Preply, as prices vary by tutor and country.' },
       { q: 'Can I use Bliss between Preply lessons?', a: 'Yes — that is a great combination: a weekly lesson with a human, daily speaking practice with Bliss.' },
     ],
   },
