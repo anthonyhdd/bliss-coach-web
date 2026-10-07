@@ -591,8 +591,8 @@ export const VS_PAGES: readonly VsPage[] = [
 ];
 
 export const vsPath = (p: VsPage) => `/bliss/vs/${p.slug}/`;
-export type VsLang = 'en' | 'fr' | 'es';
-export const VS_LANGS: readonly VsLang[] = ['en', 'fr', 'es'];
+export type VsLang = 'en' | 'fr' | 'es' | 'de';
+export const VS_LANGS: readonly VsLang[] = ['en', 'fr', 'es', 'de'];
 /** Translations live at /<lang>/bliss/vs/<slug>/ (content: vsPages.<lang>.ts, same slugs). */
 export const vsPathLang = (p: VsPage, lang: VsLang) => (lang === 'en' ? vsPath(p) : `/${lang}/bliss/vs/${p.slug}/`);
 export const vsPathFr = (p: VsPage) => vsPathLang(p, 'fr');
