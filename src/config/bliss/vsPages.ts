@@ -409,6 +409,180 @@ export const VS_PAGES: readonly VsPage[] = [
       { q: 'Does Bliss have a placement test?', a: 'No. Your tutor adapts to your level as you talk, and explains in your own language whenever you need it.' },
     ],
   },
+  {
+    slug: 'emma',
+    name: 'Emma',
+    title: 'Bliss vs Emma: AI Language Tutor Apps Compared',
+    description:
+      'Bliss vs Emma: one AI tutor for six languages, or eight tutors for ten? How the two compare on speaking, corrections and choice — and why learners pick Bliss.',
+    h1: 'Bliss vs Emma: one AI tutor, or the tutor you choose?',
+    intro:
+      'Emma is an AI tutor app that started with English and now lists six languages, mixing text and voice chats with lessons and vocabulary exercises. Bliss is voice-first, with eight tutors and ten languages — and every one of them explains in the language you already speak.',
+    verdict:
+      'Bliss is the stronger pick for most learners: more languages (including Mandarin, Japanese, Korean and Arabic), eight tutors with their own personalities instead of one, and sessions that are spent speaking — with each mistake fixed and said again. Emma mainly suits learners who want to type as much as talk.',
+    chooseBliss: [
+      'You learn Mandarin, Japanese, Korean or Arabic — Emma does not list them',
+      'You want to choose your tutor, and switch whenever you like',
+      'You want every session to be spoken practice',
+      'You want romanization under every line of a non-Latin script',
+    ],
+    chooseThem: [
+      'You prefer typing to your tutor as much as speaking',
+      'You want a lesson plan with vocabulary exercises alongside the chat',
+    ],
+    rows: [
+      { label: 'Format', bliss: 'Voice conversation with an AI tutor', them: 'Text and voice chat with an AI tutor plus lessons and exercises', win: true },
+      { label: 'Languages', bliss: BLISS_LANGS, them: 'English, Spanish, French, Italian, Portuguese and German (per its store page)', win: true },
+      { label: 'Tutors', bliss: 'Eight characters, pick any one for any language', them: 'One tutor, Emma', win: true },
+      { label: 'Explanations', bliss: 'In the language you already speak', them: 'Adapted to your level', win: true },
+      { label: 'Corrections', bliss: 'Fixes the sentence you just said and has you repeat it', them: 'Real-time corrections in the chat', win: true },
+      { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone' },
+      { label: 'Free option', bliss: BLISS_FREE, them: 'Free download with in-app purchases' },
+    ],
+    theirStrengths: [
+      { title: 'Text when you cannot talk', body: 'Typed chats keep you practising on the bus or in an open-plan office.' },
+      { title: 'A guided plan', body: 'A personalised plan with vocabulary exercises suits learners who like a checklist.' },
+    ],
+    blissDifference: [
+      { title: 'Eight tutors, not one', body: 'Sofia, Amélie, Emily, Meilin and four more — each with their own voice and style. Keep the one you click with across every language.' },
+      { title: 'Ten languages', body: 'Including Mandarin, Japanese, Korean and Arabic, each with romanization so you can say it before you can read it.' },
+      { title: 'Speaking is the whole session', body: 'You talk, your tutor corrects the exact sentence you said, you say it again. That loop is what builds speaking.' },
+    ],
+    faq: [
+      { q: 'Is Bliss an Emma alternative?', a: 'Yes. Both are AI tutors. Bliss is voice-first, teaches ten languages and lets you choose among eight tutors; Emma is one tutor with text and voice chat across six languages.' },
+      { q: 'Which is better for learning Japanese or Korean?', a: 'Bliss — Emma does not list them at the time of writing, and Bliss adds romanization under every line.' },
+      { q: 'Can I try Bliss for free?', a: 'Yes. Bliss is free to download with a first tutor. Plans and prices are shown in the app before you pay anything.' },
+    ],
+  },
+  {
+    slug: 'busuu',
+    name: 'Busuu',
+    title: 'Bliss vs Busuu: AI Tutor Conversation vs Course + Community',
+    description:
+      'Bliss vs Busuu: a course with community corrections, or an AI tutor who corrects you live while you speak? An honest comparison and who should pick which.',
+    h1: 'Bliss vs Busuu: wait for a correction, or get it while you speak?',
+    intro:
+      'Busuu combines a structured course in around fourteen languages with a community of native speakers who correct your written and spoken exercises, plus AI conversation practice in some languages. Bliss gives you the correction the moment you say something, from a tutor you choose.',
+    verdict:
+      'If your goal is to speak, Bliss is the better tool: you get the correction instantly, explained in your own language, and you say the fixed sentence straight away — no waiting for a stranger to review a recording. Busuu mainly suits learners who want a CEFR-style course and enjoy the community side.',
+    chooseBliss: [
+      'You want to be corrected the moment you speak, not later',
+      'You want a full conversation every session, in any of ten languages',
+      'You learn Mandarin, Korean or Arabic and want romanization on every line',
+      'You want a tutor with a personality you choose',
+    ],
+    chooseThem: [
+      'You want a structured course organised by level',
+      'You enjoy getting feedback from other learners and native speakers',
+    ],
+    rows: [
+      { label: 'Format', bliss: 'Voice conversation with an AI tutor', them: 'Structured course, community feedback, AI conversations in some languages', win: true },
+      { label: 'Languages', bliss: BLISS_LANGS, them: 'Around 14 courses' },
+      { label: 'Corrections', bliss: 'Instant: the sentence you just said, fixed and repeated', them: 'Community corrections on submitted exercises; AI feedback where available', win: true },
+      { label: 'Explanations', bliss: 'In the language you already speak', them: 'Course explanations in your language' },
+      { label: 'Speaking practice', bliss: 'The whole session is speaking', them: 'Speaking exercises inside the course', win: true },
+      { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone, Android and web' },
+    ],
+    theirStrengths: [
+      { title: 'A course by level', body: 'Busuu’s lessons are organised by proficiency level, which helps if you are working toward an exam.' },
+      { title: 'Real people in the loop', body: 'Native speakers reviewing your exercises is a nice human touch.' },
+    ],
+    blissDifference: [
+      { title: 'No waiting', body: 'Your tutor corrects you in the moment and has you say the right version straight away — while the sentence is still in your head.' },
+      { title: 'Conversation, not exercises', body: 'Every Bliss session is a real back-and-forth with your tutor, in any of ten languages.' },
+    ],
+    faq: [
+      { q: 'Is Bliss a Busuu alternative?', a: 'Yes, especially for speaking. Busuu is a course with community feedback; Bliss is an AI tutor you talk with who corrects you instantly.' },
+      { q: 'Can I use Bliss and Busuu together?', a: 'Yes. Some learners use a course for structure and Bliss to practise speaking it out loud.' },
+      { q: 'Does Bliss have a community?', a: 'No — Bliss is one-to-one with your tutor, so you never wait for someone else to review your work.' },
+    ],
+  },
+  {
+    slug: 'pimsleur',
+    name: 'Pimsleur',
+    title: 'Bliss vs Pimsleur: AI Tutor Conversation vs Audio Lessons',
+    description:
+      'Bliss vs Pimsleur: scripted audio lessons, or a tutor who answers what you actually say? How the two speaking methods compare — and who each one suits.',
+    h1: 'Bliss vs Pimsleur: repeat after the recording, or talk with a tutor?',
+    intro:
+      'Pimsleur is the classic audio method: you listen, you answer out loud, the recording gives you the right answer. It works — but the recording cannot hear you. Bliss is a tutor that listens to what you actually said and corrects it.',
+    verdict:
+      'Bliss is the better choice if you want feedback on your own speech: your tutor hears your sentence, fixes it, explains why in your language and has you say it again. Pimsleur is mainly worth it for hands-free listening on a commute, or for a language outside Bliss’s ten.',
+    chooseBliss: [
+      'You want someone to actually hear and correct what you say',
+      'You want to say your own sentences, not only scripted answers',
+      'You want explanations when something is wrong',
+      'You want a tutor whose voice and personality you choose',
+    ],
+    chooseThem: [
+      'You want hands-free audio for driving or commuting',
+      'Your language is outside Bliss’s ten',
+    ],
+    rows: [
+      { label: 'Format', bliss: 'Live voice conversation with an AI tutor', them: 'Pre-recorded audio lessons with prompts to answer out loud', win: true },
+      { label: 'Feedback', bliss: 'Your actual sentence, corrected and repeated', them: 'The recording plays the right answer; it does not hear you', win: true },
+      { label: 'Languages', bliss: BLISS_LANGS, them: 'Many more, in varying depth' },
+      { label: 'Explanations', bliss: 'In the language you already speak, when you need them', them: 'Narrated in the lesson script', win: true },
+      { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'iPhone, Android, web, car audio' },
+    ],
+    theirStrengths: [
+      { title: 'Hands-free', body: 'Audio lessons fit a drive or a run in a way a conversation app does not.' },
+      { title: 'A long track record', body: 'The spaced-recall audio method has helped many people build pronunciation and recall.' },
+    ],
+    blissDifference: [
+      { title: 'A tutor that listens', body: 'Bliss hears what you said — wrong verb, wrong word order — and corrects that specific sentence.' },
+      { title: 'Your sentences, not a script', body: 'You can say what you actually want to say, and your tutor follows the conversation.' },
+    ],
+    faq: [
+      { q: 'Is Bliss a Pimsleur alternative?', a: 'Yes. Both get you speaking out loud. Pimsleur uses scripted audio; Bliss is a tutor who hears and corrects what you say.' },
+      { q: 'Can I use Bliss hands-free?', a: 'Bliss is a voice conversation, so you mostly talk and listen. It is designed to be used with your phone in hand, though.' },
+      { q: 'Which languages does Bliss teach?', a: 'Spanish, French, English, Mandarin, Italian, German, Portuguese, Japanese, Korean and Arabic.' },
+    ],
+  },
+  {
+    slug: 'preply',
+    name: 'Preply',
+    title: 'Bliss vs Preply: AI Tutor vs Booking a Human Tutor',
+    description:
+      'Bliss vs Preply: book and pay a human tutor per lesson, or talk to an AI tutor any time, as much as you want? Cost, flexibility and who each one suits.',
+    h1: 'Bliss vs Preply: a human tutor by appointment, or an AI tutor any time?',
+    intro:
+      'Preply is a marketplace of human tutors: you pick a teacher, book a time and pay per lesson. Bliss is an AI tutor you open whenever you want — at 7 a.m., on your lunch break, for five minutes or forty — with one subscription.',
+    verdict:
+      'For speaking practice, Bliss gives you far more of it: no booking, no scheduling, no per-lesson cost, and no awkwardness about making the same mistake for the tenth time. A human tutor on Preply mainly makes sense for exam prep or very specific professional needs — and many learners combine a weekly human lesson with daily Bliss practice.',
+    chooseBliss: [
+      'You want to practise every day, not once a week',
+      'You do not want to book slots or work around time zones',
+      'You feel shy speaking to a stranger and want a judgement-free tutor',
+      'You want one subscription instead of paying per lesson',
+    ],
+    chooseThem: [
+      'You are preparing for a specific exam with a human examiner',
+      'You need a teacher for a very specialised professional field',
+    ],
+    rows: [
+      { label: 'Format', bliss: 'AI tutor, available any time', them: 'Human tutors, booked lessons' },
+      { label: 'Scheduling', bliss: 'None — open the app and talk', them: 'Book a slot with your tutor', win: true },
+      { label: 'Cost model', bliss: 'One subscription, practise daily at no extra cost per session', them: 'Paid per lesson, price set by each tutor', win: true },
+      { label: 'Languages', bliss: BLISS_LANGS, them: 'Very many, depending on available tutors' },
+      { label: 'Comfort', bliss: 'No judgement, repeat a mistake as often as needed', them: 'A real person, which some learners find intimidating', win: true },
+      { label: 'Platforms', bliss: BLISS_PLATFORM, them: 'Web, iPhone and Android' },
+    ],
+    theirStrengths: [
+      { title: 'A real human', body: 'A human tutor can read your mood, prep you for a specific exam and adapt in ways no app does.' },
+      { title: 'Specialists', body: 'Need business Japanese for a pharma job? A marketplace can find that person.' },
+    ],
+    blissDifference: [
+      { title: 'Practice whenever you have five minutes', body: 'No calendar, no time zones: your tutor is ready the second you open the app.' },
+      { title: 'Volume', body: 'Speaking improves with repetition. Bliss lets you practise daily without the cost adding up lesson by lesson.' },
+      { title: 'No stage fright', body: 'Say it wrong ten times. Your tutor corrects you patiently, every time, in your own language.' },
+    ],
+    faq: [
+      { q: 'Is an AI tutor as good as a human tutor?', a: 'For daily speaking practice, an AI tutor gives you far more repetitions, any time. For exam preparation or specialised needs, a human tutor adds things an app cannot. Many learners use both.' },
+      { q: 'Is Bliss cheaper than Preply?', a: 'Bliss is one subscription rather than a price per lesson. Check current plans in the app and on Preply, as prices vary by tutor and country.' },
+      { q: 'Can I use Bliss between Preply lessons?', a: 'Yes — that is a great combination: a weekly lesson with a human, daily speaking practice with Bliss.' },
+    ],
+  },
 ];
 
 export const vsPath = (p: VsPage) => `/bliss/vs/${p.slug}/`;
