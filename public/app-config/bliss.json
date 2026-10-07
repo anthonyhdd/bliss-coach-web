@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-08 ttsStream rallumé (fondateur seul, 1 génération/clip #1924)",
+  "rev": "2026-10-08 ttsStream recoupé (test fondateur : démarrage de la voix plus lent)",
   "blocks": {
     "updateGate": {
       "maxBinary": "1.0.2",
@@ -11,6 +11,7 @@
     },
     "killSwitches": {
       "value": {
+        "ttsStream": true,
         "noiseSuppression": true,
         "walletPass": true
       }
