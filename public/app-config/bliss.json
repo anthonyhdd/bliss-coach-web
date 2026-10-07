@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-03 carte Apple Wallet retirée (killSwitches.walletPass)",
+  "rev": "2026-10-08 ttsStream rallumé (fondateur seul, 1 génération/clip #1924)",
   "blocks": {
     "updateGate": {
       "maxBinary": "1.0.2",
@@ -11,7 +11,6 @@
     },
     "killSwitches": {
       "value": {
-        "ttsStream": true,
         "noiseSuppression": true,
         "walletPass": true
       }
