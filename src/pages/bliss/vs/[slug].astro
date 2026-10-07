@@ -1,0 +1,205 @@
+---
+// /bliss/vs/<competitor>/ — honest "Bliss vs X" comparisons. Content: src/config/bliss/vsPages.ts
+// (read its header before editing: no prices, no ratings, say where the other app wins).
+import Base from '../../../layouts/Base.astro';
+import FaqList from '../../../components/tutor/FaqList.astro';
+import AppStoreButton from '../../../components/AppStoreButton.astro';
+import { withBase, BLISS_APP_STORE_URL, BLISS_APP_STORE_ID } from '../../../config/apps';
+import { VS_PAGES, vsPath, type VsPage } from '../../../config/bliss/vsPages';
+import { TUTORS } from '../../../config/bliss/tutors';
+import '../../../styles/tutor.css';
+
+export function getStaticPaths() {
+  return VS_PAGES.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+const { page } = Astro.props as { page: VsPage };
+const url = `https://bliss-coach.com${vsPath(page)}`;
+const brandStyle = '--brand-1:#FF6B35;--brand-2:#DB2777;--brand-3:#6366F1;--accent:#DB2777;--on-gradient:#ffffff';
+const others = VS_PAGES.filter((p) => p.slug !== page.slug);
+const faces = TUTORS.slice(0, 4);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: page.faq.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Bliss Coach', item: 'https://bliss-coach.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Bliss', item: 'https://bliss-coach.com/bliss/' },
+      { '@type': 'ListItem', position: 3, name: 'Comparisons', item: 'https://bliss-coach.com/bliss/vs/' },
+      { '@type': 'ListItem', position: 4, name: `Bliss vs ${page.name}`, item: url },
+    ],
+  },
+];
+---
+
+<Base
+  title={page.title}
+  description={page.description}
+  appStoreId={BLISS_APP_STORE_ID}
+  brandStyle={brandStyle}
+  jsonLd={jsonLd}
+  activeApp="bliss"
+  ogImage="/home/og.png"
+>
+  <div class="app-bliss vs" style={brandStyle}>
+    <section class="vs-hero">
+      <div class="container">
+        <nav class="vs-crumb" aria-label="Breadcrumb">
+          <a href={withBase('/bliss/')}>Bliss</a> <span aria-hidden="true">/</span>
+          <a href={withBase('/bliss/vs/')}>Comparisons</a> <span aria-hidden="true">/</span> Bliss vs {page.name}
+        </nav>
+        <span class="skicker">Bliss vs {page.name}</span>
+        <h1>{page.h1}</h1>
+        <p class="sub">{page.intro}</p>
+        <div class="vs-hero-cta">
+          <AppStoreButton href={BLISS_APP_STORE_URL} placement={`vs-${page.slug}-hero`} />
+          <span>Free to download on iPhone</span>
+        </div>
+        <div class="vs-faces" aria-hidden="true">
+          {faces.map((t) => <img src={withBase(`/home/${t.photo}`)} alt="" width="44" height="44" loading="eager" />)}
+          <span>Sofia, Amélie, Emily, Meilin and four more Bliss tutors</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container vs-verdict-wrap">
+      <div class="vs-verdict">
+        <span class="skicker">Our verdict</span>
+        <p>{page.verdict}</p>
+      </div>
+      <div class="vs-choose">
+        <div class="vs-col bliss">
+          <h2>Choose Bliss if…</h2>
+          <ul>{page.chooseBliss.map((c) => <li>{c}</li>)}</ul>
+        </div>
+        <div class="vs-col them">
+          <h2>{page.name} may still suit you if…</h2>
+          <ul>{page.chooseThem.map((c) => <li>{c}</li>)}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <span class="skicker">Side by side</span>
+      <h2>Bliss and {page.name}, feature by feature</h2>
+      <p class="lead">Competitor details reflect their own store listings at the time of writing (October 2026) and can change. We leave prices out on purpose — check both apps for current plans.</p>
+      <div class="vs-table-wrap">
+        <table class="vs-table">
+          <thead>
+            <tr><th scope="col"></th><th scope="col">Bliss</th><th scope="col">{page.name}</th></tr>
+          </thead>
+          <tbody>
+            {page.rows.map((r) => (
+              <tr><th scope="row">{r.label}</th><td class={r.win ? 'win' : undefined}>{r.win && <span class="tick" aria-label="Bliss wins">✓</span>}{r.bliss}</td><td>{r.them}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section container">
+      <span class="skicker">Why Bliss</span>
+      <h2>Why learners pick Bliss over {page.name}</h2>
+      <div class="vs-grid">
+        {page.blissDifference.map((s) => (
+          <div class="vs-card accent"><h3>{s.title}</h3><p>{s.body}</p></div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section container vs-fair">
+      <h2>To be fair to {page.name}</h2>
+      <ul>
+        {page.theirStrengths.slice(0, 2).map((s) => <li><b>{s.title}.</b> {s.body}</li>)}
+      </ul>
+    </section>
+
+    <section class="section container">
+      <span class="skicker">FAQ</span>
+      <h2>Bliss vs {page.name}: questions, answered</h2>
+      <FaqList items={page.faq} />
+    </section>
+
+    <section class="section container vs-more">
+      <span class="skicker">More comparisons</span>
+      <h2>Comparing other language apps?</h2>
+      <ul>
+        {others.map((o) => (
+          <li><a href={withBase(vsPath(o))}>Bliss vs {o.name} →</a></li>
+        ))}
+        {page.related?.map((r) => (
+          <li><a href={withBase(r.href)}>{r.label} →</a></li>
+        ))}
+        <li><a href={withBase('/bliss/learn-spanish/')}>Learn Spanish with Bliss →</a></li>
+      </ul>
+    </section>
+
+    <section class="cta-band">
+      <div class="container inner-cta">
+        <img src={withBase(`/home/${TUTORS[0].photo}`)} alt="" width="72" height="72" loading="lazy" />
+        <div class="txt">
+          <h2>Try Bliss free</h2>
+          <p>Download Bliss on the App Store, pick a language and a tutor, and say your first sentence today.</p>
+        </div>
+        <AppStoreButton href={BLISS_APP_STORE_URL} placement={`vs-${page.slug}-final`} />
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .vs-hero { padding: 56px 0 8px; }
+  .vs-hero h1 { font-size: clamp(30px, 4.6vw, 48px); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 18px; max-width: 22ch; }
+  .vs-hero .sub { color: var(--text-dim); font-size: 17px; max-width: 64ch; }
+  .vs-crumb { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+  .vs-crumb a { text-decoration: underline; text-underline-offset: 3px; }
+  .vs-faces { display: flex; align-items: center; gap: 4px; margin-top: 24px; flex-wrap: wrap; }
+  .vs-faces img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--bg-raised); margin-right: -10px; }
+  .vs-faces span { margin-left: 18px; font-size: 13.5px; color: var(--text-dim); }
+  .vs-verdict { padding: 22px 24px; border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 8%, var(--bg-raised)); border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); max-width: 860px; }
+  .vs-verdict p { font-size: 17px; line-height: 1.55; }
+  .vs-choose { display: grid; gap: 18px; margin-top: 24px; }
+  .vs-col { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+  .vs-col.bliss { border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 5%, var(--bg-raised)); }
+  .vs-col.them { opacity: 0.85; }
+  .vs-col.them h2 { font-size: 16px; color: var(--text-dim); }
+  .vs-col.them li { font-size: 14px; color: var(--text-dim); }
+  .vs-choose { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+  .vs-hero-cta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 24px; }
+  .vs-hero-cta span { font-size: 13px; color: var(--text-dim); }
+  .vs-table td.win { font-weight: 600; }
+  .tick { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; vertical-align: -3px; }
+  .vs-fair { padding-block: 32px; }
+  .vs-fair h2 { font-size: 18px; margin-bottom: 10px; }
+  .vs-fair ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 780px; }
+  .vs-fair li { font-size: 14.5px; color: var(--text-dim); }
+  .vs-col h2 { font-size: 20px; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .vs-col ul { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .vs-col li { font-size: 15px; }
+  .vs-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-raised); }
+  .vs-table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
+  .vs-table th, .vs-table td { text-align: left; vertical-align: top; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .vs-table tbody tr:last-child th, .vs-table tbody tr:last-child td { border-bottom: 0; }
+  .vs-table thead th { font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); }
+  .vs-table thead th:nth-child(2) { color: var(--accent); }
+  .vs-table tbody th { font-weight: 600; width: 22%; }
+  .vs-table td:nth-child(2) { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+  .vs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 24px; }
+  .vs-card { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+  .vs-card.accent { border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .vs-card h3 { font-size: 17px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .vs-card p { color: var(--text-dim); font-size: 15px; }
+  .vs-more ul { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+  .vs-more a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .cta-band .inner-cta img { border-radius: 50%; object-fit: cover; object-position: top; }
+  @media (max-width: 860px) {
+    .vs-choose, .vs-grid { grid-template-columns: 1fr; }
+    .vs-more ul { grid-template-columns: 1fr; }
+  }
+</style>

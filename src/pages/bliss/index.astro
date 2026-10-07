@@ -249,6 +249,7 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
           </li>
         ))}
       </ul>
+      <p class="bvs-link">Coming from another app? <a href={withBase('/bliss/vs/')}>See how Bliss compares with Praktika, Speak, Duolingo, Babbel and more →</a></p>
     </section>
 
     <!-- features -->
@@ -374,4 +375,6 @@ const liveApps = tutors.filter((t) => !t.app.comingSoon);
   .blangs span { display: flex; flex-direction: column; line-height: 1.25; }
   .blangs i { font-style: normal; font-size: 12.5px; color: var(--text-dim); }
   .blangs b { font-size: 15.5px; }
+  .bvs-link { margin-top: 20px; font-size: 15px; }
+  .bvs-link a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 </style>
