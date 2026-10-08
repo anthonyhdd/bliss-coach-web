@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-08 A/B plan présélectionné annuel vs hebdo (50/50)",
+  "rev": "2026-10-08 appel test coupé (placementCall) — fondateur : cassé",
   "blocks": {
     "paywall": {
       "experiment": "bliss_preselect_annual_vs_weekly",
@@ -28,7 +28,8 @@
       "value": {
         "ttsStream": true,
         "noiseSuppression": true,
-        "walletPass": true
+        "walletPass": true,
+        "placementCall": true
       }
     }
   }
