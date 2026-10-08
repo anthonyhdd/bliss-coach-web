@@ -1,12 +1,29 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-08 annuel présélectionné à 100 % (A/B arrêté : hebdo 0 essai sur 17 taps en 14 j) — fondateur",
+  "rev": "2026-10-08 A/B part gratuite : 2 appels × 3 échanges contre 1 appel × 5 (bliss_free_calls_v1, 50/50) — fondateur",
   "blocks": {
     "paywall": {
       "value": {
         "preselectedPlan": "primary"
       }
+    },
+    "freeCalls": {
+      "experiment": "bliss_free_calls_v1",
+      "value": {
+        "sessionsPerDay": 2,
+        "learningsPerSession": 3
+      },
+      "arms": [
+        {
+          "arm": "one_long_call",
+          "weight": 0.5,
+          "value": {
+            "sessionsPerDay": 1,
+            "learningsPerSession": 5
+          }
+        }
+      ]
     },
     "updateGate": {
       "maxBinary": "1.0.2",
