@@ -1,8 +1,23 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-08 ttsStream recoupé (test fondateur : démarrage de la voix plus lent)",
+  "rev": "2026-10-08 A/B plan présélectionné annuel vs hebdo (50/50)",
   "blocks": {
+    "paywall": {
+      "experiment": "bliss_preselect_annual_vs_weekly",
+      "value": {
+        "preselectedPlan": "secondary"
+      },
+      "arms": [
+        {
+          "arm": "annual_first",
+          "weight": 0.5,
+          "value": {
+            "preselectedPlan": "primary"
+          }
+        }
+      ]
+    },
     "updateGate": {
       "maxBinary": "1.0.2",
       "value": {
