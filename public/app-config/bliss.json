@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-08 A/B part gratuite : 2 appels × 3 échanges contre 1 appel × 5 (bliss_free_calls_v1, 50/50) — fondateur",
+  "rev": "2026-10-09 arc du 1er appel à 100 % pour test fondateur (A/B 50/50 ensuite)",
   "blocks": {
     "paywall": {
       "value": {
@@ -24,6 +24,11 @@
           }
         }
       ]
+    },
+    "onboarding": {
+      "value": {
+        "firstCallArc": true
+      }
     },
     "updateGate": {
       "maxBinary": "1.0.2",
