@@ -1,8 +1,16 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-09 updateGate <=1.0.7 + arc 1er appel à 100 % (test fondateur)",
+  "rev": "2026-10-09 accueil A/B/C bliss_welcome_v1 (actuel / réaliste / Pixar)",
   "blocks": {
+    "welcome": {
+      "experiment": "bliss_welcome_v1",
+      "value": { "layout": "control" },
+      "arms": [
+        { "arm": "realistic", "weight": 0.3333, "value": { "layout": "realistic" } },
+        { "arm": "pixar", "weight": 0.3333, "value": { "layout": "pixar" } }
+      ]
+    },
     "paywall": {
       "value": {
         "preselectedPlan": "primary"
