@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-09 arc du 1er appel à 100 % pour test fondateur (A/B 50/50 ensuite)",
+  "rev": "2026-10-09 updateGate <=1.0.7 + arc 1er appel à 100 % (test fondateur)",
   "blocks": {
     "paywall": {
       "value": {
@@ -30,8 +30,14 @@
         "firstCallArc": true
       }
     },
+    "rescueOffer": {
+      "value": {
+        "enabled": false,
+        "productId": "com.blisscoach.bliss.yearly_4999"
+      }
+    },
     "updateGate": {
-      "maxBinary": "1.0.2",
+      "maxBinary": "1.0.7",
       "value": {
         "blocking": false
       }
