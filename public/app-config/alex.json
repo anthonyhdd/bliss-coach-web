@@ -1,8 +1,14 @@
 {
   "schema": 1,
   "variant": "alex",
-  "rev": "2026-09-29 exp_paywall_timing coupée : 100 % premier appel avant le paywall",
+  "rev": "2026-10-09 updateGate <=1.1.153 (invite MAJ non bloquante)",
   "blocks": {
+    "updateGate": {
+      "maxBinary": "1.1.153",
+      "value": {
+        "blocking": false
+      }
+    },
     "killSwitches": {
       "value": {
         "ttsStream": true,

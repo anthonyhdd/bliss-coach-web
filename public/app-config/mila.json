@@ -1,13 +1,19 @@
 {
   "schema": 1,
   "variant": "mila",
-  "rev": "2026-09-29 exp_paywall_timing coupée : 100 % premier appel avant le paywall",
+  "rev": "2026-10-09 updateGate <=1.1.126 (invite MAJ non bloquante)",
   "blocks": {
     "killSwitches": {
       "value": {
         "ttsStream": true,
         "noiseSuppression": true,
         "paywallTiming": true
+      }
+    },
+    "updateGate": {
+      "maxBinary": "1.1.126",
+      "value": {
+        "blocking": false
       }
     }
   }
