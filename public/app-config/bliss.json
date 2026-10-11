@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-09 accueil A/B/C bliss_welcome_v1 (actuel / réaliste / Pixar)",
+  "rev": "2026-10-11 arc du 1er appel repasse en A/B 50/50 (bliss_first_call_arc_v1)",
   "blocks": {
     "welcome": {
       "experiment": "bliss_welcome_v1",
@@ -34,9 +34,19 @@
       ]
     },
     "onboarding": {
+      "experiment": "bliss_first_call_arc_v1",
       "value": {
-        "firstCallArc": true
-      }
+        "firstCallArc": false
+      },
+      "arms": [
+        {
+          "arm": "arc",
+          "weight": 0.5,
+          "value": {
+            "firstCallArc": true
+          }
+        }
+      ]
     },
     "rescueOffer": {
       "value": {
