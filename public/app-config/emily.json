@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "emily",
-  "rev": "2026-10-09 updateGate <=1.0.0 (invite MAJ non bloquante)",
+  "rev": "2026-10-11 A/B tutor_prepaywall_v1 50/50 : écrans « tu viens de parler » + « ton plan » avant le paywall ; updateGate live conservé",
   "blocks": {
     "killSwitches": {
       "value": {
@@ -15,6 +15,21 @@
       "value": {
         "blocking": false
       }
+    },
+    "prePaywallProof": {
+      "experiment": "tutor_prepaywall_v1",
+      "value": {
+        "enabled": false
+      },
+      "arms": [
+        {
+          "arm": "proof",
+          "weight": 0.5,
+          "value": {
+            "enabled": true
+          }
+        }
+      ]
     }
   }
 }
