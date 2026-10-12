@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "amelie",
-  "rev": "2026-10-11 A/B tutor_prepaywall_v1 50/50 : écrans « tu viens de parler » + « ton plan » avant le paywall ; updateGate live conservé",
+  "rev": "2026-10-12 tutor_prepaywall_v1 -> bilan « tu viens de parler » + « ton plan » à 100 % avant le paywall (fondateur)",
   "blocks": {
     "updateGate": {
       "maxBinary": "1.1.155",
@@ -19,12 +19,12 @@
     "prePaywallProof": {
       "experiment": "tutor_prepaywall_v1",
       "value": {
-        "enabled": false
+        "enabled": true
       },
       "arms": [
         {
           "arm": "proof",
-          "weight": 0.5,
+          "weight": 1,
           "value": {
             "enabled": true
           }
