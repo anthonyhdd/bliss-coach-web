@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-11 arc du 1er appel repasse en A/B 50/50 (bliss_first_call_arc_v1)",
+  "rev": "2026-10-13 hebdo présélectionné (fondateur) — 0 achat sur 12 feuilles Apple annuel le 10-12",
   "blocks": {
     "welcome": {
       "experiment": "bliss_welcome_v1",
@@ -13,7 +13,7 @@
     },
     "paywall": {
       "value": {
-        "preselectedPlan": "primary"
+        "preselectedPlan": "secondary"
       }
     },
     "freeCalls": {
