@@ -1,8 +1,13 @@
 {
   "schema": 1,
   "variant": "amelie",
-  "rev": "2026-10-12 tutor_prepaywall_v1 -> bilan « tu viens de parler » + « ton plan » à 100 % avant le paywall (fondateur)",
+  "rev": "2026-10-14 trimestriel présélectionné (pas d'hebdo sur Amélie, essai 3 j) — fondateur",
   "blocks": {
+    "paywall": {
+      "value": {
+        "preselectedPlan": "secondary"
+      }
+    },
     "updateGate": {
       "maxBinary": "1.1.155",
       "value": {
