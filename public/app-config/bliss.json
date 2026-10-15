@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-13 hebdo présélectionné (fondateur) — 0 achat sur 12 feuilles Apple annuel le 10-12",
+  "rev": "2026-10-16 offre de secours allumée (fondateur) — yearly_4999 APPROVED",
   "blocks": {
     "welcome": {
       "experiment": "bliss_welcome_v1",
@@ -50,7 +50,7 @@
     },
     "rescueOffer": {
       "value": {
-        "enabled": false,
+        "enabled": true,
         "productId": "com.blisscoach.bliss.yearly_4999"
       }
     },
