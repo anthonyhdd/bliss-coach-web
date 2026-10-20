@@ -1,8 +1,14 @@
 {
   "schema": 1,
   "variant": "meilin",
-  "rev": "2026-10-12 tutor_prepaywall_v1 -> bilan « tu viens de parler » + « ton plan » à 100 % avant le paywall (fondateur)",
+  "rev": "2026-10-20 offre de secours allumée — com.blisscoach.meilin.yearly_rescue APPROVED",
   "blocks": {
+    "rescueOffer": {
+      "value": {
+        "enabled": true,
+        "productId": "com.blisscoach.meilin.yearly_rescue"
+      }
+    },
     "killSwitches": {
       "value": {
         "ttsStream": true,

@@ -1,8 +1,14 @@
 {
   "schema": 1,
   "variant": "amelie",
-  "rev": "2026-10-14 trimestriel présélectionné (pas d'hebdo sur Amélie, essai 3 j) — fondateur",
+  "rev": "2026-10-20 offre de secours allumée — com.blisscoach.amelie.yearly_rescue APPROVED",
   "blocks": {
+    "rescueOffer": {
+      "value": {
+        "enabled": true,
+        "productId": "com.blisscoach.amelie.yearly_rescue"
+      }
+    },
     "paywall": {
       "value": {
         "preselectedPlan": "secondary"
