@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-10-16 offre de secours allumée (fondateur) — yearly_4999 APPROVED",
+  "rev": "2026-10-23 annuel présélectionné (go fondateur) — hebdo par défaut 10-13→23 : achats 10→1/sem",
   "blocks": {
     "welcome": {
       "experiment": "bliss_welcome_v1",
@@ -13,7 +13,7 @@
     },
     "paywall": {
       "value": {
-        "preselectedPlan": "secondary"
+        "preselectedPlan": "primary"
       }
     },
     "freeCalls": {
