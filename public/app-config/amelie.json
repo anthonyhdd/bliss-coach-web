@@ -25,7 +25,20 @@
         "ttsStream": true,
         "noiseSuppression": true,
         "paywallTiming": true
-      }
+      },
+      "experiment": "tutor_home_v3_ab",
+      "arms": [
+        {
+          "arm": "classic_home",
+          "weight": 0.5,
+          "value": {
+            "ttsStream": true,
+            "noiseSuppression": true,
+            "paywallTiming": true,
+            "tutorHomeV3": true
+          }
+        }
+      ]
     },
     "prePaywallProof": {
       "experiment": "tutor_prepaywall_v1",
