@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "meilin",
-  "rev": "2026-10-20 offre de secours allumée — com.blisscoach.meilin.yearly_rescue APPROVED",
+  "rev": "2026-11-24 A/B Home v3 (tutor_home_v3_ab, 50 % ancienne Home)",
   "blocks": {
     "rescueOffer": {
       "value": {
