@@ -1,14 +1,28 @@
 {
   "schema": 1,
   "variant": "bliss",
-  "rev": "2026-11-11 part gratuite = 1 séance × 3 (go fondateur, fin A/B bliss_free_calls_v1) ; annuel présélectionné depuis 10-23",
+  "rev": "2026-11-25 suppression de bruit rallumée (porte Tony seul)",
   "blocks": {
     "welcome": {
       "experiment": "bliss_welcome_v1",
-      "value": { "layout": "control" },
+      "value": {
+        "layout": "control"
+      },
       "arms": [
-        { "arm": "realistic", "weight": 0.3333, "value": { "layout": "realistic" } },
-        { "arm": "pixar", "weight": 0.3333, "value": { "layout": "pixar" } }
+        {
+          "arm": "realistic",
+          "weight": 0.3333,
+          "value": {
+            "layout": "realistic"
+          }
+        },
+        {
+          "arm": "pixar",
+          "weight": 0.3333,
+          "value": {
+            "layout": "pixar"
+          }
+        }
       ]
     },
     "paywall": {
@@ -52,7 +66,7 @@
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true,
+        "noiseSuppression": false,
         "walletPass": true,
         "placementCall": true
       }

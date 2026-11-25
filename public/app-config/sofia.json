@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "sofia",
-  "rev": "2026-11-25 A/B annuel présélectionné (tutor_yearly_preselect, 50 %)",
+  "rev": "2026-11-25 suppression de bruit rallumée (porte Tony seul)",
   "blocks": {
     "rescueOffer": {
       "value": {
@@ -12,7 +12,7 @@
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true,
+        "noiseSuppression": false,
         "paywallTiming": true
       },
       "experiment": "tutor_home_v3_ab",
@@ -22,7 +22,7 @@
           "weight": 0.5,
           "value": {
             "ttsStream": true,
-            "noiseSuppression": true,
+            "noiseSuppression": false,
             "paywallTiming": true,
             "tutorHomeV3": true
           }

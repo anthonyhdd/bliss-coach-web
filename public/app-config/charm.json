@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "charm",
-  "rev": "2026-10-18 offre de sauvetage allumée (com.blisscoach.charm.yearly_rescue APPROVED, version en vente depuis le 10-16)",
+  "rev": "2026-11-25 suppression de bruit rallumée (porte Tony seul)",
   "blocks": {
     "rescueOffer": {
       "value": {
@@ -12,14 +12,8 @@
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true,
+        "noiseSuppression": false,
         "paywallTiming": true
-      }
-    },
-    "updateGate": {
-      "maxBinary": "1.1.152",
-      "value": {
-        "blocking": false
       }
     }
   }

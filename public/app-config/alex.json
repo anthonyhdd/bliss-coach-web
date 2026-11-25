@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "alex",
-  "rev": "2026-10-18 offre de sauvetage allumée (com.blisscoach.alex.yearly_rescue APPROVED, version en vente depuis le 10-16)",
+  "rev": "2026-11-25 suppression de bruit rallumée (porte Tony seul)",
   "blocks": {
     "rescueOffer": {
       "value": {
@@ -10,7 +10,7 @@
       }
     },
     "updateGate": {
-      "maxBinary": "1.1.153",
+      "maxBinary": "1.1.152",
       "value": {
         "blocking": false
       }
@@ -18,7 +18,7 @@
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true,
+        "noiseSuppression": false,
         "paywallTiming": true
       }
     }

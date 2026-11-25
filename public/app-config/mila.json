@@ -1,19 +1,13 @@
 {
   "schema": 1,
   "variant": "mila",
-  "rev": "2026-10-09 updateGate <=1.1.126 (invite MAJ non bloquante)",
+  "rev": "2026-11-25 suppression de bruit rallumée (porte Tony seul)",
   "blocks": {
     "killSwitches": {
       "value": {
         "ttsStream": true,
-        "noiseSuppression": true,
+        "noiseSuppression": false,
         "paywallTiming": true
-      }
-    },
-    "updateGate": {
-      "maxBinary": "1.1.126",
-      "value": {
-        "blocking": false
       }
     }
   }
