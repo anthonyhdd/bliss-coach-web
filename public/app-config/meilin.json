@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "variant": "meilin",
-  "rev": "2026-11-24 A/B Home v3 (tutor_home_v3_ab, 50 % ancienne Home)",
+  "rev": "2026-11-25 A/B annuel présélectionné (tutor_yearly_preselect, 50 %)",
   "blocks": {
     "rescueOffer": {
       "value": {
@@ -46,6 +46,21 @@
           "weight": 1,
           "value": {
             "enabled": true
+          }
+        }
+      ]
+    },
+    "paywall": {
+      "experiment": "tutor_yearly_preselect",
+      "value": {
+        "preselectedPlan": "secondary"
+      },
+      "arms": [
+        {
+          "arm": "yearly_first",
+          "weight": 0.5,
+          "value": {
+            "preselectedPlan": "primary"
           }
         }
       ]
